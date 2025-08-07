@@ -1,0 +1,1031 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>17.1. Advanced Markov chain Monte Carlo sampling &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\text{th}}", "yexp": "y_{\\text{exp}}", "ym": "y_{\\text{m}}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'LearningFromData-content/BayesianStatistics/ComputationalBayes/AdvancedMCMC';</script>
+    <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="17.2. Overview: MCMC Diagnostics" href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html" />
+    <link rel="prev" title="17. Advanced Markov Chain Monte Carlo" href="../../StochasticProcesses/Advanced_MCMC.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../Intro/About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../Intro/About.html">
+                    About this Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Overview.html">1. Invitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Introduction.html">2. Introduction</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../BayesianBasics/RootBayesianBasics.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianBasics/Inferenceandpdfs.html">4. Inference and PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/exercise_sum_product_rule.html">4.5. Exercise: Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/exercise_medical_example_by_Bayes.html">4.6. Exercise: Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/MoreBayesTheorem.html">4.7. More on Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/Bayesian_epistemology.html">4.8. *Aside: Bayesian epistemology</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianBasics/DataModelsPredictions.html">4.9. Data, models, and predictions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html">Parameter estimation I: Gaussian mean and variance</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianBasics/Posteriors.html">5. Bayesian posteriors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianBasics/Exploring_pdfs.html">5.1. Exploring PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianBasics/Exploring_pdfs_followups.html">Follow-ups to Exploring PDFs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianBasics/Gaussians.html">5.2. Gaussians: A couple of frequentist connections</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianBasics/visualization_of_CLT.html">Visualization of the Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/Interpreting2Dposteriors.html">5.3. Interpreting 2D posteriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/chi_squared_tests.html">5.4. Demonstration: Sum of normal variables squared</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianBasics/CoinTossing.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/demo-BayesianBasics.html">6.6. Demonstration:  Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/Bayesian_updating_coinflip_interactive.html">6.7. Widgetized coin tossing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianBasics/UsingBayes.html">7. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/BayesianAdvantages.html">7.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianWorkflow/BayesianWorkflow.html">7.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianLinearRegression/BayesianLinearRegression_rjf.html">7.3. Bayesian Linear Regression (BLR)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../RootAdvancedMethods.html">8. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianParameterEstimation/ParameterEstimation.html">9. More Bayesian parameter estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/radioactive_lighthouse_exercise.html">9.1. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/amplitude_in_presence_of_background.html">9.2. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/parameter_estimation_fitting_straight_line_I.html">9.3. Parameter estimation example: fitting a straight line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/parameter_estimation_fitting_straight_line_II.html">9.4. Parameter estimation example: fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/dealing_with_outliers.html">9.5. Dealing with outliers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../AssigningProbabilities/Assigning.html">10. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../AssigningProbabilities/IgnorancePDF.html">10.1. Assigning probabilities (I): Indifferences and translation groups</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../AssigningProbabilities/demo-straight_lines.html">Alternative notebook with MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../AssigningProbabilities/MaxEnt2.html">10.2. Assigning probabilities (II): The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../AssigningProbabilities/MaxEnt_Function_Reconstruction.html">10.3. Maximum Entropy for reconstructing a function from its moments</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="BayesLinear.html">11. Bayes goes linear: History matching</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Multimodel_inference.html">12. Multi-model inference with Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ModelSelection/ModelSelection.html">12.1. Model Selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/Evidence_for_model_EFT_coefficients.html">Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/two_model_evidence.html">Follow-up to EFT evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/computing_evidence.html">Computing the evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/MCMC-parallel-tempering_ptemcee_vs_zeus.html">Demo: Multimodal distributions with two samplers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../ModelMixing/model_mixing.html">12.2. Model averaging and mixing </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/DiscrepancyModels.html">13. Discrepancy Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/MD_balldrop_v1.html">13.4. Ball-drop experiment</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../StochasticProcesses/RootMCMC.html">14. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/StochasticProcesses.html">15. Stochastic processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Metropolis_Poisson_example.html">15.7. Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/demo-MCMC.html">15.8. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/Recap_BUQ.html">15.9. Recap of Poisson and more about MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/parameter_estimation_Gaussian_noise-2.html">15.10. Parameter estimation example: Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">15.11. Exercise: Random walk</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/MCMC_overview.html">16. Overview of Markov Chain Monte Carlo</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MarkovChains.html">16.1. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC.html">16.2. Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC_intro_BUQ.html">16.3. Alternative MCMC introduction (Gregory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Assignment_extending_radioactive_lighthouse.html">16.4. Assignment: 2D radioactive lighthouse location using MCMC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../StochasticProcesses/Advanced_MCMC.html">17. Advanced MCMC</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">17.1. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html">17.2. Overview: MCMC Diagnostics</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/intuition_sampling.html">17.4. Intuition on sampling and best practices</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Other_samplers.html">18. HMC and other samplers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/HMC_intro_BUQ.html">18.1. Hamiltonian Monte Carlo (HMC) overview and visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Liouville_theorem_visualization.html">Liouville Theorem Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Orbital_eqs_with_different_algorithms.html">Solving orbital equations with different algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/zeus.html">18.2. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/PyMC_intro_updated.html">18.3. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/OverviewIntroPyMC.html">Overview of Intro to PyMC notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ2/parameter_estimation_Gaussian_noise_compare_samplers.html">18.4. Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning: A Bayesian perspective</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../MachineLearning/RootML.html">19. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/GP/RootGP.html">20. Overview of Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/GaussianProcesses.html">20.4. Introduction to Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/CF/demo-GaussianProcesses.html">demo-GaussianProcesses notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/lecture_20.html">GP recap; GP applications; (old lecture 20)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/Sklearn_demos.html">20.5. scikit-learn demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/plot_gpr_noisy_targets.html">One-dimension regression example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/plot_gpr_prior_posterior.html">Prior and posterior with different kernels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/GPy_demos.html">20.6. GPy demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/demo-GaussianProcesses.html">Gaussian processes demonstration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/CF/exercise_GP_GPy.html">Exercise: Gaussian processes using <code class="docutils literal notranslate"><span class="pre">GPy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/Gaussian_processes_exercises.html">Exercise: Gaussian Process models with GPy</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/LogReg/LogReg.html">21. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/MachineLearningExamples.html">21.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/exercises_LogReg_NeuralNet.html">21.6. Exercise: Logistic Regression and neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/ANN/MachineLearning.html">22. Machine learning: Overview and notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet.html">22.5. Artifical neural networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/demo-NeuralNet.html">22.6. Demonstration: Neural network classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/Neural_Network_for_simple_function_in_PyTorch.html">22.7. ANN from ChatGPT using PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/ModelValidation.html">22.8. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/DataBiasFairness.html">22.9. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/NeuralNetBackProp.html">22.10. *Neural networks: Backpropagation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/ANNFT.html">23. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/random_initialized_ANN_vs_width.html">23.3. Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/BNN/bnn.html">24. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/BNN/demo-bnn.html">24.4. Demonstration: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/BNN/exercises_BNN.html">24.5. Exercise: Bayesian neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/CNN/cnn.html">25. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/CNN/demo-cnn.html">25.6. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Other topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/RootOtherTopics.html">26. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/Emulators.html">27. Emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="BayesFast.html">27.1. Bayes goes fast: Emulators (from CF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extra_RBM_emulators.html">27.2. RBM emulators (BUQ)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/Student_t_distribution_from_Gaussians.html">28. Student t distribution from Gaussians</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/SVD.html">29. PCA, SVD, and all that</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/linear_algebra_games_including_SVD.html">29.5. SVD notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/qbism.html">30. QBism: Bayesian quantum mechanics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/bibliography.html">31. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/JB_tests.html">32. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Reference/Statistics.html">33. Statistics concepts and notation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/GradientDescent.html">34. Gradient-descent optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/RootScientificModeling.html">35. Overview of scientific modeling material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/OverviewModeling.html">36. Overview of modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/LinearModels.html">37. Linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/MathematicalOptimization.html">38. Mathematical optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/RootGettingStarted.html">39. Overview of Getting started material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/exercise_Intro_01_Jupyter_Python.html">40. Jupyter notebooks and Python</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/more_python_and_jupyter.html">41. More about Python and Jupyter notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_02_Jupyter_Python.html">41.4. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_03_Numpy.html">41.5. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/demo-Intro.html">41.6. Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/Simple_widgets_v1.html">41.7. Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/setting_up.html">42. Setting up for using this Jupyter Book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/installing_anaconda.html">42.1. Using Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/using_github.html">42.2. Using GitHub</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/RootMiniProjects.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_I_toy_model_of_EFT.html">MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIa.html">MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html">MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Mini-projects/Mini-project_IIb_overview.html">Overview of Mini-project IIb: How many lines?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIa_bayesian_optimization.html">MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html">MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development/issues/new?title=Issue%20on%20page%20%2FLearningFromData-content/BayesianStatistics/ComputationalBayes/AdvancedMCMC.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/LearningFromData-content/BayesianStatistics/ComputationalBayes/AdvancedMCMC.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Advanced Markov chain Monte Carlo sampling</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence-tests-for-mcmc-sampling">Convergence tests for MCMC sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-of-the-mean">Variance of the mean</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autocorrelation">Autocorrelation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-gelman-rubin-test">The Gelman-Rubin test</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hamiltonian-monte-carlo">Hamiltonian Monte Carlo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-importance-resampling">Sampling / Importance Resampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brief-review-of-the-method">Brief review of the method</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#s-ir-limitations">S/IR limitations</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="math notranslate nohighlight">
+\[\newcommand\pos{\boldsymbol{x}}
+\newcommand\mom{\boldsymbol{p}}
+\newcommand\mass{\mathcal{M}}\]</div>
+<section class="tex2jax_ignore mathjax_ignore" id="advanced-markov-chain-monte-carlo-sampling">
+<span id="sec-advancedmcmc"></span><h1><span class="section-number">17.1. </span>Advanced Markov chain Monte Carlo sampling<a class="headerlink" href="#advanced-markov-chain-monte-carlo-sampling" title="Link to this heading">#</a></h1>
+<blockquote class="epigraph">
+<div><blockquote>
+<div><p>“Why walk when you can flow.”</p>
+</div></blockquote>
+<p class="attribution">—Richard McElreath</p>
+</div></blockquote>
+<p>MCMC sampling is notoriously difficult to validate. In this chapter we will discuss some common convergence tests. Furthermore, we will consider two very useful sampling methods: Hamiltonian Monte Carlo and Sampling/Importance Resampling. Hamiltonian Monte Carlo is used in <a class="reference external" href="https://mc-stan.org/">Stan</a>, which is a state-of-the-art platform for statistical modeling and high-performance statistical computation. Sampling/Importance Resampling is mot a Markov chain method, but can be very useful for posterior updates and when working with a finite set of samples.</p>
+<section id="convergence-tests-for-mcmc-sampling">
+<span id="sec-advancedmcmc-convergence"></span><h2>Convergence tests for MCMC sampling<a class="headerlink" href="#convergence-tests-for-mcmc-sampling" title="Link to this heading">#</a></h2>
+<p>MCMC sampling can go wrong in (at least) three ways:</p>
+<ol class="arabic simple">
+<li><p>No convergence—The limiting distribution is not reached.</p></li>
+<li><p>Pseudoconvergence—The chain seems stationary, but the limiting distribution is not reached.</p></li>
+<li><p>Highly correlated samples—Not really wrong, but inefficient.</p></li>
+</ol>
+<p>There is no unique solution to such problems, but they are typically adressed in three ways:</p>
+<ol class="arabic simple">
+<li><p>Design the simulation runs for monitoring of convergence. In particular, run multiple sequences of the Markov chains with starting points dispersed over the sampling space. This is hard in high dimensions.</p></li>
+<li><p>Monitor the convergence of individual sampling dimensions, as well as predictied quantities of interest, by comparing variations within and between the different sequences. Here you are looking for stationarity (the running means are stable) and mixing (different sequences are sampling the same distribution). The Gelman-Rubin test (see below) is devised for this purpose.</p></li>
+<li><p>Unacceptably inefficient sampling (too low acceptance rate) implies that the algorithm must be adjusted, or that an altogether different sampling algorithm should be used.</p></li>
+</ol>
+<p>The diagnostics that will be discussed below are all univariate. They work perfectly when there is only one parameter to estimate. In fact, most convergence tests are performed with univariate diagnostics applied to each sampling dimension one by one.</p>
+<section id="variance-of-the-mean">
+<h3>Variance of the mean<a class="headerlink" href="#variance-of-the-mean" title="Link to this heading">#</a></h3>
+<p>Consider the sampling variance of a parameter mean value</p>
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-sampling-variance">
+<span class="eqno">(17.1)<a class="headerlink" href="#equation-eq-advancedmcmc-sampling-variance" title="Link to this equation">#</a></span>\[
+\var{\bar\para} = \frac{\var{\para}}{N},
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(N\)</span> is the length of the chain. This quantity is capturing the simulation error of the mean rather than the underlying uncertainty of the parameter <span class="math notranslate nohighlight">\(\para\)</span>. We can visualize this by examining the moving average of our parameter trace. The trace is the sequence as a function of iteration number.</p>
+</section>
+<section id="autocorrelation">
+<h3>Autocorrelation<a class="headerlink" href="#autocorrelation" title="Link to this heading">#</a></h3>
+<p>A challenge when doing MCMC sampling is that the collected samples can be <em>correlated</em>. This can be tested by computing the <em>autocorrelation function</em> and extracting the correlation time for a chain of samples.</p>
+<p>Say that <span class="math notranslate nohighlight">\(X\)</span> is an array of <span class="math notranslate nohighlight">\(N\)</span> samples numbered by the index <span class="math notranslate nohighlight">\(t\)</span>. Then <span class="math notranslate nohighlight">\(X_{+h}\)</span> is a shifted version of <span class="math notranslate nohighlight">\(X\)</span> with elements <span class="math notranslate nohighlight">\(X_{t+h}\)</span>. The integer <span class="math notranslate nohighlight">\(h\)</span> is called the <em>lag</em>. Since we have a finite number of samples, the array <span class="math notranslate nohighlight">\(X_{+h}\)</span> will be <span class="math notranslate nohighlight">\(h\)</span> elements shorter than <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>Furthermore, <span class="math notranslate nohighlight">\(\bar{X}\)</span> is the average value of <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>We can then define the autocorrelation function <span class="math notranslate nohighlight">\(\rho(h)\)</span> from the list of samples.</p>
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-autocorrelation-time">
+<span class="eqno">(17.2)<a class="headerlink" href="#equation-eq-advancedmcmc-autocorrelation-time" title="Link to this equation">#</a></span>\[
+\rho(h) = \frac{\sum_{t=0}^{N-h-1} \left[ (X_t - \bar{X}) (X_{t+h} - \bar{X})\right]}
+{\sqrt{ \sum_{t=0}^{N-h-1} (X_t - \bar{X})^2 } \sqrt{ \sum_{t=0}^{N-h-1} (X_{t+h} - \bar{X})^2 }}
+\]</div>
+<p>The summation is carried out over the subset of samples that overlap. The autocorrelation is the overlap (scalar product) of the chain of samples (the trace) with a copy of itself shifted by the lag, as a function of the lag. If the lag is short so that nearby samples are close to each other (and have not moved very far) the product of these two vectors is large. If samples are independent, you will have both positive and negative numbers in the overlap that cancel each other.</p>
+<p>The typical example of a highly correlated chain is a random walk with a too short proposal step length.</p>
+<p>It is often observed that <span class="math notranslate nohighlight">\(\rho(h)\)</span> is roughly exponential so that we can define an autocorrelation time <span class="math notranslate nohighlight">\(\tau_\mathrm{a}\)</span> according to <span class="math notranslate nohighlight">\(\rho(h) \sim \exp(-h/\tau_\mathrm{a})\)</span>.</p>
+<p>The integrated autocorrelation time is</p>
+<div class="math notranslate nohighlight">
+\[
+\tau = 1 + 2 \lim_{N \to \infty} \sum_{h=1}^N \rho(h).
+\]</div>
+<p>With autocorrelated samples, the sampling variance <a class="reference internal" href="#equation-eq-advancedmcmc-sampling-variance">(17.1)</a> becomes</p>
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-sampling-variance-autocorrelated">
+<span class="eqno">(17.3)<a class="headerlink" href="#equation-eq-advancedmcmc-sampling-variance-autocorrelated" title="Link to this equation">#</a></span>\[
+\var{\bar\para} = \tau \frac{\var{\para}}{N},
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(\tau \gg 1\)</span> for highly correlated samples. This motivates us to define the effective sample size (ESS) as</p>
+<div class="math notranslate nohighlight">
+\[
+\text{ESS} = N / \tau.
+\]</div>
+<p>To keep ESS high, we must collect many samples and keep the autocorrelation time small.</p>
+</section>
+<section id="the-gelman-rubin-test">
+<h3>The Gelman-Rubin test<a class="headerlink" href="#the-gelman-rubin-test" title="Link to this heading">#</a></h3>
+<p>The Gelman-Rubin diagnostic was constructed to test for stationarity and mixing of different Markov chain sequences <span id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id46" title="Andrew Gelman and Donald B. Rubin. Inference from iterative simulation using multiple sequences. Statistical Science, 7(4):457–472, 1992. URL: http://www.jstor.org/stable/2246093.">GR92</a>]</span>.</p>
+<div class="proof algorithm admonition" id="algorithm:AdvancedMCMC:gelman-rubin">
+<p class="admonition-title"><span class="caption-number">Algorithm 17.1 </span> (The Gelman-Rubin diagnostic)</p>
+<section class="algorithm-content" id="proof-content">
+<ol class="arabic">
+<li><p>Collect <span class="math notranslate nohighlight">\(M&gt;1\)</span> sequences (chains) of length <span class="math notranslate nohighlight">\(2N\)</span>.</p></li>
+<li><p>Discard the first <span class="math notranslate nohighlight">\(N\)</span> draws of each sequence, leaving the last <span class="math notranslate nohighlight">\(N\)</span> iterations in the chain.</p></li>
+<li><p>Calculate the within and between chain variance.</p>
+<ul>
+<li><p>Within chain variance:</p>
+<div class="math notranslate nohighlight">
+\[
+     W = \frac{1}{M}\sum_{j=1}^M s_j^2 
+     \]</div>
+<p>where <span class="math notranslate nohighlight">\(s_j^2\)</span> is the variance of each chain (after throwing out the first <span class="math notranslate nohighlight">\(N\)</span> draws).</p>
+</li>
+<li><p>Between chain variance:</p>
+<div class="math notranslate nohighlight">
+\[
+     B = \frac{N}{M-1} \sum_{j=1}^M (\bar{\para} - \bar{\bar{\para}})^2
+     \]</div>
+</li>
+</ul>
+<p>where <span class="math notranslate nohighlight">\(\bar{\bar{\para}}\)</span> is the mean of each of the M means.</p>
+</li>
+<li><p>Calculate the estimated variance of <span class="math notranslate nohighlight">\(\theta\)</span> as the weighted sum of between and within chain variance.</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\widehat{\var{\para}} = \left ( 1 - \frac{1}{N}\right ) W + \frac{1}{N}B
+\]</div>
+<ol class="arabic simple" start="5">
+<li><p>Calculate the potential scale reduction factor.</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\hat{R} = \sqrt{\frac{\widehat{\var{\para}}}{W}}
+\]</div>
+</section>
+</div><p>We want the <span class="math notranslate nohighlight">\(\hat{R}\)</span> number to be close to 1 since this would indicate that the between chain variance is small.  And a small chain variance means that both chains are mixing around the stationary distribution.  Gelman and Rubin <span id="id2">[<a class="reference internal" href="../../Backmatter/bibliography.html#id46" title="Andrew Gelman and Donald B. Rubin. Inference from iterative simulation using multiple sequences. Statistical Science, 7(4):457–472, 1992. URL: http://www.jstor.org/stable/2246093.">GR92</a>]</span> showed that stationarity has certainly not been achieved when <span class="math notranslate nohighlight">\(\hat{R}\)</span> is greater than 1.1 or 1.2.</p>
+</section>
+</section>
+<section id="hamiltonian-monte-carlo">
+<span id="sec-advancedmcmc-hmc"></span><h2>Hamiltonian Monte Carlo<a class="headerlink" href="#hamiltonian-monte-carlo" title="Link to this heading">#</a></h2>
+<p>The Hamiltonian Monte Carlo Method (HMC) is a Metropolis method that uses gradient information to reduce the random-walk behavior and to collect effectively independent samples. It was introduced in lattice QCD by Duane et al. <span id="id3">[<a class="reference internal" href="../../Backmatter/bibliography.html#id51" title="S. Duane, A. D. Kennedy, B. J. Pendleton, and D. Roweth. Hybrid Monte Carlo. Phys. Lett. B, 195:216–222, 1987. doi:10.1016/0370-2693(87)91197-X.">DKPR87</a>]</span>and was originally named Hybrid Monte Carlo as they were combining molecular dynamics with the Metropolis MCMC algorithm. A very good and detailed review of HMC is written by Radford Neal and is contained in the Handbook of Markov Chain Monte Carlo <span id="id4">[<a class="reference internal" href="../../Backmatter/bibliography.html#id52" title="S. Brooks, A. Gelman, G. Jones, and X.L. Meng. Handbook of Markov Chain Monte Carlo. Chapman &amp; Hall/CRC Handbooks of Modern Statistical Methods. CRC Press, 2011. ISBN 9781420079425. URL: https://books.google.se/books?id=qfRsAIKZ4rIC.">BGJM11</a>]</span>.</p>
+<p>In HMC, the state space <span class="math notranslate nohighlight">\(\pos\)</span> is augmented by a conjugate momentum <span class="math notranslate nohighlight">\(\mom\)</span>. Note that <span class="math notranslate nohighlight">\(\pos\)</span> will be the model parameters <span class="math notranslate nohighlight">\(\pars\)</span> in our applications but here we will stick to <span class="math notranslate nohighlight">\(\pos,\mom\)</span> to make the connection with Hamiltonian dynamics explicit. Let us define a <em>Hamiltonian</em></p>
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-hamiltonian">
+<span class="eqno">(17.4)<a class="headerlink" href="#equation-eq-advancedmcmc-hamiltonian" title="Link to this equation">#</a></span>\[
+H(\pos,\mom) = K(\mom) + U(\pos),
+\]</div>
+<p>where the kinetic energy function <span class="math notranslate nohighlight">\(K(\mom)\)</span> is a design choice while the potential energy function <span class="math notranslate nohighlight">\(U(\pos)\)</span> will be defined as minus the log probability of the density that we wish to sample</p>
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-kinetic-potential">
+<span class="eqno">(17.5)<a class="headerlink" href="#equation-eq-advancedmcmc-kinetic-potential" title="Link to this equation">#</a></span>\[\begin{split}
+\begin{aligned}
+  K(\mom) &amp;= \frac{1}{2} \mom^T \mass^{-1} \mom, \\
+  U(\pos) &amp;= -\ln\left( \p{\pos} \right),
+\end{aligned}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mass\)</span> is a user-defined mass matrix (positive definite and symmetric) and where we use <span class="math notranslate nohighlight">\(\p{\pos}\)</span> to denote the PDF that we want to sample. It could for example be a posterior distribution for some model parameters.</p>
+<p>We can link <span class="math notranslate nohighlight">\(H(\pos,\mom)\)</span> to a probability distribution for <span class="math notranslate nohighlight">\((\pos,\mom)\)</span> using the canonical Boltzmann distribution</p>
+<div class="amsmath math notranslate nohighlight" id="equation-ea5a610d-2f18-472c-9b61-9df8711ce340">
+<span class="eqno">(17.6)<a class="headerlink" href="#equation-ea5a610d-2f18-472c-9b61-9df8711ce340" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\p{\pos,\mom} = \frac{1}{Z} \exp\left( \frac{-H(\pos,\mom)}{T}\right),
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(Z\)</span> is the normalization and <span class="math notranslate nohighlight">\(T\)</span> is a temperature (here serving to render the exponents dimensionless). Let us set <span class="math notranslate nohighlight">\(T=1\)</span> and use the expressions <a class="reference internal" href="#equation-eq-advancedmcmc-kinetic-potential">(17.5)</a> to obtain the separable joint distribution</p>
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-joint-distribution">
+<span class="eqno">(17.7)<a class="headerlink" href="#equation-eq-advancedmcmc-joint-distribution" title="Link to this equation">#</a></span>\[
+\p{\pos,\mom} \propto \p{\pos} \exp \left( \frac{\mom^T \mass^{-1} \mom}{2} \right).
+\]</div>
+<p>Since we will use the Metropolis ratio during sampling, the normalization factor becomes irrelevant. The joint distribution is a produce of two (independent) distributions, the one for <span class="math notranslate nohighlight">\(\mom\)</span> becomes a Gaussian with our design choices and the one for <span class="math notranslate nohighlight">\(\pos\)</span> is the one that we are seeking. If we manage to efficiently sample from <span class="math notranslate nohighlight">\(\p{\pos,\mom}\)</span> then we can just ignore the <span class="math notranslate nohighlight">\(\mom\)</span> samples and  we will be left with samples from <span class="math notranslate nohighlight">\(\p{\pos}\)</span>.</p>
+<p>How do we sample from <span class="math notranslate nohighlight">\(\p{\pos,\mom}\)</span>? Well, naturally we simulate Hamiltonian dynamics for a finite period of time. For Metropolis updates, using a proposal found by Hamiltonian dynamics, the acceptance probability will be one since <span class="math notranslate nohighlight">\(H\)</span> is kept invariant. Unfortunately, we will only be able to solve Hamilton’s equations approximately and in practice we might not end up with perfect energy conservation.</p>
+<p>Apart from energy conservation, two additional key properties of Hamiltonian dynamics—in the context of using it for MCMC sampling—are that it is time reversibile and that it preserves the volume in <span class="math notranslate nohighlight">\((\pos,\mom)\)</span>-space (a result known as Liouville’s theorem).</p>
+<p>Hamilton’s equations are</p>
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-hamiltons-equations">
+<span class="eqno">(17.8)<a class="headerlink" href="#equation-eq-advancedmcmc-hamiltons-equations" title="Link to this equation">#</a></span>\[\begin{split}
+\begin{aligned}
+\frac{d x_i}{d t} &amp;= \frac{\partial H}{\partial p_i} = \left( \mass^{-1}\mom\right)_i\\
+\frac{d p_i}{d t} &amp;= -\frac{\partial H}{\partial x_i} = \frac{\partial \ln(\p{\pos})}{\partial x_i}.
+\end{aligned}
+\end{split}\]</div>
+<p>Every HMC iteration begins with a sample of the momentum <span class="math notranslate nohighlight">\(\mom\)</span> and continues with the integration of Hamilton’s equations for some total time <span class="math notranslate nohighlight">\(t\)</span> before the final Metropolis update and the (likely) acceptance of the new position.</p>
+<p>In order to maintain energy conservation it is important to simulate the Hamiltonian dynamics using a short time step and to perform the integration such that the accumulation of numerical errors is avoided. The standard method in HMC is known as leapfrog integration and is a symplectic integrator where the discretization error for each time step is equally likely to be positive and negative, thus helping to preserve the total energy throughout the simulation. Leapfrog integration works as an update of the momentum with half a time step, followed by a full step for the position (using the new values for the momentum variables), and finally another half time step for the momentum using the newly updated position variables.</p>
+<div class="proof algorithm admonition" id="algorithm:AdvancedMCMC:HMC">
+<p class="admonition-title"><span class="caption-number">Algorithm 17.2 </span> (The Hamiltonian Monte Carlo method)</p>
+<section class="algorithm-content" id="proof-content">
+<p>HMC can be used to sample from continuous distributions pn <span class="math notranslate nohighlight">\(\mathbb{R}^d\)</span> for which both the density and the partial derivatives of the log of the density can be evaluated.</p>
+<ol class="arabic">
+<li><p>In the first step, new values for the momentum variables <span class="math notranslate nohighlight">\(\mom\)</span> are randomly drawn from their Gaussian distribution (independently of the current values of the position variables). The result is a state <span class="math notranslate nohighlight">\((\pos_i,\mom_i)\)</span>.</p></li>
+<li><p>In the second step, a Metropolis update is performed, simulating Hamiltonian dynamics to propose a new state.</p>
+<ul>
+<li><p>Starting at the current state <span class="math notranslate nohighlight">\((\pos_i,\mom_i)\)</span>, Hamilton’s equations are integrated for <span class="math notranslate nohighlight">\(L\)</span> timesteps of length <span class="math notranslate nohighlight">\(\varepsilon\)</span> using the leapfrog method (or some other reversible method that preserves volume).</p></li>
+<li><p>The momentum variable at the end of this <span class="math notranslate nohighlight">\(L\)</span>-step trajectory are then negated, giving a proposed state <span class="math notranslate nohighlight">\((\pos^*_i,\mom^*_i)\)</span>. The negation is is needed to make the Metropolis proposal symmetric, but does not matter in practice since <span class="math notranslate nohighlight">\(K(-\mom) = K(\mom)\)</span> and the momentum will be replaced before it is used again.</p></li>
+<li><p>The proposed state is accepted as the new state <span class="math notranslate nohighlight">\((\pos_{i+1},\mom_{i+1})\)</span> with probability</p>
+<div class="math notranslate nohighlight">
+\[
+     \min\left( 1, -\exp(-H(\pos^*_i,\mom^*_i)) +H\exp(-H(\pos_i,\mom_i)) \right).
+     \]</div>
+<p>Otherwise, the new state is a copy of the current state.</p>
+</li>
+</ul>
+</li>
+</ol>
+</section>
+</div><p>For succesful application of HMC there are three hyperparameters that need to be tuned by the user:</p>
+<ol class="arabic simple">
+<li><p>The mass matrix <span class="math notranslate nohighlight">\(\mass\)</span>;</p></li>
+<li><p>The integration timestep <span class="math notranslate nohighlight">\(\varepsilon\)</span>;</p></li>
+<li><p>The number of timesteps <span class="math notranslate nohighlight">\(L\)</span>.</p></li>
+</ol>
+<p>The MontePython implementation of HMC, by Isak Svensson, was published in Ref. <span id="id5">[<a class="reference internal" href="../../Backmatter/bibliography.html#id53" title="Isak Svensson, Andreas Ekström, and Christian Forssén. Bayesian parameter estimation in chiral effective field theory using the Hamiltonian Monte Carlo method. Phys. Rev. C, 105(1):014004, 2022. arXiv:2110.04011, doi:10.1103/PhysRevC.105.014004.">SEkstromForssen22</a>]</span> and is publicly available at: <a class="github reference external" href="https://github.com/svisak/montepython.git">svisak/montepython.git</a></p>
+<p>More advanced versions, such as the No-U-Turn Samplers (NUTS) <span id="id6">[<a class="reference internal" href="../../Backmatter/bibliography.html#id54" title="Matthew D Hoffman, Andrew Gelman, and others. The no-u-turn sampler: adaptively setting path lengths in hamiltonian monte carlo. J. Mach. Learn. Res., 15(1):1593–1623, 2014.">HG+14</a>]</span>, are also available and aims to simplify the process of tuning the hyperparameters.</p>
+</section>
+<section id="sampling-importance-resampling">
+<span id="sec-advancedmcmc-sir"></span><h2>Sampling / Importance Resampling<a class="headerlink" href="#sampling-importance-resampling" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This chapter is reproduced (with some adjustments) from <em>Bayesian probability updates using sampling/importance resampling: Applications in nuclear theory</em> by Weiguang Jiang and Christian Forssén in Front. in Phys., 10:1058809, 2022 <span id="id7">[<a class="reference internal" href="../../Backmatter/bibliography.html#id42" title="Weiguang Jiang and Christian Forssén. Bayesian probability updates using sampling/importance resampling: Applications in nuclear theory. Front. in Phys., 10:1058809, 2022. arXiv:2210.02507, doi:10.3389/fphy.2022.1058809.">JForssen22</a>]</span> (with permission).</p>
+</div>
+<p>The use of MCMC in the statistical analysis of complex computer models typically requires massive computations. There are certainly situations where MCMC sampling is not ideal, or even becomes infeasible:</p>
+<ol class="arabic simple">
+<li><p>When the posterior is conditioned on some calibration data for which the model evaluations are very costly. Then a limited number of full likelihood evaluations can be afforded and the MCMC sampling becomes less likely to converge.</p></li>
+<li><p>Bayesian posterior updates in which calibration data is added in several different stages. This typically requires that the MCMC sampling must be carried out repeatedly from scratch.</p></li>
+<li><p>Model checking where the sensitivity to prior assignments is being explored. This is a second example of posterior updating.</p></li>
+<li><p>The prediction of target observables for which model evaluations become very costly and the handling of a large number of MCMC samples becomes infeasible.</p></li>
+</ol>
+<p>These are situations where one might want to use the Sampling/Importance Resampling (S/IR) method <span id="id8">[<a class="reference internal" href="../../Backmatter/bibliography.html#id44" title="J.M. Bernardo and A.F.M. Smith. Bayesian Theory. Wiley Series in Probability and Statistics. John Wiley &amp; Sons Canada, Limited, 2006. ISBN 9780470028735.">BS06</a>, <a class="reference internal" href="../../Backmatter/bibliography.html#id43" title="A. F. M. Smith and A. E. Gelfand. Bayesian statistics without tears: a sampling-resampling perspective. Am. Stat., 46(2):84-88, May 1992.">SG92</a>]</span>, which can exploit the previous results of model evaluations to allow posterior probability updates at a much smaller computational cost compared to the full MCMC method.</p>
+<section id="brief-review-of-the-method">
+<h3>Brief review of the method<a class="headerlink" href="#brief-review-of-the-method" title="Link to this heading">#</a></h3>
+<p>The basic idea of S/IR is to utilize the inherent duality between samples and the density (probability distribution) from which they were generated <span id="id9">[<a class="reference internal" href="../../Backmatter/bibliography.html#id43" title="A. F. M. Smith and A. E. Gelfand. Bayesian statistics without tears: a sampling-resampling perspective. Am. Stat., 46(2):84-88, May 1992.">SG92</a>]</span>. This duality offers an opportunity to indirectly recreate a density (that might be hard to compute) from samples that are easy to obtain.</p>
+<p>Let us consider a target density <span class="math notranslate nohighlight">\(h(\pars)\)</span>. This could be a posterior PDF <span class="math notranslate nohighlight">\(\pdf{\pars}{\data, I}\)</span>. Instead of attempting to directly collect samples from <span class="math notranslate nohighlight">\(h(\pars)\)</span>, as would be the goal in MCMC approaches, the S/IR method uses a detour. We first obtain samples from a simple (even analytic) density <span class="math notranslate nohighlight">\(g(\pars)\)</span>. We then resample from this finite set using a resampling algorithm to approximately recreate samples from the target density <span class="math notranslate nohighlight">\(h(\pars)\)</span>. There are (at least) two different resampling methods. In this paper we only focus on one of them called weighted bootstrap (more details of resampling methods can be found in Refs. <span id="id10">[<a class="reference internal" href="../../Backmatter/bibliography.html#id45" title="Donald B Rubin. Using the sir algorithm to simulate posterior distributions. Bayesian statistics, 3:395–402, 1988.">Rub88</a>, <a class="reference internal" href="../../Backmatter/bibliography.html#id43" title="A. F. M. Smith and A. E. Gelfand. Bayesian statistics without tears: a sampling-resampling perspective. Am. Stat., 46(2):84-88, May 1992.">SG92</a>]</span>).</p>
+<p>Assuming we are interested in the target density <span class="math notranslate nohighlight">\(h(\pars)=f(\pars)\,/\int\! f(\pars)\,\mathrm{d}\pars\)</span>, the procedure of resampling via weighted bootstrap can be summarized as follows:</p>
+<div class="proof algorithm admonition" id="algorithm:AdvancedMCMC:SIR">
+<p class="admonition-title"><span class="caption-number">Algorithm 17.3 </span> (The Sampling/Importance Resampling method)</p>
+<section class="algorithm-content" id="proof-content">
+<ol class="arabic simple">
+<li><p>Generate the set <span class="math notranslate nohighlight">\(\{ \pars_i\}_{i=1}^n\)</span> of samples from a sampling density <span class="math notranslate nohighlight">\(g(\pars)\)</span>.</p></li>
+<li><p>Calculate <span class="math notranslate nohighlight">\(\omega_i=f(\pars_i)\,/\,g(\pars_i)\)</span> for the <span class="math notranslate nohighlight">\(n\)</span> samples and define importance weights as: <span class="math notranslate nohighlight">\(q_i=\omega_i~/\sum_{j=1}^n \omega_j\)</span>.</p></li>
+<li><p>Draw <span class="math notranslate nohighlight">\(N\)</span> new samples <span class="math notranslate nohighlight">\(\{ \optpars_i\}_{i=1}^N\)</span> from the discrete distribution <span class="math notranslate nohighlight">\(\{ \pars_i \}_{i=1}^n\)</span> with probability mass <span class="math notranslate nohighlight">\(q_i\)</span> on <span class="math notranslate nohighlight">\(\pars_i\)</span>.</p></li>
+<li><p>The set of samples <span class="math notranslate nohighlight">\(\{ \optpars_i \}_{i=1}^N \)</span> will then be approximately distributed according to the target density <span class="math notranslate nohighlight">\(h(\pars)\)</span>.</p></li>
+</ol>
+</section>
+</div><p>Intuitively, the distribution of <span class="math notranslate nohighlight">\(\optpars\)</span> should be good approximation of <span class="math notranslate nohighlight">\(h(\pars)\)</span> when <span class="math notranslate nohighlight">\(n\)</span> is large enough. Here we justify this claim via the cumulative distribution function of <span class="math notranslate nohighlight">\(\optpara\)</span> (for the one-dimensional case)</p>
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-cdf">
+<span class="eqno">(17.9)<a class="headerlink" href="#equation-eq-advancedmcmc-cdf" title="Link to this equation">#</a></span>\[\begin{split}
+\begin{aligned}
+\rm{pr}(\optpara\leq a) &amp;= \sum\limits_{i=1}^n q_i \cdot H(a-\para_i) 
+= \frac{ \frac{1}{n}\sum\limits_{i=1}^n \omega_i \cdot H(a-\para_i)}{ \frac{1}{n}\sum\limits_{i=1}^n \omega_i} \\
+&amp; \xrightarrow[n \rightarrow \infty]{} \frac{\mathbb{E}_g\left[ \frac{f(\para)}{g(\para)} \cdot H(a-\para) \right]}{\mathbb{E}_g\left[\frac{f(\para)}{g(\para)}\right]}
+= \frac{\int^{a}_{-\infty}f(\para)\,d\para}{\int^{\infty}_{-\infty}f(\para)\,d\para}= \int^{a}_{-\infty}h(\para)\,d\para ,
+\end{aligned} 
+\end{split}\]</div>
+<p>with <span class="math notranslate nohighlight">\(\mathbb{E}_g[X(\para)]=\int^{\infty}_{-\infty} X(\para) g(\para)\,d\para\)</span> the expectation value of <span class="math notranslate nohighlight">\(X(\para)\)</span> with respect to <span class="math notranslate nohighlight">\(g(\para)\)</span>, and <span class="math notranslate nohighlight">\(H\)</span> Heaviside step function such that</p>
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-heaviside">
+<span class="eqno">(17.10)<a class="headerlink" href="#equation-eq-advancedmcmc-heaviside" title="Link to this equation">#</a></span>\[\begin{split}
+   H(a-\para) = \begin{cases}
+      1 &amp; \text{if}\ \para \leq a, \\
+      0 &amp; \text{if}\ \para &gt; a .
+\end{cases}
+\end{split}\]</div>
+<p>The above resampling method can be applied to generate samples from the posterior PDF <span class="math notranslate nohighlight">\(h(\pars)=\rm{pr}(\pars|\mathcal{D})\)</span> in a Bayesian analysis. It remains to choose a sampling distribution, <span class="math notranslate nohighlight">\(g(\pars)\)</span>, which in principle could be any continuous density distribution. However, recall that <span class="math notranslate nohighlight">\(h(\pars)\)</span> can be expressed in terms of an unnormalized distribution <span class="math notranslate nohighlight">\(f(\pars)\)</span>, and using Bayes’ theorem we can set <span class="math notranslate nohighlight">\(f(\pars)=\mathcal{L}(\pars)\pdf{\pars}{I}\)</span>. Thus, choosing the prior <span class="math notranslate nohighlight">\(\pdf{\pars}{I}\)</span> as the sampling distribution <span class="math notranslate nohighlight">\(g(\pars)\)</span> we find that the importance weights are expressed in terms of the likelihood, <span class="math notranslate nohighlight">\(q_i = \mathcal{L}(\pars_i)/ \sum_{j=1}^n \mathcal{L}(\pars_j)\)</span>. Assuming that it is simple to collect samples from the prior, the costly operation will be the evaluation of <span class="math notranslate nohighlight">\(\mathcal{L}(\pars_i)\)</span>. Here we make the side remark that an effective and computationally cost-saving approximation can be made if we manage to perform a pre-screening to identify (and ignore) samples that will give a very small importance weight. We also note that the above choice of <span class="math notranslate nohighlight">\(g(\pars)=\rm{pr}(\pars)\)</span> is purely for simplicity and one can perform importance resampling with any <span class="math notranslate nohighlight">\(g(\pars)\)</span>.</p>
+<div class="proof example admonition" id="example-3">
+<p class="admonition-title"><span class="caption-number">Example 17.1 </span> (Illustration of S/IR)</p>
+<section class="example-content" id="proof-content">
+<p>Let us follow the above procedure in a simple example of S/IR to illustrate how to get samples from a posterior distribution. We consider a two-dimensional parametric model with <span class="math notranslate nohighlight">\(\pars = (\para_1\)</span>, <span class="math notranslate nohighlight">\(\para_2)\)</span>. Given data <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> obtained under the model we have:</p>
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-example-1">
+<span class="eqno">(17.11)<a class="headerlink" href="#equation-eq-advancedmcmc-example-1" title="Link to this equation">#</a></span>\[
+  \pdf{\para_1,\para_2}{\data} = \frac{ \mathcal{L}(\para_1,\para_2)\pdf{\para_1,\para_2}{I}}{\iint \mathcal{L}(\para_1,\para_2) \pdf{\para_1,\para_2}{I} \, d\para_1 d\para_2}.
+\]</div>
+<p>For simplicity and illustration, the joint prior distribution for <span class="math notranslate nohighlight">\(\para_1\)</span>, <span class="math notranslate nohighlight">\(\para_2\)</span> is set to be uniform over the unit square as shown in <a class="reference internal" href="#fig-advancedmcmc-sir"><span class="std std-numref">Fig. 17.1</span></a>a. In this example we also assume that the data <span class="math notranslate nohighlight">\(\data\)</span> likelihood is described by a multivariate Student-t distribution</p>
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-student-t">
+<span class="eqno">(17.12)<a class="headerlink" href="#equation-eq-advancedmcmc-student-t" title="Link to this equation">#</a></span>\[
+  \mathcal{L}(\para_1,\para_2) = 
+\frac{\Gamma[(\nu+p)/2]}{\Gamma(\nu/2)\nu^{p/2}\pi^{p/2}|\boldsymbol{\Sigma}|^{1/2}}\left[ {1+\frac{1}{\nu}(\pars-\boldsymbol{\mu})^{T}\boldsymbol{\Sigma}^{-1}(\pars-\boldsymbol{\mu})} \right]^{-(\mu+p)/2},
+\]</div>
+<p>where the dimension <span class="math notranslate nohighlight">\(p=2\)</span>, the degrees of freedom <span class="math notranslate nohighlight">\(\nu=2\)</span>, the mean vector <span class="math notranslate nohighlight">\(\boldsymbol{\mu} = (0.2, 0.5)\)</span> and the scale matrix <span class="math notranslate nohighlight">\(\boldsymbol\Sigma=[[0.02, 0.005], [0.005, 0.02]]\)</span>.</p>
+<p>The importance weights <span class="math notranslate nohighlight">\(q_i\)</span> are then computed for <span class="math notranslate nohighlight">\(n=2000\)</span> samples drawn from the prior (these prior samples are shown in <a class="reference internal" href="#fig-advancedmcmc-sir"><span class="std std-numref">Fig. 17.1</span></a>a). The resulting histogram of importance weights is shown in <a class="reference internal" href="#fig-advancedmcmc-sir"><span class="std std-numref">Fig. 17.1</span></a>b. Here the weights have been rescaled as <span class="math notranslate nohighlight">\(\tilde{q}_i=q_i/\max(\{ q \})\)</span> such that the sample with the largest probability mass corresponds to 1 in the histogram. We also define the effective number of samples, <span class="math notranslate nohighlight">\(n_\mathrm{eff}\)</span>, as the sum of rescaled importance weights, <span class="math notranslate nohighlight">\(n_\mathrm{eff} = \sum_{i=1}^n \tilde{q}_i\)</span>. Finally, in <a class="reference internal" href="#fig-advancedmcmc-sir"><span class="std std-numref">Fig. 17.1</span></a>c we show <span class="math notranslate nohighlight">\(N=20,000\)</span> new samples <span class="math notranslate nohighlight">\(\{ \optpars_i \}_{i=1}^N\)</span> that are drawn from the prior samples <span class="math notranslate nohighlight">\(\{ \pars_i\}_{i=1}^n\)</span> according to the probability mass <span class="math notranslate nohighlight">\(q_i\)</span> for each <span class="math notranslate nohighlight">\(\pars_i\)</span>. The blue and green contour lines represent (68% and 90%) credible regions for the resampled distribution and for the Student-t distribution, respectively. This result demonstrates that the samples generated by the S/IR method give a very good approximation of the target posterior distribution.</p>
+<figure class="align-default" id="fig-advancedmcmc-sir">
+<a class="reference internal image-reference" href="../../../_images/SIR_corner_plot.png"><img alt="../../../_images/SIR_corner_plot.png" src="../../../_images/SIR_corner_plot.png" style="width: 800px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 17.1 </span><span class="caption-text">Illustration of S/IR procedures. <strong>a</strong>. Samples <span class="math notranslate nohighlight">\(\{ \pars\}_{i=1}^n\)</span> from a uniform prior in a unit square (<span class="math notranslate nohighlight">\(n=2000\)</span> samples are shown). <strong>b</strong>. Histogram of rescaled importance weights <span class="math notranslate nohighlight">\(\tilde{q}_i=q_i/\max(\{q\})\)</span> where <span class="math notranslate nohighlight">\(q_i= \mathcal{L}(\pars_i)/ \sum_{j=1}^n \mathcal{L}(\pars_j)\)</span> with <span class="math notranslate nohighlight">\(\mathcal{L}(\pars)\)</span> as in Eq. <a class="reference internal" href="#equation-eq-advancedmcmc-student-t">(17.12)</a>. The number of effective samples is <span class="math notranslate nohighlight">\(n_\mathrm{eff}=214.6\)</span>. Note that the samples are drawn from a unit square and that the tail of the target distribution is not covered. <strong>c</strong>. Samples <span class="math notranslate nohighlight">\(\{ \optpars\}_{i=1}^N\)</span> of the posterior (blue dots with 10% opacity) resampled from the prior samples with probability mass <span class="math notranslate nohighlight">\(q_i\)</span>. The contour lines for the <span class="math notranslate nohighlight">\(68\%\)</span> and <span class="math notranslate nohighlight">\(90\%\)</span> credible regions of the posterior samples (blue dashed) are shown and compared with those of the exact bivariate target distribution (green solid). Summary histograms of the marginal distributions for <span class="math notranslate nohighlight">\(\para_1\)</span> and <span class="math notranslate nohighlight">\(\para_2\)</span> are shown in the top and right subplots.</span><a class="headerlink" href="#fig-advancedmcmc-sir" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+</div></section>
+<section id="s-ir-limitations">
+<h3>S/IR limitations<a class="headerlink" href="#s-ir-limitations" title="Link to this heading">#</a></h3>
+<p>While the S/IR approach might provide a useful alternative to full MCMC sampling, there are some important limitations. In particular, users should be mindful of the effective number of samples. The more complex the likelihood function, the less effective is the use of a sampling distribution.</p>
+<p>Unfortunately one can also envision more difficult scenarios in which S/IR could fail without any clear signatures. For example, if the prior has a very small overlap with the posterior there is a risk that many prior samples get a similar importance weight (such that the number of effective samples is large) but that one has missed the most interesting region. Prior knowledge of the posterior landscape is very useful to avoid possible failure scenarios that might not be signaled by the number of effective samples.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./LearningFromData-content/BayesianStatistics/ComputationalBayes"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../StochasticProcesses/Advanced_MCMC.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">17. </span>Advanced Markov Chain Monte Carlo</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">17.2. </span>Overview: MCMC Diagnostics</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence-tests-for-mcmc-sampling">Convergence tests for MCMC sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-of-the-mean">Variance of the mean</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autocorrelation">Autocorrelation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-gelman-rubin-test">The Gelman-Rubin test</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hamiltonian-monte-carlo">Hamiltonian Monte Carlo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-importance-resampling">Sampling / Importance Resampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brief-review-of-the-method">Brief review of the method</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#s-ir-limitations">S/IR limitations</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

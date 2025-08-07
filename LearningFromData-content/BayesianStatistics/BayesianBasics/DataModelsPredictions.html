@@ -1,0 +1,943 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>4.9. Data, models, and predictions &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\text{th}}", "yexp": "y_{\\text{exp}}", "ym": "y_{\\text{m}}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'LearningFromData-content/BayesianStatistics/BayesianBasics/DataModelsPredictions';</script>
+    <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Parameter estimation example: Gaussian noise and averages I" href="../BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html" />
+    <link rel="prev" title="4.8. *Aside: Bayesian epistemology" href="Bayesian_epistemology.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../Intro/About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../Intro/About.html">
+                    About this Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Overview.html">1. Invitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Introduction.html">2. Introduction</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="RootBayesianBasics.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="Inferenceandpdfs.html">4. Inference and PDFs</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="exercise_sum_product_rule.html">4.5. Exercise: Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exercise_medical_example_by_Bayes.html">4.6. Exercise: Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MoreBayesTheorem.html">4.7. More on Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Bayesian_epistemology.html">4.8. *Aside: Bayesian epistemology</a></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">4.9. Data, models, and predictions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html">Parameter estimation I: Gaussian mean and variance</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Posteriors.html">5. Bayesian posteriors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="Exploring_pdfs.html">5.1. Exploring PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="Exploring_pdfs_followups.html">Follow-ups to Exploring PDFs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="Gaussians.html">5.2. Gaussians: A couple of frequentist connections</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="visualization_of_CLT.html">Visualization of the Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/Interpreting2Dposteriors.html">5.3. Interpreting 2D posteriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chi_squared_tests.html">5.4. Demonstration: Sum of normal variables squared</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="CoinTossing.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="demo-BayesianBasics.html">6.6. Demonstration:  Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Bayesian_updating_coinflip_interactive.html">6.7. Widgetized coin tossing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="UsingBayes.html">7. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="BayesianAdvantages.html">7.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianWorkflow/BayesianWorkflow.html">7.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianLinearRegression/BayesianLinearRegression_rjf.html">7.3. Bayesian Linear Regression (BLR)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../RootAdvancedMethods.html">8. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianParameterEstimation/ParameterEstimation.html">9. More Bayesian parameter estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/radioactive_lighthouse_exercise.html">9.1. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/amplitude_in_presence_of_background.html">9.2. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/parameter_estimation_fitting_straight_line_I.html">9.3. Parameter estimation example: fitting a straight line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/parameter_estimation_fitting_straight_line_II.html">9.4. Parameter estimation example: fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/dealing_with_outliers.html">9.5. Dealing with outliers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../AssigningProbabilities/Assigning.html">10. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../AssigningProbabilities/IgnorancePDF.html">10.1. Assigning probabilities (I): Indifferences and translation groups</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../AssigningProbabilities/demo-straight_lines.html">Alternative notebook with MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../AssigningProbabilities/MaxEnt2.html">10.2. Assigning probabilities (II): The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../AssigningProbabilities/MaxEnt_Function_Reconstruction.html">10.3. Maximum Entropy for reconstructing a function from its moments</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../ComputationalBayes/BayesLinear.html">11. Bayes goes linear: History matching</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Multimodel_inference.html">12. Multi-model inference with Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ModelSelection/ModelSelection.html">12.1. Model Selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/Evidence_for_model_EFT_coefficients.html">Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/two_model_evidence.html">Follow-up to EFT evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/computing_evidence.html">Computing the evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/MCMC-parallel-tempering_ptemcee_vs_zeus.html">Demo: Multimodal distributions with two samplers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../ModelMixing/model_mixing.html">12.2. Model averaging and mixing </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/DiscrepancyModels.html">13. Discrepancy Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/MD_balldrop_v1.html">13.4. Ball-drop experiment</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../StochasticProcesses/RootMCMC.html">14. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/StochasticProcesses.html">15. Stochastic processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Metropolis_Poisson_example.html">15.7. Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/demo-MCMC.html">15.8. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/Recap_BUQ.html">15.9. Recap of Poisson and more about MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/parameter_estimation_Gaussian_noise-2.html">15.10. Parameter estimation example: Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">15.11. Exercise: Random walk</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/MCMC_overview.html">16. Overview of Markov Chain Monte Carlo</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MarkovChains.html">16.1. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC.html">16.2. Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC_intro_BUQ.html">16.3. Alternative MCMC introduction (Gregory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Assignment_extending_radioactive_lighthouse.html">16.4. Assignment: 2D radioactive lighthouse location using MCMC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Advanced_MCMC.html">17. Advanced MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/AdvancedMCMC.html">17.1. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html">17.2. Overview: MCMC Diagnostics</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/intuition_sampling.html">17.4. Intuition on sampling and best practices</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Other_samplers.html">18. HMC and other samplers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/HMC_intro_BUQ.html">18.1. Hamiltonian Monte Carlo (HMC) overview and visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Liouville_theorem_visualization.html">Liouville Theorem Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Orbital_eqs_with_different_algorithms.html">Solving orbital equations with different algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/zeus.html">18.2. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/PyMC_intro_updated.html">18.3. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/OverviewIntroPyMC.html">Overview of Intro to PyMC notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ2/parameter_estimation_Gaussian_noise_compare_samplers.html">18.4. Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning: A Bayesian perspective</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../MachineLearning/RootML.html">19. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/GP/RootGP.html">20. Overview of Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/GaussianProcesses.html">20.4. Introduction to Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/CF/demo-GaussianProcesses.html">demo-GaussianProcesses notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/lecture_20.html">GP recap; GP applications; (old lecture 20)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/Sklearn_demos.html">20.5. scikit-learn demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/plot_gpr_noisy_targets.html">One-dimension regression example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/plot_gpr_prior_posterior.html">Prior and posterior with different kernels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/GPy_demos.html">20.6. GPy demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/demo-GaussianProcesses.html">Gaussian processes demonstration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/CF/exercise_GP_GPy.html">Exercise: Gaussian processes using <code class="docutils literal notranslate"><span class="pre">GPy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/Gaussian_processes_exercises.html">Exercise: Gaussian Process models with GPy</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/LogReg/LogReg.html">21. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/MachineLearningExamples.html">21.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/exercises_LogReg_NeuralNet.html">21.6. Exercise: Logistic Regression and neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/ANN/MachineLearning.html">22. Machine learning: Overview and notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet.html">22.5. Artifical neural networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/demo-NeuralNet.html">22.6. Demonstration: Neural network classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/Neural_Network_for_simple_function_in_PyTorch.html">22.7. ANN from ChatGPT using PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/ModelValidation.html">22.8. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/DataBiasFairness.html">22.9. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/NeuralNetBackProp.html">22.10. *Neural networks: Backpropagation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/ANNFT.html">23. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/random_initialized_ANN_vs_width.html">23.3. Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/BNN/bnn.html">24. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/BNN/demo-bnn.html">24.4. Demonstration: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/BNN/exercises_BNN.html">24.5. Exercise: Bayesian neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/CNN/cnn.html">25. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/CNN/demo-cnn.html">25.6. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Other topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/RootOtherTopics.html">26. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/Emulators.html">27. Emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/BayesFast.html">27.1. Bayes goes fast: Emulators (from CF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/extra_RBM_emulators.html">27.2. RBM emulators (BUQ)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/Student_t_distribution_from_Gaussians.html">28. Student t distribution from Gaussians</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/SVD.html">29. PCA, SVD, and all that</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/linear_algebra_games_including_SVD.html">29.5. SVD notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/qbism.html">30. QBism: Bayesian quantum mechanics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/bibliography.html">31. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/JB_tests.html">32. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Reference/Statistics.html">33. Statistics concepts and notation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/GradientDescent.html">34. Gradient-descent optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/RootScientificModeling.html">35. Overview of scientific modeling material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/OverviewModeling.html">36. Overview of modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/LinearModels.html">37. Linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/MathematicalOptimization.html">38. Mathematical optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/RootGettingStarted.html">39. Overview of Getting started material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/exercise_Intro_01_Jupyter_Python.html">40. Jupyter notebooks and Python</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/more_python_and_jupyter.html">41. More about Python and Jupyter notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_02_Jupyter_Python.html">41.4. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_03_Numpy.html">41.5. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/demo-Intro.html">41.6. Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/Simple_widgets_v1.html">41.7. Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/setting_up.html">42. Setting up for using this Jupyter Book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/installing_anaconda.html">42.1. Using Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/using_github.html">42.2. Using GitHub</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/RootMiniProjects.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_I_toy_model_of_EFT.html">MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIa.html">MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html">MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Mini-projects/Mini-project_IIb_overview.html">Overview of Mini-project IIb: How many lines?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIa_bayesian_optimization.html">MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html">MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development/issues/new?title=Issue%20on%20page%20%2FLearningFromData-content/BayesianStatistics/BayesianBasics/DataModelsPredictions.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/LearningFromData-content/BayesianStatistics/BayesianBasics/DataModelsPredictions.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Data, models, and predictions</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-posterior-predictive-distribution">The posterior predictive distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-parameter-estimation">Bayesian parameter estimation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">Solutions</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="data-models-and-predictions">
+<span id="sec-datamodelspredictions"></span><h1><span class="section-number">4.9. </span>Data, models, and predictions<a class="headerlink" href="#data-models-and-predictions" title="Link to this heading">#</a></h1>
+<blockquote class="epigraph">
+<div><blockquote>
+<div><p>“All models are wrong, but models that know when and how they are wrong, are useful…”</p>
+</div></blockquote>
+<p class="attribution">—revised version of George Box’s quote (see <a class="reference internal" href="../../ModelingOptimization/OverviewModeling.html#sec-overviewmodeling"><span class="std std-ref">Overview of modeling</span></a>)</p>
+</div></blockquote>
+<!-- The use of probability theory to quantify uncertainty plays a central role in science and the scientific method for inferring new knowledge about the universe. Before we can elaborate on this topic of inductive inference we must briefly discuss the nature of science in terms of data, theories, and models. In the next chapter we will exemplify this using a linear model and some test data. But for now we will remain general and slightly more abstract.-->
+<p>Before continuing with concrete applications of Bayes’ theorem, let’s step back and briefly discuss the nature of science in terms of data, theories, and models in more abstract terms.</p>
+<p>Let us start with the <em>data</em> <span class="math notranslate nohighlight">\(\data\)</span> already obtained through a measurement process, e.g., an experiment in a laboratory or an observation of some astronomical event. It is obviously so that all data are equipped with uncertainties of various origin, let us denote this <span class="math notranslate nohighlight">\(\delta \data\)</span>. Surely you can think of several examples. Nevertheless, given some data <span class="math notranslate nohighlight">\(\data\)</span>, one would immediately ask what this data can tell us about data we have not yet collected or used in the inference. We call this future data <span class="math notranslate nohighlight">\(\futuredata\)</span>. At present, we are uncertain about any future data, and we describe as a (conditional) probability <span class="math notranslate nohighlight">\(\cprob{\futuredata}{\data,I}\)</span>. All we have said so far is that <em>predictions are uncertain</em>. The obvious and interesting question is: how uncertain is the prediction? To answer that, we must go from this abstract probability to something that we can evaluate quantitatively. The first step is to develop a <em>theory</em>, e.g., Newtonian mechanics, within which we can define a <em>model</em> to describe, e.g., the structural stability of a residential house or some planetary motion, to analyze the relevant data.</p>
+<p>In physics, a <em>theory</em> is very often some framework that postulates, or deduces from some axioms, a master equation that governs the spacetime dependence of a system of interacting bodies, e.g., Einstein’s field equations in the general theory of relativity or Heisenberg’s equations of motion in quantum mechanics. There is no recipe for how to develop a realistic theory. All we can do is to use our imagination, try to discover patterns and/or symmetries, collaborate with other experts, and have some luck on the way! No theory is complete and we always seek improvement or sometimes face a fundamental change of interpretation, i.e., a paradigm shift. In that sense, a theory always comes with some probability for being true, and, besides for purely logical statements, this probability can never be exactly 0 or 1. In such cases, no new evidence/data will ever have any influence. In this sense, <em>all theories are wrong</em>, i.e., they are never correct with absolute certainty. This is at some level a provocative statement that is designed to draw attention to the fact that all theories can be improved or replaced, and we do this all the time using the scientific method.</p>
+<!-- described in the introduction section about [](intro:inference). -->
+<p>A physical <em>model</em> <span class="math notranslate nohighlight">\(M\)</span> allows quantitative evaluation of the system under study. Any model we employ will always depend on model parameters <span class="math notranslate nohighlight">\(\pars\)</span> with uncertain numerical values. Moreover, <em>all models are wrong</em>. Indeed, there will always be some physics that we have neglected to include or are unaware of today. If we denote mismatch between model predictions and real world observations of the system, i.e., data, as <span class="math notranslate nohighlight">\(\delta M\)</span>, we can write</p>
+<div class="math notranslate nohighlight" id="equation-eq-datamodelspredictions-mismatch">
+<span class="eqno">(4.18)<a class="headerlink" href="#equation-eq-datamodelspredictions-mismatch" title="Link to this equation">#</a></span>\[
+\data = M(\pars) + \delta \data + \delta M.
+\]</div>
+<p>The mismatch term <span class="math notranslate nohighlight">\(\delta M\)</span> is often referred to as a model discrepancy. We are uncertain also about this term, so it must be represented as a random variable that is distributed in accordance with our beliefs about <span class="math notranslate nohighlight">\(\delta M\)</span>. It is no trivial task to incorporate model discrepancies in the analysis of scientific models and data, yet it is crucial to avoid overfitting the model parameters <span class="math notranslate nohighlight">\(\pars\)</span> and make overly confident model predictions.
+We will touch upon <span class="math notranslate nohighlight">\(\delta M\)</span> in two contexts in this text: in treating the truncation error in expansions such as encountered in effective field theories and with a prototypical example (the “Ball-Drop Experiment”) of using Gaussian processes to model <span class="math notranslate nohighlight">\(\delta M\)</span> (see <a class="reference internal" href="../../OtherTopics/DiscrepancyModels.html#sec-modeldiscrepancy"><span class="std std-ref">Bayesian approach to model discrepancy</span></a> and the <a class="reference internal" href="../../OtherTopics/MD_balldrop_v1.html"><span class="std std-doc">Model discrepancy example: The ball-drop experiment</span></a> notebook).</p>
+<!-- Although important, we will for the most part in this course neglect $\delta M$. There is simply no time to cover also this aspect of the scientific method.--> 
+<p>Note that the model discrepancy remains present even if there is no uncertainty about <span class="math notranslate nohighlight">\(\pars\)</span>. In the following we subsume the choice of model and other decisions into the set of background knowledge <span class="math notranslate nohighlight">\(I\)</span>.</p>
+<section id="the-posterior-predictive-distribution">
+<h2>The posterior predictive distribution<a class="headerlink" href="#the-posterior-predictive-distribution" title="Link to this heading">#</a></h2>
+<p>The distribution of future data conditioned on past data and background information, i.e., <span class="math notranslate nohighlight">\(\pdf{\futuredata}{\data,I}\)</span>, is called a posterior predictive distribution. Assuming that we have a model <span class="math notranslate nohighlight">\(M(\pars)\)</span> for the data-generating mechanism we can express this distribution by marginalizing over the uncertain model parameters <span class="math notranslate nohighlight">\(\pars \in \Omega\)</span></p>
+<div class="math notranslate nohighlight" id="equation-eq-ppd">
+<span class="eqno">(4.19)<a class="headerlink" href="#equation-eq-ppd" title="Link to this equation">#</a></span>\[\pdf{\futuredata}{\data,I} = \int_{\Omega} \pdf{\futuredata}{\pars,I}\pdf{\pars}{\data,I}\,{\rm d} \pars,\]</div>
+<p>where we have used that <span class="math notranslate nohighlight">\(\futuredata\)</span> is conditionally independent of <span class="math notranslate nohighlight">\(\data\)</span>. By performing this integral we account for the uncertainty in the model parameters <span class="math notranslate nohighlight">\(\pars\)</span> when making predictions. In fact, one can marginalize (average) predictions over anything and everything that we are uncertain about as long as we have access to the necessary probability distributions. To evaluate the posterior for the model parameters we must employ Bayes’ theorem</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayes">
+<span class="eqno">(4.20)<a class="headerlink" href="#equation-eq-bayes" title="Link to this equation">#</a></span>\[\pdf{\pars}{\data,I} = \frac{\pdf{\data}{\pars,I}\pdf{\pars}{I}}{\pdf{\data}{I}}.\]</div>
+<p>Here, we must insert a likelihood of the data <span class="math notranslate nohighlight">\(\pdf{\data}{\pars,I}\)</span> and a prior distribution of the model parameters <span class="math notranslate nohighlight">\(\pdf{\pars}{I}\)</span>. Unless we are able to select very particular combinations of likelihood and prior distributions we must use numerical methods to evaluate the posterior predictive distribution. We will discuss the likelihood and prior in great detail in the next chapter, and also specialize to a case where we can perform the marginal integral in Eq. <a class="reference internal" href="#equation-eq-ppd">(4.19)</a> analytically. The denominator in Eq. <a class="reference internal" href="#equation-eq-bayes">(4.20)</a> is sometimes referred to as the marginal likelihood or the evidence and normalizes the left-hand side such that it integrates to unity, i.e., we have</p>
+<div class="amsmath math notranslate nohighlight" id="equation-f74c1e8e-cb3f-4515-b80a-2c0f47976e06">
+<span class="eqno">(4.21)<a class="headerlink" href="#equation-f74c1e8e-cb3f-4515-b80a-2c0f47976e06" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\pdf{\data}{I} = \int_{\Omega} \pdf{\data}{\pars} \pdf{\pars}{I}\, {\rm d}\pars.
+\end{equation}\]</div>
+<p>Unless we are interested in obtaining an absolutely normalized posterior distribution we can omit the denominator in Eq. <a class="reference internal" href="#equation-eq-bayes">(4.20)</a>. Indeed, this does not explicitly depend on <span class="math notranslate nohighlight">\(\pars\)</span>.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>What did knowing that <span class="math notranslate nohighlight">\(\futuredata\)</span> is <em>conditionally independent</em> of <span class="math notranslate nohighlight">\(\data\)</span> allow us to do in <a class="reference internal" href="#equation-eq-ppd">(4.19)</a>?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>Because if we know <span class="math notranslate nohighlight">\(\pars\)</span>, <span class="math notranslate nohighlight">\(\data\)</span> gives no additional information, so we were able to replace <span class="math notranslate nohighlight">\(\pdf{\futuredata}{\pars,\data,I} \longrightarrow \pdf{\futuredata}{\pars,I}\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="bayesian-parameter-estimation">
+<h2>Bayesian parameter estimation<a class="headerlink" href="#bayesian-parameter-estimation" title="Link to this heading">#</a></h2>
+<p>Quantifying the posterior distribution <span class="math notranslate nohighlight">\(\pdf{\pars}{\data,I}\)</span> for the parameters of a model is called <em>Bayesian parameter estimation</em>, and is a staple of Bayesian inference. This is a probabilistic generalization of parameter optimization and maximum likelihood estimation whereby one tries to find an extremum parameter value of some objective function or data likelihood, respectively. We will see multiple examples of this in the coming chapters.</p>
+<!-- chapter on [](sec:LinearModels).-->
+<p>Bayesian parameter estimation can sometimes be very challenging. In the chapter on <a class="reference internal" href="../BayesianLinearRegression/BayesianLinearRegression_rjf.html#sec-bayesianlinearregression"><span class="std std-ref">Bayesian Linear Regression (BLR)</span></a> we will se an example of where we can perform analytical calculations throughout. However, in most realistic applications the posterior must be evaluated numerically, and most often using <a class="reference internal" href="../../StochasticProcesses/MCMC.html#sec-mcmc"><span class="std std-ref">Markov chain Monte Carlo sampling</span></a>. This is no silver bullet and to quantify (or characterize) a multi-dimensional posterior, sometimes with a complicated geometry, for an intricate physical model, is by no means guaranteed to succeed. At least not in finite time. Nevertheless, obtaining posterior distributions to represent uncertainties is the gold standard in any inferential analysis.</p>
+</section>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<div class="exercise admonition" id="exercise:ppd_definition">
+
+<p class="admonition-title"><span class="caption-number">Exercise 4.3 </span></p>
+<section id="exercise-content">
+<p>Derive Eq. <a class="reference internal" href="#equation-eq-ppd">(4.19)</a> using the rules of probability calculus and inference.</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:pdf_normalization">
+
+<p class="admonition-title"><span class="caption-number">Exercise 4.4 </span></p>
+<section id="exercise-content">
+<p>Can you think of a situation where you would have to compute the denominator in Eq. <a class="reference internal" href="#equation-eq-bayes">(4.20)</a></p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:rain">
+
+<p class="admonition-title"><span class="caption-number">Exercise 4.5 </span></p>
+<section id="exercise-content">
+<p>In Gothenburg it rains on 60% of the days. The weather forecaster at SMHI attempts to predict whether or not it will rain tomorrow. 75% of rainy days and 55% of dry days are correctly predicted thusfar. Given that forecast for tomorrow predicts rain, what is the probability that it will actually rain tomorrow?</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:monty_hall">
+
+<p class="admonition-title"><span class="caption-number">Exercise 4.6 </span></p>
+<section id="exercise-content">
+<p>Suppose you’re on a game show, and you’re given the choice of three doors: Behind one door is a car; behind the others, there are goats. You pick a door, say No. 1. This door remains closed. Instead, the game-show host, who knows what’s behind all three doors, opens another door where he knows there will be a goat, say No. 3, which indeed has a goat. He then says to you, “Do you want to pick door No. 2?” Is it to your advantage to switch your initial choice of door? Motivate your answer using Bayes’ theorem. (This is a famous problem known as <em>the Monty Hall problem</em>)</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:coin_ppd">
+
+<p class="admonition-title"><span class="caption-number">Exercise 4.7 </span></p>
+<section id="exercise-content">
+<p>Assume we have three coins in a bag. All three coins feel and look the same, but we are told that: the first coin is biased with a 0.75 probability of obtaining heads when flipped – the second coin is fair, i.e., 0.5 probability of obtaining heads – the third coin is biased towards tails with a 0.25 probability of coming up heads.</p>
+<p>Assume that you reach your hand into the bag and pick a coin randomly, then flip it and obtain heads. What is the probability for obtaining heads if you flip it once more?</p>
+</section>
+</div>
+</section>
+<section id="solutions">
+<h2>Solutions<a class="headerlink" href="#solutions" title="Link to this heading">#</a></h2>
+<p>Here are answers and solutions to selected exercises.</p>
+<div class="solution dropdown admonition" id="solution:ppd_definition">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:ppd_definition"> Exercise 4.3</a></p>
+<section id="solution-content">
+<p><em>Hint:</em> see part of the solution to <a class="reference internal" href="#exercise:coin_ppd"><span class="std std-numref">Exercise 4.7</span></a>.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:pdf_normalization">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:pdf_normalization"> Exercise 4.4</a></p>
+<section id="solution-content">
+<p>For instance when making comparisons of quantities averaged over two or more posterior distributions.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:rain">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:rain"> Exercise 4.5</a></p>
+<section id="solution-content">
+<p>Let <span class="math notranslate nohighlight">\(r\)</span> be rain, <span class="math notranslate nohighlight">\(\bar{r}\)</span> be not rain, and <span class="math notranslate nohighlight">\(p\)</span> be rain predicted. We seek <span class="math notranslate nohighlight">\(\prob(r|p,I)\)</span>, where <span class="math notranslate nohighlight">\(I\)</span> is the background information we were given in the problem definition. Let us use Bayes’ theorem</p>
+<div class="math notranslate nohighlight">
+\[
+\prob(r|p,I) = \frac{ \prob(p|r,I)\prob(r|I)}{\prob(p|I) } = \frac{\prob(p|r,I)\prob(r|I)}{\prob(p|r,I)\prob(r|I) + \prob(p|\bar{r},I)\prob(\bar{r}|I) }
+\]</div>
+<p>With <span class="math notranslate nohighlight">\(\prob(r|I) = 0.6\)</span>, <span class="math notranslate nohighlight">\(\prob(\bar{r}|I) = 0.4\)</span>, <span class="math notranslate nohighlight">\(\prob(p|r,I) = 0.75\)</span>, <span class="math notranslate nohighlight">\(\prob(p|\bar{r},I) = 0.45\)</span>, we have <span class="math notranslate nohighlight">\(\prob(r|p,I) \approx 0.71\)</span></p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:monty_hall">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:monty_hall"> Exercise 4.6</a></p>
+<section id="solution-content">
+<p>You should switch to door No. 2 to increase your chance of winning the car. This, somewhat counter-intuitive, result can be obtained using Bayesian reasoning.</p>
+<p>Let us introduce some notation for different events: <span class="math notranslate nohighlight">\(p_i = \)</span> (the player initially picks door <span class="math notranslate nohighlight">\(i\)</span>), <span class="math notranslate nohighlight">\(h_j = \)</span> (Monty opens door <span class="math notranslate nohighlight">\(j\)</span>), <span class="math notranslate nohighlight">\(c_k = \)</span>(car is behind door <span class="math notranslate nohighlight">\(k\)</span>). In the problem definition we had the series of events <span class="math notranslate nohighlight">\(p_1\)</span> and <span class="math notranslate nohighlight">\(h_3\)</span>, and now we would like to know which probability is the greatest: <span class="math notranslate nohighlight">\(\prob(c_1|p_1,h_3)\)</span> or <span class="math notranslate nohighlight">\(\prob(c_2|p_1,h_3)\)</span>? Let’s compute them:</p>
+<p>This is the probability that the car is behind door 1:</p>
+<div class="math notranslate nohighlight">
+\[
+\prob(c_1|p_1,h_3) = \frac{\prob(h_3|c_1,p_1)\prob(c_1,p_1)}{\prob(p_1,h_3)} = \frac{\prob(h_3|c_1,p_1)\prob(c_1)\prob(p_1)}{\prob(h_3|p_1)\prob(p_1)} = \frac{\prob(h_3|c_1,p_1)\prob(c_1)}{\prob(h_3|p_1)}
+\]</div>
+<p>We have <span class="math notranslate nohighlight">\(\prob(h_3|c_1,p_1)=1/2\)</span> (since Monty can open doors 2 or 3), <span class="math notranslate nohighlight">\(\prob(c_1) = 1/3\)</span> (car can be placed initially behind any of the three doors), <span class="math notranslate nohighlight">\(\prob(h_3|p_1) = 1/2\)</span> (this probability is independent of car location!). Combined, this gives us that <span class="math notranslate nohighlight">\(\prob(c_1|p_1,h_3) = 1/3\)</span></p>
+<p>Now we compute the probability that the car is behind door 2:</p>
+<div class="math notranslate nohighlight">
+\[
+\prob(c_2|p_1,h_3) = \frac{\prob(h_3|c_2,p_1)\prob(c_2,p_1)}{\prob(p_1,h_3)} = \frac{\prob(h_3|c_2,p_1)\prob(c_2)\prob(p_1)}{\prob(h_3|p_1)\prob(p_1)} = \frac{\prob(h_3|c_2,p_1)\prob(c_2)}{\prob(h_3|p_1)}
+\]</div>
+<p>We have <span class="math notranslate nohighlight">\(\prob(h_3|c_2,p_1)=1\)</span> (since Monty can only open door 3), <span class="math notranslate nohighlight">\(\prob(c_2) = 1/3\)</span> (car can be placed initially behind any of the three doors), <span class="math notranslate nohighlight">\(\prob(h_3|p_1) = 1/2\)</span> (this probability is independent of car location!). Combined, this gives us that <span class="math notranslate nohighlight">\(\prob(c_2|p_1,h_3) = 2/3\)</span></p>
+<p>So, you have a higher probability of getting the car if you change your initial pick from door number 1 to door number 2.</p>
+<p>You can convince yourself that this is true by considering an extreme version of the game show where there are 100 doors, 99 goats, and 1 car. You first pick one door. After this, Monty opens 98 doors where he knows there are goats. There’s only one door left closed at this point. Would you switch?</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:coin_ppd">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:coin_ppd"> Exercise 4.7</a></p>
+<section id="solution-content">
+<p>Let <span class="math notranslate nohighlight">\(H/T\)</span> denote the result of a coin flip coming up heads/tails. We seek the posterior predictive probability</p>
+<div class="math notranslate nohighlight">
+\[
+\prob(\mathcal{F}=H|\mathcal{D}=H,I)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(I\)</span> is the information given in the problem definition. We do not know which one out of the three coins we are flipping, so the appropriate thing to do is to marginalize with respect to the coin type. Let us number the coins using the discrete random variable <span class="math notranslate nohighlight">\(C=1,2,3\)</span>. This gives us the following expression for the posterior predictive probability</p>
+<div class="math notranslate nohighlight">
+\[
+\prob(\mathcal{F}=H|\mathcal{D}=H,I) = \sum_{C=1}^{3} \prob(\mathcal{F}=H,C|\mathcal{D}=H,I) = \sum_{C=1}^{3} \prob(\mathcal{F}=H|C,I)\prob(C|\mathcal{D}=H,I),
+\]</div>
+<p>where we used the product rule of probabilities in the last step and that once we have knowledge of <span class="math notranslate nohighlight">\(C\)</span> then the probability <span class="math notranslate nohighlight">\(\prob(\mathcal{F}=H|C,I)\)</span> is conditionally independent of previous coin flips.</p>
+<p>The left-hand factor in the last step is a likelihood, and we know that <span class="math notranslate nohighlight">\(\prob(\mathcal{F}=H|C=1,I) = 0.75\)</span>, <span class="math notranslate nohighlight">\(\prob(\mathcal{F}=H|C=2,I) = 0.5\)</span>, and <span class="math notranslate nohighlight">\(\prob(\mathcal{F}=H|C=3,I) = 0.25\)</span>. The right hand factor is a posterior probability for having coin <span class="math notranslate nohighlight">\(C\)</span> if observing heads (in the first flip). To compute this, we must use Bayes’ theorem</p>
+<div class="math notranslate nohighlight">
+\[
+\prob(C|\mathcal{D}=H,I) = \frac{\prob(\mathcal{D}=H|C,I)\prob(C|I)}{\prob(\mathcal{D}=H|I)}.
+\]</div>
+<p>Evaluating the denominator</p>
+<div class="math notranslate nohighlight">
+\[
+\prob(\mathcal{D}=H|I) = \sum_{C=1}^3 \prob(\mathcal{D}=H|C,I)\prob(C|I) = \frac{3}{4}\frac{1}{3} + \frac{1}{2}\frac{1}{3} + \frac{1}{4}\frac{1}{3} = \frac{1}{2}.
+\]</div>
+<p>With this, we have for the three coin posteriors</p>
+<div class="math notranslate nohighlight">
+\[
+\prob(C=1|\mathcal{D}=H,I) = 2\cdot \frac{3}{4}\cdot\frac{1}{3} = \frac{1}{2}.
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\prob(C=2|\mathcal{D}=H,I) = 2\cdot \frac{1}{2}\cdot\frac{1}{3} = \frac{1}{3}.
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\prob(C=3|\mathcal{D}=H,I) = 2\cdot \frac{1}{4}\cdot\frac{1}{3} = \frac{1}{6}.
+\]</div>
+<p>We can now evaluate the posterior predictive probability that we set out to obtain in the first place</p>
+<div class="math notranslate nohighlight">
+\[
+\prob(\mathcal{F}=H|\mathcal{D}=H,I) = \sum_{C=1}^{3} \prob(\mathcal{F}=H|C,I)\prob(C|\mathcal{D}=H,I) = \frac{3}{4}\frac{1}{2} + \frac{1}{2}\frac{1}{3} + \frac{1}{4}\frac{1}{6} = \frac{7}{12} \approx 0.58.
+\]</div>
+</section>
+</div>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./LearningFromData-content/BayesianStatistics/BayesianBasics"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="Bayesian_epistemology.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">4.8. </span>*Aside: Bayesian epistemology</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Parameter estimation example: Gaussian noise and averages I</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-posterior-predictive-distribution">The posterior predictive distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-parameter-estimation">Bayesian parameter estimation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">Solutions</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1940 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>7.3. Bayesian Linear Regression (BLR) &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\text{th}}", "yexp": "y_{\\text{exp}}", "ym": "y_{\\text{m}}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'LearningFromData-content/BayesianStatistics/BayesianLinearRegression/BayesianLinearRegression_rjf';</script>
+    <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="8. Overview of Part II: Advanced Bayesian methods" href="../RootAdvancedMethods.html" />
+    <link rel="prev" title="7.2. Bayesian research workflow" href="../BayesianWorkflow/BayesianWorkflow.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../Intro/About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../Intro/About.html">
+                    About this Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Overview.html">1. Invitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Introduction.html">2. Introduction</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../BayesianBasics/RootBayesianBasics.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianBasics/Inferenceandpdfs.html">4. Inference and PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/exercise_sum_product_rule.html">4.5. Exercise: Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/exercise_medical_example_by_Bayes.html">4.6. Exercise: Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/MoreBayesTheorem.html">4.7. More on Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/Bayesian_epistemology.html">4.8. *Aside: Bayesian epistemology</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianBasics/DataModelsPredictions.html">4.9. Data, models, and predictions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html">Parameter estimation I: Gaussian mean and variance</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianBasics/Posteriors.html">5. Bayesian posteriors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianBasics/Exploring_pdfs.html">5.1. Exploring PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianBasics/Exploring_pdfs_followups.html">Follow-ups to Exploring PDFs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianBasics/Gaussians.html">5.2. Gaussians: A couple of frequentist connections</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianBasics/visualization_of_CLT.html">Visualization of the Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/Interpreting2Dposteriors.html">5.3. Interpreting 2D posteriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/chi_squared_tests.html">5.4. Demonstration: Sum of normal variables squared</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianBasics/CoinTossing.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/demo-BayesianBasics.html">6.6. Demonstration:  Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/Bayesian_updating_coinflip_interactive.html">6.7. Widgetized coin tossing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../BayesianBasics/UsingBayes.html">7. Bayes in practice</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/BayesianAdvantages.html">7.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianWorkflow/BayesianWorkflow.html">7.2. Bayesian research workflow</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">7.3. Bayesian Linear Regression (BLR)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../RootAdvancedMethods.html">8. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianParameterEstimation/ParameterEstimation.html">9. More Bayesian parameter estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/radioactive_lighthouse_exercise.html">9.1. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/amplitude_in_presence_of_background.html">9.2. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/parameter_estimation_fitting_straight_line_I.html">9.3. Parameter estimation example: fitting a straight line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/parameter_estimation_fitting_straight_line_II.html">9.4. Parameter estimation example: fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianParameterEstimation/dealing_with_outliers.html">9.5. Dealing with outliers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../AssigningProbabilities/Assigning.html">10. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../AssigningProbabilities/IgnorancePDF.html">10.1. Assigning probabilities (I): Indifferences and translation groups</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../AssigningProbabilities/demo-straight_lines.html">Alternative notebook with MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../AssigningProbabilities/MaxEnt2.html">10.2. Assigning probabilities (II): The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../AssigningProbabilities/MaxEnt_Function_Reconstruction.html">10.3. Maximum Entropy for reconstructing a function from its moments</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../ComputationalBayes/BayesLinear.html">11. Bayes goes linear: History matching</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Multimodel_inference.html">12. Multi-model inference with Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ModelSelection/ModelSelection.html">12.1. Model Selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/Evidence_for_model_EFT_coefficients.html">Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/two_model_evidence.html">Follow-up to EFT evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/computing_evidence.html">Computing the evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/MCMC-parallel-tempering_ptemcee_vs_zeus.html">Demo: Multimodal distributions with two samplers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../ModelMixing/model_mixing.html">12.2. Model averaging and mixing </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/DiscrepancyModels.html">13. Discrepancy Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/MD_balldrop_v1.html">13.4. Ball-drop experiment</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../StochasticProcesses/RootMCMC.html">14. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/StochasticProcesses.html">15. Stochastic processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Metropolis_Poisson_example.html">15.7. Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/demo-MCMC.html">15.8. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/Recap_BUQ.html">15.9. Recap of Poisson and more about MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/parameter_estimation_Gaussian_noise-2.html">15.10. Parameter estimation example: Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">15.11. Exercise: Random walk</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/MCMC_overview.html">16. Overview of Markov Chain Monte Carlo</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MarkovChains.html">16.1. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC.html">16.2. Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC_intro_BUQ.html">16.3. Alternative MCMC introduction (Gregory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Assignment_extending_radioactive_lighthouse.html">16.4. Assignment: 2D radioactive lighthouse location using MCMC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Advanced_MCMC.html">17. Advanced MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/AdvancedMCMC.html">17.1. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html">17.2. Overview: MCMC Diagnostics</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/intuition_sampling.html">17.4. Intuition on sampling and best practices</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Other_samplers.html">18. HMC and other samplers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/HMC_intro_BUQ.html">18.1. Hamiltonian Monte Carlo (HMC) overview and visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Liouville_theorem_visualization.html">Liouville Theorem Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Orbital_eqs_with_different_algorithms.html">Solving orbital equations with different algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/zeus.html">18.2. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/PyMC_intro_updated.html">18.3. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/OverviewIntroPyMC.html">Overview of Intro to PyMC notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ2/parameter_estimation_Gaussian_noise_compare_samplers.html">18.4. Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning: A Bayesian perspective</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../MachineLearning/RootML.html">19. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/GP/RootGP.html">20. Overview of Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/GaussianProcesses.html">20.4. Introduction to Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/CF/demo-GaussianProcesses.html">demo-GaussianProcesses notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/lecture_20.html">GP recap; GP applications; (old lecture 20)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/Sklearn_demos.html">20.5. scikit-learn demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/plot_gpr_noisy_targets.html">One-dimension regression example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/plot_gpr_prior_posterior.html">Prior and posterior with different kernels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/GPy_demos.html">20.6. GPy demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/demo-GaussianProcesses.html">Gaussian processes demonstration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/CF/exercise_GP_GPy.html">Exercise: Gaussian processes using <code class="docutils literal notranslate"><span class="pre">GPy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/Gaussian_processes_exercises.html">Exercise: Gaussian Process models with GPy</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/LogReg/LogReg.html">21. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/MachineLearningExamples.html">21.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/exercises_LogReg_NeuralNet.html">21.6. Exercise: Logistic Regression and neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/ANN/MachineLearning.html">22. Machine learning: Overview and notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet.html">22.5. Artifical neural networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/demo-NeuralNet.html">22.6. Demonstration: Neural network classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/Neural_Network_for_simple_function_in_PyTorch.html">22.7. ANN from ChatGPT using PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/ModelValidation.html">22.8. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/DataBiasFairness.html">22.9. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/NeuralNetBackProp.html">22.10. *Neural networks: Backpropagation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/ANNFT.html">23. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/random_initialized_ANN_vs_width.html">23.3. Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/BNN/bnn.html">24. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/BNN/demo-bnn.html">24.4. Demonstration: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/BNN/exercises_BNN.html">24.5. Exercise: Bayesian neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/CNN/cnn.html">25. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/CNN/demo-cnn.html">25.6. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Other topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/RootOtherTopics.html">26. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/Emulators.html">27. Emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/BayesFast.html">27.1. Bayes goes fast: Emulators (from CF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/extra_RBM_emulators.html">27.2. RBM emulators (BUQ)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/Student_t_distribution_from_Gaussians.html">28. Student t distribution from Gaussians</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/SVD.html">29. PCA, SVD, and all that</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/linear_algebra_games_including_SVD.html">29.5. SVD notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/qbism.html">30. QBism: Bayesian quantum mechanics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/bibliography.html">31. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/JB_tests.html">32. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Reference/Statistics.html">33. Statistics concepts and notation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/GradientDescent.html">34. Gradient-descent optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/RootScientificModeling.html">35. Overview of scientific modeling material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/OverviewModeling.html">36. Overview of modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/LinearModels.html">37. Linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/MathematicalOptimization.html">38. Mathematical optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/RootGettingStarted.html">39. Overview of Getting started material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/exercise_Intro_01_Jupyter_Python.html">40. Jupyter notebooks and Python</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/more_python_and_jupyter.html">41. More about Python and Jupyter notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_02_Jupyter_Python.html">41.4. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_03_Numpy.html">41.5. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/demo-Intro.html">41.6. Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/Simple_widgets_v1.html">41.7. Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/setting_up.html">42. Setting up for using this Jupyter Book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/installing_anaconda.html">42.1. Using Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/using_github.html">42.2. Using GitHub</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/RootMiniProjects.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_I_toy_model_of_EFT.html">MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIa.html">MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html">MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Mini-projects/Mini-project_IIb_overview.html">Overview of Mini-project IIb: How many lines?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIa_bayesian_optimization.html">MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html">MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development/issues/new?title=Issue%20on%20page%20%2FLearningFromData-content/BayesianStatistics/BayesianLinearRegression/BayesianLinearRegression_rjf.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/LearningFromData-content/BayesianStatistics/BayesianLinearRegression/BayesianLinearRegression_rjf.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Bayesian Linear Regression (BLR)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background-on-linear-models">Background on linear models</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definition-and-examples">Definition and examples</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-linear-models-to-matrix-form">Converting linear models to matrix form</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-normal-equation">The normal equation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow-for-bayesian-linear-regression">Workflow for Bayesian linear regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prior">The prior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-likelihood">The likelihood</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-posterior">The posterior</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rewriting-the-likelihood">Rewriting the likelihood</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-with-a-uniform-prior">Posterior with a uniform prior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-with-a-gaussian-prior">Posterior with a Gaussian prior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#marginal-posterior-distributions">Marginal posterior distributions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-posterior-predictive">The posterior predictive</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-linear-regression-warmup">Bayesian linear regression: warmup</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prelude-ordinary-linear-regression">Prelude: ordinary linear regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#continuing">Continuing …</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions-to-selected-exercises">Solutions to selected exercises</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#addendum-ordinary-linear-regression-in-practice">Addendum: Ordinary linear regression in practice</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="bayesian-linear-regression-blr">
+<span id="sec-bayesianlinearregression"></span><h1><span class="section-number">7.3. </span>Bayesian Linear Regression (BLR)<a class="headerlink" href="#bayesian-linear-regression-blr" title="Link to this heading">#</a></h1>
+<blockquote class="epigraph">
+<div><blockquote>
+<div><p>“La théorie des probabilités n’est que le bon sens réduit au calcul”</p>
+</div></blockquote>
+<p>(trans.) Probability theory is nothing but common sense reduced to calculation.</p>
+<p class="attribution">—Pierre Simon de Laplace</p>
+</div></blockquote>
+<p>In this chapter we use Bayes’ theorem to infer a (posterior) probability density function for parameters of a <em>linear statistical model</em>, conditional on data <span class="math notranslate nohighlight">\(\data\)</span>.
+This is called Bayesian linear regression (BLR).
+In this context “linear” means that the parameters we seek to infer appear in the model only to the first power (specific examples below).
+You may already be familiar with ordinary (frequentist) linear regression, such as making a least-squares fit of a polynomial to data; later in this chapter we will show how this is related to BLR.</p>
+<p>The advantages of doing <em>Bayesian</em> instead of frequentist linear regression are many. The Bayesian approach yields a probability distribution for the unknown parameters and for future model predictions. It also enables us to make all assumptions explicit whereas the frequentist approach puts nearly all emphasis on the collected data. These assumptions can be more general as well; e.g., they allow you to specify prior beliefs on the parameters (such as slope and intercept for a straight line model). Finally, we can do straightforward model checking and add a discrepancy model to account for limitations of the linear model being considered.</p>
+<p>We will use BLR to exemplify the general Bayesian workflow we have summarized in <a class="reference internal" href="../BayesianWorkflow/BayesianWorkflow.html#sec-bayesianworkflow"><span class="std std-numref">Section 7.2</span></a> <em>[or somewhere else?]</em>.
+To do so, we first need to more precisely define what we mean by linear models.</p>
+<section id="background-on-linear-models">
+<h2>Background on linear models<a class="headerlink" href="#background-on-linear-models" title="Link to this heading">#</a></h2>
+<section id="definition-and-examples">
+<h3>Definition and examples<a class="headerlink" href="#definition-and-examples" title="Link to this heading">#</a></h3>
+<p>In <strong>linear modeling</strong> the dependence on the model parameters <span class="math notranslate nohighlight">\(\parsLR\)</span> is <strong>linear</strong>, and this fact will make it possible, for certain priors, to find the distribution of model parameters analytically. Note that we will mostly operate with models depending on more than one parameter. Hence, we denote the model parameters (<span class="math notranslate nohighlight">\(\parsLR\)</span>) using a bold symbol. (We reserve the generic symbol <span class="math notranslate nohighlight">\(\pars\)</span> to include not only <span class="math notranslate nohighlight">\(\parsLR\)</span> but also any other parameters specifying our statistical model.) In this chapter we will, however, consider models (<span class="math notranslate nohighlight">\(\modeloutput\)</span>) that relate a single dependent variable (<span class="math notranslate nohighlight">\(\output\)</span>) with a single independent one (<span class="math notranslate nohighlight">\(\inputt\)</span>).</p>
+<p>The linear parameter dependence implies that our model <span class="math notranslate nohighlight">\(\model{\parsLR}{\inputt}\)</span> separates into a sum of parameters times basis functions. Assuming <span class="math notranslate nohighlight">\(N_p\)</span> different basis functions we have</p>
+<div class="math notranslate nohighlight" id="equation-eq-linear-model-b">
+<span class="eqno">(7.30)<a class="headerlink" href="#equation-eq-linear-model-b" title="Link to this equation">#</a></span>\[
+\model{\parsLR}{\inputt} = \sum_{j=0}^{N_p-1} \paraLR_j f_j(\inputt).
+\]</div>
+<p>Note that there is no <span class="math notranslate nohighlight">\(\parsLR\)</span>-dependence in the basis functions <span class="math notranslate nohighlight">\(f_j(\inputt)\)</span>.</p>
+<p>From a machine-learning perspective the different basis functions are known as <strong>features</strong>.</p>
+<div class="proof example admonition" id="example:polynomial-linear-model_b">
+<p class="admonition-title"><span class="caption-number">Example 7.5 </span> (Polynomial basis functions)</p>
+<section class="example-content" id="proof-content">
+<p>A common linear model corresponds to the use of polynomial basis functions <span class="math notranslate nohighlight">\(f_j(x) = x^j\)</span>. A polynomial model of degree <span class="math notranslate nohighlight">\(N_p-1\)</span> would then be written</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-polynomial-basis-b">
+<span class="eqno">(7.31)<a class="headerlink" href="#equation-eq-bayesianlinearregression-polynomial-basis-b" title="Link to this equation">#</a></span>\[
+M(\parsLR;\inputt) = \sum_{j=0}^{N_p-1} \paraLR_j \inputt^j.
+\]</div>
+<p>Note that the <span class="math notranslate nohighlight">\(j=0\)</span> basis function is <span class="math notranslate nohighlight">\(f_0(x) = x^0 = 1\)</span> such that the <span class="math notranslate nohighlight">\(\paraLR_0\)</span> parameter becomes the <span class="math notranslate nohighlight">\(x=0\)</span> intercept.</p>
+</section>
+</div><div class="proof example admonition" id="example:LinearModels:liquid-drop-model_b">
+<p class="admonition-title"><span class="caption-number">Example 7.6 </span> (Liquid-drop model for nuclear binding energies)</p>
+<section class="example-content" id="proof-content">
+<p>The liquid drop model is useful for a phenomenological description of nuclear binding energies (BE) as a function of the mass number <span class="math notranslate nohighlight">\(A\)</span> and the number of protons <span class="math notranslate nohighlight">\(Z\)</span>, neutrons <span class="math notranslate nohighlight">\(N\)</span>:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-add58194-5a4a-4102-bf15-f2a648acc5e2">
+<span class="eqno">(7.32)<a class="headerlink" href="#equation-add58194-5a4a-4102-bf15-f2a648acc5e2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\text{BE}(A,N,Z) = a_0+a_1A+a_2A^{2/3}+a_3 Z^2 A^{-1/3}+a_4 (N-Z)^2 A^{-1}.
+\end{equation}\]</div>
+<p>We have five features: the intercept (constant term, bias), the <span class="math notranslate nohighlight">\(A\)</span> dependent volume term, the <span class="math notranslate nohighlight">\(A^{2/3}\)</span> surface term and the Coulomb <span class="math notranslate nohighlight">\(Z^2 A^{-1/3}\)</span> and pairing <span class="math notranslate nohighlight">\((N-Z)^2 A^{-1}\)</span> terms. Although the features are somewhat complicated functions of the independent variables <span class="math notranslate nohighlight">\(A,N,Z\)</span>, we note that the <span class="math notranslate nohighlight">\(p=5\)</span> regression parameters <span class="math notranslate nohighlight">\(\parsLR = (a_0, a_1, a_2, a_3, a_4)\)</span> enter linearly.</p>
+</section>
+</div><!--
+Font awesome test: <i class="fas fa-pencil-alt"></i> Did it work?
+-->
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Is a Fourier series expansion of a function a linear model?</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>If <span class="math notranslate nohighlight">\(f(x)\)</span> is an odd function with period <span class="math notranslate nohighlight">\(2L\)</span>, a
+Fourier sine expansion of <span class="math notranslate nohighlight">\(f(x)\)</span> with <span class="math notranslate nohighlight">\(N\)</span> terms takes the form</p>
+<div class="math notranslate nohighlight">
+\[
+   f(x)= \sum_{n=1}^N b_n \sin(\frac{n \pi x}{L}),  
+\]</div>
+<p>where the <span class="math notranslate nohighlight">\(b_n\)</span> are to be determined.</p>
+</div>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>The parameters <span class="math notranslate nohighlight">\(b_n\)</span> appear linearly, so this is a linear model <em>if</em> only the parameters are being determined (i.e. <span class="math notranslate nohighlight">\(L\)</span> and <span class="math notranslate nohighlight">\(N\)</span> are given).
+Note that with finite <span class="math notranslate nohighlight">\(N\)</span> this model will not be a perfect reproduction of a general <span class="math notranslate nohighlight">\(f(x)\)</span>, so there will be a <em>discrepancy</em>.</p>
+</div>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Which of the following are linear models and which are nonlinear?</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+  (a)\quad  &amp; f(x) = \beta_0 + \beta_1 \sqrt{x}  \quad \text{with } \parsLR = (\beta_0, \beta_1)\\
+  (b)\quad  &amp; E(N) = E_\infty + a e^{-b N} \quad \text{with } \parsLR = (E_\infty, a, b) \\
+  (c)\quad  &amp;
+\end{align}
+\end{split}\]</div>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>Remember that it is the <em>parameter</em> dependence that dictates whether it is linear.</p>
+</div>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>The first and third are linear, the second is not (because of the <span class="math notranslate nohighlight">\(b\)</span> parameter).</p>
+</div>
+</div>
+</section>
+<section id="converting-linear-models-to-matrix-form">
+<h3>Converting linear models to matrix form<a class="headerlink" href="#converting-linear-models-to-matrix-form" title="Link to this heading">#</a></h3>
+<p>When using a linear model we have access to a set of data <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> for the dependent variable, e.g., the <span class="math notranslate nohighlight">\(N_d\)</span> values</p>
+<div class="amsmath math notranslate nohighlight" id="equation-64a23a9e-04d1-4f9e-949d-8cff1ff02b17">
+<span class="eqno">(7.33)<a class="headerlink" href="#equation-64a23a9e-04d1-4f9e-949d-8cff1ff02b17" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\data = [y_1, y_2,\dots, y_{N_d}]^T.
+\end{equation}\]</div>
+<p>For each datum <span class="math notranslate nohighlight">\(y_i\)</span> there is an independent variable <span class="math notranslate nohighlight">\(x_i\)</span>, and our model for the <span class="math notranslate nohighlight">\(i^{\text{th}}\)</span> datum  is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-93d2d705-ae21-4ad8-8ffe-0e6240a20fcf">
+<span class="eqno">(7.34)<a class="headerlink" href="#equation-93d2d705-ae21-4ad8-8ffe-0e6240a20fcf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+M_i \equiv M(\parsLR;x_i) = \sum_{j=0}^{N_p-1} \paraLR_j f_j(x_i).
+\end{equation}\]</div>
+<p>We can collect the basis functions evaluated at each independent variable <span class="math notranslate nohighlight">\(x_i\)</span> in a matrix <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> of dimension <span class="math notranslate nohighlight">\(N_d \times N_p\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-design-matrix-b">
+<span class="eqno">(7.35)<a class="headerlink" href="#equation-eq-bayesianlinearregression-design-matrix-b" title="Link to this equation">#</a></span>\[\begin{split}
+\dmat = 
+  \begin{bmatrix} 
+        f_0(x_1) &amp; \ldots &amp; f_{N_p-1}(x_1) \\
+        f_0(x_2) &amp; \ldots &amp; f_{N_p-1}(x_2) \\
+        \vdots  &amp; \ddots &amp; \vdots \\
+        f_0(x_{N_d}) &amp; \ldots &amp; f_{N_p-1}(x_{N_d})
+    \end{bmatrix}
+\end{split}\]</div>
+<p>This matrix will be referred to as a <strong>design matrix</strong>.</p>
+<div class="proof example admonition" id="example:design-matrix-polynomial-models_b">
+<p class="admonition-title"><span class="caption-number">Example 7.7 </span> (The design matrix for polynomial models)</p>
+<section class="example-content" id="proof-content">
+<p>The design matrix for a linear model with polynomial basis functions becomes</p>
+<div class="amsmath math notranslate nohighlight" id="equation-d85cce4f-eeee-4263-8a10-c197436c864f">
+<span class="eqno">(7.36)<a class="headerlink" href="#equation-d85cce4f-eeee-4263-8a10-c197436c864f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\dmat =
+\begin{bmatrix} 
+1 &amp; x_{1}^1 &amp; x_{1}^2 &amp; \dots &amp; x_{1}^{p-1} \\
+1 &amp; x_{2}^1 &amp; x_{2}^2 &amp; \dots &amp; x_{2}^{p-1} \\
+1 &amp; x_{3}^1 &amp; x_{3}^2 &amp; \dots &amp; x_{3}^{p-1} \\                      
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+1 &amp; x_{N_d}^1 &amp; x_{N_d}^2 &amp; \dots &amp; x_{N_d}^{p-1} \\
+\end{bmatrix}, 
+\end{equation}\]</div>
+<p>where we are considering a polynomial of degree <span class="math notranslate nohighlight">\(p-1\)</span>, which implies a model with <span class="math notranslate nohighlight">\(p\)</span> features (including the intercept). It is also known in linear algebra circles as a <a class="reference external" href="https://en.wikipedia.org/wiki/Vandermonde_matrix">Vandermonde matrix</a>.</p>
+</section>
+</div><div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>What is the design matrix for a Fourier cosine series expansion with <span class="math notranslate nohighlight">\(N_p\)</span> terms (plus a constant)?</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>If <span class="math notranslate nohighlight">\(f(x)\)</span> is an even function with period <span class="math notranslate nohighlight">\(2L\)</span>, a
+Fourier cosine expansion of <span class="math notranslate nohighlight">\(f(x)\)</span> with <span class="math notranslate nohighlight">\(N_p\)</span> terms (plus a constant) takes the form</p>
+<div class="math notranslate nohighlight">
+\[
+   f(x)= \frac{a_0}{2} + \sum_{n=1}^{N_p} a_n \cos(\frac{n \pi x}{L}),  
+\]</div>
+<p>where the <span class="math notranslate nohighlight">\(a_n\)</span> are to be determined.</p>
+</div>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>For convenience, let <span class="math notranslate nohighlight">\(\omega = \pi/L\)</span>. Then the design matrix is:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-10608cad-4920-4635-9815-8b1df0efb0e4">
+<span class="eqno">(7.37)<a class="headerlink" href="#equation-10608cad-4920-4635-9815-8b1df0efb0e4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\begin{bmatrix}
+1 &amp; \cos(\omega x_1) &amp; \cos(2\omega x_1) &amp; \dots  &amp; \cos(N_p \omega x_1) \\
+1 &amp; \cos(\omega x_2) &amp; \cos(2\omega x_2) &amp; \dots  &amp; \cos(N_p \omega x_2) \\
+1 &amp; \cos(\omega x_3) &amp; \cos(2\omega x_3) &amp; \dots  &amp; \cos(N_p \omega x_3) \\
+\vdots &amp;  \vdots &amp; \vdots &amp; \ddots &amp; \vdots\\
+1 &amp; \cos(\omega x_{N_d}) &amp; \cos(2\omega x_{N_d})  &amp; \dots &amp; \cos(N_p \omega x_{N_d}) \\
+\end{bmatrix}
+\end{equation}\]</div>
+</div>
+</div>
+<p>Next, using the column vector <span class="math notranslate nohighlight">\(\parsLR\)</span> for the parameters,</p>
+<div class="amsmath math notranslate nohighlight" id="equation-5d8cf6b3-11ac-40c8-909f-7ac38de55b61">
+<span class="eqno">(7.38)<a class="headerlink" href="#equation-5d8cf6b3-11ac-40c8-909f-7ac38de55b61" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\parsLR = [\paraLR_0,\paraLR_1, \paraLR_2,\dots, \paraLR_{N_p-1}]^T,
+\end{equation}\]</div>
+<p>we can write the general (additive) statistical model</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-eq-statmodel">
+<span class="eqno">(7.39)<a class="headerlink" href="#equation-eq-bayesianlinearregression-eq-statmodel" title="Link to this equation">#</a></span>\[
+\data = M(\parsLR) + \delta \data + \delta M.
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(M(\parsLR) \rightarrow M(\parsLR; \inputt)\)</span> as the matrix equation</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-eq-linear-matrix-eq">
+<span class="eqno">(7.40)<a class="headerlink" href="#equation-eq-bayesianlinearregression-eq-linear-matrix-eq" title="Link to this equation">#</a></span>\[
+   \data = \dmat \parsLR + \residuals.
+\]</div>
+<p>The last term <span class="math notranslate nohighlight">\(\residuals\)</span> is a column vector of so-called <strong>residuals</strong>. This term includes both the data uncertainty <span class="math notranslate nohighlight">\(\delta\data\)</span> and the model uncertainty <span class="math notranslate nohighlight">\(\delta M\)</span>, i.e., it expresses the part of the dependent variable, for which we have data, that we cannot describe using a linear model. Formally, we can therefore write <span class="math notranslate nohighlight">\(\residual_i = y_i - M_i\)</span> and define the vector <span class="math notranslate nohighlight">\(\residuals\)</span> as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-44656b7a-f953-460f-9251-580d6c676e9f">
+<span class="eqno">(7.41)<a class="headerlink" href="#equation-44656b7a-f953-460f-9251-580d6c676e9f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\residuals = [\residual_1,\residual_2, \residual_3,\dots, \residual_{N_d}]^T.
+\end{equation}\]</div>
+<p>It is important to realize that our model <span class="math notranslate nohighlight">\(M\)</span> provides an approximate description of the data. For now we will take <span class="math notranslate nohighlight">\(\delta M = 0\)</span>; that is, we assume that the entire residual is explained by data uncertainty.
+More generally we expect that <span class="math notranslate nohighlight">\(\delta M \neq 0\)</span> (this is often summarized as <em>all models are wrong</em>) because in a realistic setting we have no guarantee that the data is generated by a linear process. Of course, based on physics insight, or other assumptions, there might exist very good reasons for using a linear model to explain the data (taking into account <span class="math notranslate nohighlight">\(\delta\data\)</span>).</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Why does the Fourier series from the last section have to be truncated to a finite number of terms in practice?</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>Could I do linear algebra with <span class="math notranslate nohighlight">\(N = \infty\)</span>?</p>
+</div>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>Our manipulations will be with <em>finite</em> matrices, so the basis size must be finite in practice.</p>
+</div>
+</div>
+</section>
+<section id="the-normal-equation">
+<h3>The normal equation<a class="headerlink" href="#the-normal-equation" title="Link to this heading">#</a></h3>
+<p>A regression analysis often aims at finding the parameters <span class="math notranslate nohighlight">\(\parsLR\)</span> of a model <span class="math notranslate nohighlight">\(M\)</span> such that the vector of residuals <span class="math notranslate nohighlight">\(\residuals\)</span> is minimized in the sense of its Euclidean norm (or 2-norm). This is assumed in the familiar least-squares analysis. Below we will see that this particular goal arises naturally in Bayesian linear regression.</p>
+<p>Here we will lay the groundwork for an analytical solution to the linear regression problem by  finding the set of parameters <span class="math notranslate nohighlight">\(\parsLR^*\)</span> (we will typically use an asterisk to denote specific parameters that are “optimal” in some sense) that minimizes</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-cost-function">
+<span class="eqno">(7.42)<a class="headerlink" href="#equation-eq-bayesianlinearregression-cost-function" title="Link to this equation">#</a></span>\[
+C(\parsLR)\equiv \sum_{i=1}^{N_d} \residual_i^2 = \sum_{i=1}^{N_d}\left(y_i-M_i\right)^2 = \left\{\left(\data-\dmat \parsLR\right)^T\left(\data-\dmat \parsLR\right)\right\}.
+\]</div>
+<p>The solution to this optimization problem turns out to be a solution of the normal equation and is known as ordinary least-squares or ordinary linear regression. (Later an exercise will have you generalize this problem to the case where the last factor in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-cost-function">(7.42)</a> has a covariance matrix between the two terms.)</p>
+<div class="proof theorem admonition" id="theorem:BayesianLinearRegression:normal-equation_b">
+<p class="admonition-title"><span class="caption-number">Theorem 7.1 </span> (Ordinary least squares (the normal equation))</p>
+<section class="theorem-content" id="proof-content">
+<p>The ordinary least-squares method corresponds to finding the optimal parameter vector <span class="math notranslate nohighlight">\(\parsLR^*\)</span> that minimizes the Euclidean norm of the residual vector <span class="math notranslate nohighlight">\(\residuals = \data - \dmat \parsLR\)</span>, where <span class="math notranslate nohighlight">\(\data\)</span> is a column vector of observations and <span class="math notranslate nohighlight">\(\dmat\)</span> is the design matrix <a class="reference internal" href="#equation-eq-bayesianlinearregression-design-matrix-b">(7.35)</a>.</p>
+<p>Finding this optimum turns out to correspond to solving the <strong>normal equation</strong></p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-normalequation">
+<span class="eqno">(7.43)<a class="headerlink" href="#equation-eq-bayesianlinearregression-normalequation" title="Link to this equation">#</a></span>\[
+\dmat^T\data = \dmat^T\dmat\parsLR^*.  
+\]</div>
+<p>Given that the <strong>normal matrix</strong> <span class="math notranslate nohighlight">\(\dmat^T\dmat\)</span> is invertible, the solution to the normal equation is given by</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-ols-optimum-b">
+<span class="eqno">(7.44)<a class="headerlink" href="#equation-eq-bayesianlinearregression-ols-optimum-b" title="Link to this equation">#</a></span>\[
+\parsLR^* =\left(\dmat^T\dmat\right)^{-1}\dmat^T\data.
+\]</div>
+</section>
+</div><div class="proof admonition" id="proof">
+<p>Proof. Due to its quadratic form, the Euclidean norm <span class="math notranslate nohighlight">\(\left| \residuals \right|_2^2 = \left(\data-\dmat\parsLR\right)^T\left(\data-\dmat\parsLR\right) \equiv C(\parsLR)\)</span> is bounded from below and we just need to find the single extremum. That is we need to solve the problem</p>
+<div class="amsmath math notranslate nohighlight" id="equation-0ad3c33c-2070-438e-a5ae-b66ae34e532e">
+<span class="eqno">(7.45)<a class="headerlink" href="#equation-0ad3c33c-2070-438e-a5ae-b66ae34e532e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\parsLR^* =
+{\displaystyle \mathop{\mathrm{arg} \min}_{\parsLR\in
+{\mathbb{R}}^{N_p}}} \left(\data-\dmat\parsLR\right)^T\left(\data-\dmat\parsLR\right).
+\end{equation}\]</div>
+<p>In practical terms it means we will require</p>
+<div class="amsmath math notranslate nohighlight" id="equation-7ce844e9-76b3-4326-b2cf-d67554586615">
+<span class="eqno">(7.46)<a class="headerlink" href="#equation-7ce844e9-76b3-4326-b2cf-d67554586615" title="Permalink to this equation">#</a></span>\[\begin{align}
+\frac{\partial C(\parsLR)}{\partial \paraLR_j} = \frac{\partial }{\partial \paraLR_j} \Bigg[  \sum_{i=1}^{N_d}\Big(y_i &amp;-\paraLR_0 f_0(x_i)-\paraLR_1f_1(x_i)-\paraLR_2f_2(x_i)-\dots \\
+&amp;-  \paraLR_{N_p-1}f_{N_p-1}(x_i)\Big)^2\Bigg] = 0, 
+\end{align}\]</div>
+<p>where <span class="math notranslate nohighlight">\(y_i\)</span> and <span class="math notranslate nohighlight">\(f_j(x_i)\)</span> are the elements of <span class="math notranslate nohighlight">\(\data\)</span> and <span class="math notranslate nohighlight">\(\dmat\)</span>, respectively. Performing the derivative results in</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregressioin-gradient-elements">
+<span class="eqno">(7.47)<a class="headerlink" href="#equation-eq-bayesianlinearregressioin-gradient-elements" title="Link to this equation">#</a></span>\[\begin{split}
+\frac{\partial C(\parsLR)}{\partial \paraLR_j} = -2\Bigg[ \sum_{i=1}^{N_d}f_j(x_i)\Big(y_i &amp;-\paraLR_0 f_0(x_i)-\para_1f_1(x_i)-\paraLR_2f_2(x_i)-\dots \\
+&amp;-\paraLR_{N_p-1}f_{N_p-1}(x_i)\Big)\Bigg]=0,
+\end{split}\]</div>
+<p>which is one element of the full gradient vector. This gradient vector can be succinctly expressed in matrix-vector form as</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-gradient">
+<span class="eqno">(7.48)<a class="headerlink" href="#equation-eq-bayesianlinearregression-gradient" title="Link to this equation">#</a></span>\[
+\boldsymbol{\nabla}_{\pars} C(\parsLR) = -2 \dmat^T\left( \data-\dmat\parsLR\right).  
+\]</div>
+<p>The minimum of <span class="math notranslate nohighlight">\(C\)</span>, where <span class="math notranslate nohighlight">\(\boldsymbol{\nabla}_{\parsLR} C(\parsLR) = 0\)</span>, then corresponds to</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-minimumc">
+<span class="eqno">(7.49)<a class="headerlink" href="#equation-eq-bayesianlinearregression-minimumc" title="Link to this equation">#</a></span>\[
+\dmat^T\data = \dmat^T\dmat\parsLR^*,  
+\]</div>
+<p>which is the normal equation. Finally, if the matrix <span class="math notranslate nohighlight">\(\dmat^T\dmat\)</span> is invertible then we have the solution</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-normal-equation-solution">
+<span class="eqno">(7.50)<a class="headerlink" href="#equation-eq-bayesianlinearregression-normal-equation-solution" title="Link to this equation">#</a></span>\[
+\parsLR^* =\left(\dmat^T\dmat\right)^{-1}\dmat^T\data.
+\]</div>
+</div>
+<div class="admonition-the-pseudo-inverse-or-moore-penrose-inverse admonition">
+<p class="admonition-title">The pseudo-inverse (or Moore-Penrose inverse)</p>
+<p>We note that since our design matrix is defined as <span class="math notranslate nohighlight">\(\dmat\in
+{\mathbb{R}}^{N_d\times N_p}\)</span>, the combination <span class="math notranslate nohighlight">\(\dmat^T\dmat \in
+{\mathbb{R}}^{N_p\times N_p}\)</span> is a square matrix. The product <span class="math notranslate nohighlight">\(\left(\dmat^T\dmat\right)^{-1}\dmat^T\)</span> is called the pseudo-inverse of the design matrix <span class="math notranslate nohighlight">\(\dmat\)</span>. The pseudo-inverse is a generalization of the usual matrix inverse. The former can be defined also for non-square matrices that are not necessarily full rank. In the case of full-rank and square matrices the pseudo-inverse is equal to the usual inverse.</p>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Spot the error!</p>
+<p>Your classmate simplifies <span class="math notranslate nohighlight">\(\dmat^T\data = \dmat^T\dmat\parsLR^*\)</span> as <span class="math notranslate nohighlight">\(\data = \dmat\parsLR^*\)</span> and then solves for <span class="math notranslate nohighlight">\(\parsLR^*\)</span> as <span class="math notranslate nohighlight">\(\parsLR^* = \dmat^{-1}\data\)</span>. What is wrong?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p><span class="math notranslate nohighlight">\(\dmat\)</span> is not a square matrix (in general).</p>
+</div>
+</div>
+<p>The regression residuals <span class="math notranslate nohighlight">\(\residuals^{*} =  \data - \dmat \parsLR^{*}\)</span> can be used to obtain an estimator <span class="math notranslate nohighlight">\(s^2\)</span> of the variance of the residuals</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-estimatorvariance">
+<span class="eqno">(7.51)<a class="headerlink" href="#equation-eq-bayesianlinearregression-estimatorvariance" title="Link to this equation">#</a></span>\[
+s^2 = \frac{(\residuals^*)^T\residuals^*}{N_d-N_p},
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(N_p\)</span> is the number of parameters in the model and <span class="math notranslate nohighlight">\(N_d\)</span> is the number of data.</p>
+<p>In frequentist linear regression using the ordinary least-squares method we make a leap of faith and decide that we are seeking a “best” model with an optimal set of parameters <span class="math notranslate nohighlight">\(\parsLR^*\)</span> that minimizes the  Euclidean norm of the residual vector <span class="math notranslate nohighlight">\(\residuals\)</span>, as above.</p>
+</section>
+</section>
+<section id="workflow-for-bayesian-linear-regression">
+<h2>Workflow for Bayesian linear regression<a class="headerlink" href="#workflow-for-bayesian-linear-regression" title="Link to this heading">#</a></h2>
+<p>In following the idealized BDA3 three-step workflow for Bayesian inference <span id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id2" title="A. Gelman, J.B. Carlin, H.S. Stern, D.B. Dunson, A. Vehtari, and D.B. Rubin. Bayesian Data Analysis, Third Edition. Chapman &amp; Hall/CRC Texts in Statistical Science. Taylor &amp; Francis, 2013. URL: http://www.stat.columbia.edu/~gelman/book/BDA3.pdf.">GCS+13</a>]</span>, we need to</p>
+<ol class="arabic simple">
+<li><p>Identify the observable and unobservable quantities and then set up a full probability model, which is a joint probability distribution of these quantities. We need to consistently build in our knowledge of the underlying physics and of the data measurement process.</p></li>
+<li><p>Next we condition on the observed data, which entails calculating and interpreting the relevant posterior distribution. This is the conditional probability distribution of the unobserved quantities of interest, given the observed data.</p></li>
+<li><p>Finally, we do model checking: assess the fit of the model and the reasonableness of the conclusions, testing the sensitivity to model assumptions in step 1. From this assessment we modify the model appropriately and repeat the three steps.</p></li>
+</ol>
+<p>To carry out step 1.,
+we note that our goal is to relate data <span class="math notranslate nohighlight">\(\data\)</span> to the output of a linear model expressed in terms of its design matrix <span class="math notranslate nohighlight">\(\dmat\)</span> and its model parameters <span class="math notranslate nohighlight">\(\parsLR\)</span> by Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-eq-statmodel">(7.39)</a>.
+We consider the special case of one dependent response variable (<span class="math notranslate nohighlight">\(\output\)</span>) and a single independent variable (<span class="math notranslate nohighlight">\(\inputt\)</span>), for which the data set (<span class="math notranslate nohighlight">\(\data\)</span>) and the residual vector (<span class="math notranslate nohighlight">\(\residuals\)</span>) are both <span class="math notranslate nohighlight">\(N_d \times 1\)</span> column vectors with <span class="math notranslate nohighlight">\(N_d\)</span> the length of the data set. The design matrix (<span class="math notranslate nohighlight">\(\dmat\)</span>) has dimension <span class="math notranslate nohighlight">\(N_d \times N_p\)</span> and the parameter vector (<span class="math notranslate nohighlight">\(\parsLR\)</span>) is <span class="math notranslate nohighlight">\(N_p \times 1\)</span>.</p>
+<p>For the residuals, consider a statistical model that describes the mismatch between our model and observations as in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-eq-statmodel">(7.39)</a> (recall that we assume here that <span class="math notranslate nohighlight">\(\Delta M = 0\)</span>). Knowledge (and/or assumptions) concerning measurement uncertainties, or modeling errors, then allows to describe the residuals as a vector of random variables that are distributed according to a PDF</p>
+<div class="amsmath math notranslate nohighlight" id="equation-371408ba-a345-4ab1-8627-b6b4dfe73e8f">
+<span class="eqno">(7.52)<a class="headerlink" href="#equation-371408ba-a345-4ab1-8627-b6b4dfe73e8f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+  \residuals \sim \pdf{\residuals}{I},
+\end{equation}\]</div>
+<p>where we introduce the relation <span class="math notranslate nohighlight">\(\sim\)</span> to indicate how a (random) variable is <em>distributed</em>.
+A very common assumption is that errors are normally distributed with zero mean. As before we let <span class="math notranslate nohighlight">\(N_d\)</span> denote the number of data points in the (column) vector <span class="math notranslate nohighlight">\(\data\)</span>. Introducing the <span class="math notranslate nohighlight">\(N_d \times N_d\)</span> covariance matrix <span class="math notranslate nohighlight">\(\covres\)</span> for the errors we then have the explicit distribution</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-residualerrors">
+<span class="eqno">(7.53)<a class="headerlink" href="#equation-eq-bayesianlinearregression-residualerrors" title="Link to this equation">#</a></span>\[
+\pdf{\residuals}{\covres, I} = \mathcal{N}(\zeros,\covres).
+\]</div>
+<p>Recall that the notation for the multivariate normal distribution <span class="math notranslate nohighlight">\(\mathcal{N}\)</span> here is that the mean is <span class="math notranslate nohighlight">\(\zeros\)</span> and the covariance matrix is <span class="math notranslate nohighlight">\(\covres\)</span>.</p>
+<p>To carry out step 2. we adapt Bayes’ theorem to the current problem</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-eq-bayes">
+<span class="eqno">(7.54)<a class="headerlink" href="#equation-eq-bayesianlinearregression-eq-bayes" title="Link to this equation">#</a></span>\[
+\pdf{\pars}{\data,I} = \frac{\pdf{\data}{\pars,I}\pdf{\pars}{I}}{\pdf{\data}{I}}
+  \quad\longrightarrow\quad
+  \pdf{\parsLR}{\data, \covres, I} = \frac{\pdf{\data}{\parsLR,\covres,I}\pdf{\parsLR}{I}}{\pdf{\data}{I}} ,
+\]</div>
+<p>which is the conditioned probability of the quantities of interest, namely the model parameters, on the observed measurements with known covariance for the measurement errors.
+In most realistic data analyses we will then have to resort to numerical evaluation or sampling of the posterior. However, certain combinations of likelihoods and priors facilitate analytical derivation of the posterior. In this chapter we will explore one such situation and also demonstrate how we can recover the results from an ordinary least squares approach with certain assumptions. A slightly more general approach involves so called <strong>conjugate priors</strong>. This class of probability distributions have clever functional relationships with corresponding likelihood distributions that facilitate analytical derivation.</p>
+<p>To evaluate this posterior we must have expressions for both factors in the numerator on the right-hand side (following the Bayesian research workflow in <a class="reference internal" href="../BayesianWorkflow/BayesianWorkflow.html#sec-bayesianworkflow"><span class="std std-numref">Section 7.2</span></a>): the prior <span class="math notranslate nohighlight">\(\pdf{\parsLR}{I}\)</span> and the likelihood <span class="math notranslate nohighlight">\(\pdf{\data}{\parsLR,\covres,I}\)</span>. Note that the prior does not depend on the data or the error model. The denominator <span class="math notranslate nohighlight">\(\pdf{\data}{I}\)</span>, sometimes known as the evidence, becomes irrelevant for the task of parameter estimation since it does not depend on <span class="math notranslate nohighlight">\(\parsLR\)</span>. It is typically quite challenging, if not impossible, to evaluate the evidence for a multivariate inference problem except for some very special cases. In this chapter we will only be dealing with analytically tractable problems and will therefore (in principle) be able to evaluate also the evidence.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Why is it possible to perform parameter estimation without computing the evidence?</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>In Bayes theorem, the posterior is normalized. Verify this by integrating both sides over the parameters.
+For parameter estimation, do you need the posterior to be normalized (e.g., do you need more than the shape and location of the posterior density)?</p>
+</div>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Can you think of why it is so challenging to compute the evidence?</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>To evaluate the evidence, you need to introduce an integral over all possible values of
+<span class="math notranslate nohighlight">\(\pars\)</span>. Why might this integral harder to do than the likelihood or prior evaluation?</p>
+</div>
+</div>
+<!--
+The Bayesian research workflow in {numref}`sec:BayesianWorkflow` breaks the steps leading to {eq}`eq:BayesianLinearRegression:eq_bayes` 
+
+Having such a statistical model for the errors makes it possible to derive an expression for the data likelihood $\pdf{\data}{\parsLR,\covres,I}$ (see below). Using Bayes' theorem {eq}`eq:BayesTheorem:bayes-theorem-for-data` we can then "invert" this conditional probability distribution and write the parameter posterior
+-->
+<!--
+## Bayes' theorem for the normal linear model
+-->
+</section>
+<section id="the-prior">
+<h2>The prior<a class="headerlink" href="#the-prior" title="Link to this heading">#</a></h2>
+<p>First we assign a prior probability <span class="math notranslate nohighlight">\(\pdf{\parsLR}{I}\)</span> for the model parameters. In order to facilitate analytical expressions we will explore two options: (i) a very broad, uniform prior, and (ii) a Gaussian prior. For simplicity, we consider both these priors to have zero mean and with all model parameters being i.i.d.</p>
+<p>As discussed earlier (<em>I think?</em>), we rarely want to use a truly uniform prior, preferring a wide beta distribution instead.
+We will assume that the width is large enough that it will be effectively flat where our Bayesian linear regression likelihood is not negligible.
+Then for the analytic calculations here we can take the uniform prior for the <span class="math notranslate nohighlight">\(N_p\)</span> parameters to be</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-uniform-iid-prior">
+<span class="eqno">(7.55)<a class="headerlink" href="#equation-eq-bayesianlinearregression-uniform-iid-prior" title="Link to this equation">#</a></span>\[\begin{split}
+\pdf{\parsLR}{I} = \frac{1}{(\Delta\paraLR)^{N_p}} \left\{ 
+\begin{array}{ll}
+1 &amp; \text{if all } \paraLR_i \in [-\Delta\paraLR/2, +\Delta\paraLR/2] \\
+0 &amp; \text{else},
+\end{array}
+\right.
+\end{split}\]</div>
+<p>with <span class="math notranslate nohighlight">\(\Delta\paraLR\)</span> the width of the prior range in all parameter directions (this assumes we have standardized the data so that it has roughly the same extent in all directions).</p>
+<p>The Gaussian prior that we will also be exploring is</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-gaussian-iid-prior">
+<span class="eqno">(7.56)<a class="headerlink" href="#equation-eq-bayesianlinearregression-gaussian-iid-prior" title="Link to this equation">#</a></span>\[
+\pdf{\parsLR}{I} = \left(\frac{1}{2\pi\sigma_\paraLR^2}\right)^{N_p/2} \exp\left[ -\frac{1}{2}\frac{\parsLR^T\parsLR}{\sigma_\paraLR^2} \right],
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(\sigma_\paraLR\)</span> the standard deviation of the prior for all parameters.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Are these priors normalized?</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint-1</p>
+<p>Integrate both sides over <span class="math notranslate nohighlight">\(\parsLR\)</span> to check normalization, remembering that <span class="math notranslate nohighlight">\(\parsLR\)</span> is a vector, so this is a multidimensional integral.</p>
+</div>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint-2</p>
+<p>Both normalization integrals in this case can be <em>factorized</em> into the product of one-dimensional integrals. This is true here for the Gaussian prior because the covariance matrix is taken to be diagonal.</p>
+</div>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>Yes, they are normalized.</p>
+</div>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>In what limit are the uniform and Gaussian priors (as defined here) effectively equivalent?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>The limit where <span class="math notranslate nohighlight">\(\Delta\paraLR/2\)</span> and <span class="math notranslate nohighlight">\(\sigma_\paraLR\)</span> are both so large that the priors are effectively flat where the likelihood is not negligible.</p>
+</div>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>What is implied (i.e., what are you assuming) if you use a truly uniform prior for model parameters?</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>Is it possible that the parameters could be arbitrarily large?</p>
+</div>
+</div>
+</section>
+<section id="the-likelihood">
+<h2>The likelihood<a class="headerlink" href="#the-likelihood" title="Link to this heading">#</a></h2>
+<p>Assuming normally distributed residuals, as we have done, it turns out to be straightforward to express the data likelihood. In the following we will make the further assumption that errors are <em>independent</em>. This implies that the covariance matrix <span class="math notranslate nohighlight">\(\covres\)</span> is diagonal and given by a vector <span class="math notranslate nohighlight">\(\sigmas\)</span>,</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-independent-errors">
+<span class="eqno">(7.57)<a class="headerlink" href="#equation-eq-bayesianlinearregression-independent-errors" title="Link to this equation">#</a></span>\[\begin{split}
+\covres &amp;= \mathrm{diag}(\sigmas^2), \, \text{where} \\ 
+\sigmas^2 &amp;= \left( \sigma_0^2, \sigma_1^2, \ldots, \sigma_{N_d-1}^2\right),
+\end{split}\]</div>
+<p>and <span class="math notranslate nohighlight">\(\sigmai^2\)</span> is the variance for residual <span class="math notranslate nohighlight">\(\residual_i\)</span>.</p>
+<p>Let’s first consider a single datum <span class="math notranslate nohighlight">\(\data_i\)</span> and the corresponding model prediction <span class="math notranslate nohighlight">\(M_i = \left( \dmat \parsLR \right)_i\)</span>. We are interested in the likelihood for this single data point</p>
+<div class="amsmath math notranslate nohighlight" id="equation-2c289879-d9bb-4350-9a00-1e4dd511a3e4">
+<span class="eqno">(7.58)<a class="headerlink" href="#equation-2c289879-d9bb-4350-9a00-1e4dd511a3e4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\pdf{\data_i}{\parsLR,\sigmai^2,I}.
+\end{equation}\]</div>
+<p>Since the relation between data and residual is a simple additive transformation <span class="math notranslate nohighlight">\(\data_i = \modeloutput_i + \residual_i\)</span>,
+we can use the standard probability rules to obtain (alternatively we can apply the recipe for changing variables <em>(add reference)</em>)</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-likelihood-eq-1">
+<span class="eqno">(7.59)<a class="headerlink" href="#equation-eq-bayesianlinearregression-likelihood-eq-1" title="Link to this equation">#</a></span>\[\begin{split}
+\begin{align}
+\pdf{\data_i}{\parsLR,\sigmai^2,I} &amp;= \int d\residual_i\, \pdf{\data_i, \residual_i}{\parsLR,\sigmai^2,I} \\
+  &amp;= \int d\residual_i\, \pdf{\data_i}{\residual_i, \parsLR, I}\, \pdf{\residual_i}{\sigmai^2} \\
+  &amp;= \int d\residual_i\, \delta\bigl(\data_i - (\modeloutput_i + \residual_i)\bigr)
+     \frac{1}{\sqrt{2\pi}\sigmai} e^{-\residual_i^2/2\sigmai^2} \\
+&amp;= \frac{1}{\sqrt{2\pi}\sigmai} \exp \left[ -\frac{(\data_i - \modeloutput_i)^2}{2\sigmai^2} \right]
+\end{align}
+\end{split}\]</div>
+<p>where we used that <span class="math notranslate nohighlight">\(\residual_i \sim \mathcal{N}(0,\sigmai^2)\)</span>. Note that the parameter dependence sits in <span class="math notranslate nohighlight">\(\modeloutput_i \equiv \modeloutput(\parsLR, \inputs_i)\)</span>.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Fill in the details for the steps in <a class="reference internal" href="#equation-eq-bayesianlinearregression-likelihood-eq-1">(7.59)</a>.</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>Review the probability rules in <a class="reference internal" href="../BayesianBasics/Inferenceandpdfs.html#sec-manipulatingpdfs"><span class="std std-numref">Section 4.2</span></a>. The first step integrates in <span class="math notranslate nohighlight">\(\residual_i\)</span>.</p>
+</div>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<ol class="arabic simple">
+<li><p>Apply the sum rule to integrate in <span class="math notranslate nohighlight">\(\residual_i\)</span>.</p></li>
+<li><p>Apply the product rule, taking into account that <span class="math notranslate nohighlight">\(\residual_i\)</span> depends only on <span class="math notranslate nohighlight">\(\sigmai\)</span>.</p></li>
+<li><p>Use <span class="math notranslate nohighlight">\(\data_i = \modeloutput_i + \residual_i\)</span> to evaluate the first pdf; it is a <span class="math notranslate nohighlight">\(\delta\)</span> function because <span class="math notranslate nohighlight">\(\data_i\)</span> is exactly specified given <span class="math notranslate nohighlight">\(\modeloutput_i \equiv \modeloutput(\parsLR, \inputs_i)\)</span> and <span class="math notranslate nohighlight">\(\epsilon_i\)</span>.</p></li>
+<li><p>Evaluate the integral using the <span class="math notranslate nohighlight">\(\delta\)</span> function and <span class="math notranslate nohighlight">\(\delta\bigl(\data_i - (\modeloutput_i + \residual_i)\bigr) = \delta\bigl(\epsilon_i - (\data_i - \modeloutput_i)\bigr)\)</span>.</p></li>
+</ol>
+</div>
+</div>
+<p>Furthermore, since we assume that the residuals are independent we find that the total likelihood becomes a product of the individual ones for each element of <span class="math notranslate nohighlight">\(\data\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-normal-likelihood">
+<span class="eqno">(7.60)<a class="headerlink" href="#equation-eq-bayesianlinearregression-normal-likelihood" title="Link to this equation">#</a></span>\[\begin{split}
+\pdf{\data}{\parsLR,\sigmas^2,I} &amp;= \prod_{i=0}^{N_d-1} \pdf{\data_i}{\parsLR,\sigmai^2,I} \\
+&amp;= \left(\frac{1}{2\pi}\right)^{N_d/2} \frac{1}{\left| \covres \right|^{1/2}} \exp\left[ -\frac{1}{2} (\data - \dmat \parsLR)^T \covres^{-1} (\data - \dmat \parsLR) \right],
+\end{split}\]</div>
+<p>where we note that the diagonal form of <span class="math notranslate nohighlight">\(\covres\)</span> implies that <span class="math notranslate nohighlight">\(\left| \covres \right|^{1/2} = \prod_{i=0}^{N_d-1} \sigmai\)</span> and that the exponent becomes a sum of squared and weighted residual terms</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-lr-likelihood-exponent">
+<span class="eqno">(7.61)<a class="headerlink" href="#equation-eq-bayesianlinearregression-lr-likelihood-exponent" title="Link to this equation">#</a></span>\[
+-\frac{1}{2} (\data - \dmat \parsLR)^T \covres^{-1} (\data - \dmat \parsLR) = -\frac{1}{2} \sum_{i=0}^{N_d - 1} \frac{(\data_i - (\dmat \parsLR)_i)^2}{\sigma_i^2}.
+\]</div>
+<p>In the special case that all residuals are both <em>independent and identically distributed</em> (i.i.d.) we have that all variances are the same, <span class="math notranslate nohighlight">\(\sigmai^2 = \sigmares^2\)</span>, and the full covariance matrix is completely specified by a single parameter <span class="math notranslate nohighlight">\(\sigmares^2\)</span>. For this special case, the likelihood becomes</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-normal-iid-likelihood">
+<span class="eqno">(7.62)<a class="headerlink" href="#equation-eq-bayesianlinearregression-normal-iid-likelihood" title="Link to this equation">#</a></span>\[
+\pdf{\data}{\parsLR,\sigmares^2,I} = \left(\frac{1}{2\pi\sigmares^2}\right)^{N_d/2} \exp\left[ -\frac{1}{2\sigmares^2} \sum_{i=0}^{N_d - 1} (\data_i - (\dmat \parsLR)_i)^2 \right].
+\]</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>For computational performance it is always better (if possible) to write sums, such as the one in the exponent of <a class="reference internal" href="#equation-eq-bayesianlinearregression-normal-iid-likelihood">(7.62)</a>, in the form of vector-matrix operations rather than as for-loops. This particular sum should therefore be implemented as <span class="math notranslate nohighlight">\((\data - \dmat \parsLR)^T (\data - \dmat \parsLR)\)</span> to employ powerful optimization for vectorized operations in existing numerical libraries (such as <a class="reference external" href="https://numpy.org/"><code class="docutils literal notranslate"><span class="pre">numpy</span></code></a> in <code class="docutils literal notranslate"><span class="pre">python</span></code> and <a class="reference external" href="https://www.gnu.org/software/gsl/"><code class="docutils literal notranslate"><span class="pre">gsl</span></code></a>, <a class="reference external" href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html"><code class="docutils literal notranslate"><span class="pre">mkl</span></code></a> for C and other compiled programming languages).</p>
+</div>
+<div class="admonition-two-views-on-the-likelihood admonition">
+<p class="admonition-title">Two views on the likelihood</p>
+<p>Since observed data is generated stochastically, through an underlying <span class="math notranslate nohighlight">\(\text{``data-generating process''}\)</span>, it is appropriately described by a probabibility distribution. This is the <span class="math notranslate nohighlight">\(\text{``data likelihood''}\)</span> that describes the probability distribution for observed data given a specific data-generating process (as indicated by the information on the right-hand side of the conditional).</p>
+<ul class="simple">
+<li><p>View 1: Assuming fixed values of <span class="math notranslate nohighlight">\(\parsLR\)</span>; what are long-term frequencies of future data observations as described by the likelihood?</p></li>
+<li><p>View 2: Focusing on the data <span class="math notranslate nohighlight">\(\data_\mathrm{obs}\)</span> that we have; how does the likelihood for this data set depend on the values of the model parameters?</p></li>
+</ul>
+<p>This second view is the one that we will be adopting when allowing model parameters to be associated with probability distributions. The likelihood still describes the probability for observing a set of data, but we emphasize its parameter dependence by writing</p>
+<div class="amsmath math notranslate nohighlight" id="equation-ec5c916f-a8ad-4ae3-a28c-fce4df97c886">
+<span class="eqno">(7.63)<a class="headerlink" href="#equation-ec5c916f-a8ad-4ae3-a28c-fce4df97c886" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\pdf{\data}{\parsLR,\sigma^2,I} = \mathcal{L}(\parsLR).
+\end{equation}\]</div>
+<p>This function is <strong>not</strong> a probability distribution for model parameters. The parameter posterior, left-hand side of Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-eq-bayes">(7.54)</a>, regains status as a probability density for <span class="math notranslate nohighlight">\(\parsLR\)</span> since the likelihood is multiplied with the prior <span class="math notranslate nohighlight">\(\pdf{\parsLR}{I}\)</span> and normalized by the evidence <span class="math notranslate nohighlight">\(\pdf{\data}{I}\)</span>.</p>
+</div>
+</section>
+<section id="the-posterior">
+<h2>The posterior<a class="headerlink" href="#the-posterior" title="Link to this heading">#</a></h2>
+<p>Given the likelihood with i.i.d. errors <a class="reference internal" href="#equation-eq-bayesianlinearregression-normal-iid-likelihood">(7.62)</a> and the two alternative priors, <a class="reference internal" href="#equation-eq-bayesianlinearregression-uniform-iid-prior">(7.55)</a> and <a class="reference internal" href="#equation-eq-bayesianlinearregression-gaussian-iid-prior">(7.56)</a>, we will derive the corresponding two different expressions for the posterior (up to multiplicative normalization constants).</p>
+<section id="rewriting-the-likelihood">
+<h3>Rewriting the likelihood<a class="headerlink" href="#rewriting-the-likelihood" title="Link to this heading">#</a></h3>
+<p>First, let us rewrite the likelihood in a way that is made possible by the fact that we are considering a linear model. In particular, this implies quadratic dependence on model parameters in the exponent, which means one can show (by performing a Taylor expansion of the log likelihood around the mode) that the likelihood becomes proportional to the functional form of a multivariate normal distribution for the model parameters:</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-likelihood-pars-b">
+<span class="eqno">(7.64)<a class="headerlink" href="#equation-eq-bayesianlinearregression-likelihood-pars-b" title="Link to this equation">#</a></span>\[
+\pdf{\data}{\parsLR,\sigmares^2,I} = \pdf{\data}{\optparsLR,\sigmares^2,I} \exp\left[ -\frac{1}{2} (\parsLR-\optparsLR)^T \covparsLR^{-1} (\parsLR-\optparsLR) \right].
+\]</div>
+<p>Note that this expression still describes a probability distribution for the data. The data dependence sits in the amplitude of the mode, <span class="math notranslate nohighlight">\(\pdf{\data}{\optparsLR,\sigmares^2,I}\)</span>, and its position, <span class="math notranslate nohighlight">\(\optparsLR = \optparsLR(\data) = \left(\dmat^T\dmat\right)^{-1}\dmat^T\data\)</span>. The latter is the solution <a class="reference internal" href="#equation-eq-bayesianlinearregression-ols-optimum-b">(7.44)</a> of the normal equation when the covariance matrix is proportional to the identity: <span class="math notranslate nohighlight">\(\covres = \mathrm{diag}(\sigmares^2)\)</span>. Furthermore, the statistical model for the errors in this case enter in the covariance matrix,</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-likelihood-hessian-b">
+<span class="eqno">(7.65)<a class="headerlink" href="#equation-eq-bayesianlinearregression-likelihood-hessian-b" title="Link to this equation">#</a></span>\[
+\covparsLR^{-1} = \frac{\dmat^T\dmat}{\sigmares^2},
+\]</div>
+<p>which can be understood as the curvature (Hessian) of the negative log-likelihood.</p>
+<div class="exercise admonition" id="exercise:BayesianLinearRegression:likelihood_pars_b">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.8 </span> (Prove the Gaussian likelihood)</p>
+<section id="exercise-content">
+<p>Prove Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-likelihood-pars-b">(7.64)</a>.</p>
+<div class="toggle my-exercise-hint admonition">
+<p class="admonition-title">Hints</p>
+<ol class="arabic simple">
+<li><p>Identify <span class="math notranslate nohighlight">\(\optparsLR\)</span> as the position of the mode of the likelihood by inspecting the negative log-likelihood <span class="math notranslate nohighlight">\(L(\parsLR)\)</span> and comparing with the derivation of the normal equation.</p></li>
+<li><p>Taylor expand <span class="math notranslate nohighlight">\(L(\parsLR)\)</span> around <span class="math notranslate nohighlight">\(\optparsLR\)</span>. For this you need to argue (or show) that the gradient vector <span class="math notranslate nohighlight">\(\nabla_{\parsLR} L(\parsLR) = 0\)</span> at <span class="math notranslate nohighlight">\(\pars=\optparsLR\)</span>, and show that the Hessian <span class="math notranslate nohighlight">\(\boldsymbol{H}\)</span> (with elements <span class="math notranslate nohighlight">\(H_{ij} = \frac{\partial^2 L}{\partial\paraLR_i\partial\paraLR_j}\)</span>) is a constant matrix <span class="math notranslate nohighlight">\(\boldsymbol{H} = \frac{\dmat^T\dmat}{\sigmares^2}\)</span>.</p></li>
+<li><p>Compare with the Taylor expansion of a normal distribution <span class="math notranslate nohighlight">\(\mathcal{N}\left( \parsLR \vert \optparsLR, \covparsLR \right)\)</span>.</p></li>
+</ol>
+</div>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:BayesianLinearRegression:GeneralizedNormalEquation">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.9 </span> (Generalized normal equation)</p>
+<section id="exercise-content">
+<p>Prove for the case of the general exponent in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-normal-likelihood">(7.60)</a> that the position of the mode <span class="math notranslate nohighlight">\(\optparsLR\)</span> is given by</p>
+<div class="math notranslate nohighlight">
+\[
+   \optparsLR(\data) = \bigl[\dmat^T \covres^{-1} \dmat\bigr]^{-1} \bigl[\dmat^T \covres^{-1} \data\bigr] 
+\]</div>
+</section>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Why can’t I say
+<span class="math notranslate nohighlight">\( \bigl[\dmat^T \covres^{-1} \dmat\bigr]^{-1} \bigl[\dmat^T \covres^{-1} \data\bigr]
+   = \dmat^{-1} \covres (\dmat^T)^{-1} \dmat^T \covres^{-1} \data = \dmat^{-1}\data\)</span>?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>Because these are not square, invertible matrices, so those operations don’t hold.</p>
+</div>
+</div>
+</section>
+<section id="posterior-with-a-uniform-prior">
+<h3>Posterior with a uniform prior<a class="headerlink" href="#posterior-with-a-uniform-prior" title="Link to this heading">#</a></h3>
+<p>Let us first consider a uniform prior as expressed in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-uniform-iid-prior">(7.55)</a>. The prior can be considered very broad if its boundaries <span class="math notranslate nohighlight">\(\pm \Delta\para/2\)</span> are very far from the mode of the likelihood <a class="reference internal" href="#equation-eq-bayesianlinearregression-likelihood-pars-b">(7.64)</a>. “Distance” in this context is measured in terms of standard deviations. A “far distance”, therefore, implies that <span class="math notranslate nohighlight">\(\pdf{\data}{\parsLR,\sigmares^2,I}\)</span> is very close to zero. This implies that the posterior</p>
+<div class="amsmath math notranslate nohighlight" id="equation-be626f2a-a7cf-479a-b5b3-612746ef9f9f">
+<span class="eqno">(7.66)<a class="headerlink" href="#equation-be626f2a-a7cf-479a-b5b3-612746ef9f9f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\pdf{\parsLR}{\data,\sigmares^2,I} \propto \pdf{\data}{\parsLR,\sigmares^2,I} \pdf{\parsLR}{I},
+\end{equation}\]</div>
+<p>simply becomes proportional to the data likelihood (with the prior just truncating the distribution at very large distances). Thus we find from Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-likelihood-pars-b">(7.64)</a></p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-posterior-with-iid-uniform-prior">
+<span class="eqno">(7.67)<a class="headerlink" href="#equation-eq-bayesianlinearregression-posterior-with-iid-uniform-prior" title="Link to this equation">#</a></span>\[
+\pdf{\parsLR}{\data,\sigmares^2,I} \propto \exp\left[ -\frac{1}{2} (\parsLR-\optparsLR)^T \covparsLR^{-1} (\parsLR-\optparsLR) \right],
+\]</div>
+<p>if all <span class="math notranslate nohighlight">\(\paraLR_i \in [-\Delta\paraLR/2, +\Delta\paraLR/2]\)</span> while it is zero elsewhere. The mode of this distribution is obviously the mean vector <span class="math notranslate nohighlight">\(\optparsLR = \optparsLR(\data)\)</span>. We can therefore say that we have recovered the ordinary least-squares result. At this stage, however, the interpretation is that this parameter optimum corresponds to the maximum of the posterior PDF <a class="reference internal" href="#equation-eq-bayesianlinearregression-posterior-with-iid-uniform-prior">(7.67)</a>. Such an optimum is sometimes known as the maximum a posteriori, or MAP.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Why is it obvious that the mode of <span class="math notranslate nohighlight">\(\pdf{\parsLR}{\data,\sigmares^2,I}\)</span> is the mean vector <span class="math notranslate nohighlight">\(\optparsLR\)</span>?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>The argument of the exponent is negative semi-definite, so the mode (maximum value) of the distribution is when the exponent is equal to zero, which is when <span class="math notranslate nohighlight">\(\parsLR = \optparsLR\)</span>.</p>
+</div>
+</div>
+<div class="admonition-discuss admonition">
+<p class="admonition-title">Discuss</p>
+<p>In light of the results of this section, what assumption(s) are implicit in linear regression while they are made explicit in Bayesian linear regression?</p>
+</div>
+</section>
+<section id="posterior-with-a-gaussian-prior">
+<h3>Posterior with a Gaussian prior<a class="headerlink" href="#posterior-with-a-gaussian-prior" title="Link to this heading">#</a></h3>
+<p>Assigning instead a Gaussian prior for the model parameters, as expressed in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-gaussian-iid-prior">(7.56)</a>, we find that the posterior is proportional to the product of two exponential functions</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-posterior-with-iid-gaussian-prior">
+<span class="eqno">(7.68)<a class="headerlink" href="#equation-eq-bayesianlinearregression-posterior-with-iid-gaussian-prior" title="Link to this equation">#</a></span>\[\begin{split}
+\pdf{\parsLR}{\data,\sigmares^2,I} &amp;\propto \exp\left[ -\frac{1}{2} (\parsLR-\optparsLR)^T \covparsLR^{-1} (\parsLR-\optparsLR) \right] \exp\left[ -\frac{1}{2}\frac{\parsLR^T\parsLR}{\sigma_{\paraLR}^2} \right] \\
+&amp;\propto \exp\left[ -\frac{1}{2} (\parsLR-\tilde{\parsLR})^T \tildecovparsLR^{-1} (\parsLR-\tilde{\parsLR}) \right].
+\end{split}\]</div>
+<p>The second proportionality is a consequence of both exponents being quadratic in the model parameters, and therefore that the full expression looks like the product of two Gaussians. This product is proportional to another Gaussian distribution which has mean vector and (inverse) covariance matrix given by</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-posterior-pars-with-iid-gaussian-prior">
+<span class="eqno">(7.69)<a class="headerlink" href="#equation-eq-bayesianlinearregression-posterior-pars-with-iid-gaussian-prior" title="Link to this equation">#</a></span>\[\begin{split}
+\tilde{\parsLR} &amp;= \tildecovparsLR \covparsLR^{-1} \optparsLR \\
+\tildecovparsLR^{-1} &amp;= \covparsLR^{-1} + \sigma_{\paraLR}^{-2} \boldsymbol{1} 
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\boldsymbol{1}\)</span> is the <span class="math notranslate nohighlight">\(N_p \times N_p\)</span> unit matrix. In effect, what has happend is that the prior normal distribution becomes updated to a posterior normal distribution via an inference process that involves a data likelihood. In this particular case, learning from data implies that the mode changes from <span class="math notranslate nohighlight">\(\parsLR\)</span> to <span class="math notranslate nohighlight">\(\tilde{\parsLR}\)</span> and the covariance from a diagonal structure with <span class="math notranslate nohighlight">\(\sigma_{\paraLR}^2\)</span> in all directions to the covariance matrix <span class="math notranslate nohighlight">\(\tildecovparsLR\)</span>.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>What happens if the data is of high quality (i.e., the likelihood <span class="math notranslate nohighlight">\(\mathcal{L}(\parsLR)\)</span> is sharply peaked around <span class="math notranslate nohighlight">\(\optparsLR\)</span>), and what happens if it is of poor quality (providing a very broad likelihood distribution)?</p>
+</div>
+</section>
+<section id="marginal-posterior-distributions">
+<h3>Marginal posterior distributions<a class="headerlink" href="#marginal-posterior-distributions" title="Link to this heading">#</a></h3>
+<p>Given a multivariate probability distribution we are often interested in lower dimensional marginal distributions. Consider for example <span class="math notranslate nohighlight">\(\parsLR^T = [\parsLR_1^T, \parsLR_2^T\)</span>], that is partitioned into dimensions <span class="math notranslate nohighlight">\(D_1\)</span> and <span class="math notranslate nohighlight">\(D_2\)</span>. The marginal distribution for <span class="math notranslate nohighlight">\(\parsLR_2\)</span> corresponds to the integral</p>
+<div class="math notranslate nohighlight">
+\[
+\p{\parsLR_2} = \int d\parsLR_1 \p{\parsLR}.
+\]</div>
+<div class="admonition-transformation-property-of-multivariate-normal-distributions admonition">
+<p class="admonition-title">Transformation property of multivariate normal distributions</p>
+<p>Let <span class="math notranslate nohighlight">\(\mathbf{Y}\)</span> be a multivariate normal-distributed random variable of length <span class="math notranslate nohighlight">\(N_p\)</span> with mean vector <span class="math notranslate nohighlight">\(\boldsymbol{\mu}\)</span> and covariance matrix <span class="math notranslate nohighlight">\(\boldsymbol{\Sigma}\)</span>. We use the notation <span class="math notranslate nohighlight">\(\psub{\mathbf{Y}}{\mathbf{y}} = \mathcal{N} (\mathbf{y} | \mathbf{\mu}, \mathbf{\Sigma})\)</span> to emphasize which variable is normally distributed.</p>
+<p>Consider now a general <span class="math notranslate nohighlight">\(N_p \times N_p\)</span> matrix <span class="math notranslate nohighlight">\(\boldsymbol{A}\)</span> and <span class="math notranslate nohighlight">\(N_p \times 1\)</span> vector <span class="math notranslate nohighlight">\(\boldsymbol{b}\)</span>. Then, the random variable <span class="math notranslate nohighlight">\(\mathbf{Z} = \boldsymbol{A} \mathbf{Y} + \boldsymbol{b}\)</span> is also multivariate normal-distributed with the PDF</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-transformed-normal">
+<span class="eqno">(7.70)<a class="headerlink" href="#equation-eq-bayesianlinearregression-transformed-normal" title="Link to this equation">#</a></span>\[
+\psub{\mathbf{Z}}{\mathbf{z}} = \mathcal{N} (\mathbf{z} \vert \mathbf{A}\boldsymbol{\mu} + \boldsymbol{b},\boldsymbol{A}\boldsymbol{\Sigma}\boldsymbol{A}^T).
+\]</div>
+</div>
+<p>For multivariate normal distributions we can employ a useful transformation property, shown in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-transformed-normal">(7.70)</a>. Considering the posterior <a class="reference internal" href="#equation-eq-bayesianlinearregression-posterior-with-iid-gaussian-prior">(7.68)</a> we partition the parameters <span class="math notranslate nohighlight">\(\parsLR^T = [\parsLR_1^T, \parsLR_2^T\)</span>] and the mean vector and covariance matrix into <span class="math notranslate nohighlight">\(\boldsymbol{\mu}^T = [\boldsymbol{\mu}_1^T,\boldsymbol{\mu}_2^T]\)</span> and</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\boldsymbol{\Sigma} = \left[
+    \begin{array}{cc}
+        \boldsymbol{\Sigma}_{11} &amp; \boldsymbol{\Sigma}_{12} \\	
+        \boldsymbol{\Sigma}_{12}^T &amp; \boldsymbol{\Sigma}_{22}
+    \end{array}
+\right].
+\end{split}\]</div>
+<p>We can obtain the marginal distribution for <span class="math notranslate nohighlight">\(\parsLR_2\)</span> by setting</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{A} = \left[
+    \begin{array}{cc}
+        0 &amp; 0 \\
+        0 &amp; \mathbf{1}_{D_2\times D_2}
+    \end{array}
+\right], \,\, \mathbf{b} = 0,
+\end{split}\]</div>
+<p>which yields</p>
+<div class="math notranslate nohighlight" id="equation-eq-marginal-n">
+<span class="eqno">(7.71)<a class="headerlink" href="#equation-eq-marginal-n" title="Link to this equation">#</a></span>\[
+\pdf{\parsLR_2}{\data, I} = 
+\mathcal{N}(\parsLR_2|\boldsymbol{\mu}_2,\boldsymbol{\Sigma}_{22}).
+\]</div>
+</section>
+</section>
+<section id="the-posterior-predictive">
+<span id="sec-ppd"></span><h2>The posterior predictive<a class="headerlink" href="#the-posterior-predictive" title="Link to this heading">#</a></h2>
+<p>One can also derive the posterior predictive distribution (PPD), i.e., the probability distribution for predictions <span class="math notranslate nohighlight">\(\widetilde{\boldsymbol{\mathcal{F}}}\)</span> given the model <span class="math notranslate nohighlight">\(M\)</span> and a set of new inputs for the independent variable <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span>. The new inputs give rise to a new design matrix <span class="math notranslate nohighlight">\(\widetilde{\dmat}\)</span>.</p>
+<p>We obtain the posterior predictive distribution by marginalizing over the uncertain model parameters that we just inferred from the given data <span class="math notranslate nohighlight">\(\data\)</span>.</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-ppd-pdf">
+<span class="eqno">(7.72)<a class="headerlink" href="#equation-eq-bayesianlinearregression-ppd-pdf" title="Link to this equation">#</a></span>\[
+\pdf{\widetilde{\boldsymbol{\mathcal{F}}}}{\data}
+\propto \int \pdf{\widetilde{\boldsymbol{\mathcal{F}}}}{\parsLR,\sigmares^2,I}  \pdf{\parsLR}{\data,\sigmares^2,I}\, d\parsLR,
+\]</div>
+<p>where both distributions in the integrand can be expressed as Gaussians. Alternatively, one can express the PPD as the set of model predictions with the model parameters distributed according to the posterior parameter PDF</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-ppd-pdf-set">
+<span class="eqno">(7.73)<a class="headerlink" href="#equation-eq-bayesianlinearregression-ppd-pdf-set" title="Link to this equation">#</a></span>\[
+\left\{ \widetilde{\dmat} \parsLR \, : \, \parsLR \sim \pdf{\parsLR}{\data,\sigmares^2,I} \right\}.
+\]</div>
+<p>This set of predictions can be obtained if we have access to a set of samples from the parameter posterior.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Fill in the details to obtain the right side of <a class="reference internal" href="#equation-eq-bayesianlinearregression-ppd-pdf">(7.72)</a>.</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>Introduce the integration over <span class="math notranslate nohighlight">\(\parsLR\)</span> using the sum rule and then obtain the right side from the product rule.</p>
+</div>
+</div>
+</section>
+<section id="bayesian-linear-regression-warmup">
+<span id="sec-warmup"></span><h2>Bayesian linear regression: warmup<a class="headerlink" href="#bayesian-linear-regression-warmup" title="Link to this heading">#</a></h2>
+<section id="prelude-ordinary-linear-regression">
+<span id="sec-ols-warmup-b"></span><h3>Prelude: ordinary linear regression<a class="headerlink" href="#prelude-ordinary-linear-regression" title="Link to this heading">#</a></h3>
+<p>To warm up, and get acquainted with the notation and formalism, let us work out a small example. Assume that we have the situation where we have collected two datapoints <span class="math notranslate nohighlight">\(\data = [y_1,y_2]^T = [-3,3]^T\)</span> for the predictor values <span class="math notranslate nohighlight">\([x_1,x_2]^T = [-2,1]^T\)</span>.</p>
+<p>This data could have come from any process, even a non-linear one. But this is artificial data that I generated by evaluating the function <span class="math notranslate nohighlight">\(y = 1 + 2x\)</span> at <span class="math notranslate nohighlight">\(x=x_1=-2\)</span> and <span class="math notranslate nohighlight">\(x=x_2=1\)</span>. Clearly, the data-generating mechanism is very simple and corresponds to a linear model <span class="math notranslate nohighlight">\(y = \paraLR_0 + \paraLR_1 x\)</span> with <span class="math notranslate nohighlight">\([\paraLR_0,\paraLR_1] = [1,2]\)</span>. This is the kind of information we <em>never</em> have in reality. Indeed, we are always uncertain about the process that maps input to output, and as such our model <span class="math notranslate nohighlight">\(M\)</span> will always be wrong. We are also uncertain about the parameters <span class="math notranslate nohighlight">\(\parsLR\)</span> of our model. These are the some of the fundamental reasons for why it can be useful to operate with a Bayesian approach where we can assign probabilities to any quantity and statement. In this example, however, we will continue with the standard (frequentist) approach based on finding the parameters that minimize the squared errors (i.e., the norm of the residual vector).</p>
+<p>We will now assume a linear model with polynomial basis up to order one to model the data, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[
+M(\parsLR;\inputt) = \paraLR_0 + \paraLR_1 \inputt,
+\]</div>
+<p>which we can express in terms of a design matrix <span class="math notranslate nohighlight">\(\dmat\)</span> and (unknown) parameter vector <span class="math notranslate nohighlight">\(\parsLR\)</span> as <span class="math notranslate nohighlight">\(M = \dmat \parsLR\)</span>.</p>
+<p>In the present case the two unknowns <span class="math notranslate nohighlight">\(\parsLR = [\paraLR_0,\paraLR_1]^T\)</span> can be fit to the two datapoints <span class="math notranslate nohighlight">\(\data = [-3,3]^T\)</span> using pen a paper.</p>
+<div class="exercise admonition" id="exercise:ols_example_1_b">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.10 </span></p>
+<section id="exercise-content">
+<p>In the example above you have two data points and two unknowns, which means you can easily solve for the model parameters using a conventional matrix inverse.
+Do the numerical calculation to make sure you have set up the problem correctly.</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:ols_example_2_b">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.11 </span></p>
+<section id="exercise-content">
+<p>Evaluate the normal equations for the design matrix <span class="math notranslate nohighlight">\(\dmat\)</span> and data vector <span class="math notranslate nohighlight">\(\data\)</span> in the example above.</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:ols_example_3_b">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.12 </span></p>
+<section id="exercise-content">
+<p>Evaluate the sample variance <span class="math notranslate nohighlight">\(s^2\)</span> for the example above using Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-estimatorvariance">(7.51)</a>. Do you think the result makes sense?</p>
+</section>
+</div>
+</section>
+<section id="continuing">
+<h3>Continuing …<a class="headerlink" href="#continuing" title="Link to this heading">#</a></h3>
+<p>For the time being we assume to know enough about the data to consider a normal likelihood with i.i.d. errors. Let us first set the known residual variance to <span class="math notranslate nohighlight">\(\sigmares^2 = 0.5^2\)</span>.</p>
+<p>This time we also have prior knowledge that we would like to build into the inference. Here we use a normal prior for the parameters with <span class="math notranslate nohighlight">\(\sigma_\paraLR = 5.0\)</span>, which is to say that before looking at the data we believe the pdf for <span class="math notranslate nohighlight">\(\parsLR\)</span> to be centered on zero with a variance of <span class="math notranslate nohighlight">\(5^2\)</span>.</p>
+<p>Let us plot this prior. The prior is the same for <span class="math notranslate nohighlight">\(\paraLR_0\)</span> and <span class="math notranslate nohighlight">\(\paraLR_1\)</span>, so it is enough to plot one of them.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">normal_distribution</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span><span class="n">sigma2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">norm</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">))</span>
+
+<span class="n">betai</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">prior</span> <span class="o">=</span> <span class="n">normal_distribution</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">5.0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">betai</span><span class="p">,</span><span class="n">prior</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">betai</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$p(\beta_i \vert I )$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\beta_i$&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/c9d7ff1e81b1dee1e4ea6fb98c9f065e0bbfdedf69346c92af1a1afa5489d736.png" src="../../../_images/c9d7ff1e81b1dee1e4ea6fb98c9f065e0bbfdedf69346c92af1a1afa5489d736.png" />
+</div>
+</div>
+<p>It is straightforward to evaluate Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-posterior-pars-with-iid-gaussian-prior">(7.69)</a>, which gives us</p>
+<div class="math notranslate nohighlight" id="equation-eq-warmup-results">
+<span class="eqno">(7.74)<a class="headerlink" href="#equation-eq-warmup-results" title="Link to this equation">#</a></span>\[\begin{split}
+\tildecovparsLR^{-1} &amp;=  4 \begin{pmatrix} 2.01 &amp; -1.0 \\ -1.0 &amp; 5.01 \end{pmatrix} \\
+\tilde{\parsLR} &amp;= ( 0.992, 1.994)
+\end{split}\]</div>
+<p>This should be compared with the parameter vector <span class="math notranslate nohighlight">\((1,2)\)</span> we recovered using ordinary linear regression. With Bayesian linear regression we start from an informative prior with both parameters centered on zero with a rather large variance.</p>
+<div class="exercise admonition" id="exercise:BayesianLinearRegression:warmup">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.13 </span> (Warm-up Bayesian linear regression)</p>
+<section id="exercise-content">
+<p>Reproduce the posterior mean and covariance matrix from Eq. <a class="reference internal" href="#equation-eq-warmup-results">(7.74)</a>. You can use <code class="docutils literal notranslate"><span class="pre">numpy</span></code> methods to perform the linear algebra operations.</p>
+</section>
+</div>
+<p>We can plot the posterior probability distribution for <span class="math notranslate nohighlight">\(\pars\)</span>, i.e., by plotting the bi-variate <span class="math notranslate nohighlight">\(\mathcal{N}-\)</span>distribution with the parameter in Eq. <a class="reference internal" href="#equation-eq-warmup-results">(7.74)</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">multivariate_normal</span>
+
+<span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.992</span><span class="p">,</span><span class="mf">1.992</span><span class="p">])</span>
+<span class="n">Sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">2.01</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">5.01</span><span class="p">]]))</span>
+
+<span class="n">posterior</span> <span class="o">=</span> <span class="n">multivariate_normal</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">Sigma</span><span class="p">)</span>
+
+<span class="n">beta0</span><span class="p">,</span> <span class="n">beta1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">:</span><span class="mf">2.5</span><span class="p">:</span><span class="mf">.01</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">:</span><span class="mf">3.5</span><span class="p">:</span><span class="mf">.01</span><span class="p">]</span>
+<span class="n">beta_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">beta0</span><span class="p">,</span> <span class="n">beta1</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\beta_0$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\beta_1$&#39;</span><span class="p">)</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">beta0</span><span class="p">,</span> <span class="n">beta1</span><span class="p">,</span> <span class="n">posterior</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">beta_grid</span><span class="p">),</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Reds</span><span class="p">);</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/6e7145a733c9b384d4b8b4a638a3575d10c53ab16a1f72839bcc5c63c9895f39.png" src="../../../_images/6e7145a733c9b384d4b8b4a638a3575d10c53ab16a1f72839bcc5c63c9895f39.png" />
+</div>
+</div>
+<p>Using Eq. <a class="reference internal" href="#equation-eq-marginal-n">(7.71)</a> we can obtain, e.g., the <span class="math notranslate nohighlight">\(\paraLR_1\)</span> marginal density and compare with the prior</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">beta1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">4.5</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">mu1</span> <span class="o">=</span> <span class="n">mu</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">Sigma11_sq</span> <span class="o">=</span> <span class="n">Sigma</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">posterior1</span> <span class="o">=</span> <span class="n">normal_distribution</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span><span class="n">Sigma11_sq</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta1</span><span class="p">,</span><span class="n">posterior1</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">beta1</span><span class="p">),</span><span class="s1">&#39;r-&#39;</span><span class="p">,</span>\
+<span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$p(\beta_1 \vert \mathcal</span><span class="si">{D}</span><span class="s1">, \sigma_\epsilon^2, I )$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta1</span><span class="p">,</span><span class="n">prior</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">beta1</span><span class="p">),</span> <span class="s1">&#39;b--&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$p(\beta_1 \vert I )$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$p(\beta_1 \vert \ldots )$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\beta_1$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/c350e132a2aa16f7f7692d448967e59c28d8ad9c318db1d92ed2adc818abc0d5.png" src="../../../_images/c350e132a2aa16f7f7692d448967e59c28d8ad9c318db1d92ed2adc818abc0d5.png" />
+</div>
+</div>
+<p>The key take-away with this numerical exercise is that Bayesian inference yields a probability distribution for the model parameters whose values we are uncertain about. With ordinary linear regression techniques you only obtain the parameter values that optimize some cost function, and not a probability distribution.</p>
+<div class="exercise admonition" id="exercise:BayesianLinearRegression:warmup_errors">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.14 </span> (Warm-up Bayesian linear regression (data errors))</p>
+<section id="exercise-content">
+<p>Explore the sensitivity to changes in the residual errors <span class="math notranslate nohighlight">\(\sigmares\)</span>. Try to increase and reduce the error.</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:BayesianLinearRegression:warmup_priors">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.15 </span> (Warm-up Bayesian linear regression (prior sensitivity))</p>
+<section id="exercise-content">
+<p>Explore the sensitivity to changes in the Gaussian prior width <span class="math notranslate nohighlight">\(\sigma_\paraLR\)</span>. Try to increase and reduce the width.</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:BayesianLinearRegression:in_practice">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.16 </span> (“In practice” Bayesian linear regression)</p>
+<section id="exercise-content">
+<p>Perform Bayesian Linear Regression on the data that was generated in <a class="reference internal" href="#sec-ols-in-practice-b"><span class="std std-ref">Addendum: Ordinary linear regression in practice</span></a>. Explore:</p>
+<ul class="simple">
+<li><p>Dependence on the quality of the data (generate data with different <span class="math notranslate nohighlight">\(\sigma_\epsilon\)</span>) or the number of data.</p></li>
+<li><p>Dependence on the polynomial function that was used to generate the data.</p></li>
+<li><p>Dependence on the number of polynomial terms in the model.</p></li>
+<li><p>Dependence on the parameter prior.</p></li>
+</ul>
+<p>In all cases you should compare the Bayesian inference with the results from Ordinary Least Squares and with the true parameters that were used to generate the data.</p>
+</section>
+</div>
+</section>
+<section id="solutions-to-selected-exercises">
+<h3>Solutions to selected exercises<a class="headerlink" href="#solutions-to-selected-exercises" title="Link to this heading">#</a></h3>
+<div class="solution dropdown admonition" id="solution:BayesianLinearRegression:likelihood_pars">
+
+<p class="admonition-title">Solution to</p>
+<section id="solution-content">
+<ul class="simple">
+<li><p>The likelihood can be written <span class="math notranslate nohighlight">\(\pdf{\data}{\parsLR,I} = \exp\left[ -L(\parsLR) \right]\)</span>, where we include information on the error distribution (<span class="math notranslate nohighlight">\(\sigmares\)</span>) in the conditional <span class="math notranslate nohighlight">\(I\)</span>. The negative log-likelihood, including the normalization factor, is</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+L(\parsLR) = \frac{N_d}{2}\log(2\pi\sigmares^2) + \frac{1}{2\sigmares^2} \sum_{i=0}^{N_d - 1} (\data_i - (\dmat \parsLR)_i)^2.
+\]</div>
+<ul>
+<li><p>Comparing with Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-cost-function">(7.42)</a> and the corresponding gradient vector <a class="reference internal" href="#equation-eq-bayesianlinearregression-gradient">(7.48)</a> we find that</p>
+<div class="math notranslate nohighlight">
+\[
+  \nabla_{\pars} L(\parsLR) = -\frac{\dmat^T\left( \data-\dmat\pars\right)}{\sigmares^2},
+  \]</div>
+<p>which is zero at <span class="math notranslate nohighlight">\(\pars = \optparsLR = \left(\dmat^T\dmat\right)^{-1}\dmat^T\data\)</span> corresponding to the solution of the normal equation.</p>
+</li>
+<li><p>We can Taylor expand <span class="math notranslate nohighlight">\(L(\parsLR)\)</span> around <span class="math notranslate nohighlight">\(\parsLR=\optparsLR\)</span> realizing that the linear (gradient) term is zero. Furthermore, the quadrating term depends on the second derivative (hessian) which is a constant matrix since <span class="math notranslate nohighlight">\(L\)</span> only depends quadratically on the parameters</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+H = \Delta L = \nabla_{\parsLR} \cdot (\nabla_{\pars} L(\parsLR)) = \frac{\dmat^T\dmat}{\sigmares^2}
+\]</div>
+<ul class="simple">
+<li><p>Since higher derivatives therefore must be zero, the Taylor expansion actually terminates at second order</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+L(\parsLR) = L(\optparsLR) + \frac{1}{2} (\parsLR-\optparsLR)^T \frac{\dmat^T\dmat}{\sigmares^2} (\pars-\optparsLR)
+\]</div>
+<ul>
+<li><p>We introduce <span class="math notranslate nohighlight">\(\covparsLR^{-1} \equiv {\dmat^T\dmat} / {\sigmares^2}\)</span> and use that <span class="math notranslate nohighlight">\(\exp\left[ - L(\optparsLR) \right] = \pdf{\data}{\optparsLR,I}\)</span>. Therefore, evaluating <span class="math notranslate nohighlight">\(\exp\left[ -L(\parsLR) \right]\)</span> gives</p>
+<div class="math notranslate nohighlight">
+\[
+  \pdf{\data}{\parsLR,I} = \pdf{\data}{\optparsLR,I} \exp\left[ -\frac{1}{2} (\pars-\optparsLR)^T \covparsLR^{-1} (\pars-\optparsLR) \right],
+  \]</div>
+<p>as we wanted to show.</p>
+</li>
+</ul>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:ols_example_1_b">
+
+<p class="admonition-title">Solution to</p>
+<section id="solution-content">
+<p>We have the following design matrix</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\dmat = \left[
+    \begin{array}{cc}
+        1 &amp; -2 \\
+        1 &amp; 1
+    \end{array}
+\right],
+\end{split}\]</div>
+<p>which in the present case yields the parameter values</p>
+<div class="math notranslate nohighlight">
+\[
+\pars^{*} = \dmat^{-1}\data = [1,2]^T.
+\]</div>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:ols_example_3_b">
+
+<p class="admonition-title">Solution to</p>
+<section id="solution-content">
+<p>For the warmup case we have fitted a straight line through two data points, which is always possible, and we cannot determine the sample variance. This will be even more clear when we come to <a class="reference internal" href="#sec-bayesianlinearregression"><span class="std std-ref">Bayesian Linear Regression (BLR)</span></a>.</p>
+</section>
+</div>
+</section>
+</section>
+<section id="addendum-ordinary-linear-regression-in-practice">
+<span id="sec-ols-in-practice-b"></span><h2>Addendum: Ordinary linear regression in practice<a class="headerlink" href="#addendum-ordinary-linear-regression-in-practice" title="Link to this heading">#</a></h2>
+<p>We often have situation where we have much more than just two datapoints, and they rarely  fall exactly on a straight line. Let’s use python to generate some more realistic, yet artificial, data. Using the function below you can generate data from some linear process with random variables for the underlying parameters. We call this a data-generating process.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">data_generating_process_reality</span><span class="p">(</span><span class="n">model_type</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s1">&#39;polynomial&#39;</span><span class="p">:</span>
+      <span class="n">true_params</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;poldeg&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,))</span>
+      <span class="c1">#polynomial model   </span>
+      <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">xdata</span><span class="p">):</span>
+          <span class="n">ydata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polynomial</span><span class="o">.</span><span class="n">polynomial</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
+          <span class="k">return</span> <span class="n">ydata</span>
+      
+  <span class="c1"># use this to define a non-polynomial (possibly non-linear) data-generating process</span>
+  <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">:</span>
+      <span class="n">true_params</span> <span class="o">=</span> <span class="kc">None</span>
+      <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">xdata</span><span class="p">):</span>
+          <span class="n">ydata</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">xdata</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+          <span class="k">return</span> <span class="n">ydata</span>           
+  <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown Model&#39;</span><span class="p">)</span>
+      
+  <span class="c1"># return function for the true process the values for the true parameters</span>
+  <span class="c1"># and the name of the model_type</span>
+  <span class="k">return</span> <span class="n">process</span><span class="p">,</span> <span class="n">true_params</span><span class="p">,</span> <span class="n">model_type</span>    
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we make some measurements of this process, and that typically entails some measurement errors. We will here assume that independently and identically distributed (i.i.d.) measurement errors <span class="math notranslate nohighlight">\(e_i\)</span> that all follow a normal distribution with zero mean and variance <span class="math notranslate nohighlight">\(\sigma_e^2\)</span>. In a statistical notation we write <span class="math notranslate nohighlight">\(e_i \sim \mathcal{N}(0,\sigma_e^2)\)</span>. By default, we set <span class="math notranslate nohighlight">\(\sigma_e = 0.5\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">data_generating_process_measurement</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">xdata</span><span class="p">,</span> 
+                           <span class="n">sigma_error</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()):</span>
+      
+  <span class="n">ydata</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">xdata</span><span class="p">)</span>
+  
+  <span class="c1">#  sigma_error: measurement error. </span>
+  <span class="n">error</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">sigma_error</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">xdata</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">ydata</span><span class="o">+</span><span class="n">error</span><span class="p">,</span> <span class="n">sigma_error</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xdata</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us setup the data-generating process, in this case a linear process of polynomial degree 1, and decide how many measurements we make (<span class="math notranslate nohighlight">\(N_d=10\)</span>). All relevant output is stored in pandas dataframes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#the number of data points to collect</span>
+<span class="c1"># -----</span>
+<span class="n">Nd</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="c1"># -----</span>
+
+<span class="c1"># predictor values</span>
+<span class="n">xmin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="n">xmax</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span>
+<span class="n">Xmeasurement</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">,</span><span class="n">Nd</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># store it in a pandas dataframe</span>
+<span class="n">pd_Xmeasurement</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Xmeasurement</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>
+
+<span class="c1"># Define the data-generating process.</span>
+<span class="c1"># Begin with a polynomial (poldeg=1) model_type</span>
+<span class="c1"># in a second run of this notebook you can play with other linear models</span>
+<span class="n">reality</span><span class="p">,</span> <span class="n">true_params</span><span class="p">,</span> <span class="n">model_type</span> <span class="o">=</span> <span class="n">data_generating_process_reality</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;polynomial&#39;</span><span class="p">,</span><span class="n">poldeg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;model type      : </span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;true parameters : </span><span class="si">{</span><span class="n">true_params</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Nd = </span><span class="si">{</span><span class="n">Nd</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="c1"># Collect measured data</span>
+<span class="c1"># -----</span>
+<span class="n">sigma_e</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="c1"># -----</span>
+<span class="n">Ydata</span><span class="p">,</span> <span class="n">Yerror</span> <span class="o">=</span> <span class="n">data_generating_process_measurement</span><span class="p">(</span><span class="n">reality</span><span class="p">,</span><span class="n">true_params</span><span class="p">,</span><span class="n">Xmeasurement</span><span class="p">,</span><span class="n">sigma_error</span><span class="o">=</span><span class="n">sigma_e</span><span class="p">)</span>
+<span class="c1"># store the data in a pandas dataframe</span>
+<span class="n">pd_D</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Ydata</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="c1"># </span>
+<span class="n">pd_D</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Xmeasurement</span>
+<span class="n">pd_D</span><span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Yerror</span>
+
+<span class="c1"># We will also produce a denser grid for predictions with our model and comparison with the true process. This is useful for plotting</span>
+   
+<span class="n">xreality</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pd_R</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">reality</span><span class="p">(</span><span class="n">true_params</span><span class="p">,</span><span class="n">xreality</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="n">pd_R</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xreality</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>model type      : polynomial
+true parameters : [-2.42006844  4.89653919]
+Nd = 10
+</pre></div>
+</div>
+</div>
+</div>
+<p>Create some analysis tool to inspect the data, and later on the model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># helper function to plot data, reality, and model (pd_M)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_data</span><span class="p">(</span><span class="n">pd_D</span><span class="p">,</span> <span class="n">pd_R</span><span class="p">,</span> <span class="n">pd_M</span><span class="p">,</span> <span class="n">with_errorbars</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pd_D</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span><span class="n">pd_D</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s2">&quot;d&quot;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">with_errorbars</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">pd_D</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span><span class="n">pd_D</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">pd_D</span><span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">],</span><span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">pd_R</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pd_R</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">pd_R</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Reality&#39;</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pd_M</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pd_M</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">pd_M</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Model&#39;</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Collected data&#39;</span><span class="p">);</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Predictor $x$&#39;</span><span class="p">);</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Response $y$&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span><span class="n">ax</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s have a look at the data. We set the last two arguments to <code class="docutils literal notranslate"><span class="pre">None</span></code> for visualizing only the data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_data</span><span class="p">(</span><span class="n">pd_D</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/660f0146a55712fefe6c6c2ed9356b632faef8344076f434349bf5b7cab8a6cc.png" src="../../../_images/660f0146a55712fefe6c6c2ed9356b632faef8344076f434349bf5b7cab8a6cc.png" />
+</div>
+</div>
+<p>Linear regression proceeds via the design matrix. We will analyze this data using a linear polynomial model of order 1. The following code will allow you to setup the corresponding design matrix <span class="math notranslate nohighlight">\(\dmat\)</span> for any polynomial order (referred to as poldeg below)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">setup_polynomial_design_matrix</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">poldeg</span><span class="p">,</span> <span class="n">drop_constant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;setting up design matrix:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  len(data):&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+
+        <span class="c1"># for polynomial models: x^0, x^1, x^2, ..., x^p</span>
+        <span class="c1"># use numpy increasing vandermonde matrix</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  model poldeg:&#39;</span><span class="p">,</span><span class="n">poldeg</span><span class="p">)</span>
+    
+    <span class="n">predictors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vander</span><span class="p">(</span><span class="n">data_frame</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">poldeg</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">increasing</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">drop_constant</span><span class="p">:</span>
+        <span class="n">predictors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">predictors</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  dropping constant term&#39;</span><span class="p">)</span>
+    <span class="n">pd_design_matrix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">predictors</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">pd_design_matrix</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>So, let’s setup the design matrix for a model with polynomial basis functions. Note that there are <span class="math notranslate nohighlight">\(N_p\)</span> parameters in a polynomial function of order <span class="math notranslate nohighlight">\(N_p-1\)</span></p>
+<div class="math notranslate nohighlight">
+\[
+M(\parsLR;\inputt) = \paraLR_0 + \paraLR_1 \inputt.
+\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Np</span><span class="o">=</span><span class="mi">2</span>
+<span class="n">pd_X</span> <span class="o">=</span> <span class="n">setup_polynomial_design_matrix</span><span class="p">(</span><span class="n">pd_Xmeasurement</span><span class="p">,</span><span class="n">poldeg</span><span class="o">=</span><span class="n">Np</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>setting up design matrix:
+  len(data): 10
+  model poldeg: 1
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now perform linear regression, or ordinary least squares (OLS), as</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#ols estimator for physical parameter theta</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">pd_D</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd_X</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+<span class="n">ols_cov</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">X</span><span class="p">))</span>
+<span class="n">ols_xTd</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">D</span><span class="p">)</span>
+<span class="n">ols_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">ols_cov</span><span class="p">,</span><span class="n">ols_xTd</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Ndata = </span><span class="si">{</span><span class="n">Nd</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;theta_ols </span><span class="se">\t</span><span class="si">{</span><span class="n">ols_theta</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;theta_true </span><span class="se">\t</span><span class="si">{</span><span class="n">true_params</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ndata = 10
+theta_ols 	[-2.56939384  5.17678341]
+theta_true 	[-2.42006844  4.89653919]
+</pre></div>
+</div>
+</div>
+</div>
+<p>To evaluate the (fitted) model we setup a design matrix that spans dense values across the relevant range of predictors.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd_Xreality</span> <span class="o">=</span> <span class="n">setup_polynomial_design_matrix</span><span class="p">(</span><span class="n">pd_R</span><span class="p">,</span><span class="n">poldeg</span><span class="o">=</span><span class="n">Np</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>setting up design matrix:
+  len(data): 200
+  model poldeg: 1
+</pre></div>
+</div>
+</div>
+</div>
+<p>and then we dot this with the fitted (ols) parameter values</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Xreality</span> <span class="o">=</span> <span class="n">pd_Xreality</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">pd_M_ols</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">Xreality</span><span class="p">,</span><span class="n">ols_theta</span><span class="p">),</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="n">pd_M_ols</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xreality</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>A plot (which now includes the data-generating process ‘reality’) demonstrates the quality of the inference.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_data</span><span class="p">(</span><span class="n">pd_D</span><span class="p">,</span> <span class="n">pd_R</span><span class="p">,</span> <span class="n">pd_M_ols</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/93cfb484574349e2fc4cd1c67db0c0536ac05aa724b0f1407e90054ffd4abcbd.png" src="../../../_images/93cfb484574349e2fc4cd1c67db0c0536ac05aa724b0f1407e90054ffd4abcbd.png" />
+</div>
+</div>
+<p>To conclude, we also compute the sample variance <span class="math notranslate nohighlight">\(s^2\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ols_D</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">ols_theta</span><span class="p">)</span>
+<span class="n">ols_eps</span> <span class="o">=</span> <span class="p">(</span><span class="n">ols_D</span> <span class="o">-</span> <span class="n">D</span><span class="p">)</span>
+<span class="n">ols_s2</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ols_eps</span><span class="p">,</span><span class="n">ols_eps</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Nd</span><span class="o">-</span><span class="n">Np</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;s^2       </span><span class="se">\t</span><span class="si">{</span><span class="n">ols_s2</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;sigma_e^2 </span><span class="se">\t</span><span class="si">{</span><span class="n">sigma_e</span><span class="o">**</span><span class="mi">2</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>s^2       	0.379
+sigma_e^2 	0.250
+</pre></div>
+</div>
+</div>
+</div>
+<p>As seen, the extracted variance is in some agreement with the true one.</p>
+<p>Using the code above, you should now try to do the following exercises.</p>
+<div class="exercise admonition" id="exercise:ols_example_4_b">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.17 </span></p>
+<section id="exercise-content">
+<p>Keep working with the simple polynomial model <span class="math notranslate nohighlight">\(M = \paraLR_0 + \paraLR_1 x\)</span></p>
+<p>Reduce the number of data to 2, i.e., set Nd=2. Do you reproduce the result from the simple example in the previous section?</p>
+<p>Increase the number of data to 1000. Do the OLS values of the model parameters and the sample variance approach the (true) parameters of the data-generating process? Is this to be expected?</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:ols_example_5_b">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.18 </span></p>
+<section id="exercise-content">
+<p>Set the data-generating process to be a 3rd-order polynomial and set limits of the the predictor variable to [-3,3]. Analyze the data using a 2nd-order polynomial model.</p>
+<p>Explore the limit of <span class="math notranslate nohighlight">\(N_d \rightarrow \infty\)</span> by setting <span class="math notranslate nohighlight">\(N_d = 500\)</span> or so. Will the OLS values of the model parameters and the sample variance approach the (true) values for some of the parameters?</p>
+</section>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./LearningFromData-content/BayesianStatistics/BayesianLinearRegression"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../BayesianWorkflow/BayesianWorkflow.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">7.2. </span>Bayesian research workflow</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../RootAdvancedMethods.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">8. </span>Overview of Part II: Advanced Bayesian methods</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background-on-linear-models">Background on linear models</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definition-and-examples">Definition and examples</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-linear-models-to-matrix-form">Converting linear models to matrix form</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-normal-equation">The normal equation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow-for-bayesian-linear-regression">Workflow for Bayesian linear regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prior">The prior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-likelihood">The likelihood</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-posterior">The posterior</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rewriting-the-likelihood">Rewriting the likelihood</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-with-a-uniform-prior">Posterior with a uniform prior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-with-a-gaussian-prior">Posterior with a Gaussian prior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#marginal-posterior-distributions">Marginal posterior distributions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-posterior-predictive">The posterior predictive</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-linear-regression-warmup">Bayesian linear regression: warmup</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prelude-ordinary-linear-regression">Prelude: ordinary linear regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#continuing">Continuing …</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions-to-selected-exercises">Solutions to selected exercises</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#addendum-ordinary-linear-regression-in-practice">Addendum: Ordinary linear regression in practice</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

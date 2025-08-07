@@ -1,0 +1,1149 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>21. Logistic Regression &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\text{th}}", "yexp": "y_{\\text{exp}}", "ym": "y_{\\text{m}}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'LearningFromData-content/MachineLearning/LogReg/LogReg';</script>
+    <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="21.5. Machine Learning: First Examples" href="../ANN/MachineLearningExamples.html" />
+    <link rel="prev" title="Exercise: Gaussian Process models with GPy" href="../GP/BUQ/Gaussian_processes_exercises.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../Intro/About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../Intro/About.html">
+                    About this Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Overview.html">1. Invitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Introduction.html">2. Introduction</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/RootBayesianBasics.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Inferenceandpdfs.html">4. Inference and PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/exercise_sum_product_rule.html">4.5. Exercise: Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/exercise_medical_example_by_Bayes.html">4.6. Exercise: Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/MoreBayesTheorem.html">4.7. More on Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Bayesian_epistemology.html">4.8. *Aside: Bayesian epistemology</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/DataModelsPredictions.html">4.9. Data, models, and predictions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html">Parameter estimation I: Gaussian mean and variance</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Posteriors.html">5. Bayesian posteriors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Exploring_pdfs.html">5.1. Exploring PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Exploring_pdfs_followups.html">Follow-ups to Exploring PDFs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Gaussians.html">5.2. Gaussians: A couple of frequentist connections</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/visualization_of_CLT.html">Visualization of the Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/Interpreting2Dposteriors.html">5.3. Interpreting 2D posteriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/chi_squared_tests.html">5.4. Demonstration: Sum of normal variables squared</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/CoinTossing.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/demo-BayesianBasics.html">6.6. Demonstration:  Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Bayesian_updating_coinflip_interactive.html">6.7. Widgetized coin tossing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/UsingBayes.html">7. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/BayesianAdvantages.html">7.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianWorkflow/BayesianWorkflow.html">7.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianLinearRegression/BayesianLinearRegression_rjf.html">7.3. Bayesian Linear Regression (BLR)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../BayesianStatistics/RootAdvancedMethods.html">8. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/ParameterEstimation.html">9. More Bayesian parameter estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/radioactive_lighthouse_exercise.html">9.1. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/amplitude_in_presence_of_background.html">9.2. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_fitting_straight_line_I.html">9.3. Parameter estimation example: fitting a straight line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_fitting_straight_line_II.html">9.4. Parameter estimation example: fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/dealing_with_outliers.html">9.5. Dealing with outliers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/Assigning.html">10. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/IgnorancePDF.html">10.1. Assigning probabilities (I): Indifferences and translation groups</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/demo-straight_lines.html">Alternative notebook with MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/MaxEnt2.html">10.2. Assigning probabilities (II): The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/MaxEnt_Function_Reconstruction.html">10.3. Maximum Entropy for reconstructing a function from its moments</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/BayesLinear.html">11. Bayes goes linear: History matching</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/Multimodel_inference.html">12. Multi-model inference with Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/ModelSelection.html">12.1. Model Selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/Evidence_for_model_EFT_coefficients.html">Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/two_model_evidence.html">Follow-up to EFT evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/computing_evidence.html">Computing the evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/MCMC-parallel-tempering_ptemcee_vs_zeus.html">Demo: Multimodal distributions with two samplers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ModelMixing/model_mixing.html">12.2. Model averaging and mixing </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/DiscrepancyModels.html">13. Discrepancy Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/MD_balldrop_v1.html">13.4. Ball-drop experiment</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../StochasticProcesses/RootMCMC.html">14. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/StochasticProcesses.html">15. Stochastic processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Metropolis_Poisson_example.html">15.7. Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/demo-MCMC.html">15.8. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/Recap_BUQ.html">15.9. Recap of Poisson and more about MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/parameter_estimation_Gaussian_noise-2.html">15.10. Parameter estimation example: Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">15.11. Exercise: Random walk</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/MCMC_overview.html">16. Overview of Markov Chain Monte Carlo</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MarkovChains.html">16.1. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC.html">16.2. Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC_intro_BUQ.html">16.3. Alternative MCMC introduction (Gregory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Assignment_extending_radioactive_lighthouse.html">16.4. Assignment: 2D radioactive lighthouse location using MCMC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Advanced_MCMC.html">17. Advanced MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html">17.1. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html">17.2. Overview: MCMC Diagnostics</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/intuition_sampling.html">17.4. Intuition on sampling and best practices</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Other_samplers.html">18. HMC and other samplers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/HMC_intro_BUQ.html">18.1. Hamiltonian Monte Carlo (HMC) overview and visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Liouville_theorem_visualization.html">Liouville Theorem Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Orbital_eqs_with_different_algorithms.html">Solving orbital equations with different algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/zeus.html">18.2. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/PyMC_intro_updated.html">18.3. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/OverviewIntroPyMC.html">Overview of Intro to PyMC notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ2/parameter_estimation_Gaussian_noise_compare_samplers.html">18.4. Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning: A Bayesian perspective</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../RootML.html">19. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../GP/RootGP.html">20. Overview of Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../GP/GaussianProcesses.html">20.4. Introduction to Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../GP/CF/demo-GaussianProcesses.html">demo-GaussianProcesses notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GP/BUQ/lecture_20.html">GP recap; GP applications; (old lecture 20)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../GP/Sklearn_demos.html">20.5. scikit-learn demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../GP/BUQ/plot_gpr_noisy_targets.html">One-dimension regression example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GP/BUQ/plot_gpr_prior_posterior.html">Prior and posterior with different kernels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../GP/GPy_demos.html">20.6. GPy demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../GP/BUQ/demo-GaussianProcesses.html">Gaussian processes demonstration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GP/CF/exercise_GP_GPy.html">Exercise: Gaussian processes using <code class="docutils literal notranslate"><span class="pre">GPy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GP/BUQ/Gaussian_processes_exercises.html">Exercise: Gaussian Process models with GPy</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">21. Logistic Regression</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ANN/MachineLearningExamples.html">21.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ANN/NeuralNet/exercises_LogReg_NeuralNet.html">21.6. Exercise: Logistic Regression and neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../ANN/MachineLearning.html">22. Machine learning: Overview and notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ANN/NeuralNet.html">22.5. Artifical neural networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ANN/NeuralNet/demo-NeuralNet.html">22.6. Demonstration: Neural network classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ANN/Neural_Network_for_simple_function_in_PyTorch.html">22.7. ANN from ChatGPT using PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ANN/ModelValidation.html">22.8. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ANN/DataBiasFairness.html">22.9. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ANN/NeuralNet/NeuralNetBackProp.html">22.10. *Neural networks: Backpropagation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/ANNFT.html">23. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/random_initialized_ANN_vs_width.html">23.3. Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BNN/bnn.html">24. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BNN/demo-bnn.html">24.4. Demonstration: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BNN/exercises_BNN.html">24.5. Exercise: Bayesian neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../CNN/cnn.html">25. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../CNN/demo-cnn.html">25.6. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Other topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/RootOtherTopics.html">26. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/Emulators.html">27. Emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/BayesFast.html">27.1. Bayes goes fast: Emulators (from CF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/extra_RBM_emulators.html">27.2. RBM emulators (BUQ)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/Student_t_distribution_from_Gaussians.html">28. Student t distribution from Gaussians</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/SVD.html">29. PCA, SVD, and all that</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/linear_algebra_games_including_SVD.html">29.5. SVD notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/qbism.html">30. QBism: Bayesian quantum mechanics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/bibliography.html">31. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/JB_tests.html">32. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Reference/Statistics.html">33. Statistics concepts and notation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/GradientDescent.html">34. Gradient-descent optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/RootScientificModeling.html">35. Overview of scientific modeling material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/OverviewModeling.html">36. Overview of modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/LinearModels.html">37. Linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/MathematicalOptimization.html">38. Mathematical optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/RootGettingStarted.html">39. Overview of Getting started material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/exercise_Intro_01_Jupyter_Python.html">40. Jupyter notebooks and Python</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/more_python_and_jupyter.html">41. More about Python and Jupyter notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_02_Jupyter_Python.html">41.4. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_03_Numpy.html">41.5. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/demo-Intro.html">41.6. Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/Simple_widgets_v1.html">41.7. Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/setting_up.html">42. Setting up for using this Jupyter Book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/installing_anaconda.html">42.1. Using Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/using_github.html">42.2. Using GitHub</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/RootMiniProjects.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_I_toy_model_of_EFT.html">MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIa.html">MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html">MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Mini-projects/Mini-project_IIb_overview.html">Overview of Mini-project IIb: How many lines?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIa_bayesian_optimization.html">MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html">MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development/issues/new?title=Issue%20on%20page%20%2FLearningFromData-content/MachineLearning/LogReg/LogReg.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/LearningFromData-content/MachineLearning/LogReg/LogReg.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Logistic Regression</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-and-deep-learning">21.1. Optimization and Deep learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basics-and-notation">21.2. Basics and notation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-classification">21.3. Binary classification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-perceptron">The perceptron</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-logistic-function">The logistic function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-activation-functions">Standard activation functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-binary-classifier-with-two-parameters">A binary classifier with two parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#determination-of-weights">Determination of weights</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-likelihood">Maximum likelihood</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cost-function-rewritten-as-cross-entropy">The cost function rewritten as cross entropy</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#regularization">Regularization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#minimizing-the-cross-entropy">Minimizing the cross entropy</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#a-more-compact-expression">A more compact expression</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-learning-algorithm">A learning algorithm</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#extending-to-more-features">Extending to more features</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extending-to-more-classes">21.4. Extending to more classes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#class-probabilities-the-softmax-function">Class probabilities: The Softmax function</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="logistic-regression">
+<span id="sec-logisticregression"></span><h1><span class="section-number">21. </span>Logistic Regression<a class="headerlink" href="#logistic-regression" title="Link to this heading">#</a></h1>
+<p>In linear regression our main interest was centered on learning the
+coefficients of a functional fit (say a polynomial) in order to be
+able to predict the response of a continuous variable on some unseen
+data. The fit to the continuous variable <span class="math notranslate nohighlight">\(y^{(i)}\)</span> is based on some
+independent variables <span class="math notranslate nohighlight">\(\boldsymbol{x}^{(i)}\)</span>. Linear regression resulted in
+analytical expressions for standard ordinary Least Squares or Ridge
+regression (in terms of matrices to invert) for several quantities,
+ranging from the variance and thereby the confidence intervals of the
+parameters <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> to the mean squared error. If we can invert
+the product of the design matrices, linear regression gives then a
+simple recipe for fitting our data.</p>
+<p>Classification problems, however, are concerned with outcomes taking
+the form of discrete variables (i.e. categories). We may for example,
+on the basis of DNA sequencing for a number of patients, like to find
+out which mutations are important for a certain disease; or based on
+scans of various patients’ brains, figure out if there is a tumor or
+not; or given a specific physical system, we’d like to identify its
+state, say whether it is an ordered or disordered system (typical
+situation in solid state physics); or classify the status of a
+patient, whether she/he has a stroke or not and many other similar
+situations.</p>
+<p>The most common situation we encounter when we apply logistic
+regression is that of two possible outcomes, normally denoted as a
+binary outcome, true or false, positive or negative, success or
+failure etc.</p>
+<section id="optimization-and-deep-learning">
+<h2><span class="section-number">21.1. </span>Optimization and Deep learning<a class="headerlink" href="#optimization-and-deep-learning" title="Link to this heading">#</a></h2>
+<p>Logistic regression will also serve as our stepping stone towards
+neural network algorithms and supervised deep learning. For logistic
+learning, the minimization of the cost function leads to an
+optimization problem that is non-linear in the parameters <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span>. This optimization (how to find reliable minima of a multi-variable function) is a key challenge for all machine learning algorithms. This leads us back to the
+family of gradient descent methods encountered in the chapter on <a class="reference internal" href="../../ModelingOptimization/MathematicalOptimization.html#sec-mathematicaloptimization"><span class="std std-ref">Mathematical optimization</span></a>. These methods are the working horses
+of basically all modern machine learning algorithms.</p>
+<p>We note also that many of the topics discussed here on logistic
+regression are also commonly used in modern supervised deep learning
+models, as we will see later.</p>
+</section>
+<section id="basics-and-notation">
+<h2><span class="section-number">21.2. </span>Basics and notation<a class="headerlink" href="#basics-and-notation" title="Link to this heading">#</a></h2>
+<p>We consider the case where the dependent variables (also called the
+responses, targets, or outcomes) are discrete and only take values
+from <span class="math notranslate nohighlight">\(k=1, \dots, K\)</span> (i.e. <span class="math notranslate nohighlight">\(K\)</span> classes).</p>
+<p>The goal is to predict the
+output classes from the design matrix <span class="math notranslate nohighlight">\(\boldsymbol{X}\in\mathbb{R}^{n\times p}\)</span>
+made of <span class="math notranslate nohighlight">\(n\)</span> samples, each of which carries <span class="math notranslate nohighlight">\(p\)</span> features or predictors. The
+primary goal is to identify the classes to which new unseen samples
+belong.</p>
+<div class="admonition-notation admonition">
+<p class="admonition-title">Notation</p>
+<p>We will use the following notation:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span>: independent (input) variables, typically a vector of length <span class="math notranslate nohighlight">\(p\)</span>. A matrix of <span class="math notranslate nohighlight">\(N\)</span> instances of input vectors is denoted <span class="math notranslate nohighlight">\(\boldsymbol{X}\)</span>, and is also known as the <em>design matrix</em>. The input for machine-learning applications are often referred to as <em>features</em>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(t\)</span>: dependent, response variable, also known as the target. For binary classification the target <span class="math notranslate nohighlight">\(t^{(i)} \in \{0,1\}\)</span>. For <span class="math notranslate nohighlight">\(K\)</span> different classes we would have <span class="math notranslate nohighlight">\(t^{(i)} \in \{1, 2, \ldots, K\}\)</span>. A vector of <span class="math notranslate nohighlight">\(N\)</span> targets from <span class="math notranslate nohighlight">\(N\)</span> instances of data is denoted <span class="math notranslate nohighlight">\(\boldsymbol{t}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{D}\)</span>: is the data, where <span class="math notranslate nohighlight">\(\mathcal{D}^{(i)} = \{ (\boldsymbol{x}^{(i)}, t^{(i)} ) \}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{y}\)</span>: is the output of our classifier that will be used to quantify probabilities <span class="math notranslate nohighlight">\(p_{t=C}\)</span> that the target belongs to class <span class="math notranslate nohighlight">\(C\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span>: will be the parameters (weights) of our classification model.</p></li>
+</ul>
+</div>
+</section>
+<section id="binary-classification">
+<h2><span class="section-number">21.3. </span>Binary classification<a class="headerlink" href="#binary-classification" title="Link to this heading">#</a></h2>
+<p>Let us specialize to the case of two classes only, with outputs
+<span class="math notranslate nohighlight">\(t^{(i)} \in \{0,1\}\)</span>. That is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-a731f3e3-6e48-4b67-899b-42b6001fcbd4">
+<span class="eqno">(21.1)<a class="headerlink" href="#equation-a731f3e3-6e48-4b67-899b-42b6001fcbd4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+t^{(i)} = \begin{bmatrix} 0 \\  1 \end{bmatrix}
+= \begin{bmatrix} \mathrm{no}\\  \mathrm{yes} \end{bmatrix}.
+
+\end{equation}\]</div>
+<section id="the-perceptron">
+<h3>The perceptron<a class="headerlink" href="#the-perceptron" title="Link to this heading">#</a></h3>
+<p>Before moving to the logistic model, let us try to use a linear regression model to classify these two outcomes. We could use a linear model</p>
+<div class="amsmath math notranslate nohighlight" id="equation-141a9424-824a-4fb3-b35d-5ebeafda9511">
+<span class="eqno">(21.2)<a class="headerlink" href="#equation-141a9424-824a-4fb3-b35d-5ebeafda9511" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\boldsymbol{\tilde{y}} = \boldsymbol{X} \boldsymbol{w},
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\boldsymbol{\tilde{y}}\)</span> is a vector representing the possible outcomes, <span class="math notranslate nohighlight">\(\boldsymbol{X}\)</span> is our <span class="math notranslate nohighlight">\(n\times p\)</span> design matrix and <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> are the model parameters.</p>
+<p>Note however that our outputs <span class="math notranslate nohighlight">\(\tilde{y}^{(i)} \in \mathbb{R}\)</span> take values on the
+entire real axis. Our targets <span class="math notranslate nohighlight">\(t^{(i)}\)</span>, however, are discrete variables.</p>
+<p>One simple way to get a discrete output is to have sign
+functions that map the output of a linear regressor to values <span class="math notranslate nohighlight">\(y^{(i)} \in \{ 0, 1 \}\)</span>,
+<span class="math notranslate nohighlight">\(y^{(i)} = f(\tilde{y}^{(i)})=\frac{\mathrm{sign}(\tilde{y}^{(i)})+1}{2}\)</span>, which will map to one if <span class="math notranslate nohighlight">\(\tilde{y}^{(i)}\ge 0\)</span> and zero otherwise.
+Historically this model is called the <em>perceptron</em>  in the machine learning
+literature.</p>
+<p>The perceptron is an example of a “hard classification” model. We
+will encounter this model when we discuss neural networks as
+well. Each datapoint is deterministically assigned to a category (i.e
+<span class="math notranslate nohighlight">\(y^{(i)}=0\)</span> or <span class="math notranslate nohighlight">\(y^{(i)}=1\)</span>). In many cases, it is favorable to have a <em>soft</em>
+classifier that outputs the probability of a given category rather
+than a single value. For example, given <span class="math notranslate nohighlight">\(\boldsymbol{x}^{(i)}\)</span>, the classifier
+outputs the probability of being in a category <span class="math notranslate nohighlight">\(k\)</span>.</p>
+</section>
+<section id="the-logistic-function">
+<h3>The logistic function<a class="headerlink" href="#the-logistic-function" title="Link to this heading">#</a></h3>
+<p>Logistic regression is the simplest example of the use of such a soft classifier. Let us assume that we have two classes such that <span class="math notranslate nohighlight">\(t^{(i)}\)</span> is either <span class="math notranslate nohighlight">\(0\)</span> or <span class="math notranslate nohighlight">\(1\)</span>.</p>
+<p>In logistic regression, we will use the so-called <em>logit</em> function</p>
+<div class="amsmath math notranslate nohighlight" id="equation-79cbc7b0-5af3-4b2f-8541-c5b88d1b81e6">
+<span class="eqno">(21.3)<a class="headerlink" href="#equation-79cbc7b0-5af3-4b2f-8541-c5b88d1b81e6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+y(\boldsymbol{x}; \boldsymbol{w}) = y(z) = \frac{1}{1+e^{-z}} = \frac{e^z}{1+e^z},
+\end{equation}\]</div>
+<p>with the so called <em>activation</em> <span class="math notranslate nohighlight">\(z = z(\boldsymbol{x}; \boldsymbol{w})\)</span>.
+This function is no longer linear in the model parameters <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span>. It is an example of a S-shape or <em>Sigmoid</em> function.</p>
+<p>We let <span class="math notranslate nohighlight">\(y^{(i)}\)</span> give the probability that a data point <span class="math notranslate nohighlight">\(\boldsymbol{x}^{(i)}\)</span> belongs to category <span class="math notranslate nohighlight">\(t^{(i)} = 1\)</span>,</p>
+<div class="amsmath math notranslate nohighlight" id="equation-363a073a-3580-4b16-a924-81e3a345f7df">
+<span class="eqno">(21.4)<a class="headerlink" href="#equation-363a073a-3580-4b16-a924-81e3a345f7df" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\prob \left( t^{(i)} = 1 \vert \boldsymbol{x}^{(i)}, \boldsymbol{w} \right) = y(\boldsymbol{x}^{(i)}; \boldsymbol{w}).
+\end{equation}\]</div>
+<ul class="simple">
+<li><p>Most frequently one uses <span class="math notranslate nohighlight">\(z = z(\boldsymbol{x}, \boldsymbol{w}) \equiv \boldsymbol{x} \cdot \boldsymbol{w}\)</span>.</p></li>
+<li><p>It is common to introduce also a bias, or threshold, weight <span class="math notranslate nohighlight">\(w_0\)</span>. This can be accommodated by prepending a constant feature <span class="math notranslate nohighlight">\(x_0^{(i)}=1\)</span> for all <span class="math notranslate nohighlight">\(i\)</span>.</p></li>
+<li><p>Note that <span class="math notranslate nohighlight">\(1-y(z)= y(-z)\)</span>.</p></li>
+<li><p>The sigmoid function can be motivated in several different ways:</p>
+<ul>
+<li><p>In information theory this function represents the probability of a signal <span class="math notranslate nohighlight">\(s=1\)</span> rather than <span class="math notranslate nohighlight">\(s=0\)</span> when transmission occurs over a noisy channel.</p></li>
+<li><p>It can be seen as an artificial neuron that mimics aspects of its biological counterpart.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="standard-activation-functions">
+<h3>Standard activation functions<a class="headerlink" href="#standard-activation-functions" title="Link to this heading">#</a></h3>
+<div class="cell tag_hide-cell docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell content</p>
+<p class="expanded admonition-title">Hide code cell content</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myst_nb</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue</span>
+
+<span class="c1"># Set the relevant activation interval </span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="mi">1201</span><span class="p">)</span>
+
+<span class="c1"># Perceptron model</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">y_perceptron</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+    
+<span class="c1"># logit model</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">y_logit</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">z</span><span class="p">))</span>
+    
+<span class="c1"># tanh model</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">y_tanh</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+    
+    
+<span class="c1"># Create a visualization</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;figsize&quot;</span><span class="p">:(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">)})</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">y_perceptron</span><span class="p">(</span><span class="n">z</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;perceptron&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-.&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">y_logit</span><span class="p">(</span><span class="n">z</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;logit&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">y_tanh</span><span class="p">(</span><span class="n">z</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;tanh (normalized)&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Activation $z$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Activation function&#39;</span><span class="p">)</span>
+
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;sigmoid_functions_fig&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/c4bde790c6d720f80a9235e52f64e1de7fac501605e9a18624abea7137ecba90.png" src="../../../_images/c4bde790c6d720f80a9235e52f64e1de7fac501605e9a18624abea7137ecba90.png" />
+</div>
+</details>
+</div>
+<figure class="align-default" id="fig-sigmoid-functions">
+<img alt="../../../_images/c4bde790c6d720f80a9235e52f64e1de7fac501605e9a18624abea7137ecba90.png" src="../../../_images/c4bde790c6d720f80a9235e52f64e1de7fac501605e9a18624abea7137ecba90.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 21.1 </span><span class="caption-text">The sigmoid, step,and (normalized) tanh functions; three common classifier functions used in classification and neural networks. In these lecture notes we use the letter <span class="math notranslate nohighlight">\(z\)</span> to denote the activation.</span><a class="headerlink" href="#fig-sigmoid-functions" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="a-binary-classifier-with-two-parameters">
+<h3>A binary classifier with two parameters<a class="headerlink" href="#a-binary-classifier-with-two-parameters" title="Link to this heading">#</a></h3>
+<p>We assume now that we have two classes with <span class="math notranslate nohighlight">\(t^{(i)}\)</span> being either <span class="math notranslate nohighlight">\(0\)</span> or <span class="math notranslate nohighlight">\(1\)</span>. Furthermore we assume also that we have only two parameters <span class="math notranslate nohighlight">\(w_0, w_1\)</span> and the features <span class="math notranslate nohighlight">\(\boldsymbol{x}^{(i)} = \{ 1, x^{(i)} \}\)</span> defining the activation function. I.e., there is a single independent (input) variable <span class="math notranslate nohighlight">\(x\)</span>. We can produce probabilities from the classifier output <span class="math notranslate nohighlight">\(y^{(i)}\)</span></p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+\prob (t^{(i)}=1|x^{(i)},\boldsymbol{w}) &amp;= y(z^{(i)})= \frac{\exp{(w_0+w_1x^{(i)})}}{1+\exp{(w_0+w_1x^{(i)})}},\\
+\prob (t^{(i)}=0|x^{(i)},\boldsymbol{w}) &amp;= 1 - \prob (t^{(i)}=1|x^{(i)},\boldsymbol{w}) = \frac{1}{1+\exp{(w_0+w_1x^{(i)})}},
+\end{align*}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\boldsymbol{w} = ( w_0, w_1)\)</span> are the weights we wish to extract from training data.</p>
+</section>
+<section id="determination-of-weights">
+<h3>Determination of weights<a class="headerlink" href="#determination-of-weights" title="Link to this heading">#</a></h3>
+<p>Among ML practitioners, the prevalent approach to determine the weights in the activation function(s) is by minimizing some kind of cost function using some version of gradient descent. As we will see this usually corresponds to maximizing a likelihood function with or without a regularizer.</p>
+<p>In this course we will obviously also advocate (or at least make aware of) the more probabilistic approach to learning about these parameters.</p>
+<!-- !split  -->
+<section id="maximum-likelihood">
+<h4>Maximum likelihood<a class="headerlink" href="#maximum-likelihood" title="Link to this heading">#</a></h4>
+<p>In order to define the total likelihood for all possible outcomes from a dataset <span class="math notranslate nohighlight">\(\mathcal{D}=\{(x^{(i)}, t^{(i)},)\}\)</span>, with the binary labels
+<span class="math notranslate nohighlight">\(t^{(i)}\in\{0,1\}\)</span> and where the data points are drawn independently, we use the binary version of the <a class="reference external" href="https://en.wikipedia.org/wiki/Maximum_likelihood_estimation">Maximum Likelihood Estimation</a> (MLE) principle.
+We express the
+likelihood in terms of the product of the individual probabilities of a specific outcome <span class="math notranslate nohighlight">\(t^{(i)}\)</span>, that is</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+\mathcal{L} = \prob (\mathcal{D}|\boldsymbol{w})&amp; = \prod_{i=1}^N \left[p(t^{(i)}=1|x^{(i)},\boldsymbol{w})\right]^{t^{(i)}}\left[1-p(t^{(i)}=1|x^{(i)},\boldsymbol{w}))\right]^{1-t^{(i)}}\nonumber \\
+\end{align*}\]</div>
+<p>The <strong>cost/loss</strong> function (to be minimized) is then defined as the negative log-likelihood</p>
+<div class="amsmath math notranslate nohighlight" id="equation-2168f4b3-bd0f-4ff3-8644-fa332a22bf28">
+<span class="eqno">(21.5)<a class="headerlink" href="#equation-2168f4b3-bd0f-4ff3-8644-fa332a22bf28" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\mathcal{C}(\boldsymbol{w}) = -L \equiv -\log(\mathcal{L}) = -\sum_{i=1}^N \left( t^{(i)}\log{\prob (t^{(i)}=1|x^{(i)},\boldsymbol{w})} + (1-t^{(i)})\log\left[1-\prob (t^{(i)}=1|x^{(i)},\boldsymbol{w}))\right]\right).
+
+\end{equation}\]</div>
+</section>
+<section id="the-cost-function-rewritten-as-cross-entropy">
+<h4>The cost function rewritten as cross entropy<a class="headerlink" href="#the-cost-function-rewritten-as-cross-entropy" title="Link to this heading">#</a></h4>
+<p>Using the definitions of the probabilities we can rewrite the <strong>cost/loss</strong> function as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-4693f0eb-0f57-4c08-bf48-4f1fc48448ab">
+<span class="eqno">(21.6)<a class="headerlink" href="#equation-4693f0eb-0f57-4c08-bf48-4f1fc48448ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\mathcal{C}(\boldsymbol{w}) = -\sum_{i=1}^N \left( t^{(i)}\log{ y(x^{(i)},\boldsymbol{w})} + (1-t^{(i)})\log\left[ 1-y( x^{(i)},\boldsymbol{w}) \right] \right),
+
+\end{equation}\]</div>
+<p>which can be recognised as the relative entropy between the empirical probability distribution <span class="math notranslate nohighlight">\((t^{(i)}, 1-t^{(i)})\)</span> and the probability distribution predicted by the classifier <span class="math notranslate nohighlight">\((y^{(i)}, 1-y^{(i)})\)</span>.
+Therefore, this cost function is known in statistics as the <strong>cross entropy</strong>.</p>
+<p>Using specifically the logistic sigmoid activation function with two weights, and reordering the logarithms, we can rewrite the log-likelihood to obtain</p>
+<div class="amsmath math notranslate nohighlight" id="equation-64142a34-236e-4f07-874a-72e79e685a79">
+<span class="eqno">(21.7)<a class="headerlink" href="#equation-64142a34-236e-4f07-874a-72e79e685a79" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{C}(\boldsymbol{w})=-\sum_{i=1}^N  \left[ t^{(i)} (w_0+w_1x^{(i)}) -\log{ \left( 1+\exp{(w_0+w_1x^{(i)})} \right) } \right].
+\end{equation}\]</div>
+<p>MLE should give the weights <span class="math notranslate nohighlight">\(\boldsymbol{w}^*\)</span> that minimizes this cost function.</p>
+</section>
+<section id="regularization">
+<h4>Regularization<a class="headerlink" href="#regularization" title="Link to this heading">#</a></h4>
+<p>In practice, just as for linear regression, one often supplements the cross-entropy cost function with additional regularization terms, usually <span class="math notranslate nohighlight">\(L_1\)</span> and <span class="math notranslate nohighlight">\(L_2\)</span> regularization. This introduces hyperparameters into the classifier.</p>
+<p>In particular, Ridge regularization is obtained by defining another cost function</p>
+<div class="amsmath math notranslate nohighlight" id="equation-72bf409b-fcc7-40f1-8aa5-59ac5d3b6789">
+<span class="eqno">(21.8)<a class="headerlink" href="#equation-72bf409b-fcc7-40f1-8aa5-59ac5d3b6789" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\mathcal{C}_W (\boldsymbol{w}) \equiv \mathcal{C} (\boldsymbol{w}) + \alpha E_W (\boldsymbol{w})
+
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(E_W (\boldsymbol{w}) = \frac{1}{2} \sum_j w_j^2\)</span> and <span class="math notranslate nohighlight">\(\alpha\)</span> is known as the <em>weight decay</em>.</p>
+<div class="tip admonition">
+<p class="admonition-title">Question</p>
+<p>Can you motivate why <span class="math notranslate nohighlight">\(\alpha\)</span> is known as the weight decay?</p>
+<p><em>Hint</em>: Recall the origin of this regularizer from a Bayesian perspective.</p>
+</div>
+<!-- !split -->
+</section>
+<section id="minimizing-the-cross-entropy">
+<h4>Minimizing the cross entropy<a class="headerlink" href="#minimizing-the-cross-entropy" title="Link to this heading">#</a></h4>
+<p>The cross entropy is a convex function of the weights <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> and,
+therefore, any local minimizer is a global minimizer.</p>
+<p>Minimizing this cost function (here without regularization term) with respect to the two parameters <span class="math notranslate nohighlight">\(w_0\)</span> and <span class="math notranslate nohighlight">\(w_1\)</span> we obtain</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+\frac{\partial \mathcal{C}(\boldsymbol{w})}{\partial w_0} 
+&amp;= -\sum_{i=1}^N  \left(t^{(i)} -\frac{\exp{(w_0+w_1x^{(i)})}}{1+\exp{(w_0+w_1x^{(i)})}}\right)
+&amp;= -\sum_{i=1}^N  \left(t^{(i)} - y^{(i)} \right), \\
+\frac{\partial \mathcal{C}(\boldsymbol{w})}{\partial w_1} 
+&amp;= -\sum_{i=1}^N  \left(t^{(i)} x^{(i)} -x^{(i)}\frac{\exp{(w_0+w_1x^{(i)})}}{1+\exp{(w_0+w_1x^{(i)})}}\right)
+&amp;= -\sum_{i=1}^N  x^{(i)} \left(t^{(i)} - y^{(i)} \right).
+\end{align*}\]</div>
+</section>
+<section id="a-more-compact-expression">
+<h4>A more compact expression<a class="headerlink" href="#a-more-compact-expression" title="Link to this heading">#</a></h4>
+<p>Let us now define a vector <span class="math notranslate nohighlight">\(\boldsymbol{t}\)</span> with <span class="math notranslate nohighlight">\(n\)</span> elements <span class="math notranslate nohighlight">\(t^{(i)}\)</span>, an
+<span class="math notranslate nohighlight">\(N\times 2\)</span> matrix <span class="math notranslate nohighlight">\(\boldsymbol{X}\)</span> which contains the <span class="math notranslate nohighlight">\((1, x^{(i)})\)</span> predictor variables, and a
+vector <span class="math notranslate nohighlight">\(\boldsymbol{y}\)</span> of the outputs <span class="math notranslate nohighlight">\(y^{(i)} = y(x^{(i)},\boldsymbol{w})\)</span>. We can then express the first
+derivative of the cost function in matrix form</p>
+<div class="amsmath math notranslate nohighlight" id="equation-103ba888-c7be-42fa-87d8-facda1eccee0">
+<span class="eqno">(21.9)<a class="headerlink" href="#equation-103ba888-c7be-42fa-87d8-facda1eccee0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\frac{\partial \mathcal{C}(\boldsymbol{w})}{\partial \boldsymbol{w}} = -\boldsymbol{X}^T\left( \boldsymbol{t}-\boldsymbol{y} \right). 
+
+\end{equation}\]</div>
+<!-- !split -->
+</section>
+</section>
+<section id="a-learning-algorithm">
+<h3>A learning algorithm<a class="headerlink" href="#a-learning-algorithm" title="Link to this heading">#</a></h3>
+<p><em>Notice.</em>
+Having access to the first derivative we can define an <em>on-line learning rule</em> as follows:</p>
+<ul class="simple">
+<li><p>For each input <span class="math notranslate nohighlight">\(i\)</span> (possibly permuting the sequence in each epoch) compute the error <span class="math notranslate nohighlight">\(e^{(i)} = t^{(i)} - y^{(i)}\)</span>.</p></li>
+<li><p>Adjust the weights in a direction that would reduce this error: <span class="math notranslate nohighlight">\(\Delta w_j = \eta e^{(i)} x_j^{(i)}\)</span>. The parameter <span class="math notranslate nohighlight">\(\eta\)</span> is called the <em>learning rate</em>.</p></li>
+<li><p>Perform multiple passes through the data, where each pass is known as an <em>epoch</em>. The computation of outputs <span class="math notranslate nohighlight">\(\boldsymbol{y}\)</span> given a set of weights <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> is known as a <em>forward pass</em>, while the computation of gradients and adjustment of weights is called <em>back-propagation</em>.</p></li>
+</ul>
+<p>You will recognise this learning algorithm as <em>stochastic gradient descent</em>.</p>
+<p>Alternatively, one can perform <em>batch learning</em> for which multiple instances are combined into a batch, and the weights are adjusted following the matrix expression stated above. At the end, one hopes to have reached an optimal set of weights.</p>
+<section id="extending-to-more-features">
+<h4>Extending to more features<a class="headerlink" href="#extending-to-more-features" title="Link to this heading">#</a></h4>
+<p>Within a binary classification problem, we can easily expand our model to include multiple input features. Our activation function is then (with <span class="math notranslate nohighlight">\(p\)</span> features)</p>
+<div class="amsmath math notranslate nohighlight" id="equation-478599cf-def3-4def-9d56-d7f25d6e2334">
+<span class="eqno">(21.10)<a class="headerlink" href="#equation-478599cf-def3-4def-9d56-d7f25d6e2334" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+z( \boldsymbol{x}^{(i)}, \boldsymbol{w} ) = w_0 + w_1 x_1^{(i)} + w_2 x_2^{(i)} + \dots + w_p x_p^{(i)}.
+
+\end{equation}\]</div>
+<p>Defining <span class="math notranslate nohighlight">\(\boldsymbol{x}^{(i)} \equiv [1,x_1^{(i)}, x_2^{(i)}, \dots, x_p^{(i)}]\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{w}=[w_0, w_1, \dots, w_p]\)</span> we get</p>
+<div class="amsmath math notranslate nohighlight" id="equation-b023bcf1-0c9d-4a76-bcfd-afc748027d9b">
+<span class="eqno">(21.11)<a class="headerlink" href="#equation-b023bcf1-0c9d-4a76-bcfd-afc748027d9b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\prob (t^{(i)}=1 | \boldsymbol{w}, \boldsymbol{x}^{(i)}) = \frac{ \exp{ \left( \boldsymbol{w} \cdot \boldsymbol{x}^{(i)} \right) }}{ 1 + \exp{ \left( \boldsymbol{w} \cdot \boldsymbol{x}^{(i)} \right) } }.
+
+\end{equation}\]</div>
+</section>
+</section>
+</section>
+<section id="extending-to-more-classes">
+<h2><span class="section-number">21.4. </span>Extending to more classes<a class="headerlink" href="#extending-to-more-classes" title="Link to this heading">#</a></h2>
+<p>Until now we have focused on binary classification involving just a decision between two classes. Suppose we wish to extend to <span class="math notranslate nohighlight">\(K\)</span> classes.  We will then introduce <span class="math notranslate nohighlight">\(K\)</span> outputs <span class="math notranslate nohighlight">\(\boldsymbol{y}^{(i)} = \{ y_1^{(i)}, y_2^{(i)}, \ldots, y_{K}^{(i)} \}\)</span>.</p>
+<div class="admonition-question admonition">
+<p class="admonition-title">Question</p>
+<p>Actually, we would only need <span class="math notranslate nohighlight">\(K-1\)</span> outputs to create a soft classifier for <span class="math notranslate nohighlight">\(K\)</span> classes. Why?</p>
+</div>
+<p>Let us for the sake of simplicity assume we have only one feature. The activations are (suppressing the index <span class="math notranslate nohighlight">\(i\)</span>)</p>
+<div class="amsmath math notranslate nohighlight" id="equation-e7e9c63e-1afd-4926-9e1a-c5b50b857dda">
+<span class="eqno">(21.12)<a class="headerlink" href="#equation-e7e9c63e-1afd-4926-9e1a-c5b50b857dda" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+z_1 = w_{1,0}+w_{1,1}x_1,
+
+\end{equation}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-f73b1f4f-2fca-478a-99b1-eceadfa4f383">
+<span class="eqno">(21.13)<a class="headerlink" href="#equation-f73b1f4f-2fca-478a-99b1-eceadfa4f383" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+z_2 = w_{2,0}+w_{2,1}x_1,
+
+\end{equation}\]</div>
+<p>and so on until the class <span class="math notranslate nohighlight">\(K\)</span>:th class</p>
+<div class="amsmath math notranslate nohighlight" id="equation-ec501c57-5a08-4f60-9ef1-a767f3a56735">
+<span class="eqno">(21.14)<a class="headerlink" href="#equation-ec501c57-5a08-4f60-9ef1-a767f3a56735" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+z_{K} = w_{K,0}+w_{K,1}x_1,
+
+\end{equation}\]</div>
+<p>and the model is specified in term of <span class="math notranslate nohighlight">\(K\)</span> so-called log-odds or <strong>logit</strong> transformations <span class="math notranslate nohighlight">\(y_j^{(i)} = y(z_j^{(i)})\)</span>.</p>
+<section id="class-probabilities-the-softmax-function">
+<h3>Class probabilities: The Softmax function<a class="headerlink" href="#class-probabilities-the-softmax-function" title="Link to this heading">#</a></h3>
+<p>The transformation of the multiple outputs, as described above, to probabilities for belonging to any of <span class="math notranslate nohighlight">\(K\)</span> different classes can be achieved via the so-called <em>Softmax</em> function.</p>
+<p>The Softmax function is used in various multiclass classification
+methods, such as multinomial logistic regression (also known as
+softmax regression), multiclass linear discriminant analysis, naive
+Bayes classifiers, and artificial neural networks.  Specifically, the predicted probability for the <span class="math notranslate nohighlight">\(k\)</span>:th class given a sample
+vector <span class="math notranslate nohighlight">\(\boldsymbol{x}^{(i)}\)</span> and a weighting vector <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> is (with one independent variable):</p>
+<div class="amsmath math notranslate nohighlight" id="equation-0e432866-6c84-46b6-916d-32f452050549">
+<span class="eqno">(21.15)<a class="headerlink" href="#equation-0e432866-6c84-46b6-916d-32f452050549" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\prob (t^{(i)}=k\vert \boldsymbol{x}^{(i)},  \boldsymbol{w} ) = \frac{\exp{(w_{k,0}+w_{k,1}x_1^{(i)})}} {\sum_{l=1}^{K}\exp{(w_{l,0}+w_{l,1}x_1^{(i)})}}.
+\end{equation}\]</div>
+<p>which means that the discrete set of probabilities is properly normalized.</p>
+<p>Our earlier discussions were all specialized to
+the case with two classes only. It is easy to see from the above that
+what we derived earlier is compatible with these equations.</p>
+</section>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./LearningFromData-content/MachineLearning/LogReg"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../GP/BUQ/Gaussian_processes_exercises.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Exercise: Gaussian Process models with GPy</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ANN/MachineLearningExamples.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">21.5. </span>Machine Learning: First Examples</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-and-deep-learning">21.1. Optimization and Deep learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basics-and-notation">21.2. Basics and notation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-classification">21.3. Binary classification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-perceptron">The perceptron</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-logistic-function">The logistic function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-activation-functions">Standard activation functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-binary-classifier-with-two-parameters">A binary classifier with two parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#determination-of-weights">Determination of weights</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-likelihood">Maximum likelihood</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cost-function-rewritten-as-cross-entropy">The cost function rewritten as cross entropy</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#regularization">Regularization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#minimizing-the-cross-entropy">Minimizing the cross entropy</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#a-more-compact-expression">A more compact expression</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-learning-algorithm">A learning algorithm</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#extending-to-more-features">Extending to more features</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extending-to-more-classes">21.4. Extending to more classes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#class-probabilities-the-softmax-function">Class probabilities: The Softmax function</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

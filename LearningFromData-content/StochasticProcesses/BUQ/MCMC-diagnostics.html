@@ -1,0 +1,1363 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>17.2. Overview: MCMC Diagnostics &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\text{th}}", "yexp": "y_{\\text{exp}}", "ym": "y_{\\text{m}}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'LearningFromData-content/StochasticProcesses/BUQ/MCMC-diagnostics';</script>
+    <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="17.4. Lecture 12" href="intuition_sampling.html" />
+    <link rel="prev" title="17.1. Advanced Markov chain Monte Carlo sampling" href="../../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../Intro/About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../Intro/About.html">
+                    About this Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Overview.html">1. Invitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Introduction.html">2. Introduction</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/RootBayesianBasics.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Inferenceandpdfs.html">4. Inference and PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/exercise_sum_product_rule.html">4.5. Exercise: Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/exercise_medical_example_by_Bayes.html">4.6. Exercise: Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/MoreBayesTheorem.html">4.7. More on Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Bayesian_epistemology.html">4.8. *Aside: Bayesian epistemology</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/DataModelsPredictions.html">4.9. Data, models, and predictions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html">Parameter estimation I: Gaussian mean and variance</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Posteriors.html">5. Bayesian posteriors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Exploring_pdfs.html">5.1. Exploring PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Exploring_pdfs_followups.html">Follow-ups to Exploring PDFs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Gaussians.html">5.2. Gaussians: A couple of frequentist connections</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/visualization_of_CLT.html">Visualization of the Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/Interpreting2Dposteriors.html">5.3. Interpreting 2D posteriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/chi_squared_tests.html">5.4. Demonstration: Sum of normal variables squared</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/CoinTossing.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/demo-BayesianBasics.html">6.6. Demonstration:  Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Bayesian_updating_coinflip_interactive.html">6.7. Widgetized coin tossing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/UsingBayes.html">7. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/BayesianAdvantages.html">7.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianWorkflow/BayesianWorkflow.html">7.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianLinearRegression/BayesianLinearRegression_rjf.html">7.3. Bayesian Linear Regression (BLR)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../BayesianStatistics/RootAdvancedMethods.html">8. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/ParameterEstimation.html">9. More Bayesian parameter estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/radioactive_lighthouse_exercise.html">9.1. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/amplitude_in_presence_of_background.html">9.2. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_fitting_straight_line_I.html">9.3. Parameter estimation example: fitting a straight line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_fitting_straight_line_II.html">9.4. Parameter estimation example: fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/dealing_with_outliers.html">9.5. Dealing with outliers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/Assigning.html">10. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/IgnorancePDF.html">10.1. Assigning probabilities (I): Indifferences and translation groups</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/demo-straight_lines.html">Alternative notebook with MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/MaxEnt2.html">10.2. Assigning probabilities (II): The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/MaxEnt_Function_Reconstruction.html">10.3. Maximum Entropy for reconstructing a function from its moments</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/BayesLinear.html">11. Bayes goes linear: History matching</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/Multimodel_inference.html">12. Multi-model inference with Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/ModelSelection.html">12.1. Model Selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/Evidence_for_model_EFT_coefficients.html">Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/two_model_evidence.html">Follow-up to EFT evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/computing_evidence.html">Computing the evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/MCMC-parallel-tempering_ptemcee_vs_zeus.html">Demo: Multimodal distributions with two samplers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ModelMixing/model_mixing.html">12.2. Model averaging and mixing </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/DiscrepancyModels.html">13. Discrepancy Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/MD_balldrop_v1.html">13.4. Ball-drop experiment</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../RootMCMC.html">14. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../StochasticProcesses.html">15. Stochastic processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Metropolis_Poisson_example.html">15.7. Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../demo-MCMC.html">15.8. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Recap_BUQ.html">15.9. Recap of Poisson and more about MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameter_estimation_Gaussian_noise-2.html">15.10. Parameter estimation example: Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MCMC-random-walk-and-sampling.html">15.11. Exercise: Random walk</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../MCMC_overview.html">16. Overview of Markov Chain Monte Carlo</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MarkovChains.html">16.1. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MCMC.html">16.2. Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MCMC_intro_BUQ.html">16.3. Alternative MCMC introduction (Gregory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Assignment_extending_radioactive_lighthouse.html">16.4. Assignment: 2D radioactive lighthouse location using MCMC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../Advanced_MCMC.html">17. Advanced MCMC</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html">17.1. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">17.2. Overview: MCMC Diagnostics</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="intuition_sampling.html">17.4. Intuition on sampling and best practices</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Other_samplers.html">18. HMC and other samplers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BUQ2/HMC_intro_BUQ.html">18.1. Hamiltonian Monte Carlo (HMC) overview and visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BUQ2/Liouville_theorem_visualization.html">Liouville Theorem Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BUQ2/Orbital_eqs_with_different_algorithms.html">Solving orbital equations with different algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../zeus.html">18.2. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BUQ2/PyMC_intro_updated.html">18.3. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../OverviewIntroPyMC.html">Overview of Intro to PyMC notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../BUQ2/parameter_estimation_Gaussian_noise_compare_samplers.html">18.4. Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning: A Bayesian perspective</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../MachineLearning/RootML.html">19. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/GP/RootGP.html">20. Overview of Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/GaussianProcesses.html">20.4. Introduction to Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/CF/demo-GaussianProcesses.html">demo-GaussianProcesses notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/lecture_20.html">GP recap; GP applications; (old lecture 20)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/Sklearn_demos.html">20.5. scikit-learn demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/plot_gpr_noisy_targets.html">One-dimension regression example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/plot_gpr_prior_posterior.html">Prior and posterior with different kernels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/GPy_demos.html">20.6. GPy demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/demo-GaussianProcesses.html">Gaussian processes demonstration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/CF/exercise_GP_GPy.html">Exercise: Gaussian processes using <code class="docutils literal notranslate"><span class="pre">GPy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/Gaussian_processes_exercises.html">Exercise: Gaussian Process models with GPy</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/LogReg/LogReg.html">21. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/MachineLearningExamples.html">21.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/exercises_LogReg_NeuralNet.html">21.6. Exercise: Logistic Regression and neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/ANN/MachineLearning.html">22. Machine learning: Overview and notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet.html">22.5. Artifical neural networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/demo-NeuralNet.html">22.6. Demonstration: Neural network classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/Neural_Network_for_simple_function_in_PyTorch.html">22.7. ANN from ChatGPT using PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/ModelValidation.html">22.8. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/DataBiasFairness.html">22.9. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/NeuralNetBackProp.html">22.10. *Neural networks: Backpropagation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/ANNFT.html">23. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/random_initialized_ANN_vs_width.html">23.3. Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/BNN/bnn.html">24. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/BNN/demo-bnn.html">24.4. Demonstration: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/BNN/exercises_BNN.html">24.5. Exercise: Bayesian neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/CNN/cnn.html">25. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/CNN/demo-cnn.html">25.6. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Other topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/RootOtherTopics.html">26. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/Emulators.html">27. Emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/BayesFast.html">27.1. Bayes goes fast: Emulators (from CF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/extra_RBM_emulators.html">27.2. RBM emulators (BUQ)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/Student_t_distribution_from_Gaussians.html">28. Student t distribution from Gaussians</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/SVD.html">29. PCA, SVD, and all that</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/linear_algebra_games_including_SVD.html">29.5. SVD notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/qbism.html">30. QBism: Bayesian quantum mechanics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/bibliography.html">31. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/JB_tests.html">32. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Reference/Statistics.html">33. Statistics concepts and notation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/GradientDescent.html">34. Gradient-descent optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/RootScientificModeling.html">35. Overview of scientific modeling material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/OverviewModeling.html">36. Overview of modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/LinearModels.html">37. Linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/MathematicalOptimization.html">38. Mathematical optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/RootGettingStarted.html">39. Overview of Getting started material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/exercise_Intro_01_Jupyter_Python.html">40. Jupyter notebooks and Python</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/more_python_and_jupyter.html">41. More about Python and Jupyter notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_02_Jupyter_Python.html">41.4. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_03_Numpy.html">41.5. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/demo-Intro.html">41.6. Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/Simple_widgets_v1.html">41.7. Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/setting_up.html">42. Setting up for using this Jupyter Book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/installing_anaconda.html">42.1. Using Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/using_github.html">42.2. Using GitHub</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/RootMiniProjects.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_I_toy_model_of_EFT.html">MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIa.html">MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html">MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Mini-projects/Mini-project_IIb_overview.html">Overview of Mini-project IIb: How many lines?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIa_bayesian_optimization.html">MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html">MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development/issues/new?title=Issue%20on%20page%20%2FLearningFromData-content/StochasticProcesses/BUQ/MCMC-diagnostics.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/LearningFromData-content/StochasticProcesses/BUQ/MCMC-diagnostics.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Overview: MCMC Diagnostics</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">17.2. Overview: MCMC Diagnostics</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mcmc-diagnostics-assessing-convergence">MCMC diagnostics: assessing convergence</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bda3-gelman-et-al-fig-11-1">BDA3: Gelman et al, Fig. 11.1</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-a-straight-line-revisited">Fitting a straight line - revisited</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-data">The Data</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model">The Model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-we-know-this-chain-has-converged-to-the-posterior">How do we know this chain has converged to the posterior?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-error-of-the-mean">Standard Error of the Mean</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autocorrelation-plots">Autocorrelation Plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#acceptance-rate-for-the-mh-algorithm">Acceptance Rate for the MH Algorithm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gelman-rubin-diagnostic">Gelman Rubin Diagnostic</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#univariate-approaches">17.3. Univariate Approaches</a></li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="overview-mcmc-diagnostics">
+<h1><span class="section-number">17.2. </span>Overview: MCMC Diagnostics<a class="headerlink" href="#overview-mcmc-diagnostics" title="Link to this heading">#</a></h1>
+<p>Adapted from the TALENT course on Learning from Data: Bayesian Methods and Machine Learning
+(York, UK, June 10-28, 2019).</p>
+<p>The original notebook was by Christian Forssen.  Revisions by Dick Furnstahl.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span><span class="p">,</span> <span class="n">uniform</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sbn</span>
+<span class="n">sbn</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">sbn</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s1">&#39;talk&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="mcmc-diagnostics-assessing-convergence">
+<h2>MCMC diagnostics: assessing convergence<a class="headerlink" href="#mcmc-diagnostics-assessing-convergence" title="Link to this heading">#</a></h2>
+<p>From previous notebooks, we know that using Metropolis-Hastings (MH) leads to a Markov Chain that we can use for inference. This is predicated on our chain converging to our stationary distribution (the posterior).  Knowing when a chain has converged is a numerical issue and there are some diagnostic tools that we can use for assessing convergence.</p>
+<section id="bda3-gelman-et-al-fig-11-1">
+<h3>BDA3: Gelman et al, Fig. 11.1<a class="headerlink" href="#bda3-gelman-et-al-fig-11-1" title="Link to this heading">#</a></h3>
+<p><img alt="BDA3: Gelman et al, Fig. 11.1" src="https://raw.githubusercontent.com/buqeye/LearningFromData/main/LectureNotes/_images/gelman_11.1.png" /></p>
+</section>
+<section id="fitting-a-straight-line-revisited">
+<h3>Fitting a straight line - revisited<a class="headerlink" href="#fitting-a-straight-line-revisited" title="Link to this heading">#</a></h3>
+<p>Let us revisit the problem of inferring the parameters of a straight line. See also <a class="reference internal" href="#../Parameter_estimation/parameter_estimation_fitting_straight_line_I.ipynb"><span class="xref myst">parameter_estimation_fitting_straight_line_I.ipynb</span></a> and <a class="reference internal" href="#../Why_Bayes_is_better//parameter_estimation_fitting_straight_line_II.ipynb"><span class="xref myst">parameter_estimation_fitting_straight_line_II.ipynb</span></a></p>
+<section id="the-data">
+<h4>The Data<a class="headerlink" href="#the-data" title="Link to this heading">#</a></h4>
+<p>Let’s start by creating some data that we will fit with a straight line.  We’ll start with a constant standard deviation of <span class="math notranslate nohighlight">\(\sigma\)</span> on the <span class="math notranslate nohighlight">\(y\)</span> values and no error on <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">()</span>   <span class="c1"># set up the random seed for later calls</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_data</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">N_pts</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="mf">.2</span><span class="p">,</span> <span class="n">rseed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a straight line defined by intercept and slope:</span>
+<span class="sd">          y = slope * x + intercept</span>
+<span class="sd">       generate N_pts points randomly spaced points from x=0 to x=x_max</span>
+<span class="sd">       with Gaussian (i.e., normal) error with mean zero and standard</span>
+<span class="sd">       deviation dy.</span>
+<span class="sd">       </span>
+<span class="sd">       Unless rseed is specified as an integer, new random data will be </span>
+<span class="sd">       generated each time.</span>
+<span class="sd">       </span>
+<span class="sd">       Return the x and y arrays and an array of standard deviations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">rseed</span><span class="p">)</span> 
+    
+    <span class="n">x_max</span> <span class="o">=</span> <span class="mf">10.</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x_max</span> <span class="o">*</span> <span class="n">rand</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">N_pts</span><span class="p">)</span>  <span class="c1"># choose the x values randomly in [0,10]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">intercept</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x</span>  <span class="c1"># This is the y value without noise</span>
+    <span class="n">y</span> <span class="o">+=</span> <span class="n">dy</span> <span class="o">*</span> <span class="n">rand</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N_pts</span><span class="p">)</span>    <span class="c1"># Add in Gaussian noise</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># return coordinates and error bars</span>
+
+<span class="c1"># Specify the true parameters and make sample data</span>
+<span class="n">intercept</span> <span class="o">=</span> <span class="mf">1.5</span>   <span class="c1"># true intercept (called b elsewhere)</span>
+<span class="n">slope</span> <span class="o">=</span> <span class="mf">0.5</span>       <span class="c1"># true slope (called m elsewhere)</span>
+<span class="n">theta_true</span> <span class="o">=</span> <span class="p">[</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">]</span>  <span class="c1"># put parameters in a true theta vector</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">make_data</span><span class="p">(</span><span class="o">*</span><span class="n">theta_true</span><span class="p">)</span>
+
+<span class="c1"># Make a plot of the data</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$y$&#39;</span><span class="p">)</span>
+<span class="n">plot_title</span> <span class="o">=</span> <span class="sa">rf</span><span class="s1">&#39;intercept $= </span><span class="si">{</span><span class="n">intercept</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">$, slope $= </span><span class="si">{</span><span class="n">slope</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">$, &#39;</span> \
+              <span class="o">+</span> <span class="sa">rf</span><span class="s1">&#39; $\sigma = </span><span class="si">{</span><span class="n">dy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">$&#39;</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">plot_title</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/a621425e9a659e0837c0bb96c11a9f0e03f214be80b0c67479b10b3136a19fd1.png" src="../../../_images/a621425e9a659e0837c0bb96c11a9f0e03f214be80b0c67479b10b3136a19fd1.png" />
+</div>
+</div>
+</section>
+<section id="the-model">
+<h4>The Model<a class="headerlink" href="#the-model" title="Link to this heading">#</a></h4>
+<p>Next we need to specify a theoretical model. We’re fitting a straight line to data, so we’ll need a slope and an intercept; i.e.</p>
+<div class="math notranslate nohighlight">
+\[
+y_{\textrm{th}}(x) = mx + b
+\]</div>
+<p>where our parameter vector will be</p>
+<div class="math notranslate nohighlight">
+\[
+\theta = [b, m]
+\]</div>
+<p>But this is only half the picture: what we mean by a “model” in a Bayesian sense is not only this expected value <span class="math notranslate nohighlight">\(y_{\textrm{th}}(x;\theta)\)</span>, but a <strong>probability distribution</strong> for our data.
+That is, we need an expression to compute the likelihood <span class="math notranslate nohighlight">\(p(D\mid\theta, I)\)</span> for our data as a function of the parameters <span class="math notranslate nohighlight">\(\theta\)</span> (<span class="math notranslate nohighlight">\(I\)</span> stands for all other information).
+Here <span class="math notranslate nohighlight">\(D\)</span> is the set of all <span class="math notranslate nohighlight">\((x,y)\)</span> pairs that we know about (or measure).</p>
+<p>[Note: At this stage we are (implicitly) assuming that our theoretical model is perfect.  But it is not!  We’ll come back eventually to talk about adding a theory error <span class="math notranslate nohighlight">\(\delta y_{\textrm{th}}\)</span>.]</p>
+<p>We are given data with simple error bars, which imply that the probability for any <em>single</em> data point (labeled by <span class="math notranslate nohighlight">\(i\)</span>) is a normal distribution with mean given by the true value. That is,</p>
+<div class="math notranslate nohighlight">
+\[
+y_i \sim \mathcal{N}(y_{\textrm{th}}(x_i;\theta), \varepsilon_i^2)
+\]</div>
+<p>or, in other words,</p>
+<div class="math notranslate nohighlight">
+\[
+p(y_i\mid x_i,\theta,  I) = \frac{1}{\sqrt{2\pi\varepsilon_i^2}} \exp\left(\frac{-\left[y_i - y_{\textrm{th}}(x_i;\theta)\right]^2}{2\varepsilon_i^2}\right)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\varepsilon_i\)</span> are the (known) measurement errors indicated by the error bars.</p>
+<p>Assuming all the points are independent, we can find the full likelihood by multiplying the individual likelihoods together:</p>
+<div class="math notranslate nohighlight">
+\[
+p(D\mid\theta, I) = \prod_{i=1}^N p(y_i\mid x_i,\theta, I)
+\]</div>
+<p>For convenience (and also for numerical accuracy) this is often expressed in terms of the log-likelihood:</p>
+<div class="math notranslate nohighlight">
+\[
+\log p(D\mid\theta, I) = -\frac{1}{2}\sum_{i=1}^N\left(\log(2\pi\varepsilon_i^2) + \frac{\left[y_i - y_M(x_i;\theta)\right]^2}{\varepsilon_i^2}\right)
+\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Log likelihood</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_likelihood</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the log likelihood given the vector of parameters theta and</span>
+<span class="sd">        numpy arrays for x, y, and dy (which is the standard deviation).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y_model</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">dy</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> 
+                         <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_model</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">dy</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Let&#39;s use the (log) symmetric prior, which is the scale-invariant one.</span>
+<span class="c1"># Uniform prior for the offset</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prior p(m) proportional to (1 + m^2)^{-3/2}&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mf">1.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>  <span class="c1"># log(0)</span>
+    
+<span class="k">def</span><span class="w"> </span><span class="nf">log_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the log posterior by evaluating the log prior and log</span>
+<span class="sd">        likelihood.</span>
+<span class="sd">       Probably should first check if the log prior is -np.inf before </span>
+<span class="sd">        evaluating the log likelihood</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">log_likelihood</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will use the emcee sampler, but in its Metropolis-Hastings mode. Here you can use your own sampler if you created one.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">emcee</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">corner</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;emcee sampling (version: )&#39;</span><span class="p">,</span> <span class="n">emcee</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+
+<span class="n">ndim</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># number of parameters in the model</span>
+<span class="n">nwalkers</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">nwarmup</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">nsteps</span> <span class="o">=</span> <span class="mi">2000</span>
+
+<span class="c1"># MH-Sampler setup</span>
+<span class="n">stepsize</span> <span class="o">=</span> <span class="mf">.005</span>
+<span class="n">cov</span> <span class="o">=</span> <span class="n">stepsize</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">ndim</span><span class="p">)</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span><span class="n">ndim</span><span class="p">)</span>
+
+<span class="c1"># initialize the sampler</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">log_posterior</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="p">],</span>
+                               <span class="n">moves</span><span class="o">=</span><span class="n">emcee</span><span class="o">.</span><span class="n">moves</span><span class="o">.</span><span class="n">GaussianMove</span><span class="p">(</span><span class="n">cov</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>emcee sampling (version: ) 3.1.6
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Sample the posterior distribution</span>
+
+<span class="c1"># Warm-up</span>
+<span class="k">if</span> <span class="n">nwarmup</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Performing </span><span class="si">{</span><span class="n">nwarmup</span><span class="si">}</span><span class="s1"> warmup iterations.&#39;</span><span class="p">)</span>
+    <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">nwarmup</span><span class="p">)</span>
+    <span class="n">sampler</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">p0</span>
+    
+<span class="c1"># Perform iterations, starting at the final position from the warmup.</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MH sampler performing </span><span class="si">{</span><span class="n">nsteps</span><span class="si">}</span><span class="s1"> samples.&#39;</span><span class="p">)</span>
+<span class="o">%</span><span class="k">time</span> sampler.run_mcmc(pos, nsteps)
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean acceptance fraction: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ndim</span><span class="p">))</span>
+<span class="n">samples_unflattened</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">chain</span>
+<span class="n">lnposts</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">lnprobability</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+    
+<span class="c1"># make a corner plot with the posterior distribution</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">],</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$\theta_0$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\theta_1$&quot;</span><span class="p">],</span>
+                       <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Performing 1000 warmup iterations.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MH sampler performing 2000 samples.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 700 ms, sys: 1.99 ms, total: 702 ms
+Wall time: 701 ms
+done
+Mean acceptance fraction: 0.118
+</pre></div>
+</div>
+<img alt="../../../_images/35e370352b8f25aac77bf527f0481617d3368b2e24617eed37bca6c085bbd43f.png" src="../../../_images/35e370352b8f25aac77bf527f0481617d3368b2e24617eed37bca6c085bbd43f.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">samples_unflattened</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">lnposts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(20000, 2)
+(10, 2000, 2)
+(20000,)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fix</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">5</span><span class="o">*</span><span class="n">ndim</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">irow</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">samples</span><span class="p">[:,</span><span class="n">irow</span><span class="p">])</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\theta_</span><span class="si">{0}</span><span class="s1">$&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">irow</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">samples</span><span class="p">[:,</span><span class="n">irow</span><span class="p">],</span><span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+    
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">lnposts</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">lnposts</span><span class="p">,</span><span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\log(p)$&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Histogram&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Trace Plot&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/cf955d9181842d2ddee5be848bea862b31f62d899c0617bb55d2fb6d6814b887.png" src="../../../_images/cf955d9181842d2ddee5be848bea862b31f62d899c0617bb55d2fb6d6814b887.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="how-do-we-know-this-chain-has-converged-to-the-posterior">
+<h2>How do we know this chain has converged to the posterior?<a class="headerlink" href="#how-do-we-know-this-chain-has-converged-to-the-posterior" title="Link to this heading">#</a></h2>
+<p>Credit to <a class="reference external" href="http://www.stat.columbia.edu/~gelman/book/">BDA3</a> by Gelman et al. and lecture notes by <a class="reference external" href="https://rlhick.people.wm.edu/">Rob Hicks</a></p>
+<section id="standard-error-of-the-mean">
+<h3>Standard Error of the Mean<a class="headerlink" href="#standard-error-of-the-mean" title="Link to this heading">#</a></h3>
+<p>This investigates the question how does the <strong>mean</strong> of <span class="math notranslate nohighlight">\(\theta\)</span> deviate in our chain, and is capturing the <em>simulation error</em> of the mean rather than underlying uncertainty of our parameter <span class="math notranslate nohighlight">\(\theta\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+SE({\bar{\theta}}) = \frac{\text{Posterior Standard Deviation}}{\sqrt{N}}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(N\)</span> is the chain length (the number of iterations in your chain).</p>
+<p>For our problem this is:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">irow</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of the Mean for theta_</span><span class="si">{</span><span class="n">irow</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">samples</span><span class="p">[:,</span><span class="n">irow</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Standard Error of the Mean for theta_0: 8.5e-04
+Standard Error of the Mean for theta_1: 1.3e-04
+</pre></div>
+</div>
+</div>
+</div>
+<p>This is saying that very little of our posterior variation in <span class="math notranslate nohighlight">\(\theta\)</span> is due to sampling error (that is good).  We can visualize this by examining the moving average of our chain as we move through the iterations:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fix</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="c1"># pandas makes this easy:</span>
+<span class="n">df_chain</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;theta0&#39;</span><span class="p">,</span><span class="s1">&#39;theta1&#39;</span><span class="p">])</span>
+<span class="n">df_chain</span><span class="p">[</span><span class="s1">&#39;ma_theta0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_chain</span><span class="o">.</span><span class="n">theta0</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">center</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">df_chain</span><span class="p">[</span><span class="s1">&#39;ma_theta1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_chain</span><span class="o">.</span><span class="n">theta1</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">center</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">samples</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_0$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">df_chain</span><span class="p">[</span><span class="s1">&#39;ma_theta0&#39;</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;Moving average&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\theta_0$&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">samples</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;trace&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">df_chain</span><span class="p">[</span><span class="s1">&#39;ma_theta1&#39;</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;Moving average&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\theta_1$&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/c86be327f9b6ae21aced1c3c929c5c375bddc464d70a50252f1e2115918be203.png" src="../../../_images/c86be327f9b6ae21aced1c3c929c5c375bddc464d70a50252f1e2115918be203.png" />
+</div>
+</div>
+<p>This is a good sign that our chain is stable, since both the individual samples of <span class="math notranslate nohighlight">\(\theta\)</span> in our chain and the mean of the samples dance around a stable value of <span class="math notranslate nohighlight">\(\theta\)</span>.  The calculation above makes this more concrete.  There are time series versions of this calculation that accounts for the fact that the chain is not iid.</p>
+</section>
+<section id="autocorrelation-plots">
+<h3>Autocorrelation Plots<a class="headerlink" href="#autocorrelation-plots" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">autocorrelation</span><span class="p">(</span><span class="n">chain</span><span class="p">,</span> <span class="n">max_lag</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chain</span><span class="p">)</span>
+    <span class="n">acors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">max_lag</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_lag</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">chain</span><span class="p">)</span><span class="o">/</span><span class="mi">5</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;max_lag is more than one fifth the chain length&#39;</span><span class="p">)</span>
+    <span class="c1"># Create a copy of the chain with average zero</span>
+    <span class="n">chain1d</span> <span class="o">=</span> <span class="n">chain</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">chain</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_lag</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">unshifted</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">shifted</span> <span class="o">=</span> <span class="n">chain1d</span><span class="p">[</span><span class="n">lag</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="n">lag</span><span class="p">:</span>
+            <span class="n">unshifted</span> <span class="o">=</span> <span class="n">chain1d</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">unshifted</span> <span class="o">=</span> <span class="n">chain1d</span><span class="p">[:</span><span class="o">-</span><span class="n">lag</span><span class="p">]</span>
+        <span class="n">normalization</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">unshifted</span><span class="p">,</span> <span class="n">unshifted</span><span class="p">))</span>
+        <span class="n">normalization</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">shifted</span><span class="p">,</span> <span class="n">shifted</span><span class="p">))</span>
+        <span class="n">acors</span><span class="p">[</span><span class="n">lag</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">unshifted</span><span class="p">,</span> <span class="n">shifted</span><span class="p">)</span> <span class="o">/</span> <span class="n">normalization</span>
+    <span class="k">return</span> <span class="n">acors</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">icol</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+    <span class="n">acors</span> <span class="o">=</span> <span class="n">autocorrelation</span><span class="p">(</span><span class="n">samples</span><span class="p">[:,</span><span class="n">icol</span><span class="p">],</span><span class="n">max_lag</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">icol</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">acors</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">icol</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;lag&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;autocorrelation&#39;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">1.</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/294b0764fcb0d52ebfcc70700713001e9c717a2afa31cca9708423a9e64d2a36.png" src="../../../_images/294b0764fcb0d52ebfcc70700713001e9c717a2afa31cca9708423a9e64d2a36.png" />
+</div>
+</div>
+</section>
+<section id="acceptance-rate-for-the-mh-algorithm">
+<h3>Acceptance Rate for the MH Algorithm<a class="headerlink" href="#acceptance-rate-for-the-mh-algorithm" title="Link to this heading">#</a></h3>
+<p>Recall that we want the acceptance rate to be in the range .2 to .4.  For our problem <a class="reference external" href="http://projecteuclid.org/DPubS?service=UI&amp;amp;version=1.0&amp;amp;verb=Display&amp;amp;handle=euclid.aoap/1034625254">this paper</a> suggests an acceptance rate of .234 for random walk MH.</p>
+<p>Since the number of <strong>new</strong> members in the chain represent the number of acceptances, count changes in chain values and divide by total chain length to calculate acceptance rate:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Acceptance Rate is: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Acceptance Rate is: 0.118
+</pre></div>
+</div>
+</div>
+</div>
+<p>The acceptance rate is helpful in describing convergence because it indicates a good level of “mixing” over the parameter space. The acceptance rate can be tuned via the proposal width after which we re-run our MH MCMC sampler.</p>
+<blockquote>
+<div><p>Note: modern software (like pymc and emcee) can auto-tune the proposal distribution to achieve a desired acceptance rate.</p>
+</div></blockquote>
+</section>
+<section id="gelman-rubin-diagnostic">
+<h3>Gelman Rubin Diagnostic<a class="headerlink" href="#gelman-rubin-diagnostic" title="Link to this heading">#</a></h3>
+<p>If our MH MCMC Chain reaches a stationary distribution, and we repeat the exercise multiple times, then we can examine if the posterior for each chain converges to the same place in the distribution of the parameter space.</p>
+<p>Steps:</p>
+<ol class="arabic simple">
+<li><p>Run multiple chains starting at different points (multiple walkers).  Discard the warm-up for each.</p></li>
+<li><p>Split each chain in two, with <span class="math notranslate nohighlight">\(N\)</span> iterations in each half chain.  Call <span class="math notranslate nohighlight">\(M\)</span> the total number of chains now (twice the original number).</p></li>
+<li><p>Calculate the within and between chain variance.  This tests both mixing (if well-mixed, the separate parts of different chains should mix) and stationarity (two halves of each chain should be sampling the same distribution).</p></li>
+</ol>
+<ul class="simple">
+<li><p>Label the scalar parameter or expectation value being tested as <span class="math notranslate nohighlight">\(\psi\)</span> and label the simulated results as <span class="math notranslate nohighlight">\(\psi_{ij}\)</span>, where <span class="math notranslate nohighlight">\(i\)</span> runs from 1 to <span class="math notranslate nohighlight">\(N\)</span> within each chain and <span class="math notranslate nohighlight">\(j\)</span> labels the chain from 1 to <span class="math notranslate nohighlight">\(M\)</span>.  Then we define:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+    \overline\psi_{\cdot j} \equiv \frac{1}{N} \sum_{i=1}^{N} \psi_{ij}
+    \quad \mbox{and} \quad
+    \overline\psi_{\cdot \cdot} \equiv \frac{1}{M} \sum_{j=1}^{M} \overline\psi_{\cdot j}    
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\overline\psi_{\cdot j}\)</span> is the mean within chain <span class="math notranslate nohighlight">\(j\)</span> and <span class="math notranslate nohighlight">\(\overline\psi_{\cdot \cdot}\)</span> is the average (mean) of these means across the <span class="math notranslate nohighlight">\(M\)</span> chains.</p>
+<ul class="simple">
+<li><p>Within chain variance:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+    W = \frac{1}{M}\sum_{j=1}^M s_j^2 
+    \quad \mbox{where} \quad
+    s_j^2 = \frac{1}{N-1}\sum_{i=1}^{N}(\psi_{ij} - \overline\psi_{\cdot j})^2 \;,
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(s_j^2\)</span> is the variance of each chain.  So <span class="math notranslate nohighlight">\(W\)</span> is the mean of the in-chain variances.  It is expected that <span class="math notranslate nohighlight">\(W\)</span> will <em>underestimate</em> the variance of <span class="math notranslate nohighlight">\(\psi\)</span> (which we’ll denote <span class="math notranslate nohighlight">\({\mbox{var}}(\psi)\)</span> because an individual sequence (i.e., chain) with <span class="math notranslate nohighlight">\(N &lt; \infty\)</span> will not have run forever, so it will not have ranged over the full target distribution, so it will have less variability.</p>
+<ul class="simple">
+<li><p>Between chain variance:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+    B = \frac{N}{M-1} \sum_{j=1}^M (\overline\psi_{\cdot j} - \overline\psi_{\cdot \cdot})^2 \;.
+\]</div>
+<p>There is an <span class="math notranslate nohighlight">\(N\)</span> in the numerator of <span class="math notranslate nohighlight">\(B\)</span> because it is from the variance of the within-sequence means <span class="math notranslate nohighlight">\(\overline\psi_{\cdot j}\)</span>,
+each of which is an average of <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(\psi_{ij}\)</span>.</p>
+<ol class="arabic simple" start="4">
+<li><p>Calculate the estimated variance of <span class="math notranslate nohighlight">\(\psi\)</span> as the weighted sum of within and between chain variance.</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+    \hat{\mbox{var}}(\psi)^{+} = \left ( 1 - \frac{1}{N}\right ) W + \frac{1}{N}B  \;.
+\]</div>
+<p>This quantity is expected to <em>overestimate</em> <span class="math notranslate nohighlight">\({\mbox{var}}(\psi)\)</span> but is unbiased under stationarity.</p>
+<ol class="arabic simple" start="5">
+<li><p>Calculate the potential scale reduction factor, <span class="math notranslate nohighlight">\(\hat{R}\)</span>, which is the factor by which the scale that characterizes the distribution for <span class="math notranslate nohighlight">\(\psi\)</span> at the current stage might be reduced if we increased each chain size <span class="math notranslate nohighlight">\(N\)</span> toward infinity:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+    \hat{R} = \sqrt{\frac{\hat{\mbox{var}}(\psi)}{W}}
+\]</div>
+<p>Based on our expectations, this should be greater than 1 because the numerator overestimates <span class="math notranslate nohighlight">\({\mbox{var}}(\psi)\)</span> and denominator underestimates it.  But if it is close to 1, then it should mean that both chains are mixing around the stationary distribution.<br />
+Gelman and Rubin show that when <span class="math notranslate nohighlight">\(\hat{R}\)</span> is greater than 1.1 or 1.2, we need longer runs.</p>
+<p>Let’s run 2 chains:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">no_of_chains</span><span class="o">=</span><span class="mi">2</span>
+<span class="n">chains</span><span class="o">=</span><span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">ichain</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">no_of_chains</span><span class="p">):</span>
+    <span class="n">sampler</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">p0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span><span class="n">ndim</span><span class="p">)</span>
+    <span class="c1"># Warm-up</span>
+    <span class="k">if</span> <span class="n">nwarmup</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Chain </span><span class="si">{</span><span class="n">ichain</span><span class="si">}</span><span class="s1"> performing </span><span class="si">{</span><span class="n">nwarmup</span><span class="si">}</span><span class="s1"> warmup iterations.&#39;</span><span class="p">)</span>
+        <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">nwarmup</span><span class="p">)</span>
+        <span class="n">sampler</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">p0</span>
+    
+    <span class="c1"># Perform iterations, starting at the final position from the warmup.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MH sampler </span><span class="si">{</span><span class="n">ichain</span><span class="si">}</span><span class="s1"> performing </span><span class="si">{</span><span class="n">nsteps</span><span class="si">}</span><span class="s1"> samples.&#39;</span><span class="p">)</span>
+    <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean acceptance fraction: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">chains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Chain 0 performing 1000 warmup iterations.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MH sampler 0 performing 2000 samples.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>done
+Mean acceptance fraction: 0.121
+Chain 1 performing 1000 warmup iterations.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MH sampler 1 performing 2000 samples.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>done
+Mean acceptance fraction: 0.110
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">chain1</span> <span class="o">=</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">chain2</span> <span class="o">=</span> <span class="n">chains</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">num_iter</span> <span class="o">=</span> <span class="n">chain1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">icol</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">icol</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_iter</span><span class="p">),</span> <span class="n">chain1</span><span class="p">[:,</span><span class="n">icol</span><span class="p">])</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">icol</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_iter</span><span class="p">),</span> <span class="n">chain2</span><span class="p">[:,</span><span class="n">icol</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.7</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">icol</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">fr</span><span class="s1">&#39;$\theta_</span><span class="si">{</span><span class="n">icol</span><span class="si">}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">icol</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;iteration&#39;</span><span class="p">)</span>
+    
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/dd0d6a66636c03982a67c37aad3892973431f9087ac87649c2ff3914b6a990be.png" src="../../../_images/dd0d6a66636c03982a67c37aad3892973431f9087ac87649c2ff3914b6a990be.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># rewrite of Gelman-Rubin estimation</span>
+<span class="c1"># we only want one of the variables</span>
+<span class="n">Nchain</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nsteps</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># full chain</span>
+
+<span class="n">Nchain</span> <span class="o">=</span> <span class="mi">2500</span>  <span class="c1"># size of each chain to use here</span>
+<span class="n">Mchain</span> <span class="o">=</span> <span class="mi">4</span>   <span class="c1"># total number of chains</span>
+<span class="n">param</span> <span class="o">=</span> <span class="mi">0</span>    <span class="c1"># which parameter to use</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">Gelman_Rubin_diagnostic_calc</span><span class="p">(</span><span class="n">chains</span><span class="p">,</span> <span class="n">Nchain</span><span class="p">,</span> <span class="n">Mchain</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">psi_chains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Mchain</span><span class="p">,</span> <span class="n">Nchain</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">icol</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Mchain</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">icol</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">psi_chains</span><span class="p">[</span><span class="n">icol</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="n">chains</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">)[:</span><span class="n">Nchain</span><span class="p">,</span> <span class="n">param</span><span class="p">]</span>
+        <span class="n">psi_chains</span><span class="p">[</span><span class="n">icol</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="n">chains</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">)[</span><span class="n">Nchain</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">Nchain</span><span class="p">,</span> <span class="n">param</span><span class="p">]</span>
+    
+    <span class="n">psi_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">chain</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">psi_chains</span><span class="p">])</span>
+    <span class="n">psi_mean_all</span> <span class="o">=</span> <span class="n">psi_mean</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">Mchain</span>
+
+    <span class="n">var_chain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Mchain</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Mchain</span><span class="p">):</span>
+        <span class="n">var_chain</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">Nchain</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> \
+                           <span class="p">((</span><span class="n">psi_chains</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">psi_mean</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="n">W</span> <span class="o">=</span> <span class="n">var_chain</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">Mchain</span>
+
+    <span class="n">B</span> <span class="o">=</span> <span class="n">Nchain</span> <span class="o">/</span> <span class="p">(</span><span class="n">Mchain</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> \
+          <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">mean</span> <span class="o">-</span> <span class="n">psi_mean_all</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">mean</span> <span class="ow">in</span> <span class="n">psi_mean</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    
+    <span class="n">var_theta</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="mf">1.</span><span class="o">/</span><span class="n">Nchain</span><span class="p">)</span> <span class="o">*</span> <span class="n">W</span> <span class="o">+</span> <span class="mf">1.</span><span class="o">/</span><span class="n">Nchain</span> <span class="o">*</span> <span class="n">B</span>
+    <span class="n">Rhat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_theta</span><span class="o">/</span><span class="n">W</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;Nchain = </span><span class="si">{</span><span class="n">Nchain</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">  Rhat = </span><span class="si">{</span><span class="n">Rhat</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gelman-Rubin Diagnostic for different chain lengths: &quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">Nchain</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">]:</span>
+    <span class="n">Gelman_Rubin_diagnostic_calc</span><span class="p">(</span><span class="n">chains</span><span class="p">,</span> <span class="n">Nchain</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Gelman-Rubin Diagnostic for different chain lengths: 
+Nchain =   50  Rhat = 1.713
+Nchain =  100  Rhat = 1.727
+Nchain =  200  Rhat = 1.850
+Nchain =  500  Rhat = 1.634
+Nchain = 1000  Rhat = 1.292
+Nchain = 2000  Rhat = 1.146
+</pre></div>
+</div>
+</div>
+</div>
+<p>To repeat: Gelman and Rubin show that when <span class="math notranslate nohighlight">\(\hat{R}\)</span> is greater than 1.1 or 1.2, we need longer runs.</p>
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="univariate-approaches">
+<h1><span class="section-number">17.3. </span>Univariate Approaches<a class="headerlink" href="#univariate-approaches" title="Link to this heading">#</a></h1>
+<p>The diagnostics we have discussed are all univariate (they work perfectly when there is only one parameter to estimate).</p>
+<p>So most people examine univariate diagnostics <em>for each variable</em>, examine autocorrelation plots, acceptance rates and try to argue chain convergence based on that.</p>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./LearningFromData-content/StochasticProcesses/BUQ"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">17.1. </span>Advanced Markov chain Monte Carlo sampling</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="intuition_sampling.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">17.4. </span>Lecture 12</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">17.2. Overview: MCMC Diagnostics</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mcmc-diagnostics-assessing-convergence">MCMC diagnostics: assessing convergence</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bda3-gelman-et-al-fig-11-1">BDA3: Gelman et al, Fig. 11.1</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-a-straight-line-revisited">Fitting a straight line - revisited</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-data">The Data</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model">The Model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-we-know-this-chain-has-converged-to-the-posterior">How do we know this chain has converged to the posterior?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-error-of-the-mean">Standard Error of the Mean</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autocorrelation-plots">Autocorrelation Plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#acceptance-rate-for-the-mh-algorithm">Acceptance Rate for the MH Algorithm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gelman-rubin-diagnostic">Gelman Rubin Diagnostic</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#univariate-approaches">17.3. Univariate Approaches</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

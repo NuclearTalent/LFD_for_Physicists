@@ -1,0 +1,1684 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>16.1. Markov chains &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\text{th}}", "yexp": "y_{\\text{exp}}", "ym": "y_{\\text{m}}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'LearningFromData-content/StochasticProcesses/MarkovChains';</script>
+    <script src="../../_static/custom.js?v=33f35b7a"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="16.2. Markov chain Monte Carlo sampling" href="MCMC.html" />
+    <link rel="prev" title="16. Overview of Markov Chain Monte Carlo" href="MCMC_overview.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../Intro/About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../Intro/About.html">
+                    About this Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Intro/Overview.html">1. Invitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Intro/Introduction.html">2. Introduction</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/RootBayesianBasics.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Inferenceandpdfs.html">4. Inference and PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/exercise_sum_product_rule.html">4.5. Exercise: Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/exercise_medical_example_by_Bayes.html">4.6. Exercise: Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/MoreBayesTheorem.html">4.7. More on Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Bayesian_epistemology.html">4.8. *Aside: Bayesian epistemology</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/DataModelsPredictions.html">4.9. Data, models, and predictions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html">Parameter estimation I: Gaussian mean and variance</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Posteriors.html">5. Bayesian posteriors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Exploring_pdfs.html">5.1. Exploring PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Exploring_pdfs_followups.html">Follow-ups to Exploring PDFs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Gaussians.html">5.2. Gaussians: A couple of frequentist connections</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/visualization_of_CLT.html">Visualization of the Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/Interpreting2Dposteriors.html">5.3. Interpreting 2D posteriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/chi_squared_tests.html">5.4. Demonstration: Sum of normal variables squared</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/CoinTossing.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/demo-BayesianBasics.html">6.6. Demonstration:  Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Bayesian_updating_coinflip_interactive.html">6.7. Widgetized coin tossing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/UsingBayes.html">7. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/BayesianAdvantages.html">7.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianWorkflow/BayesianWorkflow.html">7.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianLinearRegression/BayesianLinearRegression_rjf.html">7.3. Bayesian Linear Regression (BLR)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../BayesianStatistics/RootAdvancedMethods.html">8. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/ParameterEstimation.html">9. More Bayesian parameter estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/radioactive_lighthouse_exercise.html">9.1. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/amplitude_in_presence_of_background.html">9.2. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_fitting_straight_line_I.html">9.3. Parameter estimation example: fitting a straight line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_fitting_straight_line_II.html">9.4. Parameter estimation example: fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/dealing_with_outliers.html">9.5. Dealing with outliers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/AssigningProbabilities/Assigning.html">10. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianStatistics/AssigningProbabilities/IgnorancePDF.html">10.1. Assigning probabilities (I): Indifferences and translation groups</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/AssigningProbabilities/demo-straight_lines.html">Alternative notebook with MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/AssigningProbabilities/MaxEnt2.html">10.2. Assigning probabilities (II): The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/AssigningProbabilities/MaxEnt_Function_Reconstruction.html">10.3. Maximum Entropy for reconstructing a function from its moments</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/BayesLinear.html">11. Bayes goes linear: History matching</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/Multimodel_inference.html">12. Multi-model inference with Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianStatistics/ModelSelection/ModelSelection.html">12.1. Model Selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/ModelSelection/BUQ/Evidence_for_model_EFT_coefficients.html">Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/ModelSelection/BUQ/two_model_evidence.html">Follow-up to EFT evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/ModelSelection/BUQ/computing_evidence.html">Computing the evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/ModelSelection/BUQ/MCMC-parallel-tempering_ptemcee_vs_zeus.html">Demo: Multimodal distributions with two samplers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ModelMixing/model_mixing.html">12.2. Model averaging and mixing </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../OtherTopics/DiscrepancyModels.html">13. Discrepancy Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../OtherTopics/MD_balldrop_v1.html">13.4. Ball-drop experiment</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="RootMCMC.html">14. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="StochasticProcesses.html">15. Stochastic processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/Metropolis_Poisson_example.html">15.7. Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-MCMC.html">15.8. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Recap_BUQ.html">15.9. Recap of Poisson and more about MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/parameter_estimation_Gaussian_noise-2.html">15.10. Parameter estimation example: Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-random-walk-and-sampling.html">15.11. Exercise: Random walk</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="MCMC_overview.html">16. Overview of Markov Chain Monte Carlo</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">16.1. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MCMC.html">16.2. Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MCMC_intro_BUQ.html">16.3. Alternative MCMC introduction (Gregory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/Assignment_extending_radioactive_lighthouse.html">16.4. Assignment: 2D radioactive lighthouse location using MCMC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Advanced_MCMC.html">17. Advanced MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html">17.1. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-diagnostics.html">17.2. Overview: MCMC Diagnostics</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="BUQ/intuition_sampling.html">17.4. Intuition on sampling and best practices</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Other_samplers.html">18. HMC and other samplers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="BUQ2/HMC_intro_BUQ.html">18.1. Hamiltonian Monte Carlo (HMC) overview and visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="BUQ2/Liouville_theorem_visualization.html">Liouville Theorem Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BUQ2/Orbital_eqs_with_different_algorithms.html">Solving orbital equations with different algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="zeus.html">18.2. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="BUQ2/PyMC_intro_updated.html">18.3. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="OverviewIntroPyMC.html">Overview of Intro to PyMC notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ2/parameter_estimation_Gaussian_noise_compare_samplers.html">18.4. Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning: A Bayesian perspective</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../MachineLearning/RootML.html">19. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../MachineLearning/GP/RootGP.html">20. Overview of Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../MachineLearning/GP/GaussianProcesses.html">20.4. Introduction to Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/CF/demo-GaussianProcesses.html">demo-GaussianProcesses notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/BUQ/lecture_20.html">GP recap; GP applications; (old lecture 20)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../MachineLearning/GP/Sklearn_demos.html">20.5. scikit-learn demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/BUQ/plot_gpr_noisy_targets.html">One-dimension regression example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/BUQ/plot_gpr_prior_posterior.html">Prior and posterior with different kernels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../MachineLearning/GP/GPy_demos.html">20.6. GPy demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/BUQ/demo-GaussianProcesses.html">Gaussian processes demonstration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/CF/exercise_GP_GPy.html">Exercise: Gaussian processes using <code class="docutils literal notranslate"><span class="pre">GPy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/BUQ/Gaussian_processes_exercises.html">Exercise: Gaussian Process models with GPy</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../MachineLearning/LogReg/LogReg.html">21. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/MachineLearningExamples.html">21.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/NeuralNet/exercises_LogReg_NeuralNet.html">21.6. Exercise: Logistic Regression and neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../MachineLearning/ANN/MachineLearning.html">22. Machine learning: Overview and notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/NeuralNet.html">22.5. Artifical neural networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/NeuralNet/demo-NeuralNet.html">22.6. Demonstration: Neural network classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/Neural_Network_for_simple_function_in_PyTorch.html">22.7. ANN from ChatGPT using PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/ModelValidation.html">22.8. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/DataBiasFairness.html">22.9. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/NeuralNet/NeuralNetBackProp.html">22.10. *Neural networks: Backpropagation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../OtherTopics/ANNFT.html">23. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../OtherTopics/random_initialized_ANN_vs_width.html">23.3. Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../MachineLearning/BNN/bnn.html">24. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/BNN/demo-bnn.html">24.4. Demonstration: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/BNN/exercises_BNN.html">24.5. Exercise: Bayesian neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../MachineLearning/CNN/cnn.html">25. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/CNN/demo-cnn.html">25.6. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Other topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../OtherTopics/RootOtherTopics.html">26. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../OtherTopics/Emulators.html">27. Emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/BayesFast.html">27.1. Bayes goes fast: Emulators (from CF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/extra_RBM_emulators.html">27.2. RBM emulators (BUQ)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../OtherTopics/Student_t_distribution_from_Gaussians.html">28. Student t distribution from Gaussians</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../OtherTopics/SVD.html">29. PCA, SVD, and all that</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../OtherTopics/linear_algebra_games_including_SVD.html">29.5. SVD notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../OtherTopics/qbism.html">30. QBism: Bayesian quantum mechanics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Backmatter/bibliography.html">31. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Backmatter/JB_tests.html">32. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Reference/Statistics.html">33. Statistics concepts and notation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ModelingOptimization/GradientDescent.html">34. Gradient-descent optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ModelingOptimization/RootScientificModeling.html">35. Overview of scientific modeling material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ModelingOptimization/OverviewModeling.html">36. Overview of modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ModelingOptimization/LinearModels.html">37. Linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ModelingOptimization/MathematicalOptimization.html">38. Mathematical optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Setup/RootGettingStarted.html">39. Overview of Getting started material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Setup/exercise_Intro_01_Jupyter_Python.html">40. Jupyter notebooks and Python</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Setup/more_python_and_jupyter.html">41. More about Python and Jupyter notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/exercise_Intro_02_Jupyter_Python.html">41.4. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/exercise_Intro_03_Numpy.html">41.5. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/demo-Intro.html">41.6. Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/Simple_widgets_v1.html">41.7. Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Setup/setting_up.html">42. Setting up for using this Jupyter Book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/installing_anaconda.html">42.1. Using Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/using_github.html">42.2. Using GitHub</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Mini-projects/RootMiniProjects.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Mini-projects/mini-project_I_toy_model_of_EFT.html">MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Mini-projects/model-selection_mini-project-IIa.html">MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html">MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Mini-projects/Mini-project_IIb_overview.html">Overview of Mini-project IIb: How many lines?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Mini-projects/mini-project_IIIa_bayesian_optimization.html">MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html">MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development/issues/new?title=Issue%20on%20page%20%2FLearningFromData-content/StochasticProcesses/MarkovChains.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/LearningFromData-content/StochasticProcesses/MarkovChains.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Markov chains</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stationary-processes">Stationary processes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stationary-and-limiting-distributions">Stationary and limiting distributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reversibility">Reversibility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metropolis-design">Metropolis design</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">Solutions</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="markov-chains">
+<h1><span class="section-number">16.1. </span>Markov chains<a class="headerlink" href="#markov-chains" title="Link to this heading">#</a></h1>
+<blockquote class="epigraph">
+<div><blockquote>
+<div><p>“Proceeding by guesswork.”</p>
+</div></blockquote>
+<p class="attribution">—Plato (attr.), on the meaning of stochastic</p>
+</div></blockquote>
+<p>Many relevant stochastic processes share the following property: Conditional on their value at step <span class="math notranslate nohighlight">\(n\)</span>, the future values do not depend on the previous values. Such processes can be said to have a very short memory and are known as Markov chains. Let us for simplicity in notation focus on discrete processes where the time index takes integer values.</p>
+<div class="proof definition admonition" id="definition:markov-chains">
+<p class="admonition-title"><span class="caption-number">Definition 16.1 </span> (Markov chains)</p>
+<section class="definition-content" id="proof-content">
+<p>The stochastic process <span class="math notranslate nohighlight">\(X\)</span> is a Markov chain if it has the <strong>Markov property</strong></p>
+<div class="amsmath math notranslate nohighlight" id="equation-cc088266-303e-486f-a9bd-cbf82bacf90b">
+<span class="eqno">(16.1)<a class="headerlink" href="#equation-cc088266-303e-486f-a9bd-cbf82bacf90b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+  \prob_{X_n \vert X_0, X_1,\ldots, X_{n-1}}\left( i_n \vert i_0, i_1,\ldots, i_{n-1} \right)
+  = \prob_{X_n \vert X_{n-1}}\left( i_n \vert i_{n-1} \right)
+\end{equation}\]</div>
+<p>for a countable (discrete) sample space. For continuous variables we formulate this property using conditional distribution functions</p>
+<div class="amsmath math notranslate nohighlight" id="equation-9bfc44a6-803b-4790-b8e8-770e8bacc1d2">
+<span class="eqno">(16.2)<a class="headerlink" href="#equation-9bfc44a6-803b-4790-b8e8-770e8bacc1d2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+  P_{X_n \vert X_0, X_1, \ldots, X_{n-1}} \left( x_n \vert  x_0, x_1, \ldots, x_{n-1} \right)
+  = P_{X_n \vert X_{n-1}} \left( x_n \vert x_{n-1} \right)
+\end{equation}\]</div>
+</section>
+</div><p>An alternative, expressive formulation is</p>
+<blockquote>
+<div><p>Conditional on the present, the future of a Markov chain does not depend on the past.</p>
+</div></blockquote>
+<p>An observer of a Markov process would only have to measure the one-step conditional probability distributions</p>
+<div class="amsmath math notranslate nohighlight" id="equation-8b91ca4d-bc65-4fb3-a2e4-b004d7159dce">
+<span class="eqno">(16.3)<a class="headerlink" href="#equation-8b91ca4d-bc65-4fb3-a2e4-b004d7159dce" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\begin{gathered}
+P_{X_0}(x_0), \\
+P_{X_1 \vert X_0}(x_1 | x_0), \\
+P_{X_2 \vert X_1}(x_2 | x_1), \\
+\vdots\\
+P_{X_n \vert X_{n-1}}(x_n | x_{n-1}),
+\end{gathered}
+\end{equation}\]</div>
+<p>to understand the process.</p>
+<section id="stationary-processes">
+<h2>Stationary processes<a class="headerlink" href="#stationary-processes" title="Link to this heading">#</a></h2>
+<p>An important subset of Markov processes are <strong>stationary</strong> which implies that the conditional probability distribution does not depend on the position in time. In combination with the Markov property, this can be viewed as a process with very <em>short-term memory</em> and <em>no sense of time</em>. An observer of a stationary Markov process only needs to measure</p>
+<div class="amsmath math notranslate nohighlight" id="equation-0b88dba0-f7f0-43fc-85a0-0d56b218f97a">
+<span class="eqno">(16.4)<a class="headerlink" href="#equation-0b88dba0-f7f0-43fc-85a0-0d56b218f97a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\begin{gathered}
+P_{X_0}(x_0), \\
+P_{X_n \vert X_{n-1}}(x_n | x_{n-1}),
+\end{gathered}
+\end{equation}\]</div>
+<p>for any <span class="math notranslate nohighlight">\(n\)</span>, to have a complete description. Here is a more formal definition.</p>
+<div class="proof definition admonition" id="definition:stationary-processes">
+<p class="admonition-title"><span class="caption-number">Definition 16.2 </span> (Stationary processes)</p>
+<section class="definition-content" id="proof-content">
+<p>Given a countable (discrete) sample space <span class="math notranslate nohighlight">\(S\)</span>, the Markov chain <span class="math notranslate nohighlight">\(X\)</span> is stationary if</p>
+<div class="amsmath math notranslate nohighlight" id="equation-11976d56-5af9-45b9-a58f-c0e50fcba38b">
+<span class="eqno">(16.5)<a class="headerlink" href="#equation-11976d56-5af9-45b9-a58f-c0e50fcba38b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+  \prob_{X_{n+1} \vert X_n} \left(  j \vert  i \right)
+  = \prob_{X_1 \vert X_0} \left( j \vert  i \right)
+  \equiv T(i,j)
+\end{equation}\]</div>
+<p>for all <span class="math notranslate nohighlight">\(n,i,j\)</span>. Here we have also introduced the (stationary) <strong>transition density</strong> <span class="math notranslate nohighlight">\(T\)</span>, which here becomes an <span class="math notranslate nohighlight">\(|S| \times |S|\)</span> matrix with elements <span class="math notranslate nohighlight">\(T(i,j)\)</span>.</p>
+<p>For continuous variables we use (conditional) distribution functions and we introduce the continuous transition density</p>
+<div class="amsmath math notranslate nohighlight" id="equation-186ba65d-235a-42bd-be3a-435886d96226">
+<span class="eqno">(16.6)<a class="headerlink" href="#equation-186ba65d-235a-42bd-be3a-435886d96226" title="Permalink to this equation">#</a></span>\[\begin{equation}
+  P_{ X_{n+1} \vert X_n} \left( x_j \vert x_i \right)
+  = P_{X_1 \vert X_0} \left( x_j \vert x_i \right)
+  \equiv T\left( x_i, x_j \right).
+\end{equation}\]</div>
+</section>
+</div><p>Be aware since the transition density is sometimes denoted <span class="math notranslate nohighlight">\(T(x_j \leftarrow x_i)\)</span> or even <span class="math notranslate nohighlight">\(T_{j,i}\)</span>.</p>
+<div class="exercise admonition" id="exercise:MarkovChains:stochastic-matrix">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.1 </span> (Stochastic matrix)</p>
+<section id="exercise-content">
+<p>The transition density <span class="math notranslate nohighlight">\(T\)</span> is a so called <em>stochastic matrix</em>. What properties must it have? (consider the discrete case with matrix elements <span class="math notranslate nohighlight">\(T(i,j)\)</span>).</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:MarkovChains:simple-random-walk">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.2 </span> (Simple random walk)</p>
+<section id="exercise-content">
+<ul class="simple">
+<li><p>How can you see that the random walk introduced in <a class="reference internal" href="StochasticProcesses.html#example:simple-random-walk">Example 15.3</a> is a Markov process?</p></li>
+<li><p>Is it stationary?</p></li>
+<li><p>If so, what are the matrix elements of the transition density?</p></li>
+</ul>
+</section>
+</div>
+<p>In the following we will only consider stationary Markov chains and we stress that these are fully defined by <span class="math notranslate nohighlight">\(P_{X_0}(x_0)\)</span> and <span class="math notranslate nohighlight">\(T\left( x_i, x_j \right)\)</span>.</p>
+<div class="proof example admonition" id="example:simple-markov-process">
+<p class="admonition-title"><span class="caption-number">Example 16.1 </span> (A simple Markov process)</p>
+<section class="example-content" id="proof-content">
+<p>Let us construct a simpe Markov process using again the abstract python class <a class="reference external" href="https://gitlab.com/cforssen/tif385-book/-/blob/tif385/content/Utils/StochasticProcess/StochasticProcess.py"><code class="docutils literal notranslate"><span class="pre">StochasticProcess</span></code></a>).</p>
+<p>We initialize the chain with a uniform random variable <span class="math notranslate nohighlight">\(p_{X_0}(x_0) = \mathcal{U}\left( [0,1] \right)\)</span> and update it using the conditional probability density function</p>
+<div class="amsmath math notranslate nohighlight" id="equation-c93d34af-39b6-48a8-827c-33b4d062de83">
+<span class="eqno">(16.7)<a class="headerlink" href="#equation-c93d34af-39b6-48a8-827c-33b4d062de83" title="Permalink to this equation">#</a></span>\[\begin{equation}
+p_{ X_{n+1} \vert X_n} \left( x_j \vert x_i \right) = \mathcal{U}\left( \left[ \frac{x_i}{2} ,\frac{x_i+1}{2} \right] \right).
+\end{equation}\]</div>
+<p>The simulations in <a class="reference internal" href="#fig-example-markovprocessexample-runs-fig"><span class="std std-numref">Fig. 16.1</span></a> and <a class="reference internal" href="#fig-example-markovprocessexample-corner-fig"><span class="std std-numref">Fig. 16.2</span></a> includes two relevant visualizations:</p>
+<ul class="simple">
+<li><p>Plots of the first variables from a few runs.</p></li>
+<li><p>A corner plot of bivariate and univariate marginal distributions.</p></li>
+</ul>
+</section>
+</div><figure class="align-default" id="fig-example-markovprocessexample-runs-fig">
+<img alt="../../_images/d8c35ab7b350ae8b05390479db881506051b9e5c5356b2d0599026d540a12308.png" src="../../_images/d8c35ab7b350ae8b05390479db881506051b9e5c5356b2d0599026d540a12308.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 16.1 </span><span class="caption-text">First 50 variables in four realisations of the chain.</span><a class="headerlink" href="#fig-example-markovprocessexample-runs-fig" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-example-markovprocessexample-corner-fig">
+<img alt="../../_images/58183e4a1b148b426491a9479a925e181c74362826b2ff28de5dedabb818129b.png" src="../../_images/58183e4a1b148b426491a9479a925e181c74362826b2ff28de5dedabb818129b.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 16.2 </span><span class="caption-text">Joint bivariate and univariate probability distributions. The statistics to produce these plots were gathered from 20,000 realisations of the Markov chains.</span><a class="headerlink" href="#fig-example-markovprocessexample-corner-fig" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myst_nb</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="c1"># Adding ../../Utils/ to the python module search path</span>
+<span class="c1">#sys.path.insert(0, os.path.abspath(&#39;../../Utils/&#39;))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;./CodeLocal/&#39;</span><span class="p">))</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">StochasticProcess.StochasticProcess</span><span class="w"> </span><span class="kn">import</span> <span class="n">StochasticProcess</span> <span class="k">as</span> <span class="n">SP</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MarkovProcessExample</span><span class="p">(</span><span class="n">SP</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">random_state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">history</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span> <span class="p">)</span>
+        
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an instance of the class. It is possible to provide a seed</span>
+<span class="c1"># for the random state such that results are reproducible.</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">MarkovProcessExample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># The following method calls produce 4 runs, each of length 50, and plots them.</span>
+<span class="n">example</span><span class="o">.</span><span class="n">create_multiple_processes</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">fig_runs</span><span class="p">,</span> <span class="n">ax_runs</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">plot_processes</span><span class="p">()</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;MarkovProcessExample_runs_fig&quot;</span><span class="p">,</span> <span class="n">fig_runs</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="admonition hide below-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell output</p>
+<p class="expanded admonition-title">Hide code cell output</p>
+</summary>
+<div class="cell_output docutils container">
+<img alt="../../_images/d8c35ab7b350ae8b05390479db881506051b9e5c5356b2d0599026d540a12308.png" src="../../_images/d8c35ab7b350ae8b05390479db881506051b9e5c5356b2d0599026d540a12308.png" />
+</div>
+</details>
+</div>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Marginal, joint distrubtions </span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">prettyplease.prettyplease</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
+
+<span class="c1"># Here we instead create 20,000 runs (to collect statistics), each of length 13.</span>
+<span class="n">example</span><span class="o">.</span><span class="n">create_multiple_processes</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">40000</span><span class="p">)</span>
+<span class="c1"># but we just plot the first four variables</span>
+<span class="n">fig_corner</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">sequence</span><span class="p">[:</span><span class="mi">4</span><span class="p">,:]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">fr</span><span class="s1">&#39;$X_</span><span class="se">{{</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="se">}}</span><span class="s1">$&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)])</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;MarkovProcessExample_corner_fig&quot;</span><span class="p">,</span> <span class="n">fig_corner</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="admonition hide below-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell output</p>
+<p class="expanded admonition-title">Hide code cell output</p>
+</summary>
+<div class="cell_output docutils container">
+<img alt="../../_images/58183e4a1b148b426491a9479a925e181c74362826b2ff28de5dedabb818129b.png" src="../../_images/58183e4a1b148b426491a9479a925e181c74362826b2ff28de5dedabb818129b.png" />
+</div>
+</details>
+</div>
+</section>
+<section id="stationary-and-limiting-distributions">
+<h2>Stationary and limiting distributions<a class="headerlink" href="#stationary-and-limiting-distributions" title="Link to this heading">#</a></h2>
+<p>We will now explore the long-time evolution of a Markov chain. We will, for simplicity, consider a countable sample space although our final application will be to continuous probability distributions.</p>
+<p>First, we note that even the Markov process with its very short memory (dependence on just the previous value) will maintain an imprint of earlier positions. This imprint, however, will be finite. Let us explore the first few steps pf the chain. The conditional probability of being in state <span class="math notranslate nohighlight">\(k\)</span> at position 2 given that we started in position <span class="math notranslate nohighlight">\(i\)</span> at <span class="math notranslate nohighlight">\(t=0\)</span> can be obtained using the product rule <a class="reference internal" href="../Reference/Statistics.html#equation-eq-statistics-product-rule">(33.3)</a></p>
+<div class="math notranslate nohighlight" id="equation-eq-markovchains-px2-x0">
+<span class="eqno">(16.8)<a class="headerlink" href="#equation-eq-markovchains-px2-x0" title="Link to this equation">#</a></span>\[\begin{split}
+\cprob{X_{2}=k}{X_{0}=i} &amp;= \sum_j  \cprob{X_{2}=k, X_{1}=j}{X_{0}=i} \\
+&amp;= \sum_j  \cprob{X_{2}=k}{X_{0}=i, X_{1}=j} \cprob{X_{1}=j}{X_{0}=i} \\
+&amp;= \sum_j  \cprob{X_{2}=k}{X_{1}=j} \cprob{X_{1}=j}{X_{0}=i} ,
+\end{split}\]</div>
+<p>where we have employed the Markov property in the last equality. We can now compare this with the probability of being in state <span class="math notranslate nohighlight">\(k\)</span> at position 2 without any condition on the starting position</p>
+<div class="math notranslate nohighlight" id="equation-eq-markovchains-px2">
+<span class="eqno">(16.9)<a class="headerlink" href="#equation-eq-markovchains-px2" title="Link to this equation">#</a></span>\[\begin{split}
+\prob \left( X_{2}=k \right) &amp;= \sum_{i,j}  \prob \left( X_{2}=k, X_{1}=j, X_{0}=i \right) \\
+&amp;= \sum_{i,j}  \cprob{X_{2}=k}{X_{0}=i, X_{1}=j} \prob \left( X_{1}=j, X_{0}=i \right) \\
+&amp;= \sum_{j}  \cprob{X_{2}=k}{X_{1}=j} \prob \left( X_{1}=j \right),
+\end{split}\]</div>
+<p>where we have again used the product rule and the Markov property. In the final equality we also used the marginalization of the joint probability. The comparison of Eqs. <a class="reference internal" href="#equation-eq-markovchains-px2-x0">(16.8)</a> and <a class="reference internal" href="#equation-eq-markovchains-px2">(16.9)</a> reveals that the two probabilites are not equal in general. They would be equal if <span class="math notranslate nohighlight">\(\cprob{X_{1}=j}{X_{0}=i} = \prob \left( X_{1}=j \right)\)</span>, which is only fulfilled if the positions are in fact completely independent.</p>
+<div class="exercise admonition" id="exercise:MarkovChains:memory">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.3 </span> (Remnant memory)</p>
+<section id="exercise-content">
+<p>Can you visually verify the remnant memory by identifying the distributions <a class="reference internal" href="#equation-eq-markovchains-px2-x0">(16.8)</a> and <a class="reference internal" href="#equation-eq-markovchains-px2">(16.9)</a> in <a class="reference internal" href="#fig-example-markovprocessexample-corner-fig"><span class="std std-numref">Fig. 16.2</span></a> of  <a class="reference internal" href="#example:simple-markov-process">Example 16.1</a>?</p>
+<p>Hint: The conditional distribution is actually not shown in <a class="reference internal" href="#fig-example-markovprocessexample-corner-fig"><span class="std std-numref">Fig. 16.2</span></a> but is easy to obtain using the simple initial distribution and Eq. <a class="reference internal" href="../Reference/Statistics.html#equation-eq-statistics-conditional-probability">(33.2)</a>.</p>
+</section>
+</div>
+<p>The remnant memory in the process from <a class="reference internal" href="#example:simple-markov-process">Example 16.1</a>
+is considered in <a class="reference internal" href="#exercise:MarkovChains:memory"><span class="std std-numref">Exercise 16.3</span></a>. Conditional distributions <span class="math notranslate nohighlight">\(\pdf{x_m}{x_n}\)</span> (for <span class="math notranslate nohighlight">\(m&gt;n\)</span>) can be produced with the method <code class="docutils literal notranslate"><span class="pre">plot_conditional_distributions()</span></code> in the <a class="reference external" href="https://gitlab.com/cforssen/tif385-book/-/blob/tif385/content/Utils/StochasticProcess/StochasticProcess.py"><code class="docutils literal notranslate"><span class="pre">StochasticProcess</span></code></a> class.</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig_X2givenX0</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">plot_conditional_distributions</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;X2givenX0_fig&quot;</span><span class="p">,</span> <span class="n">fig_X2givenX0</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="admonition hide below-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell output</p>
+<p class="expanded admonition-title">Hide code cell output</p>
+</summary>
+<div class="cell_output docutils container">
+<img alt="../../_images/0f5acb94b3840aa34c36e92b5bde6868cb8380fb063e88e1e079462981e4e6b2.png" src="../../_images/0f5acb94b3840aa34c36e92b5bde6868cb8380fb063e88e1e079462981e4e6b2.png" />
+</div>
+</details>
+</div>
+<figure class="align-default" id="fig-x2givenx0">
+<img alt="../../_images/0f5acb94b3840aa34c36e92b5bde6868cb8380fb063e88e1e079462981e4e6b2.png" src="../../_images/0f5acb94b3840aa34c36e92b5bde6868cb8380fb063e88e1e079462981e4e6b2.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 16.3 </span><span class="caption-text">The conditional distributions <span class="math notranslate nohighlight">\(\pdf{x_1}{x_0}\)</span> and <span class="math notranslate nohighlight">\(\pdf{x_2}{x_0}\)</span> for <a class="reference internal" href="#example:simple-markov-process">Example 16.1</a>. Note that each of these is a one-dimensional distribution whose shape might depend on the value of <span class="math notranslate nohighlight">\(x_0\)</span>. This property is visualized here by histogramming the distributions. Each row corresponds to a bin of <span class="math notranslate nohighlight">\(x_0\)</span> values and
+represents the corresponding <span class="math notranslate nohighlight">\(\pdf{x_m}{x_0}\)</span> distribution. It is clear from this figure that these distributions are indeed dependent on the value of <span class="math notranslate nohighlight">\(x_0\)</span>.</span><a class="headerlink" href="#fig-x2givenx0" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="exercise admonition" id="exercise:MarkovChains:conditional-distributions">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.4 </span> (Conditional distributions)</p>
+<section id="exercise-content">
+<p>Consider <a class="reference internal" href="#fig-x2givenx0"><span class="std std-numref">Fig. 16.3</span></a>.</p>
+<ul class="simple">
+<li><p>The speckling is due to using finite statistics to estimate the probability. How would this plot look different with infinite statistics?</p></li>
+<li><p>This left panel shows <span class="math notranslate nohighlight">\(\pdf{x_1}{x_0}\)</span>. Would <span class="math notranslate nohighlight">\(\pdf{x_2}{x_1}\)</span> look any different?</p></li>
+<li><p>Are these conditional probabilities normalized along <span class="math notranslate nohighlight">\(x_0\)</span>? along <span class="math notranslate nohighlight">\(x_{1,2}\)</span> ?</p></li>
+<li><p>How would this plot change if we changed the definition of <code class="docutils literal notranslate"><span class="pre">start()</span></code> in <code class="docutils literal notranslate"><span class="pre">MarkovProcessExample</span></code>?</p></li>
+</ul>
+</section>
+</div>
+<p>We have shown that there is in fact some memory in a stationary Markov chain. However, it can be shown that a stationary Markov chain (with certain additional properties) will eventually reach an equilibrium where the distribution of <span class="math notranslate nohighlight">\(X_n\)</span> actually does settle down to a <strong>limiting distribution</strong>.</p>
+<div class="proof definition admonition" id="definition:limiting-distribution">
+<p class="admonition-title"><span class="caption-number">Definition 16.3 </span> (Limiting distribution)</p>
+<section class="definition-content" id="proof-content">
+<p>The vector <span class="math notranslate nohighlight">\(\pi\)</span> is called a limiting distribution of the Markov chain if it has entries <span class="math notranslate nohighlight">\((\pi_j \; : \; j \in S)\)</span> such that</p>
+<ol class="arabic simple">
+<li><p><span class="math notranslate nohighlight">\(\pi_j \geq 0\)</span> for all <span class="math notranslate nohighlight">\(j\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\sum_j \pi_j = 1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_j = \lim_{n \to \infty} T^n(i,j)\)</span> for all <span class="math notranslate nohighlight">\(i,j\)</span>,</p></li>
+</ol>
+<p>where <span class="math notranslate nohighlight">\(T\)</span> is the transition density of the Markov chain.</p>
+</section>
+</div><p>This definition is equivalent to the matrix equality</p>
+<div class="math notranslate nohighlight" id="equation-eq-markovchains-limiting-distribution">
+<span class="eqno">(16.10)<a class="headerlink" href="#equation-eq-markovchains-limiting-distribution" title="Link to this equation">#</a></span>\[
+\pi = \lim_{n \to \infty} \alpha T^n,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha\)</span> is any intial distribution.</p>
+<p>By the uniqueness of limits, the existence of a limiting distribution will imply that it is unique.</p>
+<p>Assuming that <span class="math notranslate nohighlight">\(\pi\)</span> is a limiting distribution of a chain, then it is also a <strong>stationary distribution</strong> (also known as <strong>equilibrium distribution</strong>).</p>
+<div class="proof definition admonition" id="definition:stationary-distribution">
+<p class="admonition-title"><span class="caption-number">Definition 16.4 </span> (Stationary distribution)</p>
+<section class="definition-content" id="proof-content">
+<p>The vector <span class="math notranslate nohighlight">\(\pi\)</span> is called a stationary distribution of the Markov chain if it has entries <span class="math notranslate nohighlight">\((\pi_j \; : \; j \in S)\)</span> such that</p>
+<ol class="arabic simple">
+<li><p><span class="math notranslate nohighlight">\(\pi_j \geq 0\)</span> for all <span class="math notranslate nohighlight">\(j\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\sum_j \pi_j = 1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_j = \sum_i \pi_i T(i,j)\)</span> for all <span class="math notranslate nohighlight">\(j\)</span>,</p></li>
+</ol>
+<p>where <span class="math notranslate nohighlight">\(T\)</span> is the transition density of the Markov chain.</p>
+</section>
+</div><p>The last equality can be written on matrix form as</p>
+<div class="math notranslate nohighlight" id="equation-eq-markovchains-discrete-equlibrium">
+<span class="eqno">(16.11)<a class="headerlink" href="#equation-eq-markovchains-discrete-equlibrium" title="Link to this equation">#</a></span>\[
+\pi = \pi T
+\]</div>
+<p>and can be seen as an eigenvalue equation (with eigenvalue 1) where <span class="math notranslate nohighlight">\(\pi\)</span> is a <em>left</em> eigenvector.</p>
+<p>A limiting distribution <span class="math notranslate nohighlight">\(\pi\)</span> is also a stationary one. According to Eq. <a class="reference internal" href="#equation-eq-markovchains-discrete-equlibrium">(16.11)</a> we just need to show that <span class="math notranslate nohighlight">\(\pi T = \pi\)</span>.
+See <a class="reference internal" href="#exercise:limiting-distribution"><span class="std std-numref">Exercise 16.9</span></a> to complete the proof.</p>
+<p>This implies that the random variable <span class="math notranslate nohighlight">\(X_n\)</span> will be distributed according to <span class="math notranslate nohighlight">\(\pi\)</span> for large enough <span class="math notranslate nohighlight">\(n\)</span> and that it will be stationary as time passes.</p>
+<p>The extra, required properties for such a <strong>limiting distribution</strong> to occur are</p>
+<dl class="simple myst">
+<dt>irreducibility</dt><dd><p>all states <em>communicate</em> with each other which basically implies that all parts of the state space can be reached regardless of starting position;</p>
+</dd>
+</dl>
+<p>and that all states are</p>
+<dl class="simple myst">
+<dt>positively recurrent</dt><dd><p>the probability of eventually returning to position <span class="math notranslate nohighlight">\(i\)</span>, having started from <span class="math notranslate nohighlight">\(i\)</span>, is 1 for all <span class="math notranslate nohighlight">\(i\)</span>.</p>
+</dd>
+</dl>
+<p>In addition, with the additional property of</p>
+<dl class="simple myst">
+<dt>aperiodicity</dt><dd><p>the recurrence of any position <span class="math notranslate nohighlight">\(i\)</span> does not follow a simple periodic pattern;</p>
+</dd>
+</dl>
+<p>it can be shown that the stationary Markov chain will reach its unique limiting distribution regardless of starting point. This is the so called <strong>limit theorem</strong>. Henceforth we will only deal with irreducible, positively recurrent, aperiodic chains unless otherwise indicated.</p>
+<div class="proof example admonition" id="example:stationary-simple-markov-process">
+<p class="admonition-title"><span class="caption-number">Example 16.2 </span> (Stationary distribution of “A simple Markov process”)</p>
+<section class="example-content" id="proof-content">
+<p>Let us consider again the Markov process from <a class="reference internal" href="#example:simple-markov-process">Example 16.1</a>. We could see in <a class="reference internal" href="#fig-x2givenx0"><span class="std std-numref">Fig. 16.3</span></a> that there was some remnant memory of <span class="math notranslate nohighlight">\(x_0\)</span> after two steps. However, according to the discussion above, this memory should eventually disappear and we will be left with the stationary (or <em>equilibrium</em>) distribution.  This is clearly seen in <a class="reference internal" href="#fig-example-xmgivenx0"><span class="std std-numref">Fig. 16.4</span></a>.</p>
+</section>
+</div><figure class="align-default" id="fig-example-xmgivenx0">
+<img alt="../../_images/49741fd7ee8a3607bdcb51a07faa8aa54929c1f32ff340c24dbc13e4a91c4a92.png" src="../../_images/49741fd7ee8a3607bdcb51a07faa8aa54929c1f32ff340c24dbc13e4a91c4a92.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 16.4 </span><span class="caption-text">The appearance of a limiting distribution already after <span class="math notranslate nohighlight">\(\approx\)</span> 8–12 iterations.</span><a class="headerlink" href="#fig-example-xmgivenx0" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="cell tag_hide-cell docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell content</p>
+<p class="expanded admonition-title">Hide code cell content</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig_XmgivenX0</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">plot_conditional_distributions</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">12</span><span class="p">],</span><span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;XmgivenX0_fig&quot;</span><span class="p">,</span> <span class="n">fig_XmgivenX0</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/49741fd7ee8a3607bdcb51a07faa8aa54929c1f32ff340c24dbc13e4a91c4a92.png" src="../../_images/49741fd7ee8a3607bdcb51a07faa8aa54929c1f32ff340c24dbc13e4a91c4a92.png" />
+</div>
+</details>
+</div>
+<p>For practical purposes there are two issues to deal with:</p>
+<ul class="simple">
+<li><p>There is no way to know in advance how big <span class="math notranslate nohighlight">\(n\)</span> needs to be to reach equilibrium.</p></li>
+<li><p>Given a stationary Markov chain, we can generate samples from its equilibrium distribution; but how do we construct a chain to sample a specific distribution?</p></li>
+</ul>
+<p>The latter problem is actually an example of an <strong>inverse problem</strong>. These are in general very difficult to solve. However, in this case there is a very clever, general class of solutions that we will look at in the next chapter.</p>
+<div class="exercise admonition" id="exercise:MarkovChains:stationary-distribution">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.5 </span> (Stationary distribution)</p>
+<section id="exercise-content">
+<p>Show that <a class="reference internal" href="#definition:stationary-distribution">Definition 16.4</a> implies that there is a stationary distribution <span class="math notranslate nohighlight">\(\pi\)</span> such that <span class="math notranslate nohighlight">\(\prob \left( X_{n}=i \right) = \prob \left( X_{n-1}=i \right) = \pi_i\)</span></p>
+</section>
+</div>
+</section>
+<section id="reversibility">
+<h2>Reversibility<a class="headerlink" href="#reversibility" title="Link to this heading">#</a></h2>
+<p>Another important property that some Markov chains can have is reversability. This property can also be seen as an invariance under reversal of time. Let us consider <span class="math notranslate nohighlight">\(X\)</span>, an irreducible, positive recurrent Markov chain of length <span class="math notranslate nohighlight">\(N\)</span>, <span class="math notranslate nohighlight">\(\{ X_N \, : \, 0 \leq n \leq N \}\)</span>, with transition matrix <span class="math notranslate nohighlight">\(T_X\)</span> and stationary distribution <span class="math notranslate nohighlight">\(\boldsymbol{\pi}\)</span>. Suppose further that <span class="math notranslate nohighlight">\(X_0\)</span> has the distribution <span class="math notranslate nohighlight">\(\boldsymbol{\pi}\)</span> such that all <span class="math notranslate nohighlight">\(X_n\)</span> also have the same distribution.</p>
+<p>Define the reversed chain <span class="math notranslate nohighlight">\(Y\)</span> with elements <span class="math notranslate nohighlight">\(Y_n = X_{N-n}\)</span>. One can show that this sequence will also be a Markov chain, and that its transition matrix <span class="math notranslate nohighlight">\(T_Y\)</span> will be given by</p>
+<div class="math notranslate nohighlight" id="equation-eq-markovchains-t-y-vs-t-x">
+<span class="eqno">(16.12)<a class="headerlink" href="#equation-eq-markovchains-t-y-vs-t-x" title="Link to this equation">#</a></span>\[
+T_Y(i,j) = \prob_{Y_{n+1 \vert Y_n}}(j \vert i) = \frac{\pi_j}{\pi_i} T_X(j,i).
+\]</div>
+<p>The chain <span class="math notranslate nohighlight">\(Y\)</span> is called the <em>time-reversal</em> of <span class="math notranslate nohighlight">\(X\)</span>, and we say that <span class="math notranslate nohighlight">\(X\)</span> is <em>reversible</em> if <span class="math notranslate nohighlight">\(T_X = T_Y\)</span>.</p>
+<p>Considering a reversible chain with transition density <span class="math notranslate nohighlight">\(T\)</span> and stationary distribution <span class="math notranslate nohighlight">\(\boldsymbol{\pi}\)</span>, the property of reversibility can be formulated as a <strong>detailed balance</strong></p>
+<div class="math notranslate nohighlight" id="equation-eq-markovchains-detailed-balance">
+<span class="eqno">(16.13)<a class="headerlink" href="#equation-eq-markovchains-detailed-balance" title="Link to this equation">#</a></span>\[
+\pi_i T(i,j) = \pi_j T(j,i),
+\]</div>
+<p>for all <span class="math notranslate nohighlight">\(j,i\)</span> in <span class="math notranslate nohighlight">\(S\)</span>.</p>
+<div class="exercise admonition" id="exercise:MarkovChains:reversibility">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.6 </span> (Reversibility)</p>
+<section id="exercise-content">
+<ul class="simple">
+<li><p>Are all stationary chains reversible?</p></li>
+<li><p>Are all reversible chains stationary?</p></li>
+</ul>
+</section>
+</div>
+<div class="proof example admonition" id="example:reversible-markov-process">
+<p class="admonition-title"><span class="caption-number">Example 16.3 </span> (A reversible Markov process)</p>
+<section class="example-content" id="proof-content">
+<p>We can construct a transition denisty that fulfills detailed balance by applying an update rule that is composed of a step proposal and an acceptance decision:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">history</span><span class="p">):</span>
+	<span class="n">propose</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">propose</span><span class="o">&lt;</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">propose</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">propose</span>
+</pre></div>
+</div>
+<p>This family of transition densities will be discussed in more detail in the next chapter. For now, we just simulate the above chain and study a set of chains in <a class="reference internal" href="#fig-example-reversiblemarkovprocessexample-runs"><span class="std std-numref">Fig. 16.5</span></a> and a subset of conditional probabilities in <a class="reference internal" href="#fig-example-reversiblemarkovprocessexample-cprob"><span class="std std-numref">Fig. 16.6</span></a> (produced with the script below). Some relevant questions are listed in <a class="reference internal" href="#exercise:MarkovChains:reversible-chain"><span class="std std-numref">Exercise 16.7</span></a>.</p>
+</section>
+</div><figure class="align-default" id="fig-example-reversiblemarkovprocessexample-runs">
+<img alt="../../_images/576d109e7c0e07fb8011ab6b3615302051f9b50591b1869f6925507942197b7e.png" src="../../_images/576d109e7c0e07fb8011ab6b3615302051f9b50591b1869f6925507942197b7e.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 16.5 </span><span class="caption-text">Four chains produced with the reversible Markov chain.</span><a class="headerlink" href="#fig-example-reversiblemarkovprocessexample-runs" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-example-reversiblemarkovprocessexample-cprob">
+<img alt="../../_images/b6f1561814ecc369fe3e74e89121eefdc8b735cb9d3ca7234cdb3db888c01cbc.png" src="../../_images/b6f1561814ecc369fe3e74e89121eefdc8b735cb9d3ca7234cdb3db888c01cbc.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 16.6 </span><span class="caption-text">Conditional probabilities for the reversible Markov chain. See the caption of <a class="reference internal" href="#fig-x2givenx0"><span class="std std-numref">Fig. 16.3</span></a> for explanations how to interpret these plots.</span><a class="headerlink" href="#fig-example-reversiblemarkovprocessexample-cprob" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="cell tag_hide-cell docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell content</p>
+<p class="expanded admonition-title">Hide code cell content</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ReversibleMarkovProcessExample</span><span class="p">(</span><span class="n">SP</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">random_state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">history</span><span class="p">):</span>
+        <span class="n">propose</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">propose</span><span class="o">&lt;</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">propose</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">propose</span>
+            
+<span class="n">example_reversible</span> <span class="o">=</span> <span class="n">ReversibleMarkovProcessExample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">example_reversible</span><span class="o">.</span><span class="n">create_multiple_processes</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">fig_runs_reversible</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">example_reversible</span><span class="o">.</span><span class="n">plot_processes</span><span class="p">()</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;ReversibleMarkovProcessExample_runs_fig&quot;</span><span class="p">,</span> <span class="n">fig_runs_reversible</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">example_reversible</span><span class="o">.</span><span class="n">create_multiple_processes</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span><span class="mi">40000</span><span class="p">)</span>
+<span class="n">fig_cprob_reversible</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">example_reversible</span><span class="o">.</span><span class="n">plot_conditional_distributions</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;ReversibleMarkovProcessExample_cprob_fig&quot;</span><span class="p">,</span> <span class="n">fig_cprob_reversible</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/576d109e7c0e07fb8011ab6b3615302051f9b50591b1869f6925507942197b7e.png" src="../../_images/576d109e7c0e07fb8011ab6b3615302051f9b50591b1869f6925507942197b7e.png" />
+<img alt="../../_images/b6f1561814ecc369fe3e74e89121eefdc8b735cb9d3ca7234cdb3db888c01cbc.png" src="../../_images/b6f1561814ecc369fe3e74e89121eefdc8b735cb9d3ca7234cdb3db888c01cbc.png" />
+</div>
+</details>
+</div>
+<div class="exercise admonition" id="exercise:MarkovChains:reversible-chain">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.7 </span> (A reversible Markov chain)</p>
+<section id="exercise-content">
+<p>Consider <a class="reference internal" href="#fig-example-reversiblemarkovprocessexample-cprob"><span class="std std-numref">Fig. 16.6</span></a>.</p>
+<ul class="simple">
+<li><p>Where is the transition density reflected in this plot?</p></li>
+<li><p>Is this a reversible Markov chain?</p></li>
+<li><p>Can you guess what is the equilibrium distribution?</p></li>
+</ul>
+</section>
+</div>
+</section>
+<section id="metropolis-design">
+<h2>Metropolis design<a class="headerlink" href="#metropolis-design" title="Link to this heading">#</a></h2>
+<p>A Markov chain that reaches an equilibrium with a stationary distribution <span class="math notranslate nohighlight">\(\pi\)</span> will have all subsequent outcomes distributed according to <span class="math notranslate nohighlight">\(\pi\)</span>. Here we consider discrete chains with a discrete sample space.</p>
+<div class="tip admonition">
+<p class="admonition-title">Sampling a distribution</p>
+<p>Consider a sequence of outcomes <span class="math notranslate nohighlight">\((i_0, i_1, i_2, \ldots)\)</span> from a stationary Markov chain.</p>
+<ol class="arabic simple">
+<li><p>The first outcome, <span class="math notranslate nohighlight">\(i_0\)</span>, is in practice a sample from the initial probability distribution <span class="math notranslate nohighlight">\(\pi^{(0)}\)</span>. Note that <span class="math notranslate nohighlight">\(\pi^{(0)}_i = \prob_{X_0}(i)\)</span>.</p></li>
+<li><p>The second outcome, <span class="math notranslate nohighlight">\(i_1\)</span>, is a sample from <span class="math notranslate nohighlight">\(\pi^{(1)} = \pi^{(0)} T\)</span>. In practice, since we have the first outcome <span class="math notranslate nohighlight">\(i_0\)</span>, we obtain this second outcome as a sample from the conditional distribution for <span class="math notranslate nohighlight">\(X_1\)</span> given <span class="math notranslate nohighlight">\(X_0\)</span>, i.e., a distribution with elements <span class="math notranslate nohighlight">\(\prob_{X_1 \vert X_0}(i \vert i_0) = T(i_0, i)\)</span>.</p></li>
+<li><p>Continuing the process of drawing samples from conditional distributions we find that the <span class="math notranslate nohighlight">\(n\)</span>:th outcome <span class="math notranslate nohighlight">\(i_n\)</span> is a sample from <span class="math notranslate nohighlight">\(\pi^{(n)} \pi^{(0)} T^n\)</span>, but in practice we obtain it as a draw from <span class="math notranslate nohighlight">\(\prob_{X_n \vert X_{n-1}}(i \vert i_{n-1}) = T(i_{n-1}, i)\)</span>.</p></li>
+</ol>
+<p>Dismissing the first <span class="math notranslate nohighlight">\(n\)</span> outcomes, for which we have not yet reached equilibrium, we have the sequence <span class="math notranslate nohighlight">\((i_{n+1}, i_{n+2}, \ldots)\)</span>. These are, respectively, samples from <span class="math notranslate nohighlight">\(\pi^{(n+1)}, \pi^{(n+2)}, \ldots\)</span>. Assuming that the Markov chain has reached equilibrium, then all of these distributions are in fact the same. Therefore, our sequence of outcomes after equilibration are samples from the <em>same</em> distribution <span class="math notranslate nohighlight">\(\pi\)</span>.</p>
+</div>
+<p>Now we would like to <em>design</em> a stationary Markov chain, via its transition matrix <span class="math notranslate nohighlight">\(T\)</span>, such that it has a desired probability distribution <span class="math notranslate nohighlight">\(\pi\)</span> as its limiting distribution. Let us first recapitulate some important facts concerning Markov chains.</p>
+<ol class="arabic simple">
+<li><p>A stationary Markov chain is guaranteed to have a limiting distribution when the transition matrix <span class="math notranslate nohighlight">\(T\)</span> fulfills certain conditions (irreducibility, etc).</p></li>
+<li><p>A limiting distribution <span class="math notranslate nohighlight">\(\pi\)</span> is also a stationary distribution: <span class="math notranslate nohighlight">\(\pi = \pi T\)</span>.</p></li>
+<li><p>A distribution <span class="math notranslate nohighlight">\(\pi\)</span> that fulfills detailed balance, <span class="math notranslate nohighlight">\(\pi_i T(i,j) = \pi_j T(j,i)\)</span>, is guaranteed to be a stationary distribution.</p></li>
+</ol>
+<p>We utilize these facts in the so called Metropolis design of a Markov chain.</p>
+<div class="proof remark admonition" id="remark:MCMC:Metropolis-discrete">
+<p class="admonition-title"><span class="caption-number">Remark 16.1 </span> (The Metropolis design for obtaining a discrete limiting distribution)</p>
+<section class="remark-content" id="proof-content">
+<p>We want to design a stationary Markov chain that has a desired distribution <span class="math notranslate nohighlight">\(\pi\)</span> as its limiting distribution. To achieve this, we construct the transition matrix in a product form. Its non-diagonal elements are</p>
+<div class="amsmath math notranslate nohighlight" id="equation-bb29e5c1-502b-4ae1-8d03-8e4613d39904">
+<span class="eqno">(16.14)<a class="headerlink" href="#equation-bb29e5c1-502b-4ae1-8d03-8e4613d39904" title="Permalink to this equation">#</a></span>\[\begin{equation}
+T(i,j) = A(i,j) S(i,j), \quad \text{for } i \neq j,
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(S\)</span> is a (discrete) step proposal matrix and <span class="math notranslate nohighlight">\(A\)</span> contains acceptance probabilities. Formally, the elements of these matrices should be interpreted as probabilities</p>
+<div class="amsmath math notranslate nohighlight" id="equation-0043d76e-76be-48cd-9fcc-4b26a5615987">
+<span class="eqno">(16.15)<a class="headerlink" href="#equation-0043d76e-76be-48cd-9fcc-4b26a5615987" title="Permalink to this equation">#</a></span>\[\begin{align}
+S(i,j) &amp;= \cprob{\text{proposing next position } j}{\text{current position is } i}, \\
+A(i,j) &amp;= \cprob{\text{accepting new position } j}{\text{current position is } i},
+\end{align}\]</div>
+<p>where we think of outcomes of subsequent random variables as positions in the sample space. Note how the probability of a transition from <span class="math notranslate nohighlight">\(i\)</span> to <span class="math notranslate nohighlight">\(j\)</span>, given by <span class="math notranslate nohighlight">\(T(i,j)\)</span>, is then the product of these two independent (proposal and acceptance) probabilities.</p>
+<p>Constraining <span class="math notranslate nohighlight">\(T\)</span> to fulfill detailed balance <a class="reference internal" href="#equation-eq-markovchains-detailed-balance">(16.13)</a> we can guarantee that <span class="math notranslate nohighlight">\(\pi\)</span> is a stationary distribution. That is, we require</p>
+<div class="amsmath math notranslate nohighlight" id="equation-a21ac885-8403-4032-9063-b1d14b4d29cf">
+<span class="eqno">(16.16)<a class="headerlink" href="#equation-a21ac885-8403-4032-9063-b1d14b4d29cf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\pi_i S(i,j) A(i,j) = \pi_j S(j,i) A(j,i).
+\end{equation}\]</div>
+<p>This condition is fulfilled for any stochastic matrix <span class="math notranslate nohighlight">\(S\)</span> (impying non-negative entries and row sums equal to one) if one sets the acceptance probability</p>
+<div class="amsmath math notranslate nohighlight" id="equation-d87da07d-6a60-41bb-80da-be9c0fde2416">
+<span class="eqno">(16.17)<a class="headerlink" href="#equation-d87da07d-6a60-41bb-80da-be9c0fde2416" title="Permalink to this equation">#</a></span>\[\begin{equation}
+A(i,j) = \min\left(1, \frac{\pi_j}{\pi_i}\frac{S(j,i)}{S(i,j)} \right),
+\end{equation}\]</div>
+<p>where the second argument to the min-function is known as the <em>Metropolis ratio</em>.</p>
+<p>Finally, the diagonal entries of the transition matrix are</p>
+<div class="amsmath math notranslate nohighlight" id="equation-52eb7c55-f6f1-476a-bb74-b4624393df4b">
+<span class="eqno">(16.18)<a class="headerlink" href="#equation-52eb7c55-f6f1-476a-bb74-b4624393df4b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+T(i,i) = S(i,i) + \sum_{j \neq i} S(i,j) \left( 1 - A(i,j)\right),
+\end{equation}\]</div>
+<p>which can be understood by the fact that transitions to the same position can be triggered by a proposed move (the first term; note that <span class="math notranslate nohighlight">\(A(i,i)=1\)</span>), or by a non-accepted, proposed move to any other position (the sum in the second term).</p>
+<p>Different choices of <span class="math notranslate nohighlight">\(S\)</span> can be considered. As long as the chain is irreducible, positively recurrent, and aperiodic then it is guaranteed that <span class="math notranslate nohighlight">\(\pi\)</span> is a limiting distribution.</p>
+<p>See <a class="reference internal" href="MCMC.html#exercise:MCMC:discrete-metropolis"><span class="std std-numref">Exercise 16.18</span></a> for an explicit example.</p>
+</section>
+</div></section>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<div class="exercise admonition" id="exercise:stationary-2x2">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.8 </span> (Stationary two-state distribution)</p>
+<section id="exercise-content">
+<p>Find the stationary distribution to the Markov chain with transition matrix</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+T = \left[                                                                  
+     \begin{array}{cc}                                                           
+         1-p &amp; p  \\                                                               
+         q &amp; 1-q \\
+     \end{array}                                                                 
+\right].                                                                
+\end{split}\]</div>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:limiting-distribution">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.9 </span> (Limiting distribution)</p>
+<section id="exercise-content">
+<p>(<em>i</em>) Assume that <span class="math notranslate nohighlight">\(\pi\)</span> is a limiting distribution of a Markov chain. Show that
+<span class="math notranslate nohighlight">\(\pi\)</span> is also stationary distribution.</p>
+<p>(<em>ii</em>) Show by providing a counterexample that the converse of the above is
+not true.</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:flip-flop">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.10 </span> (Flip-flop)</p>
+<section id="exercise-content">
+<p>Construct a transition matrix for a two-state system that will always flip state 1 <span class="math notranslate nohighlight">\(\leftrightarrow\)</span> state 2.</p>
+<ul class="simple">
+<li><p>Does it have one or several stationary distributions?</p></li>
+<li><p>Is there a limiting distribution?</p></li>
+</ul>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:MarkovChains:gothenburg-winter-weather">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.11 </span> (Gothenburg winter weather)</p>
+<section id="exercise-content">
+<p>The winter weather in Gothenburg consists mostly of rain plus the occasional days of snow and clear skies. We might describe this winter weather as a Markov chain in which the conditional probabilities for tomorrow’s weather just depends on the weather today. Here is a realistic transition matrix for a Gothenburg winter weather chain</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{ccc}
+&amp; &amp; 
+\begin{array}{ccc} s\;\; &amp; r &amp; \;\; c \end{array} \\
+T = &amp;
+\begin{array}{c} s \\ r \\ c \end{array} &amp;
+\begin{pmatrix}
+0.2 &amp; 0.6 &amp; 0.2 \\
+0.1 &amp; 0.8 &amp; 0.1 \\
+0.1 &amp; 0.6 &amp; 0.3
+\end{pmatrix}
+\end{array}
+\end{split}\]</div>
+<ul class="simple">
+<li><p>What is the probability that it snows tomorrow given that it snows today?</p></li>
+<li><p>What is the minimum probability that it will rain tomorrow no matter what the weather today?</p></li>
+<li><p>Assume that the amount of precipitation is 2 mm if it snows, 5 mm if it rains, and 0 mm if the sky is clear. Given that the sky is clear today, what is the expected amount of precipitation tomorrow?</p></li>
+<li><p>The meterologist predicts 50% probability that it will snow tomorrow and 50% probability that it will rain. Find the probability that it will rain two days later (that is in three days from today).</p></li>
+</ul>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:stationary-gothenburg-winter-weather">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.12 </span> (Stationary Gothenburg winter weather)</p>
+<section id="exercise-content">
+<p>Find the stationary distribution of the Gothenburg winter weather Markov chain from <a class="reference internal" href="#exercise:MarkovChains:gothenburg-winter-weather"><span class="std std-numref">Exercise 16.11</span></a>.</p>
+<p>Test numerically that it is also a limiting distribution.</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:is-it-reversible">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.13 </span> (Is it reversible?)</p>
+<section id="exercise-content">
+<p>Determine if the Markov chain with transition matrix</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+T = \left[                                                                  
+     \begin{array}{ccc}                                                           
+         0 &amp; 2/5 &amp; 3/5  \\                                                               
+         1/2 &amp; 1/4 &amp; 1/4 \\
+         1/2 &amp; 1/6 &amp; 1/3
+     \end{array}                                                                 
+\right]                                                                
+\end{split}\]</div>
+<p>is reversible.</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:optical-pumping">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.14 </span> (Optical pumping)</p>
+<section id="exercise-content">
+<p>In this exercise we will consider a simple quantum mechanical system that
+can be modeled using a Markov process.</p>
+<p>Consider a quantum system that has three relevant energy levels labeled
+1,2 and 3, see figure. We do not need to consider any quantum mechanics to solve
+this problem, but a few key properties are needed: An electron generally ‘‘wants’’ to be
+in the lowest possible energy state, and if it is excited to state 2 or 3 it
+will eventually decay to a state will lower energy within some time frame. The
+possible decays and their respective probabilities are also shown in the figure.
+However, by introducing an auxiliary driving mechanism, for example a laser, the
+electrons can transition from a lower energy level to a higher one. This is known as <em>optical pumping</em> and is depicted in the figure where electrons can go from state 1 to 3.</p>
+<p><img alt="file" src="../../_images/levels.png" /></p>
+<p>The probabilities are given by</p>
+<div class="math notranslate nohighlight">
+\[ 
+p_{31} = 1/3,\quad p_{13} = 1/3, \quad p_{21} = 2/3, \quad p_{32} = 1/3.
+\]</div>
+<p>The time evolution of this system can be modeled as a Markov process with state <span class="math notranslate nohighlight">\(\pi_n = (a_n^1,a_n^2,a_n^3)\)</span> (at time <span class="math notranslate nohighlight">\(t_n\)</span>)
+which describes the distribution of the electrons among the three levels subject
+to the constraint <span class="math notranslate nohighlight">\(\sum_i a_n^i = 1\)</span>. An example is
+<span class="math notranslate nohighlight">\(\pi_n = (3/6,2/6,1/6)\)</span> which describes that half of the particles are in the ground state,
+one third in the first excited state, and one sixth in the second excited state.</p>
+<p>In our model the state will be updated at each time step (<span class="math notranslate nohighlight">\(\Delta t\)</span>) according to <span class="math notranslate nohighlight">\(\pi_{n+1} = \pi_n T\)</span>, where <span class="math notranslate nohighlight">\(T\)</span> is a matrix of transition probabilities
+where <span class="math notranslate nohighlight">\(T_{ij}\)</span> gives the probability that an electron in state <span class="math notranslate nohighlight">\(i\)</span> goes to
+state <span class="math notranslate nohighlight">\(j\)</span>.</p>
+<p>We want to study the equilibrium distribution
+of electrons in this system, meaning that the state has evolved for a long time.</p>
+<p>(<em>i</em>) Construct the transition matrix, <span class="math notranslate nohighlight">\(T\)</span> from the
+transition probabilities that are given in the figure.</p>
+<p>(<em>ii</em>) Find the limiting distribution (if it exists).</p>
+<p>(<em>iii</em>) Would a limiting distribution fulfill detailed balance?
+Why, why not?</p>
+<p>(<em>iv</em>) (optional) Implement this process in the Python class <code class="docutils literal notranslate"><span class="pre">StochasticProcess</span></code> and simulate it for a few different starting configurations. Do you find the same limiting distribution as in the analytical calculation?</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:detailed-balance">
+
+<p class="admonition-title"><span class="caption-number">Exercise 16.15 </span> (Detailed balance)</p>
+<section id="exercise-content">
+<p>Prove Eq. <a class="reference internal" href="#equation-eq-markovchains-t-y-vs-t-x">(16.12)</a> to show that a reversible Markov chain must fulfill detailed balance <a class="reference internal" href="#equation-eq-markovchains-detailed-balance">(16.13)</a>.</p>
+</section>
+</div>
+</section>
+<section id="solutions">
+<h2>Solutions<a class="headerlink" href="#solutions" title="Link to this heading">#</a></h2>
+<div class="solution dropdown admonition" id="solution:MarkovChains:stochastic-matrix">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:MarkovChains:stochastic-matrix"> Exercise 16.1 (Stochastic matrix)</a></p>
+<section id="solution-content">
+<p>The transition density matrix <span class="math notranslate nohighlight">\(T\)</span> has:</p>
+<ol class="arabic simple">
+<li><p>Non-negative entries; <span class="math notranslate nohighlight">\(T(i,j) \geq 0\)</span> for all <span class="math notranslate nohighlight">\(i,j\)</span>.</p></li>
+<li><p>Row sums equal to one; <span class="math notranslate nohighlight">\(\sum_j T(i,j) = 1\)</span> for all <span class="math notranslate nohighlight">\(i\)</span>.</p></li>
+</ol>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:MarkovChains:simple-random-walk">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:MarkovChains:simple-random-walk"> Exercise 16.2 (Simple random walk)</a></p>
+<section id="solution-content">
+<ul class="simple">
+<li><p>The update rule only depends on the last variable that was sampled.</p></li>
+<li><p>Yes, it is stationary since the update rule does not depend on the position in the chain but only on the value of the last variable that was sampled.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T(i,j) = \left\{ 
+\begin{array}{ll}
+0.5 &amp; j=i \pm 1, \\
+0 &amp; \text{otherwise}.
+\end{array}
+\right.\)</span></p></li>
+</ul>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:MarkovChains:memory">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:MarkovChains:memory"> Exercise 16.3 (Remnant memory)</a></p>
+<section id="solution-content">
+<p>The marginal distribution <span class="math notranslate nohighlight">\(\p{x_2}\)</span> is shown in the third panel on the diagonal of <a class="reference internal" href="#fig-example-markovprocessexample-corner-fig"><span class="std std-numref">Fig. 16.2</span></a>. The fact that the initial distribution for <span class="math notranslate nohighlight">\(X_0\)</span> is uniform implies that <span class="math notranslate nohighlight">\(\pdf{x_2}{x_0} \propto \p{x_2,x_0}\)</span>. The joint distribution on the right-hand side is shown in the third panel from the top in the fist column. The conditional distribution then corresponds to slices at different values of <span class="math notranslate nohighlight">\(x_0\)</span>. It is obvious that these slices do not look like <span class="math notranslate nohighlight">\(\p{x_2}\)</span> for all values of <span class="math notranslate nohighlight">\(x_0\)</span>. (See also <a class="reference internal" href="#fig-x2givenx0"><span class="std std-numref">Fig. 16.3</span></a>.)</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:MarkovChains:conditional-distributions">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:MarkovChains:conditional-distributions"> Exercise 16.4 (Conditional distributions)</a></p>
+<section id="solution-content">
+<ul class="simple">
+<li><p>With infinite statistics, the diagonal band would be a uniform color since  <span class="math notranslate nohighlight">\(\pdf{x_1}{x_0}\)</span> is uniform (within the diagonal limits shown) for each <span class="math notranslate nohighlight">\(x_0\)</span>.</p></li>
+<li><p>A plot of <span class="math notranslate nohighlight">\(\pdf{x_2}{x_1}\)</span>, or any <span class="math notranslate nohighlight">\(\pdf{x_{n+1}}{x_n}\)</span> would look identical since this is the definition of a stationary Markov chain.</p></li>
+<li><p>A conditional probability <span class="math notranslate nohighlight">\(\pdf{\alpha}{\beta}\)</span> is normalized along <span class="math notranslate nohighlight">\(\alpha\)</span>, with the value of <span class="math notranslate nohighlight">\(\beta\)</span> considered fixed. In other words, a <code class="docutils literal notranslate"><span class="pre">numpy</span></code> array of values <code class="docutils literal notranslate"><span class="pre">P[n,m]</span></code> tabulating <span class="math notranslate nohighlight">\(\pdf{x_m}{x_n}\)</span> on a grid satisfies:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>This plot only shows the update rule and does not depend on how we chose an initial value for the Markov chain.</p></li>
+</ul>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:MarkovChains:stationary-distribution">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:MarkovChains:stationary-distribution"> Exercise 16.5 (Stationary distribution)</a></p>
+<section id="solution-content">
+<p>Assume that <span class="math notranslate nohighlight">\(\prob \left( X_{n-1}=i \right) = \pi_i\)</span>. Then</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\prob \left( X_{n}=i \right) &amp;= \sum_j \prob \left( X_{n}=i, X_{n-1}=j  \right) \\
+&amp;= \sum_j \cprob{X_{n}=i}{X_{n-1}=j} \prob \left( X_{n-1}=j \right) \\
+&amp;= \sum_j \pi_j T(i,j) = \pi_i.
+\end{aligned}
+\end{split}\]</div>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:MarkovChains:reversibility">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:MarkovChains:reversibility"> Exercise 16.6 (Reversibility)</a></p>
+<section id="solution-content">
+<ul class="simple">
+<li><p>A reversible chain is always stationary, but not vice versa.</p></li>
+</ul>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:MarkovChains:reversible-chain">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:MarkovChains:reversible-chain"> Exercise 16.7 (A reversible Markov chain)</a></p>
+<section id="solution-content">
+<ul class="simple">
+<li><p>The first panel, <span class="math notranslate nohighlight">\(\pdf{x_1}{x_0}\)</span>, shows the transition density.</p></li>
+<li><p>A reversible Markov chain has <span class="math notranslate nohighlight">\(\pdf{x_{n+1}}{x_n} = \pdf{x_n}{x_{n+1}}\)</span>. Here we can study the first panel which indeed is symmetric under the interchange of its axes. In other words, mirroring the plot along the diagonal should not change its appearance.</p></li>
+<li><p>The equilibrium seem to provide samples from a uniform distribution <span class="math notranslate nohighlight">\(\mathcal{U}([0,1])\)</span>.</p></li>
+</ul>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:stationary-2x2">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:stationary-2x2"> Exercise 16.8 (Stationary two-state distribution)</a></p>
+<section id="solution-content">
+<p>Solve the system of equations</p>
+<div class="math notranslate nohighlight">
+\[
+\sum_i \pi_i T_{ij} = \pi_i, \quad \forall j
+\]</div>
+<p>subject to the constraint <span class="math notranslate nohighlight">\(\pi_1 + \pi_2 = 1\)</span>. The solution is</p>
+<div class="math notranslate nohighlight">
+\[
+\pi = \left(\frac{q}{p+q},\frac{p}{p+q}\right).
+\]</div>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:limiting-distribution">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:limiting-distribution"> Exercise 16.9 (Limiting distribution)</a></p>
+<section id="solution-content">
+<p>(<em>i</em>) By the assumption we have for any starting distribution <span class="math notranslate nohighlight">\(\alpha\)</span> that</p>
+<div class="math notranslate nohighlight">
+\[
+\pi = \lim_{n\to \infty} \alpha T^n.
+\]</div>
+<p>This can be rewritten as</p>
+<div class="math notranslate nohighlight">
+\[
+\lim_{n\to \infty} \alpha T^n = \left( \lim_{n \to \infty} \alpha T^{n-1} \right) T = \pi T.
+\]</div>
+<p>(<em>ii</em>) The converse is not true. This can be shown by for example considering the
+transition matrix</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+T = \left[                                                                  
+     \begin{array}{cc}                                                           
+         1 &amp; 0  \\                                                               
+         0 &amp; 1 \\
+     \end{array}                                                                 
+\right] .
+\end{split}\]</div>
+<p>that has infinitely many stationary distributions (any distribution <span class="math notranslate nohighlight">\((p,1-p)\)</span> is stationary). However, this distribution will not be the limit for <span class="math notranslate nohighlight">\(n \to \infty\)</span> transitions from any initial distribution <span class="math notranslate nohighlight">\((q,1-q)\)</span>.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:flip-flop">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:flip-flop"> Exercise 16.10 (Flip-flop)</a></p>
+<section id="solution-content">
+<div class="math notranslate nohighlight">
+\[\begin{split}
+T = \left[                                                                  
+     \begin{array}{cc}                                                           
+         0 &amp; 1  \\                                                               
+         1 &amp; 0 \\
+     \end{array}                                                                 
+\right] .
+\end{split}\]</div>
+<p>The distribution <span class="math notranslate nohighlight">\(\pi = (0.5,0.5)\)</span> is stationary. However, it is not a limiting distribution since it will not be reached from a random initial state.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:MarkovChains:gothenburg-winter-weather">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:MarkovChains:gothenburg-winter-weather"> Exercise 16.11 (Gothenburg winter weather)</a></p>
+<section id="solution-content">
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\cprob{s}{s} = T(s,s) = 0.2\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\min\left( \cprob{r}{i} \right) = 0.6\)</span> for <span class="math notranslate nohighlight">\(i \in (s,r,c)\)</span>.</p></li>
+<li><p>The probability distribution for the weather tomorrow (given that it is clear today) is <span class="math notranslate nohighlight">\((0.1, 0.6, 0.3)\)</span> with the ordered states <span class="math notranslate nohighlight">\((s,r,c)\)</span>. The expected amount of precipitation is therefore <span class="math notranslate nohighlight">\(\expect{\text{amount precipitation}} = 0.1 \cdot 2 + 0.6 \cdot 5 + 0.3 \cdot 0 = 3.2\)</span> mm.</p></li>
+<li><p>The initial distribution is <span class="math notranslate nohighlight">\(\pi_1 = (0.5, 0.5, 0)\)</span>. We therefore have that the distribution two days later is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+  \pi_3 = \pi_1 T^2  = 
+  (0.5, 0.5, 0)
+  \begin{pmatrix}
+  0.12 &amp; 0.72 &amp; 0.16 \\
+  0.11 &amp; 0.76 &amp; 0.13 \\
+  0.11 &amp; 0.72 &amp; 0.17
+  \end{pmatrix}
+   = (0.115, 0.74, 0.145).
+  \end{split}\]</div>
+<p>We find that the requested probability is 0.74.</p>
+</li>
+</ul>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:stationary-gothenburg-winter-weather">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:stationary-gothenburg-winter-weather"> Exercise 16.12 (Stationary Gothenburg winter weather)</a></p>
+<section id="solution-content">
+<p>Solve the system of equations</p>
+<div class="math notranslate nohighlight">
+\[
+\sum_i \pi_i T_{ij} = \pi_i, \quad \forall j
+\]</div>
+<p>subject to the constraint <span class="math notranslate nohighlight">\(\pi_1 + \pi_2 +\pi_3= 1\)</span>. The solution is</p>
+<div class="math notranslate nohighlight">
+\[
+\pi = \left(\frac{1}{9},\frac{3}{4},\frac{5}{36}\right).
+\]</div>
+<p>A numerical test can be performed by evaluating a large number of transitions from different initial states.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:is-it-reversible">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:is-it-reversible"> Exercise 16.13 (Is it reversible?)</a></p>
+<section id="solution-content">
+<p>Solve the system of equations</p>
+<div class="math notranslate nohighlight">
+\[
+\sum_i \pi_i T_{ij} = \pi_i, \quad \forall j
+\]</div>
+<p>subject to the constraint <span class="math notranslate nohighlight">\(\pi_1 + \pi_2 + \pi_3= 1\)</span> to find the stationary distribution.
+The solution is</p>
+<div class="math notranslate nohighlight">
+\[
+\pi = \left(\frac{1}{3},\frac{4}{15},\frac{2}{5}\right).
+\]</div>
+<p>Check the detailed balance equations</p>
+<div class="math notranslate nohighlight">
+\[
+\pi_i T_{ij} = \pi_j T_{ji}, \quad \forall i,j
+\]</div>
+<p>All these hold, hence the chain is reversible.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:optical-pumping">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:optical-pumping"> Exercise 16.14 (Optical pumping)</a></p>
+<section id="solution-content">
+<p>(<em>i</em>)</p>
+<ul class="simple">
+<li><p>The <span class="math notranslate nohighlight">\(T\)</span> matrix can be constructed from the probabilities given, remembering that
+the rows of <span class="math notranslate nohighlight">\(T\)</span> must sum to one, which ensures that the probability
+of the electron going anywhere (including staying where is it) is one.</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+T = \left[                                                                  
+     \begin{array}{ccc}                                                           
+         1-p_{13} &amp; 0 &amp; p_{13} \\                                                               
+         p_{21} &amp; 1-p_{21}&amp; 0 \\
+         p_{31} &amp; p_{32} &amp; 1-p_{31}-p_{32}                                                                   
+     \end{array}                                                                 
+\right] =   \left[                                                                  
+     \begin{array}{ccc}                                                           
+         2/3 &amp; 0 &amp; 1/3 \\                                                               
+         2/3 &amp; 1/3 &amp; 0 \\
+         1/3 &amp; 1/3 &amp; 1/3                                                                   
+     \end{array}                                                                 
+\right] 
+\end{split}\]</div>
+<p>(<em>ii</em>)</p>
+<ul>
+<li><p>If there is a limiting stationary distribution, <span class="math notranslate nohighlight">\(\pi\)</span>, it satisfies the equation
+<span class="math notranslate nohighlight">\(\pi T = \pi\)</span>. In other words, <span class="math notranslate nohighlight">\(\pi\)</span> is a left eigenvector to <span class="math notranslate nohighlight">\(T\)</span> with eigenvalue one. This also implies that the column vector <span class="math notranslate nohighlight">\(\pi^t\)</span> is a right eigenvector to the transposed transition matrix <span class="math notranslate nohighlight">\(T^t\)</span> (again with eigenvalue one). Note that the eigenvalues of <span class="math notranslate nohighlight">\(T\)</span> and <span class="math notranslate nohighlight">\(T^t\)</span> are the same. We compute the eigenvalues of the matrix <span class="math notranslate nohighlight">\(T\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+  \mathrm{det}(T-\lambda I) = 0
+  \]</div>
+<p>which will give one eigenvalue $\lambda_0 = 1.</p>
+<p>Since there is an eigenvalue that is one, there is a limiting distribution. To find
+the distribution we compute the right eigenvector of <span class="math notranslate nohighlight">\(T^t\)</span> corresponding to the <span class="math notranslate nohighlight">\(\lambda_0 = 1\)</span> eigenvalue. We normalize it to have sum equal to one and get <span class="math notranslate nohighlight">\(\pi = \frac{1}{7}(4,1,2)\)</span>.</p>
+</li>
+</ul>
+<p>(<em>iii</em>)</p>
+<ul class="simple">
+<li><p>The detailed balance conditions are <span class="math notranslate nohighlight">\(\pi_i T_{ij} = \pi_jT_{ji}\)</span>. Since
+<span class="math notranslate nohighlight">\(T_{23} = 0\)</span> and <span class="math notranslate nohighlight">\(T_{32} \neq 0\)</span> for a non-zero stationary distribution these conditions
+are not satisfied.</p></li>
+</ul>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:detailed-balance">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:detailed-balance"> Exercise 16.15 (Detailed balance)</a></p>
+<section id="solution-content">
+<p>Hint:</p>
+<ol class="arabic">
+<li><p>Express the conditional probability</p>
+<div class="math notranslate nohighlight">
+\[
+   \prob_{Y_{N+1} \vert Y_0, Y_1, \ldots, Y_n}(i_{n+1} \vert i_0, i_1, \ldots, i_n)
+   \]</div>
+<p>in terms of a ratio of joint probabilities.</p>
+</li>
+<li><p>Express in terms of <span class="math notranslate nohighlight">\(X_i\)</span> events.</p></li>
+<li><p>Idenitfy elements of the stationary distribution and transition matrix elements.</p></li>
+</ol>
+</section>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./LearningFromData-content/StochasticProcesses"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="MCMC_overview.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">16. </span>Overview of Markov Chain Monte Carlo</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="MCMC.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">16.2. </span>Markov chain Monte Carlo sampling</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stationary-processes">Stationary processes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stationary-and-limiting-distributions">Stationary and limiting distributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reversibility">Reversibility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metropolis-design">Metropolis design</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">Solutions</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+Traceback (most recent call last):
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 154, in wrapped
+    asyncio.get_running_loop()
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 1319, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 158, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+import emcee
+import pocomc
+from multiprocess import Pool
+from scipy.stats import uniform
+import time
+import os
+
+# ================================ emcee sampler ==================================
+def emcee_sampling(min_param, max_param, log_posterior, 
+                   nburn=2000, nsteps=2000, num_walker_per_dim=8, progress=False):
+    """
+    Function for sampling in parallel using emcee.
+    
+    Parameters:
+      - min_param (list or array): minimum values parameters
+      - max_param (list or array): maximum values parameters
+      - log_posterior (callable): log posterior
+      - nburn (int): "burn-in" period to let chains stabilize
+      - nsteps (int): # number of MCMC steps to take after burn-in
+      - num_walker_per_dim (int): number of walker per dimension
+      - samples_save_dir (string): directory name in which the samples will be saved
+      - progress (boolean): toggle the progress bar
+    """
+    if len(min_param) != len(max_param):
+            raise ValueError(
+                f"min_param and max_param must have the same length."
+            )
+
+    ndim = len(min_param)  # number of parameters in the model
+    nwalkers = ndim * num_walker_per_dim  # number of MCMC walkers
+    
+    start_time = time.time()
+    print(f"Starting MCMC sampling using emcee with {nwalkers} walkers in parallel...")
+
+    # Generate starting guesses within the prior bounds
+    starting_guesses =  min_param + (max_param - min_param) * np.random.rand(nwalkers,ndim)
+    
+    # Create a pool of workers using multiprocessing
+    with Pool() as pool:
+        # Pass the pool to the sampler
+        sampler = emcee.EnsembleSampler(nwalkers,ndim,log_posterior,pool=pool)
+    
+        # "Burn-in" period
+        pos, prob, state = sampler.run_mcmc(starting_guesses, nburn, progress=progress)
+        sampler.reset()
+    
+        # Sampling period
+        pos, prob, state = sampler.run_mcmc(pos, nsteps, progress=progress)
+
+    # Collect samples
+    samples = sampler.get_chain(flat=True)
+    
+    end_time = time.time()
+    print(f"Sampling complete. Time taken: {(end_time - start_time)/60:.2f} minutes.")
+    print(f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction):.3f} (in total {nwalkers*nsteps} steps)")
+    print(f"Samples shape: {samples.shape}")
+
+    return samples
+
+
+# ================================ pocoMC sampler ==================================
+def pocomc_sampling(min_param, max_param, log_posterior,
+                    n_effective=2000, n_active=800, n_steps=None,
+                    # n_prior=2048, n_max_steps=200, 
+                    n_total=5000, n_evidence=5000, ncores = -1
+                   ):
+    """
+    This function is based on PocoMC package (version 1.2.1).
+    pocoMC is a Preconditioned Monte Carlo (PMC) sampler that uses 
+    normalizing flows to precondition the target distribution.
+
+    Parameters:
+      - min_param (list or array): Minimum values parameters
+      - max_param (list or array): Maximum values parameters
+      - log_posterior (callable): Log posterior
+
+      - n_effective (int): The effective sample size maintained during the run. Default: 2000.
+      - n_active (int): Number of active particles. Default: 800. Must be < n_effective.
+      - n_steps (int): Number of MCMC steps after logP plateau. Default: None -> n_steps=n_dim. 
+                       Higher values lead to better exploration but increases computational cost.
+      - n_total (int): Total effectively independent samples to be collected. Default: 5000.
+      - n_evidence (int): Number of importance samples used to estimate evidence. Default: 5000. 
+                          If 0, the evidence is not estimated using importance sampling.
+
+      - ncores: Number of cores to use in sampling. 
+                  -1 (default): use all availaible cores
+                   n (int): use n cores
+    """
+
+    # Generating prior range for pocomc
+    priors = [uniform(lower, upper - lower) for lower, upper in zip(min_param, max_param)]
+    prior = pocomc.Prior(priors)
+    
+    ndim = len(min_param)  # number of parameters in the model
+
+    # -------------------------------------------------------------------------------------------- 
+    # Try to get the allowed CPU count via affinity (works on Linux/Windows)
+    try:
+        available_cores = len(os.sched_getaffinity(0))# len(psutil.Process().cpu_affinity())
+    except Exception:
+        # On systems where affinity is not available (e.g., macOS), use total CPU count
+        available_cores = os.cpu_count()
+
+    # Validate that ncores is an integer and at least -1
+    if not isinstance(ncores, int) or ncores < -1:
+        raise ValueError("ncores must be an integer greater than or equal to -1. Specify '-1' to use all available cores.")
+    
+    if ncores == -1:
+        # Use all available cores
+        num_cores = available_cores
+    elif ncores > available_cores:
+        # Warn if more cores are requested than available and then use available cores
+        warnings.warn(
+            f"ncores ({ncores}) exceeds available cores ({available_cores}). Using available cores.",
+            UserWarning
+        )
+        num_cores = available_cores
+    else:
+        num_cores = ncores     
+    # --------------------------------------------------------------------------------------------
+    
+    start_time = time.time()
+
+    sampler = pocomc.Sampler(prior=prior, likelihood=log_posterior,
+                                 n_effective=n_effective, n_active=n_active, n_steps=n_steps,
+                                 # dynamic=True, n_prior=n_prior, n_max_steps=n_max_steps,
+                                 pytorch_threads=None,  # use all availaible threads for training
+                                 pool=num_cores
+                                 )
+
+    print(f"Starting sampling using pocomc in {num_cores} cores...")
+
+    sampler.run(n_total=n_total, 
+                n_evidence=n_evidence, 
+                progress=True)
+
+
+    # Generating the posterior samples
+    # samples, weights, logl, logp = sampler.posterior() # Weighted posterior samples
+    samples, _, _ = sampler.posterior(resample=True)  # equal weights for samples 
+    
+    # Generating the evidence
+    # logz, logz_err = sampler.evidence() # Bayesian model evidence estimate and uncertainty
+    # print("Log evidence: ", logz)
+    # print("Log evidence error: ", logz_err)
+    
+    # logging.info('Writing pocoMC chains to file...')
+    # chain_data = {'chain': samples, 'weights': weights, 'logl': logl,
+    #                 'logp': logp, 'logz': logz, 'logz_err': logz_err}
+
+    end_time = time.time()
+    print(f"Sampling complete. Time taken: {(end_time - start_time)/60:.2f} minutes.")
+    print(f"Samples shape: {samples.shape}")
+        
+    return samples
+
+------------------
+
+
+[31m---------------------------------------------------------------------------[39m
+[31mModuleNotFoundError[39m                       Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[2][39m[32m, line 2[39m
+[32m      1[39m [38;5;28;01mimport[39;00m[38;5;250m [39m[34;01memcee[39;00m
+[32m----> [39m[32m2[39m [38;5;28;01mimport[39;00m[38;5;250m [39m[34;01mpocomc[39;00m
+[32m      3[39m [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01mmultiprocess[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m Pool
+[32m      4[39m [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01mscipy[39;00m[34;01m.[39;00m[34;01mstats[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m uniform
+
+[31mModuleNotFoundError[39m: No module named 'pocomc'
+

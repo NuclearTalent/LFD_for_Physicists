@@ -1,0 +1,1150 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Parameter estimation example: Gaussian noise and averages I &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\text{th}}", "yexp": "y_{\\text{exp}}", "ym": "y_{\\text{m}}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'LearningFromData-content/BayesianStatistics/BayesianParameterEstimation/parameter_estimation_Gaussian_noise';</script>
+    <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="5. Bayesian posteriors" href="../BayesianBasics/Posteriors.html" />
+    <link rel="prev" title="4.9. Data, models, and predictions" href="../BayesianBasics/DataModelsPredictions.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../Intro/About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../Intro/About.html">
+                    About this Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Overview.html">1. Invitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Introduction.html">2. Introduction</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../BayesianBasics/RootBayesianBasics.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../BayesianBasics/Inferenceandpdfs.html">4. Inference and PDFs</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/exercise_sum_product_rule.html">4.5. Exercise: Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/exercise_medical_example_by_Bayes.html">4.6. Exercise: Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/MoreBayesTheorem.html">4.7. More on Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/Bayesian_epistemology.html">4.8. *Aside: Bayesian epistemology</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../BayesianBasics/DataModelsPredictions.html">4.9. Data, models, and predictions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Parameter estimation I: Gaussian mean and variance</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianBasics/Posteriors.html">5. Bayesian posteriors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianBasics/Exploring_pdfs.html">5.1. Exploring PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianBasics/Exploring_pdfs_followups.html">Follow-ups to Exploring PDFs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianBasics/Gaussians.html">5.2. Gaussians: A couple of frequentist connections</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianBasics/visualization_of_CLT.html">Visualization of the Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="Interpreting2Dposteriors.html">5.3. Interpreting 2D posteriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/chi_squared_tests.html">5.4. Demonstration: Sum of normal variables squared</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianBasics/CoinTossing.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/demo-BayesianBasics.html">6.6. Demonstration:  Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/Bayesian_updating_coinflip_interactive.html">6.7. Widgetized coin tossing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianBasics/UsingBayes.html">7. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianBasics/BayesianAdvantages.html">7.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianWorkflow/BayesianWorkflow.html">7.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianLinearRegression/BayesianLinearRegression_rjf.html">7.3. Bayesian Linear Regression (BLR)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../RootAdvancedMethods.html">8. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="ParameterEstimation.html">9. More Bayesian parameter estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="radioactive_lighthouse_exercise.html">9.1. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amplitude_in_presence_of_background.html">9.2. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameter_estimation_fitting_straight_line_I.html">9.3. Parameter estimation example: fitting a straight line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameter_estimation_fitting_straight_line_II.html">9.4. Parameter estimation example: fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dealing_with_outliers.html">9.5. Dealing with outliers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../AssigningProbabilities/Assigning.html">10. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../AssigningProbabilities/IgnorancePDF.html">10.1. Assigning probabilities (I): Indifferences and translation groups</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../AssigningProbabilities/demo-straight_lines.html">Alternative notebook with MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../AssigningProbabilities/MaxEnt2.html">10.2. Assigning probabilities (II): The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../AssigningProbabilities/MaxEnt_Function_Reconstruction.html">10.3. Maximum Entropy for reconstructing a function from its moments</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../ComputationalBayes/BayesLinear.html">11. Bayes goes linear: History matching</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Multimodel_inference.html">12. Multi-model inference with Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ModelSelection/ModelSelection.html">12.1. Model Selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/Evidence_for_model_EFT_coefficients.html">Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/two_model_evidence.html">Follow-up to EFT evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/computing_evidence.html">Computing the evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ModelSelection/BUQ/MCMC-parallel-tempering_ptemcee_vs_zeus.html">Demo: Multimodal distributions with two samplers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../ModelMixing/model_mixing.html">12.2. Model averaging and mixing </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/DiscrepancyModels.html">13. Discrepancy Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/MD_balldrop_v1.html">13.4. Ball-drop experiment</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../StochasticProcesses/RootMCMC.html">14. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/StochasticProcesses.html">15. Stochastic processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Metropolis_Poisson_example.html">15.7. Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/demo-MCMC.html">15.8. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/Recap_BUQ.html">15.9. Recap of Poisson and more about MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/parameter_estimation_Gaussian_noise-2.html">15.10. Parameter estimation example: Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">15.11. Exercise: Random walk</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/MCMC_overview.html">16. Overview of Markov Chain Monte Carlo</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MarkovChains.html">16.1. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC.html">16.2. Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC_intro_BUQ.html">16.3. Alternative MCMC introduction (Gregory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Assignment_extending_radioactive_lighthouse.html">16.4. Assignment: 2D radioactive lighthouse location using MCMC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Advanced_MCMC.html">17. Advanced MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/AdvancedMCMC.html">17.1. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html">17.2. Overview: MCMC Diagnostics</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/intuition_sampling.html">17.4. Intuition on sampling and best practices</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Other_samplers.html">18. HMC and other samplers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/HMC_intro_BUQ.html">18.1. Hamiltonian Monte Carlo (HMC) overview and visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Liouville_theorem_visualization.html">Liouville Theorem Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Orbital_eqs_with_different_algorithms.html">Solving orbital equations with different algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/zeus.html">18.2. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/PyMC_intro_updated.html">18.3. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/OverviewIntroPyMC.html">Overview of Intro to PyMC notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ2/parameter_estimation_Gaussian_noise_compare_samplers.html">18.4. Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning: A Bayesian perspective</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../MachineLearning/RootML.html">19. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/GP/RootGP.html">20. Overview of Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/GaussianProcesses.html">20.4. Introduction to Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/CF/demo-GaussianProcesses.html">demo-GaussianProcesses notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/lecture_20.html">GP recap; GP applications; (old lecture 20)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/Sklearn_demos.html">20.5. scikit-learn demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/plot_gpr_noisy_targets.html">One-dimension regression example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/plot_gpr_prior_posterior.html">Prior and posterior with different kernels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MachineLearning/GP/GPy_demos.html">20.6. GPy demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/demo-GaussianProcesses.html">Gaussian processes demonstration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/CF/exercise_GP_GPy.html">Exercise: Gaussian processes using <code class="docutils literal notranslate"><span class="pre">GPy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MachineLearning/GP/BUQ/Gaussian_processes_exercises.html">Exercise: Gaussian Process models with GPy</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/LogReg/LogReg.html">21. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/MachineLearningExamples.html">21.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/exercises_LogReg_NeuralNet.html">21.6. Exercise: Logistic Regression and neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/ANN/MachineLearning.html">22. Machine learning: Overview and notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet.html">22.5. Artifical neural networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/demo-NeuralNet.html">22.6. Demonstration: Neural network classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/Neural_Network_for_simple_function_in_PyTorch.html">22.7. ANN from ChatGPT using PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/ModelValidation.html">22.8. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/DataBiasFairness.html">22.9. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/ANN/NeuralNet/NeuralNetBackProp.html">22.10. *Neural networks: Backpropagation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/ANNFT.html">23. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/random_initialized_ANN_vs_width.html">23.3. Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/BNN/bnn.html">24. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/BNN/demo-bnn.html">24.4. Demonstration: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/BNN/exercises_BNN.html">24.5. Exercise: Bayesian neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/CNN/cnn.html">25. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/CNN/demo-cnn.html">25.6. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Other topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/RootOtherTopics.html">26. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/Emulators.html">27. Emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/BayesFast.html">27.1. Bayes goes fast: Emulators (from CF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/extra_RBM_emulators.html">27.2. RBM emulators (BUQ)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/Student_t_distribution_from_Gaussians.html">28. Student t distribution from Gaussians</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/SVD.html">29. PCA, SVD, and all that</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/linear_algebra_games_including_SVD.html">29.5. SVD notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/qbism.html">30. QBism: Bayesian quantum mechanics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/bibliography.html">31. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/JB_tests.html">32. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Reference/Statistics.html">33. Statistics concepts and notation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/GradientDescent.html">34. Gradient-descent optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/RootScientificModeling.html">35. Overview of scientific modeling material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/OverviewModeling.html">36. Overview of modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/LinearModels.html">37. Linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/MathematicalOptimization.html">38. Mathematical optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/RootGettingStarted.html">39. Overview of Getting started material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/exercise_Intro_01_Jupyter_Python.html">40. Jupyter notebooks and Python</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/more_python_and_jupyter.html">41. More about Python and Jupyter notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_02_Jupyter_Python.html">41.4. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_03_Numpy.html">41.5. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/demo-Intro.html">41.6. Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/Simple_widgets_v1.html">41.7. Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/setting_up.html">42. Setting up for using this Jupyter Book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/installing_anaconda.html">42.1. Using Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/using_github.html">42.2. Using GitHub</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/RootMiniProjects.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_I_toy_model_of_EFT.html">MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIa.html">MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html">MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Mini-projects/Mini-project_IIb_overview.html">Overview of Mini-project IIb: How many lines?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIa_bayesian_optimization.html">MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html">MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development/issues/new?title=Issue%20on%20page%20%2FLearningFromData-content/BayesianStatistics/BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/LearningFromData-content/BayesianStatistics/BayesianParameterEstimation/parameter_estimation_Gaussian_noise.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Parameter estimation example: Gaussian noise and averages I</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-gaussian-parameter-estimation">Bayesian approach to Gaussian parameter estimation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#but-what-about-the-prior">But what about the prior?</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="parameter-estimation-example-gaussian-noise-and-averages-i">
+<h1>Parameter estimation example: Gaussian noise and averages I<a class="headerlink" href="#parameter-estimation-example-gaussian-noise-and-averages-i" title="Link to this heading">#</a></h1>
+<p>Adapted from Sivia: <em>Data Analysis: A Bayesian Tutorial</em></p>
+<p>Here we’ll take a look at a simple parameter-estimation problem. We will discuss a Bayesian approach to this problem and show how it reduces to standard frequentist estimators for a particular choice of prior. This problem is an extended version of Example 2 in Ch 2.3 of the book by Sivia. (This notebook was adapted from a broad introduction to Bayesian statistics put together by Christian Forssen for the 2019 TALENT school on <a class="reference external" href="https://nucleartalent.github.io/Bayes2019/">“Learning from Data”</a>.)</p>
+<p><strong>Answer all of the question in italics.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+
+<span class="c1"># Not really needed, but nicer plots</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>      
+<span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s2">&quot;talk&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us consider the problem of estimating the mean and the variance of a normal distribution that is associated with a collection of random variables. The normal distribution</p>
+<div class="math notranslate nohighlight">
+\[
+p(x|\mu,\sigma) = \frac{1}{\sqrt{2\pi}\sigma} \exp \left(-\frac{(x-\mu)^2}{2\sigma^2} \right),
+\]</div>
+<p>is often used as a theoretical model to describe the noise associated with experimental data.</p>
+<p><em>Why is a normal (Gaussian) distribution so often a good statistical model?</em></p>
+<p>Let us assume that we have a series of <span class="math notranslate nohighlight">\(M\)</span> measurements <span class="math notranslate nohighlight">\(D \equiv \{ x_k \} = (x_1, \ldots, x_M)\)</span>, that are samples from a normal <span class="math notranslate nohighlight">\(\mathcal{N}(\mu, \sigma^2)\)</span> population, from which we would like to learn the approximate values of the parameters <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>. The standard frequentist approach to this problem is the maximum likelihood method. The Bayesian approach is to compute the posterior distribution for the model parameters <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>.</p>
+<p>Here we’ll use Python to generate some toy data to demonstrate the two approaches to the problem.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generating some data</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># for repeatability we use an integer &gt; 0. Use 0 for a random seed.</span>
+
+<span class="n">mu_true</span> <span class="o">=</span> <span class="mi">10</span>   <span class="c1"># true peak position </span>
+<span class="n">sigma_true</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># true standard deviation </span>
+<span class="n">M</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># number of measurements</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">mu_true</span><span class="p">,</span> <span class="n">sigma_true</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">M</span><span class="p">)</span>  <span class="c1"># M measurements (samples)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Side note:</strong> try shift-tab-tab to get documentation!</p>
+<p><em>Look at the array <code class="docutils literal notranslate"><span class="pre">D</span></code>.  Are the number of entries in the “tails” what you would expect?</em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">D</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([11.62434536,  9.38824359,  9.47182825,  8.92703138, 10.86540763,
+        7.6984613 , 11.74481176,  9.2387931 , 10.3190391 ,  9.75062962,
+       11.46210794,  7.93985929,  9.6775828 ,  9.61594565, 11.13376944,
+        8.90010873,  9.82757179,  9.12214158, 10.04221375, 10.58281521,
+        8.89938082, 11.14472371, 10.90159072, 10.50249434, 10.90085595,
+        9.31627214,  9.87710977,  9.06423057,  9.73211192, 10.53035547,
+        9.30833925,  9.60324647,  9.3128273 ,  9.15479436,  9.32875387,
+        9.9873354 ,  8.88268965, 10.2344157 , 11.65980218, 10.74204416,
+        9.80816445,  9.11237104,  9.25284171, 11.6924546 , 10.05080775,
+        9.36300435, 10.19091548, 12.10025514, 10.12015895, 10.61720311,
+       10.30017032,  9.64775015,  8.8574818 ,  9.65065728,  9.79110577,
+       10.58662319, 10.83898341, 10.93110208, 10.28558733, 10.88514116,
+        9.24560206, 11.25286816, 10.51292982,  9.70190716, 10.48851815,
+        9.92442829, 11.13162939, 11.51981682, 12.18557541,  8.60350366,
+        8.55588619,  9.49553414, 10.16003707, 10.87616892, 10.31563495,
+        7.97779878,  9.69379599, 10.82797464, 10.23009474, 10.76201118,
+        9.77767186,  9.79924193, 10.18656139, 10.41005165, 10.19829972,
+       10.11900865,  9.32933771, 10.37756379, 10.12182127, 11.12948391,
+       11.19891788, 10.18515642,  9.62471505,  9.36126959, 10.42349435,
+       10.07734007,  9.65614632, 10.04359686,  9.37999916, 10.69803203,
+        9.55287144, 11.2245077 , 10.40349164, 10.59357852,  8.90508815,
+       10.16938243, 10.74055645,  9.0462994 ,  9.73378149, 10.03261455,
+        8.62688268, 10.31515939, 10.84616065,  9.14048406, 10.35054598,
+        8.68771659,  9.96130449,  8.38422765, 11.12141771, 10.40890054,
+        9.97538304,  9.22483838, 11.27375593, 11.96710175,  8.14201814,
+       11.23616403, 11.62765075, 10.3380117 ,  8.80073197, 10.86334532,
+        9.8190797 ,  9.39607937,  8.76994186, 10.5505375 , 10.79280687,
+        9.37646927, 10.52057634,  8.85565861, 10.80186103, 10.0465673 ,
+        9.81343023,  9.89825413, 10.86888616, 10.75041164, 10.52946532,
+       10.13770121, 10.07782113, 10.61838026, 10.23249456, 10.68255141,
+        9.68988323,  7.56516224, 11.0388246 , 12.18697965, 10.44136444,
+        9.89984477,  9.86355526,  9.88094581, 10.01740941,  8.87798127,
+        9.48290554,  9.00297317, 10.24879916,  9.70335885, 10.49521132,
+        9.82529684, 10.98633519, 10.2135339 , 12.19069973,  8.10363908,
+        9.35308331, 10.90148689, 12.52832571,  9.75136522, 10.04366899,
+        9.77368576, 11.33145711,  9.71269214, 10.68006984,  9.6801984 ,
+        8.72744124, 10.31354772, 10.50318481, 11.29322588,  9.88955297,
+        9.38263794, 10.5627611 , 10.24073709, 10.28066508,  9.9268873 ,
+       11.16033857, 10.36949272, 11.90465871, 11.1110567 , 10.6590498 ,
+        8.37256166, 10.60231928, 10.4202822 , 10.81095167, 11.04444209,
+        9.59912181, 10.82400562,  9.43769457, 11.95487808,  8.66804833,
+        8.23931144,  8.34927873,  9.10944442,  8.8808846 , 11.9560789 ,
+        9.6735005 ,  8.65732421, 11.11438298,  9.41347606,  8.76314662,
+       10.87583893, 10.62336218,  9.56504332, 11.40754   , 10.12910158,
+       11.6169496 , 10.50274088, 11.55880554, 10.1094027 ,  8.7802556 ,
+       12.44936865,  9.45422583,  9.80116214,  9.2996015 ,  9.79660555,
+       10.24266944, 10.20183018, 10.66102029, 11.79215821,  9.87953543,
+        8.76687926,  8.81768187,  9.33424548,  8.32580419, 10.82502982,
+        9.50178644,  9.68901502,  9.99810852,  8.60337958,  9.13868364,
+       10.67471153, 10.61853913,  9.55682807, 11.81053491,  8.69427308,
+        9.65501279,  9.76916026,  7.206915  , 11.93752881, 10.36633201,
+        8.95541062, 12.05117344, 10.585662  , 10.42952614,  9.3930016 ,
+       10.10622272,  8.47431968, 10.79502609,  9.62556168, 10.1340482 ,
+       11.20205486, 10.28474811, 10.26246745, 10.2764993 ,  9.2667284 ,
+       10.83600472, 11.54335911, 10.75880566, 10.88490881,  9.12271848,
+        9.13221278,  8.55912398, 11.23225307,  9.74582013, 11.39984394,
+        9.21808832,  9.56249102, 10.09542509, 10.92145007, 10.0607502 ,
+       10.21112476, 10.01652757, 10.17718772,  8.88352998, 10.0809271 ,
+        9.81342101,  9.94317552, 10.49233656,  9.31932186,  9.91549197,
+        9.70263812, 10.417302  , 10.78477065,  9.04457474, 10.58591043,
+       12.06578332,  8.52884307,  9.1698281 ,  9.1194224 ,  9.72090228,
+       11.62284909, 10.01335268,  9.3053064 , 10.6218035 ,  9.40019547,
+       11.12341216, 10.30526704, 11.3887794 ,  9.33865576, 13.03085711,
+       10.82458463, 10.65458015,  9.94881155,  9.27440288,  9.13223132,
+        9.86402267,  9.20273021, 10.28267571,  9.17390257, 10.6210827 ,
+       10.9561217 ,  9.29415949, 11.19268607,  9.76205806, 11.15528789,
+       10.43816635, 11.12232832,  9.0029802 ,  9.89320601, 11.45142926,
+        9.38196315,  7.96279877,  8.05741082,  7.49355935,  7.88583608,
+        9.58836084, 11.27852808,  9.55777072, 10.32352735,  9.89000851,
+       10.00854895,  9.83180116,  9.82581966, 10.4611641 ,  8.82401733,
+       11.01012718, 10.92001793,  9.80494266, 10.80539342,  9.29865557,
+        9.46277698, 10.15626385,  9.80977897,  9.55126197,  9.32755196,
+        9.44250528, 10.93916874,  8.05667659, 10.35249436,  9.76356305,
+       10.7278135 , 10.51507361,  7.21746553, 10.58464661, 10.32427424,
+       10.02186284,  9.53132618, 10.85328122,  9.58697069, 11.83471763,
+       10.56438286, 12.13782807,  9.214466  ,  8.24407436, 10.7147896 ,
+       10.85270406, 10.0353601 ,  8.46120675,  9.55210482, 10.61798553,
+        9.81582367,  9.88401481,  9.82454103,  9.06608534,  9.46697967,
+        8.57344458, 11.76795995,  9.52462712, 10.47761018,  8.97811406,
+       10.79452824,  8.12683902, 10.92061512,  9.96463208, 12.11060505,
+        8.69346593, 10.07638048, 10.36723181, 11.23289919,  9.57714304,
+       10.08646441,  7.85753327,  9.16983114, 10.45161595, 11.10417433,
+        9.71826373, 12.05635552, 11.76024923,  9.93934751,  7.586497  ,
+        8.22243362,  9.22214117, 11.11584111, 10.31027229,  7.90575218,
+        9.77123417, 11.61336137,  9.62519531,  9.25003038, 12.0546241 ,
+       10.05340954,  9.5208429 , 10.35016716, 10.01716473,  9.57085772,
+       11.20845633, 11.1157018 , 10.84086156,  9.89711278, 11.14690038,
+        9.95029742, 10.46664327, 11.03368687, 10.80884436, 11.78975468,
+       10.45128402,  8.31594001,  8.8398299 , 11.35010682,  9.66871683,
+       10.38653915,  9.14854434, 11.00088142,  9.61516775, 11.45810824,
+        9.46776598, 11.1181334 , 10.6743961 ,  9.27760809, 11.09899633,
+        9.09836551,  9.17753281, 10.72171129,  9.374658  ,  9.40615693,
+        9.65609929,  8.99983081, 11.04499441, 10.6085147 ,  9.9306713 ,
+        9.89160793, 10.45015551, 11.7653351 , 10.8709698 ,  9.49154287,
+       10.77741921,  9.88122883,  9.80100182, 11.86647138,  9.5810621 ,
+        9.52081508,  8.04789471,  8.59767085, 10.45112294,  9.3050791 ,
+       10.5154138 ,  8.88512895,  9.23269017, 10.67457071, 11.46089238,
+       10.5924728 , 11.19783084, 11.70459417, 11.04008915,  9.08155996,
+        9.89465529, 10.63019567,  9.5851531 , 10.45194604,  8.42084371,
+        9.17137202, 10.52887975,  7.76291349,  8.8922875 ,  9.98228168,
+        8.28060553, 10.057121  ,  9.20045251,  9.7084054 ,  9.74101715,
+       10.1892932 ,  9.43621127, 10.08968641,  9.3988432 , 10.55607351,
+       11.69380911, 10.19686978, 10.16986926,  8.83599203, 10.69336623,
+        9.24193267,  9.1911528 , 10.55743945, 10.18103874, 11.10717545,
+       11.44287693,  9.46031844, 10.12837699, 11.76041518, 10.96653925,
+       10.71304905, 11.30620607,  9.39539703, 10.63658341, 11.40925339,
+       11.62091229,  9.19381518,  9.74832579, 10.38271517,  9.71100266,
+        9.60818376, 10.68400133,  9.64659002,  8.21208711, 10.36184732,
+        9.57550721,  9.26846902,  8.43426185, 11.01382247,  7.77288737,
+        8.3006664 ,  9.72415394, 11.22895559, 11.30970591,  8.84501737,
+        9.8223678 ,  8.48954362, 11.01120706,  8.52343734,  9.85680425,
+       11.03298378,  9.77758597, 11.47016034,  9.12999178, 10.36919047,
+       10.85328219,  9.86028827, 11.38631426, 10.54812958,  8.36255041,
+       13.9586027 , 10.64864364, 10.10734329,  8.60118718, 10.08176782,
+        9.54005717, 10.64435367, 10.37167029, 11.85300949, 10.14225137,
+       10.51350548, 10.37245685,  9.8515102 ,  9.8165998 , 11.1010002 ,
+       10.78002714,  9.3705584 ,  8.8865639 ,  9.93258998, 11.16143998,
+        9.97247061, 11.74643509,  9.22492971, 10.14164054,  7.48369614,
+        9.40433212,  9.69087868, 10.51093777, 11.71066184, 10.03494359,
+       11.45391758, 10.66168108, 10.98635218,  9.53384514, 11.38499134,
+        8.92703572, 10.49515861,  9.0479379 ,  9.48185445,  8.5385964 ,
+        9.48365209, 10.3511169 ,  9.93122954,  8.65223506, 11.47073986,
+       10.33722094, 11.00806543, 10.78522692,  9.33513223,  8.05495304,
+        9.08457563, 11.22515585,  8.94645393, 10.81604368,  9.38759303,
+       10.39310924,  8.17608015, 11.16707517,  9.9603313 , 10.8858258 ,
+       10.18986165, 10.7980638 ,  9.89806796, 10.74335654,  8.49042732,
+        8.91928931, 10.725474  ,  9.96082174,  9.77124583,  9.82038771,
+       10.50172511,  9.40665625, 10.5103076 ,  9.08420815,  9.59274796,
+       10.98495167, 11.07125243,  8.90284564, 10.83863475,  8.96081768,
+       10.73302323,  8.10118794,  8.88288931,  9.49102772,  9.83351405,
+       11.42361443, 10.90399917, 11.57546791, 11.2066079 ,  9.71713645,
+        9.73367312, 11.06897162, 10.04037143,  9.84300633,  8.66479728,
+        9.89353988,  7.20900359,  9.54388244,  9.02010975, 10.69257435,
+        9.52132764,  9.67094845, 11.34710546,  8.95093225, 10.3166589 ,
+        8.10473305, 10.08972912, 10.41026575, 10.85987097,  9.10131681,
+       10.31965694, 10.3181542 ,  9.98076837, 10.15001628, 10.46353432,
+       10.39788042,  9.00398911,  8.80413849, 12.50598029, 11.91979229,
+        8.60830612, 10.45021774, 10.62743708, 10.75133724, 10.14039544,
+        9.07312806,  9.81757959,  9.50887486, 10.13437312,  9.7316287 ,
+        9.86832437, 11.01855247, 11.2305582 ,  8.81889683,  9.5400699 ,
+        9.20920005, 11.22372221,  9.9406321 , 11.4489894 ,  9.52241915,
+       10.02599999,  8.65130355, 11.30253554,  9.63738791,  8.51484355,
+        9.40753871,  7.69509206,  9.96818283, 10.11248774, 10.28807817,
+       11.49810818,  9.69902385, 10.80745592, 10.31223869,  9.80667836,
+        7.92319798, 10.94750117,  9.49602605, 10.01795589,  8.72953922,
+       10.28299553, 10.10803082, 10.02941762,  9.86520687, 11.04921829,
+       10.96622086, 10.72591685, 13.32107876,  9.39977467,  9.62048248,
+        8.98519631, 10.4359862 ,  9.31251261,  7.30163826,  8.78666187,
+       10.0722519 , 11.00978733,  8.44305844,  9.38755787,  9.86064819,
+        9.27146251, 10.53116379, 10.00400084, 10.32126591,  9.27478507,
+       11.53653633,  9.99962499, 11.29354962,  9.56100234, 10.59003946,
+        9.32061622,  9.04909075,  9.29564967,  9.95413331,  9.78126654,
+       11.53920701,  8.85129577,  8.90966167, 11.70018815, 10.60878366,
+        8.11858913, 10.4972691 , 10.2373327 ,  7.85555595,  9.63043757,
+        9.98254505, 10.73140252, 10.95449567, 10.09574677, 11.0334508 ,
+        9.85372673,  9.14250318,  9.06581816, 10.54264529,  8.04183091,
+       10.67780757,  8.89342693,  9.6407759 , 10.5053819 , 11.2179409 ,
+        8.05931904,  9.19382179, 10.04906169,  9.40391367, 10.8616231 ,
+        7.91360943, 10.36180164, 10.42592018, 10.0490804 , 11.10223673,
+        8.77042575, 11.10861676,  9.2970796 , 10.72555052,  9.67579578,
+       10.81434313, 10.78046993,  8.53594643,  9.84550881,  9.90756768,
+        9.76212473,  9.24433723, 11.85143789, 10.20909668, 11.55501599,
+        9.43085135,  8.93820324, 10.13224778,  9.4367634 , 12.39014596,
+       10.24542285, 11.15259914,  9.77576423,  9.67393869,  9.96908858,
+       10.35571726, 10.84958685,  9.87784598,  9.31914843,  8.93212342,
+        9.92332064, 10.57296273, 10.45794708,  9.98218245,  9.3998612 ,
+       10.14676526, 10.57180488,  9.96318234, 10.11236849,  9.84949567,
+       10.91549927,  9.56179973, 10.18553562, 10.39442803, 10.72552256,
+       11.49588477, 10.67545381, 10.59921324,  8.52976291, 10.60640394,
+       12.29371761,  9.16998901,  8.98048015,  9.78534616, 11.02124813,
+       10.52475049,  9.52287579,  9.96400982, 11.03703898, 10.67261975,
+       12.42887697, 11.00568668, 10.35356722, 10.61472628,  9.65101581,
+        9.022227  , 10.17195713, 10.49056104,  8.60471697,  9.47764353,
+        9.6307441 , 10.2656424 ,  9.73953394, 10.44509671, 10.09811225,
+       11.06032751,  8.28883234, 11.65712464, 11.41767401, 10.05031709,
+       10.65032321, 10.6065484 ,  9.26271037, 10.16466507, 10.77817418,
+       10.30981676, 11.05132077, 10.09499611, 10.08075099,  9.23219625,
+        9.63546195,  9.54028232, 11.70548352, 10.24050555,  9.0005735 ,
+       10.39859839,  9.8079963 ,  6.94623562, 10.47985237,  8.44730122,
+       10.57846442,  9.0387364 ,  8.54167554, 10.49434165,  8.50580623,
+        9.5533008 , 10.20437739, 10.61223252, 10.74488454,  9.96371871,
+        9.16760465, 11.92381543,  9.39401868, 11.80358898,  9.54747503,
+       11.16128569, 11.06996554,  8.95446575, 10.35528451, 10.75539203,
+       10.70098212,  9.80106255, 10.30196005,  9.60531032,  8.82818662,
+       10.98401224,  9.44031858, 11.37975819, 10.6024509 ,  9.10735333,
+        9.83880168,  9.71361508,  9.12911235, 10.50142959,  9.52138593,
+       11.63169151, 10.86089124,  9.11981094,  9.98099948,  9.77323981,
+        8.43549215, 10.93125568, 10.94980882, 10.92550121,  9.54301214,
+       11.06898597,  9.79024706, 10.93514778, 11.81252782, 10.14010988,
+        8.58085122,  9.6830988 , 10.64098587, 11.21987438,  8.86620796,
+        9.8094517 , 10.23333913, 10.43499832, 10.9104236 ,  9.05156034,
+        9.5765217 , 11.00796648, 10.39233491, 10.44838065, 11.1253235 ,
+       10.10405339, 10.52800342,  9.68543614,  8.65498998,  8.70474211,
+       10.07432055,  9.80043928,  9.34539683, 10.3180143 ,  9.10972845,
+       10.11133727,  9.98047744,  9.16001109,  7.70179412, 11.45652739,
+       10.31663724,  7.33587406,  9.57357138, 10.39378773,  9.77185931,
+       10.58033011,  9.02673241, 10.17516773,  9.94651631,  9.81693801,
+        9.7789711 , 10.19975956, 10.93272141,  9.4698802 ,  9.59275998,
+       10.16056499,  9.87985002, 10.38560229, 10.71829074, 11.2911889 ,
+        9.88355585,  7.722702  ,  9.93037546, 10.35387043,  9.81304498])
+</pre></div>
+</div>
+</div>
+</div>
+<p><em>Hint: Roughly how many entries do you expect to find two sigma away from the mean?</em></p>
+<p>Let’s verify your answer with visualizations!</p>
+<p>First, let’s make two simple visualizations of the “measured” data: a scatter plot and a histogram</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig1</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">M</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">vlines</span><span class="p">([</span><span class="n">mu_true</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">);</span> <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;measurement number&quot;</span><span class="p">);</span>
+
+<span class="n">fig2</span><span class="p">,</span> <span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">D</span><span class="p">,</span><span class="n">alpha</span>   <span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="c1">#ax1.vlines([mu_true], 0, M, alpha=0.2)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">);</span> <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;counts&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/e8bc496f5ec6f2cc39a966cf0d0db89386ecee18559face95641a303ecf132d3.png" src="../../../_images/e8bc496f5ec6f2cc39a966cf0d0db89386ecee18559face95641a303ecf132d3.png" />
+<img alt="../../../_images/cb41adfaa12fb5c731a10243db5fb836588d834b19c5ecc0b8cf41e5bd074775.png" src="../../../_images/cb41adfaa12fb5c731a10243db5fb836588d834b19c5ecc0b8cf41e5bd074775.png" />
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Matplotlib</span></code> alternative: one figure with two subplots using an array of axes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="c1"># An alternative keeping the same axis names as before would be:</span>
+<span class="c1">#  fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(12,5))</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">M</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">vlines</span><span class="p">([</span><span class="n">mu_true</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;measurement number&quot;</span><span class="p">);</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">D</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;counts&quot;</span><span class="p">);</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/9739f9fcb65fec334e3d295cf007825214f7905620bcee441c398c1d0cae6451.png" src="../../../_images/9739f9fcb65fec334e3d295cf007825214f7905620bcee441c398c1d0cae6451.png" />
+</div>
+</div>
+<p><em>What can you conclude about the tails?</em></p>
+<p><em>Change np.random.seed(1) to a different number so that a different set of random numbers is generated. What can you say about how successive plots are similar and different?</em></p>
+<section id="bayesian-approach-to-gaussian-parameter-estimation">
+<h2>Bayesian approach to Gaussian parameter estimation<a class="headerlink" href="#bayesian-approach-to-gaussian-parameter-estimation" title="Link to this heading">#</a></h2>
+<p>The Bayesian approach begins and ends with probabilities (pdfs).  It recognizes that what we fundamentally want to compute is our knowledge of the parameters in question, i.e. in this case,</p>
+<div class="math notranslate nohighlight">
+\[ p(\mu,\sigma~|~D, I) \]</div>
+<p>Note that this formulation of the problem is <em>fundamentally contrary</em> to the frequentist philosophy, which says that <em>probabilities have no meaning for model parameters</em> like <span class="math notranslate nohighlight">\(\mu,\sigma\)</span>. Nevertheless, within the Bayesian philosophy this is perfectly acceptable.</p>
+<p>To compute this result, Bayesians next apply <a class="reference external" href="https://en.wikipedia.org/wiki/Bayes%27_theorem">Bayes’ Theorem</a>, here with the hypothesis being the Gaussian model expressed in terms of the model parameters</p>
+<div class="math notranslate nohighlight">
+\[ p(\mu,\sigma~|~D, I) = \frac{p(D~|~\mu,\sigma, I)~p(\mu,\sigma~|~I)}{p(D~|~I)} \]</div>
+<p>Though Bayes’ theorem is where Bayesians get their name, it is not this law itself that is controversial, but the Bayesian <em>interpretation of probability</em> implied by the term <span class="math notranslate nohighlight">\(p(\mu,\sigma~|~D, I)\)</span>.</p>
+<p>Let’s take a look at each of the terms in this expression:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(p(\mu,\sigma~|~D, I)\)</span>: The <strong>posterior</strong>, or the probability of the model parameters given the data: this is the result we want to compute.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p(D~|~\mu,\sigma, I)\)</span>: The <strong>likelihood</strong>, which is proportional to <span class="math notranslate nohighlight">\(\mathcal{L}(D~|~\mu,\sigma)\)</span> in the frequentist approach (see below).</p></li>
+<li><p><span class="math notranslate nohighlight">\(p(\mu,\sigma~|~I)\)</span>: The <strong>model prior</strong>, which encodes what we knew about the model prior to the application of the data <span class="math notranslate nohighlight">\(D\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p(D~|~I)\)</span>: The <strong>data probability</strong> (or <strong>evidence</strong>), which in practice amounts to simply a normalization term.</p></li>
+</ul>
+<p>If we set the prior <span class="math notranslate nohighlight">\(p(\mu,\sigma~|~I) \propto 1\)</span> (a <em>flat prior</em>), we find</p>
+<div class="math notranslate nohighlight">
+\[p(\mu,\sigma~|~D,I) \propto \mathcal{L}(D|\mu,\sigma)\]</div>
+<p>and the Bayesian probability is maximized at precisely the same value as the frequentist result! So despite the philosophical differences, we see that (for this simple problem at least) the Bayesian and frequentist point estimates are equivalent.</p>
+<p>We’ll therefore start with the classical frequentist <strong>maximum likelihood</strong> approach. The probability of a single measurement <span class="math notranslate nohighlight">\(D_i\)</span> having a value <span class="math notranslate nohighlight">\(x_i\)</span> is given by</p>
+<div class="math notranslate nohighlight">
+\[ p(x_i~|~\mu, \sigma) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp{\left[\frac{-(x_i - \mu)^2}{2 \sigma^2}\right]}, \]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu\)</span>, <span class="math notranslate nohighlight">\(\sigma\)</span> are the <em>true</em> values for the model parameters.</p>
+<p>We construct the <strong>likelihood function</strong> by computing the product of the probabilities for each data point:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{L}(D~|~\mu, \sigma) = \prod_{i=1}^M p(x_i~|~\mu, \sigma)\]</div>
+<p>Because the value of the likelihood can become very small, it is often more convenient to instead compute the log-likelihood. Furthermore, when we are looking for the maximum of the likelihood, we might just as well maximize the log-likelihood. Combining the previous two equations and computing the log, we have</p>
+<div class="math notranslate nohighlight">
+\[\log\mathcal{L} = -\frac{1}{2} \sum_{i=1}^M \left[ \log(2\pi  \sigma^2) + \frac{(x_i - \mu)^2}{\sigma^2} \right]\]</div>
+<p>What we’d like to do is find <span class="math notranslate nohighlight">\(\mu_0,\sigma_0\)</span> such that the likelihood (or log likelihood) is maximized. For this simple problem, the maximization can be computed analytically (i.e. by setting <span class="math notranslate nohighlight">\(\left. \partial\log\mathcal{L}/\partial\mu \right|_{\mu_0,\sigma_0} = \left. \partial\log\mathcal{L}/\partial\sigma \right|_{\mu_0,\sigma_0} = 0\)</span>).  This results in the following <em>maximum-likelihood estimates</em> of the true parameters:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split} 
+\mu_0 = \frac{1}{M}\sum_{i=1}^M x_i \\
+\sigma_0^2 = \frac{1}{M}\sum_{i=1}^M (x_i - \mu_0)^2
+\end{split}\]</div>
+<p>In principle, we should also compute the second derivatives to make sure that this point represents a maximum rather than a minimum or a saddle point. However, in agreement with intuition, <span class="math notranslate nohighlight">\(\mu_0\)</span> is simply the mean of the observed data. These results are fairly simple calculations; let’s evaluate them for our toy dataset:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Estimators: sample mean and (sqrt of) sample variance</span>
+<span class="c1"># Sometimes the *unbiased* estimator for the sample variance is used </span>
+<span class="c1"># with (M-1) degrees of freedom...</span>
+<span class="n">mu_est</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">M</span>
+<span class="n">sigma_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">D</span><span class="o">-</span><span class="n">mu_est</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">M</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">      (mu,sigma)_true = </span><span class="si">{0:.2f}</span><span class="s2">, </span><span class="si">{1:.2f}</span>
+<span class="s2">      </span>
+<span class="s2">      Sample estimators: </span>
+<span class="s2">      (mu,sigma)_0  = </span><span class="si">{2:.2f}</span><span class="s2">, </span><span class="si">{3:.2f}</span><span class="s2"> (based on </span><span class="si">{4}</span><span class="s2"> measurements)</span>
+<span class="s2">      &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mu_true</span><span class="p">,</span> <span class="n">sigma_true</span><span class="p">,</span> <span class="n">mu_est</span><span class="p">,</span> <span class="n">sigma_est</span><span class="p">,</span> <span class="n">M</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>      (mu,sigma)_true = 10.00, 1.00
+
+      Sample estimators: 
+      (mu,sigma)_0  = 10.04, 0.98 (based on 1000 measurements)
+      
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Aside:</strong> using <code class="docutils literal notranslate"><span class="pre">fstrings</span></code> by putting an <code class="docutils literal notranslate"><span class="pre">f</span></code> in front of the quotes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Estimators: sample mean and (sqrt of) sample variance</span>
+<span class="c1"># Sometimes the *unbiased* estimator for the sample variance is used with </span>
+<span class="c1"># (M-1) degrees of freedom...</span>
+<span class="n">mu_est</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">M</span>
+<span class="n">sigma_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">D</span><span class="o">-</span><span class="n">mu_est</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">M</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">      (mu,sigma)_true = </span><span class="si">{</span><span class="n">mu_true</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">sigma_true</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span>
+<span class="s2">      </span>
+<span class="s2">      Sample estimators:</span>
+<span class="s2">      (mu,sigma)_0 = </span><span class="si">{</span><span class="n">mu_est</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">sigma_est</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> (based on </span><span class="si">{</span><span class="n">M</span><span class="si">}</span><span class="s2"> measurements)</span>
+<span class="s2">      &quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>      (mu,sigma)_true = 10.00, 1.00
+
+      Sample estimators:
+      (mu,sigma)_0 = 10.04, 0.98 (based on 1000 measurements)
+      
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="but-what-about-the-prior">
+<h2>But what about the prior?<a class="headerlink" href="#but-what-about-the-prior" title="Link to this heading">#</a></h2>
+<p>You’ll noticed that we glossed over something here: the prior, <span class="math notranslate nohighlight">\(p(\mu,\sigma)\)</span>. The choice of prior will be discussed <span style="color:red">repeatedly</span> in the course, but we can already note that it allows inclusion of other information into the computation. This feature becomes very useful in cases where multiple measurement strategies are being combined to constrain a single model. The necessity to specify a prior, however, is one of the more controversial pieces of Bayesian analysis.</p>
+<p>A frequentist will point out that the prior is problematic when no true prior information is available. Though it might seem straightforward to use a <strong>noninformative prior</strong> like the flat prior mentioned above, there are some <a class="reference external" href="http://normaldeviate.wordpress.com/2013/07/13/lost-causes-in-statistics-ii-noninformative-priors/comment-page-1/">surprising subtleties</a> involved. It turns out that in many situations, a truly noninformative prior does not exist! Frequentists point out that the subjective choice of a prior which necessarily biases your result has no place in statistical data analysis.</p>
+<p>A Bayesian would counter that frequentism doesn’t solve this problem, but simply skirts the question. Frequentism can often be viewed as simply a special case of the Bayesian approach for some (implicit) choice of the prior: a Bayesian would say that it’s better to make this implicit choice explicit, even if the choice might include some subjectivity.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "2025-book-env"
+        },
+        kernelOptions: {
+            name: "2025-book-env",
+            path: "./LearningFromData-content/BayesianStatistics/BayesianParameterEstimation"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = '2025-book-env'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../BayesianBasics/DataModelsPredictions.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">4.9. </span>Data, models, and predictions</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../BayesianBasics/Posteriors.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">5. </span>Bayesian posteriors</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-gaussian-parameter-estimation">Bayesian approach to Gaussian parameter estimation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#but-what-about-the-prior">But what about the prior?</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1257 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>22.8. Model validation &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\text{th}}", "yexp": "y_{\\text{exp}}", "ym": "y_{\\text{m}}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'LearningFromData-content/MachineLearning/ANN/ModelValidation';</script>
+    <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="22.9. Data bias and fairness in machine learning" href="DataBiasFairness.html" />
+    <link rel="prev" title="22.7. Feed-forward neural network for a function in PyTorch" href="Neural_Network_for_simple_function_in_PyTorch.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../Intro/About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../Intro/About.html">
+                    About this Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Overview.html">1. Invitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Intro/Introduction.html">2. Introduction</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/RootBayesianBasics.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Inferenceandpdfs.html">4. Inference and PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/exercise_sum_product_rule.html">4.5. Exercise: Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/exercise_medical_example_by_Bayes.html">4.6. Exercise: Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/MoreBayesTheorem.html">4.7. More on Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Bayesian_epistemology.html">4.8. *Aside: Bayesian epistemology</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/DataModelsPredictions.html">4.9. Data, models, and predictions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html">Parameter estimation I: Gaussian mean and variance</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Posteriors.html">5. Bayesian posteriors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Exploring_pdfs.html">5.1. Exploring PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Exploring_pdfs_followups.html">Follow-ups to Exploring PDFs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Gaussians.html">5.2. Gaussians: A couple of frequentist connections</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/visualization_of_CLT.html">Visualization of the Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/Interpreting2Dposteriors.html">5.3. Interpreting 2D posteriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/chi_squared_tests.html">5.4. Demonstration: Sum of normal variables squared</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/CoinTossing.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/demo-BayesianBasics.html">6.6. Demonstration:  Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/Bayesian_updating_coinflip_interactive.html">6.7. Widgetized coin tossing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/UsingBayes.html">7. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/BayesianAdvantages.html">7.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianWorkflow/BayesianWorkflow.html">7.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianLinearRegression/BayesianLinearRegression_rjf.html">7.3. Bayesian Linear Regression (BLR)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../BayesianStatistics/RootAdvancedMethods.html">8. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/ParameterEstimation.html">9. More Bayesian parameter estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/radioactive_lighthouse_exercise.html">9.1. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/amplitude_in_presence_of_background.html">9.2. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_fitting_straight_line_I.html">9.3. Parameter estimation example: fitting a straight line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_fitting_straight_line_II.html">9.4. Parameter estimation example: fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/dealing_with_outliers.html">9.5. Dealing with outliers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/Assigning.html">10. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/IgnorancePDF.html">10.1. Assigning probabilities (I): Indifferences and translation groups</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/demo-straight_lines.html">Alternative notebook with MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/MaxEnt2.html">10.2. Assigning probabilities (II): The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/AssigningProbabilities/MaxEnt_Function_Reconstruction.html">10.3. Maximum Entropy for reconstructing a function from its moments</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/BayesLinear.html">11. Bayes goes linear: History matching</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/Multimodel_inference.html">12. Multi-model inference with Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/ModelSelection.html">12.1. Model Selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/Evidence_for_model_EFT_coefficients.html">Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/two_model_evidence.html">Follow-up to EFT evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/computing_evidence.html">Computing the evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BayesianStatistics/ModelSelection/BUQ/MCMC-parallel-tempering_ptemcee_vs_zeus.html">Demo: Multimodal distributions with two samplers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ModelMixing/model_mixing.html">12.2. Model averaging and mixing </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/DiscrepancyModels.html">13. Discrepancy Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/MD_balldrop_v1.html">13.4. Ball-drop experiment</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../StochasticProcesses/RootMCMC.html">14. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/StochasticProcesses.html">15. Stochastic processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Metropolis_Poisson_example.html">15.7. Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/demo-MCMC.html">15.8. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/Recap_BUQ.html">15.9. Recap of Poisson and more about MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/parameter_estimation_Gaussian_noise-2.html">15.10. Parameter estimation example: Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">15.11. Exercise: Random walk</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/MCMC_overview.html">16. Overview of Markov Chain Monte Carlo</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MarkovChains.html">16.1. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC.html">16.2. Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC_intro_BUQ.html">16.3. Alternative MCMC introduction (Gregory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Assignment_extending_radioactive_lighthouse.html">16.4. Assignment: 2D radioactive lighthouse location using MCMC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Advanced_MCMC.html">17. Advanced MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html">17.1. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html">17.2. Overview: MCMC Diagnostics</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/intuition_sampling.html">17.4. Intuition on sampling and best practices</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Other_samplers.html">18. HMC and other samplers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/HMC_intro_BUQ.html">18.1. Hamiltonian Monte Carlo (HMC) overview and visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Liouville_theorem_visualization.html">Liouville Theorem Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/BUQ2/Orbital_eqs_with_different_algorithms.html">Solving orbital equations with different algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/zeus.html">18.2. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../StochasticProcesses/BUQ2/PyMC_intro_updated.html">18.3. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../StochasticProcesses/OverviewIntroPyMC.html">Overview of Intro to PyMC notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ2/parameter_estimation_Gaussian_noise_compare_samplers.html">18.4. Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning: A Bayesian perspective</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../RootML.html">19. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../GP/RootGP.html">20. Overview of Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../GP/GaussianProcesses.html">20.4. Introduction to Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../GP/CF/demo-GaussianProcesses.html">demo-GaussianProcesses notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GP/BUQ/lecture_20.html">GP recap; GP applications; (old lecture 20)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../GP/Sklearn_demos.html">20.5. scikit-learn demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../GP/BUQ/plot_gpr_noisy_targets.html">One-dimension regression example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GP/BUQ/plot_gpr_prior_posterior.html">Prior and posterior with different kernels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../GP/GPy_demos.html">20.6. GPy demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../GP/BUQ/demo-GaussianProcesses.html">Gaussian processes demonstration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GP/CF/exercise_GP_GPy.html">Exercise: Gaussian processes using <code class="docutils literal notranslate"><span class="pre">GPy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GP/BUQ/Gaussian_processes_exercises.html">Exercise: Gaussian Process models with GPy</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../LogReg/LogReg.html">21. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="MachineLearningExamples.html">21.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NeuralNet/exercises_LogReg_NeuralNet.html">21.6. Exercise: Logistic Regression and neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="MachineLearning.html">22. Machine learning: Overview and notation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="NeuralNet.html">22.5. Artifical neural networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NeuralNet/demo-NeuralNet.html">22.6. Demonstration: Neural network classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Neural_Network_for_simple_function_in_PyTorch.html">22.7. ANN from ChatGPT using PyTorch</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">22.8. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DataBiasFairness.html">22.9. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NeuralNet/NeuralNetBackProp.html">22.10. *Neural networks: Backpropagation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/ANNFT.html">23. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/random_initialized_ANN_vs_width.html">23.3. Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BNN/bnn.html">24. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BNN/demo-bnn.html">24.4. Demonstration: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BNN/exercises_BNN.html">24.5. Exercise: Bayesian neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../CNN/cnn.html">25. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../CNN/demo-cnn.html">25.6. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Other topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/RootOtherTopics.html">26. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/Emulators.html">27. Emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/BayesFast.html">27.1. Bayes goes fast: Emulators (from CF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/extra_RBM_emulators.html">27.2. RBM emulators (BUQ)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/Student_t_distribution_from_Gaussians.html">28. Student t distribution from Gaussians</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../OtherTopics/SVD.html">29. PCA, SVD, and all that</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../OtherTopics/linear_algebra_games_including_SVD.html">29.5. SVD notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../OtherTopics/qbism.html">30. QBism: Bayesian quantum mechanics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/bibliography.html">31. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/JB_tests.html">32. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Reference/Statistics.html">33. Statistics concepts and notation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/GradientDescent.html">34. Gradient-descent optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/RootScientificModeling.html">35. Overview of scientific modeling material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/OverviewModeling.html">36. Overview of modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/LinearModels.html">37. Linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ModelingOptimization/MathematicalOptimization.html">38. Mathematical optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/RootGettingStarted.html">39. Overview of Getting started material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Setup/exercise_Intro_01_Jupyter_Python.html">40. Jupyter notebooks and Python</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/more_python_and_jupyter.html">41. More about Python and Jupyter notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_02_Jupyter_Python.html">41.4. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/exercise_Intro_03_Numpy.html">41.5. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/demo-Intro.html">41.6. Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/Simple_widgets_v1.html">41.7. Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Setup/setting_up.html">42. Setting up for using this Jupyter Book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/installing_anaconda.html">42.1. Using Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Setup/using_github.html">42.2. Using GitHub</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/RootMiniProjects.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_I_toy_model_of_EFT.html">MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIa.html">MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html">MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Mini-projects/Mini-project_IIb_overview.html">Overview of Mini-project IIb: How many lines?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIa_bayesian_optimization.html">MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html">MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development/issues/new?title=Issue%20on%20page%20%2FLearningFromData-content/MachineLearning/ANN/ModelValidation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/LearningFromData-content/MachineLearning/ANN/ModelValidation.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Model validation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#over-and-underfitting">Over- and underfitting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regularization-ridge-and-lasso">Regularization: Ridge and Lasso</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#more-on-ridge-regression">More on Ridge Regression</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bias-variance-tradeoff">The bias-variance tradeoff</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remarks-on-bias-and-variance">Remarks on bias and variance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Model validation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-curves">Learning curves</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-validation">Cross-validation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">Solutions</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="model-validation">
+<span id="sec-modelvalidation"></span><h1><span class="section-number">22.8. </span>Model validation<a class="headerlink" href="#model-validation" title="Link to this heading">#</a></h1>
+<p>In this lecture we will continue to explore linear regression and we will encounter several concepts that are common for machine learning methods. These concepts are:</p>
+<ul class="simple">
+<li><p>Model validation</p></li>
+<li><p>Overfitting and underfitting</p></li>
+<li><p>Bias-variance-tradeoff</p></li>
+<li><p>Regularization</p></li>
+<li><p>Model hyperparameters</p></li>
+</ul>
+<p>The lecture is based and inspired by material in several good textbooks: in particular chapter 4 in <a class="reference external" href="http://shop.oreilly.com/product/0636920052289.do">Hands‑On Machine Learning with Scikit‑Learn and TensorFlow</a> <span id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id12" title="A. Géron. Hands-on Machine Learning with Scikit-Learn and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems. O'Reilly Media, 2017. ISBN 9781491962299. URL: https://books.google.se/books?id=I6qkDAEACAAJ.">Geron17</a>]</span> by Aurelien Geron, chapter 5 in the
+<a class="reference external" href="http://shop.oreilly.com/product/0636920034919.do">Python Data Science Handbook</a> <span id="id2">[<a class="reference internal" href="../../Backmatter/bibliography.html#id14" title="J. VanderPlas. Python Data Science Handbook: Essential Tools for Working with Data. O'Reilly Media, 2016. ISBN 9781491912133. URL: https://books.google.se/books?id=6omNDQAAQBAJ.">Van16</a>]</span> by Jake VanderPlas and chapters 2-4 in <a class="reference external" href="https://link.springer.com/book/10.1007/978-0-387-84858-7">The Elements of
+Statistical Learning</a> <span id="id3">[<a class="reference internal" href="../../Backmatter/bibliography.html#id13" title="T. Hastie, R. Tibshiranie, and J. Friedman. The Elements of Statistical Learning: Data Mining, Inference, and Prediction. Springer, 2009. ISBN 978-0-387-84858-7. URL: https://link.springer.com/book/10.1007/978-0-387-84858-7.">HTF09</a>]</span>} by Trevor Hastie et al.</p>
+<section id="over-and-underfitting">
+<h2>Over- and underfitting<a class="headerlink" href="#over-and-underfitting" title="Link to this heading">#</a></h2>
+<p>Overfitting and underfitting are common problems in data analysis and machine learning. Both extremes are illustrated in <a class="reference internal" href="#fig-over-under-fitting"><span class="std std-numref">Fig. 22.3</span></a>.</p>
+<figure class="align-default" id="fig-over-under-fitting">
+<img alt="../../../_images/over_under_fitting.png" src="../../../_images/over_under_fitting.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 22.3 </span><span class="caption-text">The first-order polynomial model is clearly underfitting the data, while the very high degree model is overfitting it trying to reproduce variations that are clearly noise.</span><a class="headerlink" href="#fig-over-under-fitting" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>The following quote from an unknown source provides a concise definition of overfitting and underfitting:</p>
+<blockquote>
+<div><p>A model overfits if it fits noise as much as data and underfits if it considers variability in data to be noise while it is actually not.</p>
+</div></blockquote>
+<p>The question is then: How do we detect these problems and how can we reduce them.</p>
+<p>We can detect over- and underfitting by employing holdout sets, also known as <em>validation</em> sets. This means that we only use a fraction of the data for training the model, and save the rest for validation purposes.</p>
+<p>I.e. we optimize the model parameters to best fit the training data, and then measure e.g. the mean-square error (MSE) of the model predictions for the validation set. The function that is used for measuring the performance of the model prediction is called an error function, and is here denoted <span class="math notranslate nohighlight">\(E(\MLoutputs, \outputs)\)</span>. We stress that this function does not necessarily have to be the same as the cost function that is used for learning. The latter can incorporate other desirable features such as regularization to avoid overfitting (see below), or some domain-specific constraints. The error function, on the other hand, should focus on measuring the property of the prediction that is most important for the application at hand. Default choices for regression and classification tasks, respectively, are</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Task</p></th>
+<th class="head text-left"><p>Error function</p></th>
+<th class="head text-left"><p>Measures</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Regression</p></td>
+<td class="text-left"><p><span class="math notranslate nohighlight">\(E(\MLoutput, \output) = (\MLoutput - \output)^2 \)</span></p></td>
+<td class="text-left"><p>Squared error</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Classification</p></td>
+<td class="text-left"><p><span class="math notranslate nohighlight">\(E(\MLoutput, \output) =  1 - \delta_{\MLoutput, \output}\)</span></p></td>
+<td class="text-left"><p>Misclassification</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>where <span class="math notranslate nohighlight">\(1 - \delta_{\MLoutput, \output} = 0\)</span> if <span class="math notranslate nohighlight">\(\MLoutput = \output\)</span> (i.e. correct classification) and <span class="math notranslate nohighlight">\(= 1\)</span> if <span class="math notranslate nohighlight">\(\MLoutput \neq \output\)</span> (misclassified).</p>
+<p>Evaluating the error function on either the training set, or the validation set, gives relevant metrics that can be used to monitor under- or overfitting</p>
+<div class="math notranslate nohighlight" id="equation-eq-modelvalidation-etrain-eval">
+<span class="eqno">(22.13)<a class="headerlink" href="#equation-eq-modelvalidation-etrain-eval" title="Link to this equation">#</a></span>\[\begin{split}
+E_\mathrm{train} &amp;= \frac{1}{N} \sum_{i=1}^N E(\MLoutput(\inputs_i), \output_i), \quad\text{for } (\inputs_i, \output_i) \in \trainingdata \\
+E_\mathrm{val} &amp;= \frac{1}{N_\mathrm{val}} \sum_{i=1}^{N_\mathrm{val}} E(\MLoutput(\inputs_i), \output_i), \quad\text{for } (\inputs_i, \output_i) \in \data_\mathrm{val}. 
+\end{split}\]</div>
+<div class="admonition-training-and-validation-scores admonition">
+<p class="admonition-title">Training and validation scores</p>
+<p>Several training and validation scores are commonly used in machine learning applications.  First we have the <strong>Mean-Squared Error</strong> (MSE)</p>
+<div class="math notranslate nohighlight" id="equation-eq-modelvalidation-mse">
+<span class="eqno">(22.14)<a class="headerlink" href="#equation-eq-modelvalidation-mse" title="Link to this equation">#</a></span>\[
+\mathrm{MSE} = \frac{1}{N} \sum_{i=1}^N \left( \MLoutput(\inputs_i) - \output_i) \right)^2,
+\]</div>
+<p>where we have <span class="math notranslate nohighlight">\(N\)</span> training data and our model is a function of the parameter vector <span class="math notranslate nohighlight">\(\pars\)</span>. Note that this is the metric that we are minimizing when solving the normal equation Eq. <a class="reference internal" href="../../ModelingOptimization/LinearModels.html#equation-eq-normalequation">(37.12)</a>.</p>
+<p>Furthermore, we have the <strong>mean absolute error</strong> (MAE) defined as.</p>
+<div class="math notranslate nohighlight" id="equation-eq-modelvalidation-mae">
+<span class="eqno">(22.15)<a class="headerlink" href="#equation-eq-modelvalidation-mae" title="Link to this equation">#</a></span>\[
+\mathrm{MAE} = \frac{1}{N} \sum_{i=1}^N \left| \MLoutput(\inputs_i) - \output_i) \right|,
+\]</div>
+<p>And the <span class="math notranslate nohighlight">\(R2\)</span> score, also known as <em>coefficient of determination</em> is</p>
+<div class="math notranslate nohighlight" id="equation-eq-modelvalidation-r2">
+<span class="eqno">(22.16)<a class="headerlink" href="#equation-eq-modelvalidation-r2" title="Link to this equation">#</a></span>\[
+\mathrm{R2} = 1 - \frac{\sum_{i=1}^N \left( \MLoutput(\inputs_i) - \output_i) \right)^2}{\sum_{i=1}^N \left( \output_i - \bar{\output} \right)^2},
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\bar{\output} = \frac{1}{N} \sum_{i=1}^N \output_i\)</span> is the mean of the data. This metric therefore represents the proportion of variance (of <span class="math notranslate nohighlight">\(\data\)</span>) that has been explained by the independent variables in the model.</p>
+</div>
+<p>An underfit model has a <em>high bias</em>, which means that it gives a rather poor fit and the error function will be rather large in average. This will be true for both the training and the validation sets.</p>
+<p>An overfit model will depend sensitively on the choice of training data. A different split into training and validation sets will give very different predictions. We therefore say that the model displays a <em>high variance</em>. While the overfit model usually reproduces training data very well (low bias), it does not generalize well and gives a poor reproduction of validation data. The average values for the error function are therefore very different for the training and validation sets.</p>
+<p>Another sign of overfitting is the appearance of very large fit parameters that are needed for the fine tunings of cancellations of different terms in the model. The fits from our example has the following root-mean-square parameters</p>
+<div class="amsmath math notranslate nohighlight" id="equation-1886114b-161c-4ca2-9223-413dfbebbebc">
+<span class="eqno">(22.17)<a class="headerlink" href="#equation-1886114b-161c-4ca2-9223-413dfbebbebc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\para_\mathrm{rms} \equiv \frac{1}{p} \sqrt{ \sum_{i=0}^{p-1} \theta_i^2 } \equiv \| \pars \|_2^2 / p.
+\end{equation}\]</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>order</p></th>
+<th class="head text-left"><p><span class="math notranslate nohighlight">\(\para_\mathrm{rms}\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>1</p></td>
+<td class="text-left"><p>3.0e-01</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>3</p></td>
+<td class="text-left"><p>1.2e+00</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>100</p></td>
+<td class="text-left"><p>6.3e+12</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In some cases a learning algorithm makes good predictions despite fitting to the noise in training data. This is called “benign overfitting”. See, for example, <a class="reference external" href="https://arxiv.org/abs/1906.11300">Bartlett et al., <em>Benign Overfitting in Linear Regression</em></a>. A recent explanation of this is <a class="reference external" href="https://arxiv.org/abs/2110.02914">Chatterji and Long, <em>Foolish Crowds Support Benign Overfitting</em></a>. From their abstract: “Our analysis exposes the benefit of an effect analogous to the ‘wisdom of the crowd’, except here the harm arising from fitting the <em>noise</em> is ameliorated by spreading it among many directions - the variance reduction arises from a <em>foolish</em> crowd.”</p>
+</div>
+</section>
+<section id="regularization-ridge-and-lasso">
+<h2>Regularization: Ridge and Lasso<a class="headerlink" href="#regularization-ridge-and-lasso" title="Link to this heading">#</a></h2>
+<p>Assuming that overfitting is characterized by large fit parameters, we can attempt to avoid this scenario by <em>regularizing</em> the model parameters. We will introduce two kinds of regularization: Ridge and Lasso. In addition, so called elastic net regularization is also in use and basically corresponds to a linear combination of the Ridge and Lasso penalty functions.</p>
+<p>Let us remind ourselves about the expression for the standard Mean Squared Error (MSE) which we used to define our cost function and the equations for the ordinary least squares (OLS) method. That is our optimization problem is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-460a07c6-16f6-4431-897c-ecd3dcb82f71">
+<span class="eqno">(22.18)<a class="headerlink" href="#equation-460a07c6-16f6-4431-897c-ecd3dcb82f71" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\boldsymbol{\theta}^* = \underset{\boldsymbol{\theta}\in {\mathbb{R}}^{p}}{\operatorname{argmin}} \frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{	\theta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\right)\right\}.
+\end{equation}\]</div>
+<p>or we can state it as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-ea366daf-cc6f-4c5c-b77c-b704d311d795">
+<span class="eqno">(22.19)<a class="headerlink" href="#equation-ea366daf-cc6f-4c5c-b77c-b704d311d795" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\boldsymbol{\theta}^* = \underset{\boldsymbol{\theta}\in {\mathbb{R}}^{p}}{\operatorname{argmin}}
+\frac{1}{n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2
+= \underset{\boldsymbol{\theta}\in {\mathbb{R}}^{p}}{\operatorname{argmin}}
+\frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2,
+\end{equation}\]</div>
+<p>where we have used the definition of  a norm-2 vector, that is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-fd5cf566-3c05-4de2-8a08-07e12075c18b">
+<span class="eqno">(22.20)<a class="headerlink" href="#equation-fd5cf566-3c05-4de2-8a08-07e12075c18b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\vert\vert \boldsymbol{\epsilon}\vert\vert_2^2 = \sum_i \epsilon_i^2. 
+\end{equation}\]</div>
+<p>By minimizing the above equation with respect to the parameters
+<span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> we could then obtain an analytical expression for the
+parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>.  We can add a regularization parameter <span class="math notranslate nohighlight">\(\lambda\)</span> by
+defining a new cost function to be minimized, that is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-2aa60ae2-c7bc-4f84-99a9-6adfde72d8b0">
+<span class="eqno">(22.21)<a class="headerlink" href="#equation-2aa60ae2-c7bc-4f84-99a9-6adfde72d8b0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+C_{\lambda,2} \left( \pars \right) \equiv
+\frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\theta}\vert\vert_2^2 
+\end{equation}\]</div>
+<p>which leads to the <em>Ridge regression</em> minimization problem where we
+constrain the parameters via <span class="math notranslate nohighlight">\(\vert\vert \boldsymbol{\theta}\vert\vert_2^2\)</span> and the optimization equation becomes</p>
+<div class="amsmath math notranslate nohighlight" id="equation-0ebe865a-deb4-4f1c-9d6b-b4040c9d3be4">
+<span class="eqno">(22.22)<a class="headerlink" href="#equation-0ebe865a-deb4-4f1c-9d6b-b4040c9d3be4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\boldsymbol{\theta}^* = \underset{\boldsymbol{\theta}\in {\mathbb{R}}^{p}}{\operatorname{argmin}}
+C_{\lambda,2}\left( \boldsymbol{X}, \boldsymbol{\theta} \right)
+.
+\end{equation}\]</div>
+<p>Alternatively, <em>Lasso regularization</em> can be performed by defining</p>
+<div class="amsmath math notranslate nohighlight" id="equation-c8ddac46-2c18-4a29-8c94-ce50f68fbe0d">
+<span class="eqno">(22.23)<a class="headerlink" href="#equation-c8ddac46-2c18-4a29-8c94-ce50f68fbe0d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+C_{\lambda,1} \left( \boldsymbol{\theta} \right) \equiv
+\frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\theta}\vert\vert_1.
+\end{equation}\]</div>
+<p>Here we have defined the norm-1 as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-a342208b-6a7a-4139-b24e-f3011442ff36">
+<span class="eqno">(22.24)<a class="headerlink" href="#equation-a342208b-6a7a-4139-b24e-f3011442ff36" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\vert\vert \boldsymbol{\epsilon}\vert\vert_1 = \sum_i \vert \epsilon_i\vert. 
+\end{equation}\]</div>
+<p>Lasso stands for least absolute shrinkage and selection operator.</p>
+<figure class="align-default" id="fig-ridge-reg">
+<img alt="../../../_images/ridge_reg.png" src="../../../_images/ridge_reg.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 22.4 </span><span class="caption-text">Ridge regularization with different penalty parameters <span class="math notranslate nohighlight">\(\lambda\)</span> for different polynomial models of a noisy data set.</span><a class="headerlink" href="#fig-ridge-reg" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="more-on-ridge-regression">
+<h3>More on Ridge Regression<a class="headerlink" href="#more-on-ridge-regression" title="Link to this heading">#</a></h3>
+<p>Using the matrix-vector expression for Ridge regression,</p>
+<div class="amsmath math notranslate nohighlight" id="equation-0fd5b4eb-10ac-4df8-b066-7beac777d49c">
+<span class="eqno">(22.25)<a class="headerlink" href="#equation-0fd5b4eb-10ac-4df8-b066-7beac777d49c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+C(\boldsymbol{X},\boldsymbol{\theta})=\frac{1}{n}\left\{(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta})^T(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta})\right\}+\lambda\boldsymbol{\theta}^T\boldsymbol{\theta},
+\end{equation}\]</div>
+<p>by taking the derivatives with respect to <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> we obtain then
+a slightly modified matrix inversion problem which for finite values
+of <span class="math notranslate nohighlight">\(\lambda\)</span> does not suffer from singularity problems. We obtain</p>
+<div class="amsmath math notranslate nohighlight" id="equation-92060504-62cb-4a29-8d0b-7c3c28688ad5">
+<span class="eqno">(22.26)<a class="headerlink" href="#equation-92060504-62cb-4a29-8d0b-7c3c28688ad5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\boldsymbol{\theta}^{\mathrm{Ridge}} = \left(\boldsymbol{X}^T\boldsymbol{X}+\lambda\boldsymbol{I}\right)^{-1}\boldsymbol{X}^T\boldsymbol{y},
+\end{equation}\]</div>
+<p>with <span class="math notranslate nohighlight">\(\boldsymbol{I}\)</span> being a <span class="math notranslate nohighlight">\(p\times p\)</span> identity matrix</p>
+<p>We see that Ridge regression is nothing but the standard
+OLS with a modified diagonal term added to <span class="math notranslate nohighlight">\(\boldsymbol{X}^T\boldsymbol{X}\)</span>. The
+consequences, in particular for our discussion of the bias-variance
+are rather interesting. Ridge regression imposes a constraint on the model parameters</p>
+<div class="amsmath math notranslate nohighlight" id="equation-63a36b38-b002-4fbb-b67f-6f38517eb3ef">
+<span class="eqno">(22.27)<a class="headerlink" href="#equation-63a36b38-b002-4fbb-b67f-6f38517eb3ef" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\sum_{i=0}^{p-1} \theta_i^2 \leq t,
+\end{equation}\]</div>
+<p>with <span class="math notranslate nohighlight">\(t\)</span> a finite positive number.</p>
+<p>For more discussions of Ridge and Lasso regression, see: <a class="reference external" href="https://arxiv.org/abs/1509.09169">Wessel van Wieringen’s</a> <span id="id4">[<a class="reference internal" href="../../Backmatter/bibliography.html#id15" title="Wessel N. van Wieringen. Lecture notes on ridge regression. 2015. doi:10.48550/ARXIV.1509.09169.">vW15</a>]</span> article or <a class="reference external" href="https://arxiv.org/abs/1803.08823">Mehta et al’s</a> <span id="id5">[<a class="reference internal" href="../../Backmatter/bibliography.html#id16" title="Pankaj Mehta, Marin Bukov, Ching-Hao Wang, Alexandre G.R. Day, Clint Richardson, Charles K. Fisher, and David J. Schwab. A high-bias, low-variance introduction to machine learning for physicists. Phys. Rep., 810:1–124, may 2019. doi:10.1016/j.physrep.2019.03.001.">MBW+19</a>]</span> article.</p>
+</section>
+</section>
+<section id="the-bias-variance-tradeoff">
+<h2>The bias-variance tradeoff<a class="headerlink" href="#the-bias-variance-tradeoff" title="Link to this heading">#</a></h2>
+<p>We will discuss the bias-variance tradeoff in the context of continuous predictions such as regression. However, many of the intuitions and ideas discussed here also carry over to classification tasks.</p>
+<p>Consider observations that are related to the true data-generating process <span class="math notranslate nohighlight">\(f\)</span> via experimental noise. For a specific observation <span class="math notranslate nohighlight">\(i\)</span> we can write</p>
+<div class="amsmath math notranslate nohighlight" id="equation-c24894f4-5aad-4009-b7c4-b8039cf44f90">
+<span class="eqno">(22.28)<a class="headerlink" href="#equation-c24894f4-5aad-4009-b7c4-b8039cf44f90" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\output_i = f({\inputs_i}) + {\epsilon}_{i},
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\({\epsilon}_{i}\)</span> is an irreducible error described by a random variable. That is, even if we could find the deta-generating process <span class="math notranslate nohighlight">\(f\)</span> we would not reproduce the data more accurately than <span class="math notranslate nohighlight">\(\epsilon\)</span> permits. Let us assume that these errors are i.i.d. with expectation value <span class="math notranslate nohighlight">\(\expect{\epsilon} = 0\)</span> and variance <span class="math notranslate nohighlight">\(\var{\epsilon} = \sigma^2_\epsilon\)</span><a class="footnote-reference brackets" href="#variance" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<p>Our model <span class="math notranslate nohighlight">\(\MLoutput(\inputs)\)</span> is an approximation to the function <span class="math notranslate nohighlight">\(f(\inputs)\)</span>. We will arrive at the final model after calibration (training) and there is always a risk of either under- or overfitting. Let us now consider the following scenario:</p>
+<ul class="simple">
+<li><p>We make a prediction with our trained model at a new point <span class="math notranslate nohighlight">\(\testinputs\)</span>. We use the shorthand notation <span class="math notranslate nohighlight">\(\MLtestoutput \equiv {\MLoutput}(\testinputs)\)</span>.</p></li>
+<li><p>This prediction should eventually be compared with a future observation <span class="math notranslate nohighlight">\(\testoutput \equiv y(\testinputs) = f(\testinputs)+\epsilon^\odot \equiv f^\odot+\epsilon^\odot\)</span></p></li>
+<li><p>Specifically, we are interested in the prediction error, <span class="math notranslate nohighlight">\(\testoutput - \MLtestoutput = f^\odot+\epsilon^\odot - \MLtestoutput\)</span>, to judge the predictive power of our model.</p></li>
+</ul>
+<p>What can we say about this prediction error? It obviously depends on the inherent noise (<span class="math notranslate nohighlight">\(\epsilon\)</span>), which is random, but also on the model complexity and how it was calibrated.
+Imagine the following repeated model calibrations:</p>
+<ol class="arabic simple">
+<li><p>Draw a size <span class="math notranslate nohighlight">\(n\)</span> sample, <span class="math notranslate nohighlight">\(\trainingdata_n = \{(\inputs_j, y_j), j=1\ldots n\}\)</span></p>
+<ul class="simple">
+<li><p>Train our model <span class="math notranslate nohighlight">\({\MLoutput}\)</span> using <span class="math notranslate nohighlight">\(\trainingdata_n\)</span>.</p></li>
+<li><p>Make the prediction at <span class="math notranslate nohighlight">\(\testinputs\)</span> and evaluate <span class="math notranslate nohighlight">\(\testoutput - \MLtestoutput\)</span></p></li>
+</ul>
+</li>
+<li><p>Repeat this multiple times, using different sets of data <span class="math notranslate nohighlight">\(\trainingdata_n\)</span> to fit your model. What is the expectation value <span class="math notranslate nohighlight">\(\expect{\left(\testoutput-\MLtestoutput\right)^2}\)</span>?</p></li>
+</ol>
+<div class="proof theorem admonition" id="theorem:ModelValidation:bias-variance">
+<p class="admonition-title"><span class="caption-number">Theorem 22.1 </span> (The bias-variance tradeoff)</p>
+<section class="theorem-content" id="proof-content">
+<p>The expected prediction error of a machine-learning model can be expressed as a sum</p>
+<div class="math notranslate nohighlight" id="equation-eq-modelvalidation-bias-variance">
+<span class="eqno">(22.29)<a class="headerlink" href="#equation-eq-modelvalidation-bias-variance" title="Link to this equation">#</a></span>\[
+\expect{\left(\testoutput-\MLtestoutput\right)^2} = \left(f^\odot-\expect{\MLtestoutput}\right)^2 + \var{ \MLtestoutput} + \sigma^2_\epsilon.
+\]</div>
+<p>The first of the three terms represents the square of the bias of the machine-learning model, which can be thought of as the error caused by a lack of flexibility (underfitting) that inhibits our model to fully recreate <span class="math notranslate nohighlight">\(f\)</span>. The second term represents the variance of the model predictions, which can be thought of as its sensitivity to the choice of training data (overfitting). Finally, the last term comes from the irreducible error <span class="math notranslate nohighlight">\(\epsilon\)</span> that is inherent in the observations.</p>
+</section>
+</div><div class="proof admonition" id="proof">
+<p>Proof. To derive the <a class="reference internal" href="#theorem:ModelValidation:bias-variance">bias-variance-tradeoff</a>, we start from</p>
+<div class="amsmath math notranslate nohighlight" id="equation-840dc8b0-ee48-4bfc-84c0-60ce4eae7a09">
+<span class="eqno">(22.30)<a class="headerlink" href="#equation-840dc8b0-ee48-4bfc-84c0-60ce4eae7a09" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\testoutput = f^\odot+\epsilon^\odot
+\end{equation}\]</div>
+<p>and realize that the variances of <span class="math notranslate nohighlight">\(\testoutput\)</span> and <span class="math notranslate nohighlight">\(\epsilon^\odot\)</span> are both equal to <span class="math notranslate nohighlight">\(\sigma^2_\epsilon\)</span>, since the data-generating process <span class="math notranslate nohighlight">\(f^\odot = f(\testinputs)\)</span> is deterministic. The mean value of <span class="math notranslate nohighlight">\(\epsilon^\odot\)</span> is equal to zero which means that <span class="math notranslate nohighlight">\(\expect{\testoutput} = f^\odot\)</span>. The desired expectation value</p>
+<div class="amsmath math notranslate nohighlight" id="equation-97357544-f912-414c-8f64-537d66be6ad9">
+<span class="eqno">(22.31)<a class="headerlink" href="#equation-97357544-f912-414c-8f64-537d66be6ad9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\expect{\left(\testoutput-\MLtestoutput\right)^2} = \expect{\left(f^\odot+\epsilon^\odot-\MLtestoutput\right)^2},
+\end{equation}\]</div>
+<p>can be rewritten by subtracting and adding <span class="math notranslate nohighlight">\(\expect{\MLtestoutput}\)</span></p>
+<div class="amsmath math notranslate nohighlight" id="equation-09009c9e-3c71-4377-8fa7-989debcd43d3">
+<span class="eqno">(22.32)<a class="headerlink" href="#equation-09009c9e-3c71-4377-8fa7-989debcd43d3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\expect{\left(\testoutput-\MLtestoutput)^2}=\expect{(f^\odot + \epsilon^\odot - \expect{\MLtestoutput} + \expect{\MLtestoutput}-\MLtestoutput\right)^2}.
+\end{equation}\]</div>
+<p>Using the linearity of expectation values we can rewrite this expression as a sum of three terms:</p>
+<ul>
+<li><p>The first one is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-e2b6cea6-b504-4650-9772-472c4ee09144">
+<span class="eqno">(22.33)<a class="headerlink" href="#equation-e2b6cea6-b504-4650-9772-472c4ee09144" title="Permalink to this equation">#</a></span>\[\begin{align}
+\expect{\left(f^\odot-\expect{\MLtestoutput}+\epsilon^\odot\right)^2} &amp;= \expect{\left(f^\odot-\expect{\MLtestoutput}\right)^2} + \expect{{\epsilon^\odot}^2} \\
+&amp; \qquad + 2 \left(f^\odot-\expect{\MLtestoutput}\right)\expect{\epsilon} \\
+&amp;= \left(f^\odot-\expect{\MLtestoutput}\right)^2 + \sigma_\epsilon^2
+\end{align}\]</div>
+<p>where we use the known expectation values, plus the fact that the model bias <span class="math notranslate nohighlight">\(f^\odot-\expect{\MLtestoutput}\)</span> is a fixed number. Thus, this term becomes the (squared) model bias plus the irreducible data error <span class="math notranslate nohighlight">\(\sigma_\epsilon^2\)</span></p>
+</li>
+<li><p>The second term is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-108cc7f8-a201-4098-98f8-5677f4871a32">
+<span class="eqno">(22.34)<a class="headerlink" href="#equation-108cc7f8-a201-4098-98f8-5677f4871a32" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\expect{\left(\expect{\MLtestoutput} - \MLtestoutput\right)^2} = \var{\MLtestoutput}.
+\end{equation}\]</div>
+<p>It corresponds to the variance of model predictions.</p>
+</li>
+<li><p>The last (mixing) term is zero</p>
+<div class="amsmath math notranslate nohighlight" id="equation-e93d51ff-c09a-4d96-8a78-c25ad50dde21">
+<span class="eqno">(22.35)<a class="headerlink" href="#equation-e93d51ff-c09a-4d96-8a78-c25ad50dde21" title="Permalink to this equation">#</a></span>\[\begin{align}
+&amp; 2\expect{\left(\testoutput-\expect{\MLtestoutput}\right) \left(\expect{\MLtestoutput}-\MLtestoutput\right)} \\
+&amp; \quad = 2\expect{\left(\testoutput-\expect{\MLtestoutput}\right)} \left( \expect{\expect{\MLtestoutput}} -  \expect{\MLtestoutput}\right) = 0.
+\end{align}\]</div>
+</li>
+</ul>
+<p>In summary, we have obtained the three terms of Eq. <a class="reference internal" href="#equation-eq-modelvalidation-bias-variance">(22.29)</a> which concludes the proof.</p>
+</div>
+<p>The tradeoff between bias and variance is illustrated in <a class="reference internal" href="#fig-bias-variance-resample"><span class="std std-numref">Fig. 22.5</span></a> and <a class="reference internal" href="#fig-bias-variance"><span class="std std-numref">Fig. 22.6</span></a>.</p>
+<figure class="align-default" id="fig-bias-variance-resample">
+<img alt="../../../_images/bias_variance_100resamples.png" src="../../../_images/bias_variance_100resamples.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 22.5 </span><span class="caption-text">The bias-variance tradeoff illustrated for different polynomial models from low- to high-complexity. For each model complexity (degree) we have trained several versions of the machine-learning model using resampled training data. For each test datum (blue dots) we show the different model predictions. Underfit models have large average errors (bias) while overfit ones have large prediction variance.</span><a class="headerlink" href="#fig-bias-variance-resample" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-bias-variance">
+<img alt="../../../_images/bias_variance_means.png" src="../../../_images/bias_variance_means.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 22.6 </span><span class="caption-text">The bias-variance tradeoff illustrated for different polynomial models of our noisy data set. The squared errors for each degree represent the mean results of the test data.</span><a class="headerlink" href="#fig-bias-variance" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="remarks-on-bias-and-variance">
+<h3>Remarks on bias and variance<a class="headerlink" href="#remarks-on-bias-and-variance" title="Link to this heading">#</a></h3>
+<p>The bias-variance tradeoff summarizes the fundamental tension in
+machine learning, particularly supervised learning, between the
+complexity of a model and the amount of training data needed to train
+it.  Since data is often limited, in practice it is often useful to
+use a less-complex model with higher bias, that is  a model whose asymptotic
+performance is worse than another model because it is easier to
+train and less sensitive to sampling noise arising from having a
+finite-sized training dataset (smaller variance). In general, more
+flexible statistical methods have higher variance.</p>
+<p>The above equations tell us that in
+order to minimize the expected validation error, we need to select a
+statistical learning method that simultaneously achieves low variance
+and low bias. Note that variance is inherently a nonnegative quantity,
+and squared bias is also nonnegative. Hence, we see that the prediction error can never lie below <span class="math notranslate nohighlight">\(\var{\epsilon}) \equiv \sigma^2_\epsilon\)</span>, the irreducible error.</p>
+</section>
+</section>
+<section id="id7">
+<h2>Model validation<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<p>In order to make an informed choice for these hyperparameters we need to validate that our model provides a good fit to the training data while not becoming overfit. This important process is known as <em>model validation</em>. It most often involves splitting the data into two sets: the training set and the validation set.</p>
+<p>The model is then trained on the first set of data, while its performance is monitored on the validation set (by computing your choice of performance score/error function).</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Why is it important not to train and evaluate the model on the same data?</p>
+</div>
+<section id="learning-curves">
+<h3>Learning curves<a class="headerlink" href="#learning-curves" title="Link to this heading">#</a></h3>
+<p>The performance of the model will depend on the amount of data that is used for training. When using iterative optimization approaches, such as gradient descent, it will also depend on the number of training iterations. In order to monitor this dependence one usually plots a <em>learning curve</em>.</p>
+<p>Learning curves are plots of the model performance on both the training and the validation sets, measured by some performance metric such as the mean squared error. This measure is plotted as a function of the size of the training set, or alternatively as a function of the number of training iterations. One defines an <em>epoch</em> of training as an update of the model parameters where the entire batch of training data has been used exactly once. An epoch can therefore consist of multiple updates via a random traverse of all training data one by one, or split into mini-batches.</p>
+<figure class="align-center" id="fig-modelvalidation-learning-curve">
+<a class="reference internal image-reference" href="../../../_images/learning-curve-epochs.png"><img alt="../../../_images/learning-curve-epochs.png" src="../../../_images/learning-curve-epochs.png" style="width: 400px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 22.7 </span><span class="caption-text">Learning curve for a machine-learning model. The average mean-squared error for the model evaluated on training data and on validation data are shown as a function of the number of training epochs.</span><a class="headerlink" href="#fig-modelvalidation-learning-curve" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Several features in the learning curves shown in <a class="reference internal" href="#fig-modelvalidation-learning-curve"><span class="std std-numref">Fig. 22.7</span></a> deserve to be mentioned:</p>
+<ol class="arabic simple">
+<li><p>The performance on both training and validation sets is very poor in the beginning of the training.</p></li>
+<li><p>The error on the training set then decreases steadily as more training iterations are performed.</p></li>
+<li><p>The training error decreases quickly in th ebeginning, and much more slowly as the model parameters are becoming optimized.</p></li>
+<li><p>The validation error is initially very high but decreases as the model becomes better.</p></li>
+<li><p>The validation error eventually reaches a plateau. If the training proceeds much longer than this, the model can become overfit and the validation error will eventually start increasing.</p></li>
+</ol>
+<p>For models with a high degree of complexity there will usually be a gap between the curves which implies that the model performs significantly better on the training data than on the validation set. This demonstrates the <em>bias-variance tradeoff</em>.</p>
+</section>
+<section id="cross-validation">
+<h3>Cross-validation<a class="headerlink" href="#cross-validation" title="Link to this heading">#</a></h3>
+<p>Cross-validation is a strategy to find model hyperparameters that yield a model with good prediction
+performance. A common practice is to hold back some subset of the data from the training of the model and then use this holdout set to check the model performance.</p>
+<p>One of these two data sets, called the
+<em>training set</em>, plays the role of <strong>original</strong> data on which the model is
+built. The second of these data sets, called the <em>validation set</em>, plays the
+role of the <strong>novel</strong> data and is used to evaluate the prediction
+performance (often operationalized as the log-likelihood or the
+prediction error: MSE or R2 score) of the model built on the training data set. This
+procedure (model building and prediction evaluation on training and
+validation set, respectively) is done for a collection of possible choices for the hyperparameters. The parameter that yields the model with
+the best prediction performance is to be preferred.</p>
+<p>The validation set approach is conceptually simple and is easy to implement. But it has two potential drawbacks:</p>
+<ul class="simple">
+<li><p>The validation estimate of the validation error rate can be highly variable, depending on precisely which observations are included in the training set and which observations are included in the validation set. There might be data points that are critical for training the model, and the performance metric will be very bad if those happen to be excluded from the training set.</p></li>
+<li><p>In the validation approach, only a subset of the observations, those that are included in the training set rather than in the validation set are used to fit the model. Since statistical methods tend to perform worse when trained on fewer observations, this suggests that the validation set error rate may tend to overestimate the validation error rate for the model fit on the entire data set.</p></li>
+</ul>
+<p>To reduce the sensitivity on a particular data split, one can use perform several different splits. For each split the model is fit using the training data and
+evaluated on the corresponding validation set. The hyperparameter that performs best on average (in some sense) is then selected.</p>
+<p>To avoid unbalanced influence of important training samples one can use <span class="math notranslate nohighlight">\(k\)</span>-fold cross-validation to structure the data splitting. The samples are divided into <span class="math notranslate nohighlight">\(k\)</span> more or less equally sized, exhaustive and mutually exclusive subsets. At each fold one of these subsets plays the role of the validation set while the union of the remaining subsets constitutes the training set. Such a splitting warrants a balanced representation of each sample in both training and validation set over the splits. Still the division into the <span class="math notranslate nohighlight">\(k\)</span> subsets involves a degree of randomness. This may be fully excluded when choosing <span class="math notranslate nohighlight">\(k=n\)</span>. This particular case is referred to as leave-one-out cross-validation (LOOCV).</p>
+<div class="proof algorithm admonition" id="algorithm:ModelValidation:cross-validation">
+<p class="admonition-title"><span class="caption-number">Algorithm 22.1 </span> (k-fold cross-validation)</p>
+<section class="algorithm-content" id="proof-content">
+<ol class="arabic">
+<li><p>Define a range of interest for the  model hyperparameter(s) <span class="math notranslate nohighlight">\(\boldsymbol{\lambda}\)</span> and create a set <span class="math notranslate nohighlight">\(\{ \boldsymbol{\lambda}_m \}_{m=1}^M\)</span> that spans this range.</p></li>
+<li><p>Divide the training data set <span class="math notranslate nohighlight">\(\data\)</span> into <span class="math notranslate nohighlight">\(k\)</span> exhaustive and mutually exclusive subsets <span class="math notranslate nohighlight">\(\data_{i} \subset \data\)</span> for <span class="math notranslate nohighlight">\(i=1,\ldots,k\)</span>, and <span class="math notranslate nohighlight">\(\data_{i} \cap \data_{j} = \emptyset\)</span> for <span class="math notranslate nohighlight">\(i \neq j\)</span>.</p></li>
+<li><p>For <span class="math notranslate nohighlight">\(m \in \{1, \ldots, M\}\)</span>:</p>
+<ol class="arabic simple">
+<li><p>For <span class="math notranslate nohighlight">\(i \in \{1, \ldots, k\}\)</span>:</p>
+<ul class="simple">
+<li><p>Use <span class="math notranslate nohighlight">\(\data_{i}\)</span> as the validation set and all other data <span class="math notranslate nohighlight">\(\data_{-i} = \left( \data \cap \data_i\right)^c\)</span> as the training set.</p></li>
+<li><p>Train the model with hyperparameter(s) <span class="math notranslate nohighlight">\(\boldsymbol{\lambda}_m\)</span> using the training set <span class="math notranslate nohighlight">\(\data_{-i}\)</span>, which will give a best fit <span class="math notranslate nohighlight">\(\pars^*_{i}(\boldsymbol{\lambda}_m)\)</span>.</p></li>
+<li><p>Evaluate the prediction performance with <span class="math notranslate nohighlight">\(\pars^*_{i}(\boldsymbol{\lambda}_m)\)</span>.</p></li>
+</ul>
+</li>
+<li><p>Average the prediction performances on all folds. This is known as the <em>cross-validated error</em> <span class="math notranslate nohighlight">\(\mathrm{CV}_k(\boldsymbol{\lambda}_m)\)</span>.</p></li>
+</ol>
+</li>
+<li><p>The hyperparameter(s) that minimizes the cross-validated error is the best choice.</p>
+<div class="math notranslate nohighlight">
+\[
+   \boldsymbol{\lambda}^* = \underset{\boldsymbol{\lambda}}{\operatorname{argmin}}
+    \mathrm{CV}_k(\boldsymbol{\lambda}).
+   \]</div>
+</li>
+<li><p>Fix <span class="math notranslate nohighlight">\(\boldsymbol{\lambda} = \boldsymbol{\lambda}^*\)</span> and train the model on all data <span class="math notranslate nohighlight">\(\data\)</span>.</p></li>
+</ol>
+</section>
+</div></section>
+</section>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<div class="exercise admonition" id="exercise:ModelValidation:kNN-training-error">
+
+<p class="admonition-title"><span class="caption-number">Exercise 22.5 </span> (<span class="math notranslate nohighlight">\(k=1\)</span> NN training error)</p>
+<section id="exercise-content">
+<p>What is <span class="math notranslate nohighlight">\(E_\mathrm{train}\)</span> <a class="reference internal" href="#equation-eq-modelvalidation-etrain-eval">(22.13)</a> for binary classification using <span class="math notranslate nohighlight">\(k\)</span>NN with <span class="math notranslate nohighlight">\(k=1\)</span>?</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:ModelValidation:kNN-model-complexity">
+
+<p class="admonition-title"><span class="caption-number">Exercise 22.6 </span> (<span class="math notranslate nohighlight">\(k\)</span>NN model complexity)</p>
+<section id="exercise-content">
+<p>Draw a simple figure to illustrate the under-and overfitting regions of a <span class="math notranslate nohighlight">\(k\)</span>NN model. With model complexity on the <span class="math notranslate nohighlight">\(x\)</span>-axis, where would you put the extremes <span class="math notranslate nohighlight">\(k=1\)</span> and <span class="math notranslate nohighlight">\(k=N\)</span> (with <span class="math notranslate nohighlight">\(N\)</span> being the number of training data)? In other words, what would be the effective number of parameters in this model?</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:ModelValidation:study-model-bias-variance">
+
+<p class="admonition-title"><span class="caption-number">Exercise 22.7 </span> (Study of model bias and variance)</p>
+<section id="exercise-content">
+<p>Perform your own study of the bias-variance tradeoff by revisiting the linear regression problem in <a class="reference internal" href="../../ModelingOptimization/LinearModels.html#sec-ols-in-practice"><span class="std std-ref">Ordinary linear regression in practice</span></a>.</p>
+<ul class="simple">
+<li><p>Create one validation set and ten different training sets using different seeds in the <code class="docutils literal notranslate"><span class="pre">data_generating_process()</span></code> method call within the <code class="docutils literal notranslate"><span class="pre">measurement()</span></code> method.</p></li>
+<li><p>Train linear regression models of different polynomial degrees for each training set. Evaluate both the training error and the validation error for each model.</p></li>
+<li><p>Plot all ten degree-0 models in a single figure (using the same color for each line, but make them slightly transparent such that they don’t block the view) together with the validation data and with the true, underlying model. Plot also the ten degree-5 models in the same figure (in a different color). Now try to understand why the former family can be described as having large bias but small variance, whereas the latter has large variance.</p></li>
+</ul>
+<p>Connect these findings to the concept of predictive power.</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:ModelValidation:kfold-cross-validation">
+
+<p class="admonition-title"><span class="caption-number">Exercise 22.8 </span> (Implement <span class="math notranslate nohighlight">\(k\)</span>-fold cross validation)</p>
+<section id="exercise-content">
+<p>Use either the linear regression example, or the binary classification one, to implement <span class="math notranslate nohighlight">\(k\)</span>-fold cross validation. Try to use the results to determine an optimal degree of the polynomial for linear regression, or the choice of <span class="math notranslate nohighlight">\(k\)</span> for the <span class="math notranslate nohighlight">\(k\)</span>NN classifier.</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:ModelValidation:large-training-error">
+
+<p class="admonition-title"><span class="caption-number">Exercise 22.9 </span> (Large training error)</p>
+<section id="exercise-content">
+<ul class="simple">
+<li><p>Explain why <span class="math notranslate nohighlight">\(E_\mathrm{train}\)</span> is a poor metric for estimating the prediction error.</p></li>
+<li><p>Consider the situation when <span class="math notranslate nohighlight">\(E_\mathrm{train}\)</span> is larger than the prediction error that you are aiming for. Explain why it then becomes a waste of time to implement cross vaiidation or other techniques to estimate the actual prediction error.</p></li>
+<li><p>What could help to reduce the training error?</p></li>
+</ul>
+</section>
+</div>
+</section>
+<section id="solutions">
+<h2>Solutions<a class="headerlink" href="#solutions" title="Link to this heading">#</a></h2>
+<div class="solution dropdown admonition" id="solution:ModelValidation:kNN-training-error">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:ModelValidation:kNN-training-error"> Exercise 22.5 (<span class="math notranslate nohighlight">\(k=1\)</span> NN training error)</a></p>
+<section id="solution-content">
+<p><span class="math notranslate nohighlight">\(E_\mathrm{train} = 0\)</span> for <span class="math notranslate nohighlight">\(k\)</span>NN models with <span class="math notranslate nohighlight">\(k=1\)</span>.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:ModelValidation:kNN-model-complexity">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:ModelValidation:kNN-model-complexity"> Exercise 22.6 (<span class="math notranslate nohighlight">\(k\)</span>NN model complexity)</a></p>
+<section id="solution-content">
+<p>The effective number of parameters in a <span class="math notranslate nohighlight">\(k\)</span>NN model goes something like <span class="math notranslate nohighlight">\(N/k\)</span>. Think about how many effective parameters the training data corresponds to in the extreme situations with <span class="math notranslate nohighlight">\(k=1\)</span> and <span class="math notranslate nohighlight">\(k=N\)</span>. In between, you can imagine non-overlapping regions of <span class="math notranslate nohighlight">\(k\)</span> sized clusters.</p>
+<p>In effect, this implies that the <span class="math notranslate nohighlight">\(k=1\)</span> model is the one with the largest number of effective parameters and hence the most comples one (explaining the overfitting), whereas the <span class="math notranslate nohighlight">\(k=N\)</span> model has effectively a single parameter and will underfit.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:ModelValidation:study-model-bias-variance">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:ModelValidation:study-model-bias-variance"> Exercise 22.7 (Study of model bias and variance)</a></p>
+<section id="solution-content">
+<p>You should see small variations between the degree-0 models since they just capture the  means of the respective training sets. However, it also implies that they in average reproduce both training and validation data poorly.</p>
+<p>The higher degree models will show much larger variations (since they will be overfitting to the different sets of training data). They will all perform well on their respective training set, but poorly on the validation set.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:ModelValidation:kfold-cross-validation">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:ModelValidation:kfold-cross-validation"> Exercise 22.8 (Implement <span class="math notranslate nohighlight">\(k\)</span>-fold cross validation)</a></p>
+<section id="solution-content">
+<p>Note you are interested in <span class="math notranslate nohighlight">\(\mathrm{CV}_k(\lambda)\)</span> where the hyperparameter is <span class="math notranslate nohighlight">\(\lambda=p\)</span> for the linear regression example, or <span class="math notranslate nohighlight">\(\lambda=k\)</span> for the <span class="math notranslate nohighlight">\(k\)</span>NN classifier.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:ModelValidation:large-training-error">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:ModelValidation:large-training-error"> Exercise 22.9 (Large training error)</a></p>
+<section id="solution-content">
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(E_\mathrm{train}\)</span> will always decrease with increasing model complexity as it is tuned to the data (and higher model complexity implies more model flexibility).</p></li>
+<li><p><span class="math notranslate nohighlight">\(E_\mathrm{new} &gt; E_\mathrm{train}\)</span> in general. This is the generalization gap. So it is better to invest your time in improving the model, or collecting more data, before actually attempting to estimate the prediction error.</p></li>
+<li><p>See the above answer.</p></li>
+</ul>
+</section>
+</div>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="variance" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">1</a><span class="fn-bracket">]</span></span>
+<p>Remember that <span class="math notranslate nohighlight">\(\expect{t}\)</span> denotes the expectation value for the random variable <span class="math notranslate nohighlight">\(t\)</span>. Furthermore, the variance is given by <span class="math notranslate nohighlight">\(\var{t} = \expect{\left(t -  \expect{t}\right)^2}\)</span>.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./LearningFromData-content/MachineLearning/ANN"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="Neural_Network_for_simple_function_in_PyTorch.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">22.7. </span>Feed-forward neural network for a function in PyTorch</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="DataBiasFairness.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">22.9. </span>Data bias and fairness in machine learning</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#over-and-underfitting">Over- and underfitting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regularization-ridge-and-lasso">Regularization: Ridge and Lasso</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#more-on-ridge-regression">More on Ridge Regression</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bias-variance-tradeoff">The bias-variance tradeoff</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remarks-on-bias-and-variance">Remarks on bias and variance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Model validation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-curves">Learning curves</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-validation">Cross-validation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">Solutions</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

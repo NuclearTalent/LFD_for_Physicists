@@ -1,0 +1,1172 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>15. Stochastic processes &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\text{th}}", "yexp": "y_{\\text{exp}}", "ym": "y_{\\text{m}}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'LearningFromData-content/StochasticProcesses/StochasticProcesses';</script>
+    <script src="../../_static/custom.js?v=33f35b7a"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="15.7. Metropolis-Hasting MCMC sampling of a Poisson distribution" href="BUQ/Metropolis_Poisson_example.html" />
+    <link rel="prev" title="14. Overview of Part III: Sampling" href="RootMCMC.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../Intro/About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../Intro/About.html">
+                    About this Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Intro/Overview.html">1. Invitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Intro/Introduction.html">2. Introduction</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/RootBayesianBasics.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Inferenceandpdfs.html">4. Inference and PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/exercise_sum_product_rule.html">4.5. Exercise: Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/exercise_medical_example_by_Bayes.html">4.6. Exercise: Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/MoreBayesTheorem.html">4.7. More on Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Bayesian_epistemology.html">4.8. *Aside: Bayesian epistemology</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/DataModelsPredictions.html">4.9. Data, models, and predictions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html">Parameter estimation I: Gaussian mean and variance</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Posteriors.html">5. Bayesian posteriors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Exploring_pdfs.html">5.1. Exploring PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Exploring_pdfs_followups.html">Follow-ups to Exploring PDFs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Gaussians.html">5.2. Gaussians: A couple of frequentist connections</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/visualization_of_CLT.html">Visualization of the Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/Interpreting2Dposteriors.html">5.3. Interpreting 2D posteriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/chi_squared_tests.html">5.4. Demonstration: Sum of normal variables squared</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/CoinTossing.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/demo-BayesianBasics.html">6.6. Demonstration:  Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/Bayesian_updating_coinflip_interactive.html">6.7. Widgetized coin tossing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/UsingBayes.html">7. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianBasics/BayesianAdvantages.html">7.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianWorkflow/BayesianWorkflow.html">7.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianLinearRegression/BayesianLinearRegression_rjf.html">7.3. Bayesian Linear Regression (BLR)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../BayesianStatistics/RootAdvancedMethods.html">8. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/ParameterEstimation.html">9. More Bayesian parameter estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/radioactive_lighthouse_exercise.html">9.1. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/amplitude_in_presence_of_background.html">9.2. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_fitting_straight_line_I.html">9.3. Parameter estimation example: fitting a straight line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/parameter_estimation_fitting_straight_line_II.html">9.4. Parameter estimation example: fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/BayesianParameterEstimation/dealing_with_outliers.html">9.5. Dealing with outliers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/AssigningProbabilities/Assigning.html">10. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianStatistics/AssigningProbabilities/IgnorancePDF.html">10.1. Assigning probabilities (I): Indifferences and translation groups</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/AssigningProbabilities/demo-straight_lines.html">Alternative notebook with MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/AssigningProbabilities/MaxEnt2.html">10.2. Assigning probabilities (II): The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/AssigningProbabilities/MaxEnt_Function_Reconstruction.html">10.3. Maximum Entropy for reconstructing a function from its moments</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/BayesLinear.html">11. Bayes goes linear: History matching</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianStatistics/Multimodel_inference.html">12. Multi-model inference with Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../BayesianStatistics/ModelSelection/ModelSelection.html">12.1. Model Selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/ModelSelection/BUQ/Evidence_for_model_EFT_coefficients.html">Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/ModelSelection/BUQ/two_model_evidence.html">Follow-up to EFT evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/ModelSelection/BUQ/computing_evidence.html">Computing the evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BayesianStatistics/ModelSelection/BUQ/MCMC-parallel-tempering_ptemcee_vs_zeus.html">Demo: Multimodal distributions with two samplers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ModelMixing/model_mixing.html">12.2. Model averaging and mixing </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../OtherTopics/DiscrepancyModels.html">13. Discrepancy Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../OtherTopics/MD_balldrop_v1.html">13.4. Ball-drop experiment</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="RootMCMC.html">14. Overview of Part III</a></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">15. Stochastic processes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/Metropolis_Poisson_example.html">15.7. Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-MCMC.html">15.8. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Recap_BUQ.html">15.9. Recap of Poisson and more about MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/parameter_estimation_Gaussian_noise-2.html">15.10. Parameter estimation example: Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-random-walk-and-sampling.html">15.11. Exercise: Random walk</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="MCMC_overview.html">16. Overview of Markov Chain Monte Carlo</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="MarkovChains.html">16.1. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MCMC.html">16.2. Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MCMC_intro_BUQ.html">16.3. Alternative MCMC introduction (Gregory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/Assignment_extending_radioactive_lighthouse.html">16.4. Assignment: 2D radioactive lighthouse location using MCMC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Advanced_MCMC.html">17. Advanced MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html">17.1. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-diagnostics.html">17.2. Overview: MCMC Diagnostics</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="BUQ/intuition_sampling.html">17.4. Intuition on sampling and best practices</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Other_samplers.html">18. HMC and other samplers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="BUQ2/HMC_intro_BUQ.html">18.1. Hamiltonian Monte Carlo (HMC) overview and visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="BUQ2/Liouville_theorem_visualization.html">Liouville Theorem Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BUQ2/Orbital_eqs_with_different_algorithms.html">Solving orbital equations with different algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="zeus.html">18.2. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="BUQ2/PyMC_intro_updated.html">18.3. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="OverviewIntroPyMC.html">Overview of Intro to PyMC notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ2/parameter_estimation_Gaussian_noise_compare_samplers.html">18.4. Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning: A Bayesian perspective</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../MachineLearning/RootML.html">19. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../MachineLearning/GP/RootGP.html">20. Overview of Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../MachineLearning/GP/GaussianProcesses.html">20.4. Introduction to Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/CF/demo-GaussianProcesses.html">demo-GaussianProcesses notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/BUQ/lecture_20.html">GP recap; GP applications; (old lecture 20)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../MachineLearning/GP/Sklearn_demos.html">20.5. scikit-learn demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/BUQ/plot_gpr_noisy_targets.html">One-dimension regression example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/BUQ/plot_gpr_prior_posterior.html">Prior and posterior with different kernels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../MachineLearning/GP/GPy_demos.html">20.6. GPy demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/BUQ/demo-GaussianProcesses.html">Gaussian processes demonstration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/CF/exercise_GP_GPy.html">Exercise: Gaussian processes using <code class="docutils literal notranslate"><span class="pre">GPy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/GP/BUQ/Gaussian_processes_exercises.html">Exercise: Gaussian Process models with GPy</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../MachineLearning/LogReg/LogReg.html">21. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/MachineLearningExamples.html">21.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/NeuralNet/exercises_LogReg_NeuralNet.html">21.6. Exercise: Logistic Regression and neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../MachineLearning/ANN/MachineLearning.html">22. Machine learning: Overview and notation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/NeuralNet.html">22.5. Artifical neural networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/NeuralNet/demo-NeuralNet.html">22.6. Demonstration: Neural network classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/Neural_Network_for_simple_function_in_PyTorch.html">22.7. ANN from ChatGPT using PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/ModelValidation.html">22.8. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/DataBiasFairness.html">22.9. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/NeuralNet/NeuralNetBackProp.html">22.10. *Neural networks: Backpropagation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../OtherTopics/ANNFT.html">23. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../OtherTopics/random_initialized_ANN_vs_width.html">23.3. Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../MachineLearning/BNN/bnn.html">24. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/BNN/demo-bnn.html">24.4. Demonstration: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/BNN/exercises_BNN.html">24.5. Exercise: Bayesian neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../MachineLearning/CNN/cnn.html">25. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/CNN/demo-cnn.html">25.6. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Other topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../OtherTopics/RootOtherTopics.html">26. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../OtherTopics/Emulators.html">27. Emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/BayesFast.html">27.1. Bayes goes fast: Emulators (from CF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/extra_RBM_emulators.html">27.2. RBM emulators (BUQ)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../OtherTopics/Student_t_distribution_from_Gaussians.html">28. Student t distribution from Gaussians</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../OtherTopics/SVD.html">29. PCA, SVD, and all that</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../OtherTopics/linear_algebra_games_including_SVD.html">29.5. SVD notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../OtherTopics/qbism.html">30. QBism: Bayesian quantum mechanics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Backmatter/bibliography.html">31. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Backmatter/JB_tests.html">32. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Reference/Statistics.html">33. Statistics concepts and notation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ModelingOptimization/GradientDescent.html">34. Gradient-descent optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ModelingOptimization/RootScientificModeling.html">35. Overview of scientific modeling material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ModelingOptimization/OverviewModeling.html">36. Overview of modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ModelingOptimization/LinearModels.html">37. Linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ModelingOptimization/MathematicalOptimization.html">38. Mathematical optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Setup/RootGettingStarted.html">39. Overview of Getting started material</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Setup/exercise_Intro_01_Jupyter_Python.html">40. Jupyter notebooks and Python</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Setup/more_python_and_jupyter.html">41. More about Python and Jupyter notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/exercise_Intro_02_Jupyter_Python.html">41.4. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/exercise_Intro_03_Numpy.html">41.5. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/demo-Intro.html">41.6. Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/Simple_widgets_v1.html">41.7. Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Setup/setting_up.html">42. Setting up for using this Jupyter Book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/installing_anaconda.html">42.1. Using Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Setup/using_github.html">42.2. Using GitHub</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Mini-projects/RootMiniProjects.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Mini-projects/mini-project_I_toy_model_of_EFT.html">MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Mini-projects/model-selection_mini-project-IIa.html">MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html">MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Mini-projects/Mini-project_IIb_overview.html">Overview of Mini-project IIb: How many lines?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Mini-projects/mini-project_IIIa_bayesian_optimization.html">MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html">MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_development/issues/new?title=Issue%20on%20page%20%2FLearningFromData-content/StochasticProcesses/StochasticProcesses.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/LearningFromData-content/StochasticProcesses/StochasticProcesses.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Stochastic processes</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notation">15.1. Notation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">15.2. Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definition-of-a-stochastic-process">15.3. Definition of a stochastic process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-random-walk">15.4. Example: Random walk</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#special-case-gaussian-process">15.5. Special case: Gaussian process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">15.6. Solutions</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="stochastic-processes">
+<span id="sec-stochasticprocesses"></span><h1><span class="section-number">15. </span>Stochastic processes<a class="headerlink" href="#stochastic-processes" title="Link to this heading">#</a></h1>
+<blockquote class="epigraph">
+<div><blockquote>
+<div><p>“Stochastic, or random, processes is the dynamic side of probability. What differential equations is to calculus, stochastic processes is to probability.”</p>
+</div></blockquote>
+<p class="attribution">—Robert P. Dobrow, <em>Introduction to Stochastic Processes with R</em></p>
+</div></blockquote>
+<section id="notation">
+<h2><span class="section-number">15.1. </span>Notation<a class="headerlink" href="#notation" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>English</p></th>
+<th class="head text-center"><p>General notation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Acceptance probability</p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(A\)</span></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Limiting distribution</p></td>
+<td class="text-center"><p></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Markov chain</p></td>
+<td class="text-center"><p></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Proposal distribution</p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(S\)</span></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Random walk</p></td>
+<td class="text-center"><p></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Reversibility</p></td>
+<td class="text-center"><p></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Stationary distribution (or equilibrium distribution)</p></td>
+<td class="text-center"><p></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Stochastic process</p></td>
+<td class="text-center"><p></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Transition density</p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(T\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="introduction">
+<h2><span class="section-number">15.2. </span>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>A stochastic (random) process is simply one in which outcomes are uncertain. By contrast, a deterministic process always produces the same result for a given input. While functions and differential equations are often used to describe deterministic processes, we can use random variables and probability distribution functions to describe stochastic ones.</p>
+<p>Stochastic processes are very useful for the modeling of systems that have inherent randomness. This is certainly true in physics, and not the least for quantum systems. We will not delve deep into this topic in these notes. You might encounter stochastic modeling in the future when studying, for example, statistical physics.</p>
+<p>Instead, our specific goal is to become familiar with a special kind of stochastic processes known as Markov chains. Having defined and studied general properties, we will find that such chains be designed to produce samples from a stationary probability distribution of our choice.</p>
+<div class="admonition-discuss admonition">
+<p class="admonition-title">Discuss</p>
+<p>Why is it so useful in Bayesian inference to be able to produce samples from a user-specified probability distrbution?</p>
+</div>
+<div class="proof example admonition" id="example:exponential-growth-models">
+<p class="admonition-title"><span class="caption-number">Example 15.1 </span> (An exponential growth model)</p>
+<section class="example-content" id="proof-content">
+<p>Consider a simple exponential growth model to describe a population of bacteria in a culture with a food source. In a deterministic model we assert that the population grows at a fixed rate <span class="math notranslate nohighlight">\(\lambda\)</span>. The growth rate is then proportional to the population size as described by the differential equation</p>
+<div class="amsmath math notranslate nohighlight" id="equation-1e1237e6-8a26-48c0-99b5-940348fc55ba">
+<span class="eqno">(15.1)<a class="headerlink" href="#equation-1e1237e6-8a26-48c0-99b5-940348fc55ba" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\frac{dy}{dt} = \lambda y(t).
+\end{equation}\]</div>
+<p>With the initial population <span class="math notranslate nohighlight">\(y(0) = y_0\)</span>, this equation is solved by the exponential function</p>
+<div class="amsmath math notranslate nohighlight" id="equation-d17e89cd-ce57-4e9c-82cd-5e395b3ebdc4">
+<span class="eqno">(15.2)<a class="headerlink" href="#equation-d17e89cd-ce57-4e9c-82cd-5e395b3ebdc4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+y(t) = y_0 \exp(\lambda t),
+\end{equation} \]</div>
+<p>from which the population is precisely determined. For example, with <span class="math notranslate nohighlight">\(y_0 = 10\)</span> and <span class="math notranslate nohighlight">\(\lambda = 0.25\)</span> per minute we find that the population has almost doubled four times
+after 11 minutes (since <span class="math notranslate nohighlight">\(y(11) = 15.6 \approx 16\)</span>).</p>
+<p>This model, however, does not take into account the randomness of the reproduction of individual organisms. This can be considered in a stochastic growth model where we assign the probability <span class="math notranslate nohighlight">\(\lambda \Delta t\)</span> for a single bacteria to split once during a (very short) time interval <span class="math notranslate nohighlight">\(\Delta t\)</span>. This random process can be simulated using a short python script (click below to show the code). Ten different realizations of the stochastic model are visualized in <a class="reference internal" href="#fig-bacterial-growth"><span class="std std-numref">Fig. 15.1</span></a> and compared with the deterministic one. Questions that might be of scientific interest include:</p>
+<ul class="simple">
+<li><p>What is the expected number of bacteria at time <span class="math notranslate nohighlight">\(t\)</span>?</p></li>
+<li><p>What is the probability that the number of bacteria will exceed some threshold value after <span class="math notranslate nohighlight">\(t\)</span> minutes?</p></li>
+<li><p>What is the distribution of the time it takes for the population to double in size?</p></li>
+</ul>
+</section>
+</div><div class="cell tag_hide-cell docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell content</p>
+<p class="expanded admonition-title">Hide code cell content</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myst_nb</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue</span>
+
+<span class="c1"># Set the relevant time interval and the model parameters</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
+<span class="n">lam</span><span class="o">=</span><span class="mf">0.25</span>
+<span class="n">y0</span><span class="o">=</span><span class="mi">10</span>
+
+<span class="c1"># Deterministic model</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">y_deterministic</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">y0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">lam</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">y0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">lam</span><span class="o">*</span><span class="n">t</span><span class="p">)</span>
+    
+<span class="c1"># Stochastic model</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">y_stochastic</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">y0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">lam</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">max</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">t</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">lam</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">,</span> <span class="s2">&quot;The time interval must be much smaller than lambda.&quot;</span>
+    <span class="n">t_old</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">t_i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">t_i</span><span class="o">-</span><span class="n">t_old</span>
+        <span class="n">t_old</span><span class="o">=</span><span class="n">t_i</span>
+        <span class="n">y_i</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># Increase the number of bacteria by the number of splits</span>
+        <span class="n">y_i</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">y_i</span><span class="p">)</span><span class="o">&lt;</span><span class="n">lam</span><span class="o">*</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_i</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    
+<span class="c1"># Create a visualization</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;figsize&quot;</span><span class="p">:(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">)})</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">y_deterministic</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span><span class="n">y0</span><span class="o">=</span><span class="n">y0</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;deterministic model&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="n">y_max</span> <span class="o">=</span> <span class="mf">1.1</span> <span class="o">*</span> <span class="n">y_deterministic</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span><span class="n">y0</span><span class="o">=</span><span class="n">y0</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">num_runs</span><span class="o">=</span><span class="mi">20</span>
+<span class="n">y_runs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_runs</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span>
+<span class="k">for</span> <span class="n">irun</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_runs</span><span class="p">):</span>
+    <span class="n">y_run</span> <span class="o">=</span> <span class="n">y_stochastic</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span><span class="n">y0</span><span class="o">=</span><span class="n">y0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">irun</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;stochastic growth processes&#39;</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">irun</span><span class="o">%</span><span class="k">2</span>==0: ax.plot(t,y_run,lw=1,color=&#39;k&#39;,label=label)
+    <span class="n">y_runs</span><span class="p">[</span><span class="n">irun</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">y_run</span>
+<span class="n">y_mean</span> <span class="o">=</span> <span class="n">y_runs</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">y_mean</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;mean of </span><span class="si">{</span><span class="n">num_runs</span><span class="si">}</span><span class="s1"> stochastic runs&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="n">y_max</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time (min)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Population&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s1">&#39;Bacterial growth ($\lambda=</span><span class="si">{</span><span class="n">lam</span><span class="si">}</span><span class="s1">$, $y_0=</span><span class="si">{</span><span class="n">y0</span><span class="si">}</span><span class="s1">$)&#39;</span><span class="p">)</span>
+
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;bacterial-growth_fig&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># How large is the probability that the number of bacteria exceeds 100 after 10 mins?</span>
+<span class="n">i10</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">fraction_100_after_10min</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_runs</span><span class="p">[:,</span><span class="n">i10</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="n">num_runs</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;growth_question&quot;</span><span class="p">,</span> <span class="n">fraction_100_after_10min</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>65.0
+</pre></div>
+</div>
+<img alt="../../_images/d5bf6f4c02129e6758422cd019447869690ef2417a7b1049fe21a2d8b5e5b1a7.png" src="../../_images/d5bf6f4c02129e6758422cd019447869690ef2417a7b1049fe21a2d8b5e5b1a7.png" />
+</div>
+</details>
+</div>
+<figure class="align-default" id="fig-bacterial-growth">
+<img alt="../../_images/d5bf6f4c02129e6758422cd019447869690ef2417a7b1049fe21a2d8b5e5b1a7.png" src="../../_images/d5bf6f4c02129e6758422cd019447869690ef2417a7b1049fe21a2d8b5e5b1a7.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 15.1 </span><span class="caption-text">Growth of a bacteria population. The deterministic exponential growth curve is plotted against a number of realizations of a stochastic growth process. We find for example that <span class="pasted-text">65</span>% of the processes give 100 bacteria after ten minutes.</span><a class="headerlink" href="#fig-bacterial-growth" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="definition-of-a-stochastic-process">
+<h2><span class="section-number">15.3. </span>Definition of a stochastic process<a class="headerlink" href="#definition-of-a-stochastic-process" title="Link to this heading">#</a></h2>
+<p>Using probability theory, a stochastic process <span class="math notranslate nohighlight">\(X\)</span> is a family</p>
+<div class="amsmath math notranslate nohighlight" id="equation-8d37340f-e452-4a0e-8238-5262e3ae7ed1">
+<span class="eqno">(15.3)<a class="headerlink" href="#equation-8d37340f-e452-4a0e-8238-5262e3ae7ed1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\{X_t \; : \; t \in T\},
+\end{equation}\]</div>
+<p>of random variables <span class="math notranslate nohighlight">\(X_t\)</span> indexed by some set <span class="math notranslate nohighlight">\(T\)</span>. All the random variables take values in a common state space, <span class="math notranslate nohighlight">\(S\)</span>. The state space can be discrete or continuous. Although we might use discrete state spaces in some of the examples, one should realize that most examples in physics belong to the continuous type.</p>
+<p>Furthermore, the family is known as <strong>discrete process</strong> if the indices take discrete values <span class="math notranslate nohighlight">\(t \in \{0,1,2,\ldots\}\)</span>. This will in fact be the situation in the practical application of <strong>Markov chain Monte Carlo</strong> applications that we are aiming for. On the other hand, many physical stochastic processes are <strong>continuous</strong> and will have <span class="math notranslate nohighlight">\(T \in \mathbb{R}\)</span> or <span class="math notranslate nohighlight">\(t \in [0,\infty)\)</span>. In either case we think of a stochastic process as a family of variables that evolve as time passes, although in general <span class="math notranslate nohighlight">\(T\)</span> might be any kind of ordering index and is not restricted to physical time.</p>
+<p>Due to the randomness, different runs of the stochastic process will generate different sequences of outputs. An observer recording many such sequences generated from the same stochastic process would need to measure all the following conditional probabilities to fully describe the process:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-c3ae3231-62d0-4a81-b20e-5df5a24f7ed8">
+<span class="eqno">(15.4)<a class="headerlink" href="#equation-c3ae3231-62d0-4a81-b20e-5df5a24f7ed8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\begin{gathered}
+p_{X_0}(x_0), \\
+p_{X_1 \vert X_0}(x_1 | x_0), \\
+p_{X_2 \vert X_0, X_1}(x_2 | x_0, x_1), \\
+\vdots\\
+p_{X_n \vert X_0, X_1, \ldots, X_{n-1}} \left( x_n | x_0, x_1, \ldots, x_{n-1} \right).
+\end{gathered}
+\end{equation}\]</div>
+<div class="proof example admonition" id="example:conditional-stochastic-process">
+<p class="admonition-title"><span class="caption-number">Example 15.2 </span> (Conditional probabilities of a stochastic process)</p>
+<section class="example-content" id="proof-content">
+<p>Below is an example of a stochastic process (implemented using an abstract python class <a class="reference external" href="https://gitlab.com/cforssen/tif385-book/-/blob/tif385/content/Utils/StochasticProcess/StochasticProcess.py"><code class="docutils literal notranslate"><span class="pre">StochasticProcess</span></code></a>).</p>
+<p>Note that the process indeed is defined by:</p>
+<ol class="arabic simple">
+<li><p>the distribution of the first random variable <span class="math notranslate nohighlight">\(X_0\)</span>, which is included in the definition of class method <code class="docutils literal notranslate"><span class="pre">start</span></code>, and</p></li>
+<li><p>the conditional distributions for subsequent variables (as defined in the class method <code class="docutils literal notranslate"><span class="pre">update</span></code>).</p></li>
+</ol>
+<p>Two relevant visualizations are also included in the example below</p>
+<ul class="simple">
+<li><p>Plots of the first variables from a few runs.</p></li>
+<li><p>A corner plot of bivariate and univariate marginal distributions.</p></li>
+</ul>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="c1"># Adding ./CodeLocal/ to the python module search path</span>
+<span class="c1"># sys.path.insert(0, os.path.abspath(&#39;../../Utils/&#39;))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;./CodeLocal&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">StochasticProcess.StochasticProcess</span><span class="w"> </span><span class="kn">import</span> <span class="n">StochasticProcess</span> <span class="k">as</span> <span class="n">SP</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">StochasticProcessExample</span><span class="p">(</span><span class="n">SP</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">random_state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">history</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">history</span><span class="p">)</span> <span class="o">+</span> <span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an instance of the class. It is possible to provide a seed</span>
+<span class="c1"># for the random state such that results are reproducible.</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">StochasticProcessExample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># The following method call produces 4 runs, each of length 10.</span>
+<span class="n">example</span><span class="o">.</span><span class="n">create_multiple_processes</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># and here plotted</span>
+<span class="n">fig_runs</span><span class="p">,</span> <span class="n">ax_runs</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">plot_processes</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/7c29a37f00fe3f252690f6e3d032b6b687c81a1b10e773984af3ca1af3b9c887.png" src="../../_images/7c29a37f00fe3f252690f6e3d032b6b687c81a1b10e773984af3ca1af3b9c887.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Pretty corner plots generated with `prettyplease`</span>
+<span class="c1"># https://github.com/svisak/prettyplease </span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">prettyplease.prettyplease</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
+
+<span class="c1"># Here we instead create 10,000 runs (to collect statistics), each of length 4.</span>
+<span class="n">example</span><span class="o">.</span><span class="n">create_multiple_processes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">fig_corner</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">fr</span><span class="s1">&#39;$X_</span><span class="se">{{</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="se">}}</span><span class="s1">$&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/acfe2b428dc509ef7e133910743954871a6ec47262fffedbbb1e8146c5d1d4b7.png" src="../../_images/acfe2b428dc509ef7e133910743954871a6ec47262fffedbbb1e8146c5d1d4b7.png" />
+</div>
+</div>
+<div class="exercise admonition" id="exercise:StochasticProcess:first-example">
+
+<p class="admonition-title"><span class="caption-number">Exercise 15.1 </span></p>
+<section id="exercise-content">
+<p>Can you understand the initialization and update rules of <a class="reference internal" href="#example:conditional-stochastic-process">Example 15.2</a>?</p>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:conditional-probabilities-stochastic-process">
+
+<p class="admonition-title"><span class="caption-number">Exercise 15.2 </span></p>
+<section id="exercise-content">
+<p>For each panel of the pairplot above:</p>
+<ul class="simple">
+<li><p>What conditional distribution of random variables does each panel show?</p></li>
+<li><p>What random variables are marginalized out, if any?</p></li>
+<li><p>Explain how the pairplot answers the question “Are <span class="math notranslate nohighlight">\(X_3\)</span> and <span class="math notranslate nohighlight">\(X_0\)</span> independent?”?</p></li>
+</ul>
+<p>Hints:</p>
+<ul class="simple">
+<li><p>The top-left panel shows <span class="math notranslate nohighlight">\(\p{X_0}\)</span>, with no marginalization since <span class="math notranslate nohighlight">\(X_0\)</span> starts the random sequence.</p></li>
+<li><p>The independence of <span class="math notranslate nohighlight">\(X_3\)</span> and <span class="math notranslate nohighlight">\(X_0\)</span> would imply <span class="math notranslate nohighlight">\(\pdf{X_3}{X_0}=\p{X_3}\)</span>.</p></li>
+</ul>
+</section>
+</div>
+<div class="exercise admonition" id="exercise:construct-stochastic-process">
+
+<p class="admonition-title"><span class="caption-number">Exercise 15.3 </span></p>
+<section id="exercise-content">
+<p>Define your own stochastic process by creating your own initial and update methods within the StochasticProcess class. Explore the conditional probabilities by creating many chains and making plots.</p>
+</section>
+</div>
+</section>
+<section id="example-random-walk">
+<h2><span class="section-number">15.4. </span>Example: Random walk<a class="headerlink" href="#example-random-walk" title="Link to this heading">#</a></h2>
+<p>One of the simplest random processes is the so called <em>random walk</em>. This process can arise in many ways. A standard example is the coin-flip casino game in which a gambler G starts with a fortune <span class="math notranslate nohighlight">\(a\)</span>. The croupier tosses a (possibly biased) coin. Each time heads appears, the gambler gets one euro (let us assume that the game takes place in Monte Carlo). If tails appears, the player loses one euro.</p>
+<p>The player’s fortune <span class="math notranslate nohighlight">\(S_n\)</span>  after <span class="math notranslate nohighlight">\(n\)</span> tosses is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-ce53918c-953a-428b-87cc-35a609365f4a">
+<span class="eqno">(15.5)<a class="headerlink" href="#equation-ce53918c-953a-428b-87cc-35a609365f4a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+S_n = a + \sum_{i=1}^n X_i,
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(X_i\)</span> is a random variable with possible outcomes <span class="math notranslate nohighlight">\(\{-1,1\}\)</span>. The probability mass function is <span class="math notranslate nohighlight">\(\{ p(X_i = -1) = p, p(X_i = 1) = 1-p \}\)</span>, where an unbiased coin would have <span class="math notranslate nohighlight">\(p=0.5\)</span>. The fortune <span class="math notranslate nohighlight">\(S_n\)</span> can be considered a random walk stochastic process. A number of different scenarios can be considered by imposing external constraints on the gambler’s fortune (such as the termination of the game when <span class="math notranslate nohighlight">\(S_n = 0\)</span>).</p>
+<div class="proof example admonition" id="example:simple-random-walk">
+<p class="admonition-title"><span class="caption-number">Example 15.3 </span> (Simple random walk)</p>
+<section class="example-content" id="proof-content">
+<p>In the following code example (again using the <code class="docutils literal notranslate"><span class="pre">StochasticProcess</span></code> class) we create a large number of such processes starting at <span class="math notranslate nohighlight">\(X_0 = 0\)</span>. Here we investigate the questions:</p>
+<ul class="simple">
+<li><p>What is the mean position of the random walk after <span class="math notranslate nohighlight">\(n\)</span> steps?</p></li>
+<li><p>What is the average distance traveled after <span class="math notranslate nohighlight">\(n\)</span> steps?</p></li>
+</ul>
+<p>Can you formulate these questions as some moments of a probability distribution?</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">randomwalk</span><span class="p">(</span><span class="n">SP</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">random_state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">history</span><span class="p">):</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">step</span>
+
+<span class="n">test</span><span class="o">=</span><span class="n">randomwalk</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">test</span><span class="o">.</span><span class="n">create_multiple_processes</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">test</span><span class="o">.</span><span class="n">plot_processes</span><span class="p">()</span>
+
+<span class="n">test</span><span class="o">.</span><span class="n">create_multiple_processes</span><span class="p">(</span><span class="mi">101</span><span class="p">,</span><span class="mi">5000</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">36</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span><span class="mi">64</span><span class="p">,</span><span class="mi">81</span><span class="p">,</span><span class="mi">100</span><span class="p">]:</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">sequence</span><span class="p">[</span><span class="n">step</span><span class="p">,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">std</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">sequence</span><span class="p">[</span><span class="n">step</span><span class="p">,:]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;After </span><span class="si">{</span><span class="n">step</span><span class="si">:</span><span class="s1">&gt;3</span><span class="si">}</span><span class="s1"> steps: mean = </span><span class="si">{</span><span class="n">mean</span><span class="si">:</span><span class="s1">5.3f</span><span class="si">}</span><span class="s1">, std = </span><span class="si">{</span><span class="n">std</span><span class="si">:</span><span class="s1">6.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>After   9 steps: mean = -0.021, std =   3.00
+After  16 steps: mean = -0.004, std =   4.02
+After  25 steps: mean = 0.017, std =   4.99
+After  36 steps: mean = -0.043, std =   6.01
+After  49 steps: mean = -0.015, std =   7.00
+After  64 steps: mean = 0.047, std =   8.01
+After  81 steps: mean = 0.112, std =   9.19
+After 100 steps: mean = 0.013, std =  10.27
+</pre></div>
+</div>
+<img alt="../../_images/f5fe6f32b3d67d9d82b21d3c2a8509de4c60d8ed918cb5ebd7def8d73078e554.png" src="../../_images/f5fe6f32b3d67d9d82b21d3c2a8509de4c60d8ed918cb5ebd7def8d73078e554.png" />
+</div>
+</div>
+<p>These walks can be made more general by allowing the steps <span class="math notranslate nohighlight">\(X_n\)</span> to have some continuous distribution on the reals, and it can be placed in a multi-dimensional space with both positions and steps in <span class="math notranslate nohighlight">\(\mathbb{R}^p\)</span>. A particularly well-known random walk process involves the motion of a particle in a fluid where it is subjected to multiple collisions. This gives a so called <em>Brownian motion</em>.</p>
+</section>
+<section id="special-case-gaussian-process">
+<h2><span class="section-number">15.5. </span>Special case: Gaussian process<a class="headerlink" href="#special-case-gaussian-process" title="Link to this heading">#</a></h2>
+<p>The joint density function for a multivariate normal distribution was presented in Eq. <a class="reference internal" href="../Reference/Statistics.html#equation-eq-statistics-multivariate-normal-pdf">(33.33)</a> for <span class="math notranslate nohighlight">\(\boldsymbol{x} = (x_1, x_2, \ldots, x_k)\)</span> corresponding to random variables <span class="math notranslate nohighlight">\(X_1, X_2, \ldots X_k\)</span>. This normal distribution is completely determined by its mean vector, <span class="math notranslate nohighlight">\(\boldsymbol{\mu}\)</span>, and covariance matrix, <span class="math notranslate nohighlight">\(\boldsymbol{\Sigma}\)</span>, where elements <span class="math notranslate nohighlight">\(\mu_i = \expect{X_i}\)</span> and <span class="math notranslate nohighlight">\(\Sigma_{ij} = \cov{X_i}{X_j}\)</span>.</p>
+<p>The multivariate normal distribution has the remarkable property that all marginal and conditional distributions are normal, and specified by the corresponding subsets of the mean vector and covariance matrix.</p>
+<p>A Gaussian process extends the multivariate normal distribution to a stochastic process with a continuous time index <span class="math notranslate nohighlight">\(T\)</span>.</p>
+<div class="proof definition admonition" id="definition:gaussian-process">
+<p class="admonition-title"><span class="caption-number">Definition 15.1 </span> (Gaussian process)</p>
+<section class="definition-content" id="proof-content">
+<p>A Gaussian process <span class="math notranslate nohighlight">\((X(t))_{t \geq 0}\)</span> is a stochastic process with a continuous-time index <span class="math notranslate nohighlight">\(t \in [0,\infty)\)</span> if each finite-dimensional vector of random variables</p>
+<div class="math notranslate nohighlight">
+\[
+X(t_1), X(t_2), \ldots, X(t_k)
+\]</div>
+<p>has a multivariate distribution for <span class="math notranslate nohighlight">\(0 \leq t_1 &lt; \ldots &lt; t_k\)</span>.</p>
+<p>A Gaussian process is completely determined by its <em>mean function</em> <span class="math notranslate nohighlight">\(\mu(X(t))\)</span> and <em>covariance function</em> <span class="math notranslate nohighlight">\(C(X(s), X(t))\)</span> for <span class="math notranslate nohighlight">\(s, t \geq 0\)</span>.</p>
+</section>
+</div><p>A Gaussian process is stationary if the mean function <span class="math notranslate nohighlight">\(\mu(X(t))\)</span> is constant for all <span class="math notranslate nohighlight">\(t\)</span> and if the covariance function fulfils <span class="math notranslate nohighlight">\(C(X(s), X(t)) = C(X(s+h), X(t+h))\)</span> with <span class="math notranslate nohighlight">\(h \geq 0\)</span>. Note that stationarity is not a requirement for a Gaussian process.</p>
+</section>
+<section id="solutions">
+<h2><span class="section-number">15.6. </span>Solutions<a class="headerlink" href="#solutions" title="Link to this heading">#</a></h2>
+<p>Here are answers and solutions to selected exercises.</p>
+<div class="solution dropdown admonition" id="solution:StochasticProcess:first-example">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:StochasticProcess:first-example"> Exercise 15.1</a></p>
+<section id="solution-content">
+<ul class="simple">
+<li><p>The initial variable is from a uniform distribution: <span class="math notranslate nohighlight">\(p_{X_0}(x_0) = \mathcal{U}\left( [0,1] \right)\)</span>.</p></li>
+<li><p>Variable <span class="math notranslate nohighlight">\(X_n\)</span> is obtained from
+<span class="math notranslate nohighlight">\(p_{X_n \vert X_0, X_1, \ldots, X_{n-1}} \left( x_n | x_0, x_1, \ldots, x_{n-1} \right) = \mathcal{U}\left( [0,1] \right) + \sum_{i=0}^{n-1} x_i\)</span></p></li>
+</ul>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:conditional-probabilities-stochastic-process">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:conditional-probabilities-stochastic-process"> Exercise 15.2</a></p>
+<section id="solution-content">
+<p>The histograms on the diagonal show the distributions <span class="math notranslate nohighlight">\(\p{X_n}\)</span> which are marginalized over <span class="math notranslate nohighlight">\(X_{n−1}, \ldots, X_0\)</span>. The off-diagonal plots show the joint distributions <span class="math notranslate nohighlight">\(\p{X_i,X_j}\)</span> which are marginalized over <span class="math notranslate nohighlight">\(X_{n−1}, \ldots, X_0\)</span> with <span class="math notranslate nohighlight">\(n=\max(i,j)\)</span> and excluding <span class="math notranslate nohighlight">\(X_{\min(i,j)}\)</span>. Note that these are distributions of random variables <span class="math notranslate nohighlight">\(X_n\)</span>, not random values <span class="math notranslate nohighlight">\(x_n\)</span>.</p>
+<p>More explicitly:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\p{X_0}\)</span> has no correlated random variables marginalized out since it starts the sequence.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\p{X_1}\)</span> is marginalized over <span class="math notranslate nohighlight">\(X_0\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\p{X_2}\)</span> is marginalized over <span class="math notranslate nohighlight">\(X_1,X_0\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\p{X_3}\)</span> is marginalized over <span class="math notranslate nohighlight">\(X_2,X_1,X_0\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\p{X_0,X_1}\)</span> has no correlated random variables marginalized out.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\p{X_1,X_2}\)</span> is marginalized over <span class="math notranslate nohighlight">\(X_0\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\p{X_2,X_3}\)</span> is marginalized over <span class="math notranslate nohighlight">\(X_0, X_1\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\p{X_1,X_3}\)</span> is marginalized over <span class="math notranslate nohighlight">\(X_0, X_2\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\p{X_0,X_3}\)</span> is marginalized over <span class="math notranslate nohighlight">\(X_1, X_2\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\p{X_0,X_2}\)</span> is marginalized over <span class="math notranslate nohighlight">\(X_1, X_3\)</span>.</p></li>
+</ul>
+<p>The dependence of <span class="math notranslate nohighlight">\(X_3\)</span> on <span class="math notranslate nohighlight">\(X_0\)</span> is not directly observed since <span class="math notranslate nohighlight">\(\pdf{X_3}{X_0}\)</span> is not shown. However, from Eq. <a class="reference internal" href="../Reference/Statistics.html#equation-eq-statistics-conditional-probability">(33.2)</a> we have that <span class="math notranslate nohighlight">\(\pdf{X_3}{X_0} = \p{X_0,X_3} / \p{X_0}\)</span>. And since <span class="math notranslate nohighlight">\(\p{X_0}\)</span> is uniform, we find that <span class="math notranslate nohighlight">\(\pdf{X_3}{X_0} \neq \p{X_3}\)</span>.
+In other words, <span class="math notranslate nohighlight">\(X_3\)</span> “remembers” <span class="math notranslate nohighlight">\(X_0\)</span>.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:construct-stochastic-process">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:construct-stochastic-process"> Exercise 15.3</a></p>
+<section id="solution-content">
+<p>Here’s one possible solution. It is a slightly more general random walk.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">exerciseSP</span><span class="p">(</span><span class="n">SP</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">random_state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">history</span><span class="p">):</span>
+    	<span class="k">return</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+</div>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./LearningFromData-content/StochasticProcesses"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="RootMCMC.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">14. </span>Overview of Part III: Sampling</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="BUQ/Metropolis_Poisson_example.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">15.7. </span>Metropolis-Hasting MCMC sampling of a Poisson distribution</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notation">15.1. Notation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">15.2. Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definition-of-a-stochastic-process">15.3. Definition of a stochastic process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-random-walk">15.4. Example: Random walk</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#special-case-gaussian-process">15.5. Special case: Gaussian process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">15.6. Solutions</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
