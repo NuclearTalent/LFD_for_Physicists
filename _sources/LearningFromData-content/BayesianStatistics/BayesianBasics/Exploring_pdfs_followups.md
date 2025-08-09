@@ -1,7 +1,7 @@
 (sec:ExploringPDFsFollowups)=
 # Follow-up questions and answers to the *Exploring PDFs* section.
 
-Make sure to look at [](./Exploring_pdfs.ipynb) first!
+Make sure to look at [](./Exploring_pdfs.ipynb)  first!
 
 
 ::::{admonition} Confidence intervals
