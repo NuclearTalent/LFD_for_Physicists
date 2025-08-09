@@ -1,0 +1,47 @@
+name: Build & publish Jupyter Book
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write   # needed for pushing to gh-pages
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source (public repo main)
+        uses: actions/checkout@v4
+
+      # Set up Conda from environment.yml (commit this file to the public repo)
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: latest
+          auto-update-conda: true
+          use-mamba: true
+          environment-file: environment_JB.yml      # or environment_JB.yml
+          activate-environment: 2025-book-env         # must match the env name below
+
+      # OPTIONAL: register a kernel if you execute notebooks during build
+      # (Requires 'ipykernel' in your environment.yml dependencies)
+      - name: Register Jupyter kernel
+        run: |
+          conda run -n 2025-book-env python -m ipykernel install \
+            --sys-prefix \
+            --name book-env \
+            --display-name "Python (2025-book-env)"
+
+      # Build the book
+      - name: Build book
+        run: conda run -n 2025-book-env jupyter-book build .
+
+      # Publish the built HTML in _build/html to gh-pages of THIS repo
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}   # same-repo push
+          publish_dir: ./_build/html
+          publish_branch: gh-pages
+          keep_files: true
