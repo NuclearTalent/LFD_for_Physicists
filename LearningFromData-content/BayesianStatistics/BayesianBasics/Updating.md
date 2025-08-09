@@ -1,0 +1,2 @@
+(sec:BayesianUpdating)=
+# Bayesian updating

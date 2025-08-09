@@ -1,0 +1,391 @@
+# Book settings
+title: Combined Learning from Data materials
+copyright : "2025"  # Copyright year to be placed in the footer
+author: Christian Forssén, Dick Furnstahl, and Daniel Phillips
+email: christian.forssen@chalmers.se
+logo: ./logo/logo-copilot.png
+description: >- # this means to ignore newlines
+  This book is a merged and enhanced version of lecture notes by Christian Forssén for courses
+  at taught at Chalmers University of Technology and Gothenburg University and lecture notes 
+  by Dick Furnstahl and Daniel Phillips for courses taught at Ohio State University and Ohio
+  University, respectively.
+only_build_toc_files: true
+
+execute:
+  execute_notebooks         : cache  # force  # off  # cache  # Whether to execute notebooks at build time. Must be one of ("auto", "force", "cache", "off")
+  cache                     : ""    # A path to the jupyter cache that will be used to store execution artifacs. Defaults to `_build/.jupyter_cache/`
+  exclude_patterns          : ["exercise_Jupyter_Python_intro_01.ipynb","demo-cnn.ipynb"]    # A list of patterns to *skip* in execution (e.g. a notebook that takes a really long time)
+  timeout                   : 100    # The maximum time (in seconds) each notebook cell is allowed to run.
+  run_in_temp               : false # If `True`, then a temporary directory will be created and used as the command working directory (cwd),
+                                    # otherwise the notebook's parent directory will be the cwd.
+  allow_errors              : false # If `False`, when a code cell raises an error the execution is stopped, otherwise all cells are always run.
+  stderr_output             : show  # One of 'show', 'remove', 'remove-warn', 'warn', 'error', 'severe'
+
+#######################################################################################
+# LaTeX-specific settings
+latex:
+  latex_engine: xelatex             # one of 'pdflatex', 'xelatex' (recommended for unicode), 'luatex', 'platex', 'uplatex'
+  latex_documents:
+    targetname: book.tex
+
+bibtex_bibfiles: 
+  - LearningFromData-content/References/references.bib
+
+bibtex_reference_style: 
+  - author_year
+
+#######################################################################################
+# Information about where the book exists on the web
+repository:
+  url                       : https://github.com/NuclearTalent/LFD_development  # The URL to your book's repository
+  path_to_book              : "./"  # A path to your book's folder, relative to the repository root.
+  branch                    : master  # Which branch of the repository should be used when creating links
+
+#######################################################################################
+# HTML-specific settings
+# Add GitHub buttons to your book
+# See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
+html:
+  use_multitoc_numbering    : true   # true means chapters are labeled consecutively through the book
+  favicon                   : ""  # A path to a favicon image
+  use_edit_page_button      : false  # Whether to add an "edit this page" button to pages. If `true`, repository information in repository: must be filled in
+  use_repository_button     : true  # Whether to add a link to your repository button
+  use_issues_button         : true  # Whether to add an "open an issue" button
+  extra_navbar              : Powered by <a href="https://jupyterbook.org">Jupyter Book</a>  # Will be displayed underneath the left navbar.
+  extra_footer              : ""  # Will be displayed underneath the footer.
+  google_analytics_id       : ""  # A GA id that can be used to track book views.
+  comments:
+    hypothesis              : false
+#  home_page_in_navbar       : true  # Whether to include your home page in the left Navigation Bar
+#  baseurl                   : ""  # The base URL where your book will be hosted. Used for creating image previews and social links. e.g.: https://mypage.com/mybook/    
+  extra_css:
+    - https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css
+
+#######################################################################################
+# Customize LaTeX via Sphinx
+# see also https://www.sphinx-doc.org/en/master/latex.html
+
+# old settings...
+#sphinx:
+#  config:
+#    bibtex_reference_style: label
+#    bibtex_default_style: 'alpha'  
+#    # By default MathJax version 2 is currently used. If you are using a lot of math, you may want to try using version 3, which claims to improve load speeds by 60 - 80%:  
+#    #mathjax_path: https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+#    mathjax_path: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+#    #myst_override_mathjax: true
+ 
+
+
+# from tif385   
+sphinx:
+  config:
+    html_css_files:
+      - coloredpages.css
+    html_js_files:
+      - custom.js    
+    mathjax3_config:
+      loader: {
+        load: ['[tex]/textmacros']
+      }
+      chtml: {
+        mtextInheritFont: True,
+      }
+      tex:
+        #tags: ams
+        #packages: ['base', 'ams']
+        packages: {'[+]': ['textmacros']}
+        macros:
+          "data": "\\mathcal{D}"
+          "pars": "\\boldsymbol{\\theta}"
+          "para": "\\theta"
+          "optpars": "\\pars^*"
+          "optpara": "\\para^*"
+          "prob": "\\mathbb{P}"
+          "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)",2]
+          "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)",3]
+          "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)",2]
+          "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)",3]
+          "p": ["p \\left( #1 \\right)",1]
+          "psub": ["p_{#1} \\left( #2 \\right)",2]
+          "futuredata": "\\mathcal{F}"
+          "expect": ["\\mathbb{E} \\left[ #1 \\right]",1]
+          "var": ["\\text{Var} \\left( #1 \\right)",1]
+          "std": ["\\text{Std} \\left( #1 \\right)",1]
+          "cov": ["\\text{Cov} \\left( #1, #2 \\right)",2]
+          "dmat": "\\boldsymbol{X}"
+          "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)",2]
+          "model": ["M\\left( #1 \\, ; \\, #2 \\right)",2]
+          "modeloutputs": "\\boldsymbol{M}"
+          "modeloutput": "M"
+          "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)",1]
+          "MLoutputs": "\\boldsymbol{\\hat{y}}"
+          "MLoutput": "\\hat{y}"
+          "outputs": "\\boldsymbol{y}"
+          "inputs": "\\boldsymbol{x}"
+          "targets": "\\boldsymbol{t}"
+          "weights": "\\boldsymbol{w}"
+          "testoutputs": "\\boldsymbol{y}^\\odot"
+          "testinputs": "\\boldsymbol{x}^\\odot"
+          "output": "y"
+          "inputt": "x"
+          "target": "t"
+          "weight": "w"
+          "testoutput": "y^\\odot"
+          "MLtestoutput": "\\hat{y}^\\odot"
+          "testinput": "x^\\odot"
+          "trainingdata": "\\mathcal{T}"
+          "LaTeX": "\\text{LaTeX}"
+          "residual": "\\epsilon"
+          "residuals": "\\boldsymbol{\\epsilon}"
+          "zeros": "\\boldsymbol{0}"
+          "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}"
+          "covpars": "\\boldsymbol{\\Sigma_{\\pars}}"
+          "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}"
+          "sigmas": "\\boldsymbol{\\sigma}"
+          "sigmai": "\\sigma_i"
+          "sigmares": "\\sigma_{\\epsilon}"
+          "cbar": "\\bar c"
+          "Lra": "\\Longrightarrow"
+          "yth": "y_{\\text{th}}"
+          "yexp": "y_{\\text{exp}}"
+          "ym": "y_{\\text{m}}"
+          "thetavec": "\\boldsymbol{\\theta}"
+          "parsLR": "\\boldsymbol{\\beta}"
+          "paraLR": "\\beta"
+          "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}"
+          "optparsLR": "\\parsLR^*"
+          "optparaLR": "\\paraLR^*"
+          "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}"
+          "alphavec": "\\boldsymbol{\\alpha}"
+          "muvec": "\\boldsymbol{\\mu}"
+          "phivec": "\\boldsymbol{\\phi}"
+          "betavec": "\\boldsymbol{\\beta}"
+          "sigmavec": "\\boldsymbol{\\sigma}"
+          "Sigmavec": "\\boldsymbol{\\Sigma}"
+          "thetavechat": "\\widehat\\thetavec"
+          "avec": "\\boldsymbol{a}"
+          "Bvec": "\\boldsymbol{B}"
+          "fvec": "\\boldsymbol{f}"
+          "mvec": "\\boldsymbol{m}"
+          "qvec": "\\boldsymbol{q}"
+          "rvec": "\\boldsymbol{r}"
+          "uvec": "\\boldsymbol{u}"
+          "wvec": "\\boldsymbol{w}"
+          "xvec": "\\boldsymbol{x}"
+          "yvec": "\\boldsymbol{y}"
+          "wt": "\\widetilde"
+          "nb": "n_b"
+          "mel": ["\\langle #1 | #2 | #3 \\rangle",3]
+          "qoi": "\\mathbf{Q}"
+    # tex macros have to be repeated as latex_elements below. BE CAREFUL.
+    # Had to make renewcommand for some of these. Might be DANGEROUS.
+    # From \residuals is for the BLR chapter. BE CAREFUL
+    latex_elements:
+        preamble: |
+          \newcommand{\data}{\mathcal{D}}
+          \newcommand{\pars}{\boldsymbol{\theta}}
+          \newcommand{\para}{\theta}
+          \newcommand{\optpars}{\pars^*}
+          \newcommand{\optpara}{\para^*}
+          \newcommand{\prob}{\mathbb{P}}
+          \newcommand{\cprob}[2]{\prob\left( #1 \, \left\vert \, #2 \right. \right)}
+          \newcommand{\cprobsub}[3]{\prob_{#1}\left( #2 \, \left\vert \, #3 \right. \right)}
+          \newcommand{\pdf}[2]{p \left( #1 \, \left\vert \, #2 \right. \right)}
+          \newcommand{\pdfsub}[3]{p_{#1} \left( #2 \, \left\vert \, #3 \right. \right)}
+          \newcommand{\p}[1]{p \left( #1 \right)}
+          \newcommand{\psub}[2]{p_{#1} \left( #2 \right)}
+          \newcommand{\futuredata}{\mathcal{F}}
+          \newcommand{\expect}[1]{\mathbb{E} \left[ #1 \right]}
+          \newcommand{\var}[1]{\text{Var} \left( #1 \right)}
+          \newcommand{\std}[1]{\text{Std} \left( #1 \right)}
+          \newcommand{\cov}[2]{\text{Cov} \left( #1, #2 \right)}
+          \newcommand{\dmat}{\boldsymbol{X}}
+          \renewcommand{\models}[2]{\boldsymbol{M}\left( #1 \, ; \, #2 \right)}
+          \newcommand{\model}[2]{M\left( #1 \, ; \, #2 \right)}
+          \newcommand{\modeloutputs}{\boldsymbol{M}}
+          \newcommand{\modeloutput}{M}
+          \newcommand{\MLmodel}[1]{\boldsymbol{\hat{y}}\left( #1 \right)}
+          \newcommand{\MLoutputs}{\boldsymbol{\hat{y}}}
+          \newcommand{\MLoutput}{\hat{y}}
+          \newcommand{\outputs}{\boldsymbol{y}}
+          \newcommand{\inputs}{\boldsymbol{x}}
+          \newcommand{\targets}{\boldsymbol{t}}
+          \newcommand{\weights}{\boldsymbol{w}}
+          \newcommand{\testoutputs}{\boldsymbol{y}^\odot}
+          \newcommand{\testinputs}{\boldsymbol{x}^\odot}
+          \renewcommand{\output}{y}
+          \newcommand{\inputt}{x}
+          \newcommand{\target}{t}
+          \newcommand{\weight}{w}
+          \newcommand{\testoutput}{y^\odot}
+          \newcommand{\MLtestoutput}{\hat{y}^\odot}
+          \newcommand{\testinput}{x^\odot}
+          \newcommand{\trainingdata}{\mathcal{T}}
+          \renewcommand{\LaTeX}{\text{LaTeX}}
+          \newcommand{\residual}{\epsilon}
+          \newcommand{\residuals}{\boldsymbol{\epsilon}}
+          \newcommand{\zeros}{\boldsymbol{0}}
+          \newcommand{\covres}{\boldsymbol{\Sigma_{\epsilon}}}
+          \newcommand{\covpars}{\boldsymbol{\Sigma_{\pars}}}
+          \newcommand{\tildecovpars}{\boldsymbol{\widetilde{\Sigma}_{\pars}}}
+          \newcommand{\sigmas}{\boldsymbol{\sigma}}
+          \newcommand{\sigmai}{\sigma_i}
+          \newcommand{\sigmares}{\sigma_{\epsilon}} 
+          \newcommand{\cbar}{\bar c}
+          \newcommand{\Lra}{\Longrightarrow}
+          \newcommand{\yth}{y_{\text{th}}}
+          \newcommand{\yexp}{y_{\text{exp}}}
+          \newcommand{\ym}{y_{\text{m}}}
+          \newcommand{\thetavec}{\pars}
+          \newcommand{\parsLR}{\boldsymbol{\beta}}
+          \newcommand{\paraLR}{\beta}
+          \newcommand{\covparsLR}{\boldsymbol{\Sigma_{\parsLR}}}
+          \newcommand{\optparsLR}{\parsLR^*}
+          \newcommand{\optparaLR}{\paraLR^*}
+          \newcommand{\tildecovparsLR}{\boldsymbol{\widetilde{\Sigma}_{\parsLR}}}
+          \newcommand{\alphavec}{\boldsymbol{\alpha}}
+          \newcommand{\muvec}{\boldsymbol{\mu}}
+          \newcommand{\phivec}{\boldsymbol{\phi}}
+          \newcommand{\betavec}{\boldsymbol{\beta}}
+          \newcommand{\sigmavec}{\boldsymbol{\sigma}}
+          \newcommand{\Sigmavec}{\boldsymbol{\Sigma}}
+          \newcommand{\thetavec}{\boldsymbol{\theta}}
+          \newcommand{\thetavechat}{\widehat\thetavec}
+          \newcommand{\avec}{\boldsymbol{a}}
+          \newcommand{\Bvec}{\boldsymbol{B}}
+          \newcommand{\fvec}{\boldsymbol{f}}
+          \newcommand{\mvec}{\boldsymbol{m}}
+          \newcommand{\qvec}{\boldsymbol{q}}
+          \newcommand{\rvec}{\boldsymbol{r}}
+          \newcommand{\uvec}{\boldsymbol{u}}
+          \newcommand{\wvec}{\boldsymbol{w}}
+          \newcommand{\xvec}{\boldsymbol{x}}
+          \newcommand{\yvec}{\boldsymbol{y}}
+          \newcommand{\wt}{\widetilde}
+          \newcommand{\nb}{n_b}
+          \newcommand{\mel}[3]{\langle #1 | #2 | #3 \rangle}
+          \newcommand{\qoi}{\mathbf{Q}}
+          
+
+          
+
+          
+
+          
+    nb_custom_formats:
+      .Rmd:
+        - jupytext.reads
+        - fmt: Rmd
+  extra_extensions:
+    - sphinx_proof
+    - sphinx_exercise
+    # see https://sphinx-proof.readthedocs.io/en/latest/index.html
+    # see https://ebp-sphinx-exercise.readthedocs.io/en/latest/index.html
+    #- sphinx_inline_tabs
+    # https://jupyterbook.org/advanced/pdf.html#pdf-latex
+
+    # https://jupyterbook.org/advanced/pdf.html#pdf-latex
+    #CF removed. Tope level is chapter.
+    #latex_toplevel_sectioning: 'part'
+    
+#######################################################################################
+# Parse and render settings
+parse:
+  myst_url_schemes          : [mailto, http, https]  # URI schemes that will be recognised as external URLs in Markdown links (kept from CFs config)
+  myst_substitutions:
+    sub_extra: "This section contains extra material that is not included in the TIF285 course."  
+    #sub_extra_admonition: ""
+    sub_extra_tif385_admonition: ""
+    sub_extra_admonition: |
+        ::::{admonition} extra material
+        :class: danger
+        {{ sub_extra  }}
+        ::::
+    sub_duplicate_admonition: |
+        ::::{admonition} duplicate material
+        :class: danger
+        This section contains duplicated material (to be removed).
+        ::::
+    sub_Statistics_notation: |
+        | Quantity | General notation |
+        | :------ | :------: |
+        | Conditional probability | $\cprob{A}{B}$ |
+        | Covariance | $\cov{X}{Y}$ |
+        | Distribution function | $P(x)$ |
+        | Empty set | $\emptyset$ |
+        | Event | $A$ |
+        | Expectation value | $\expect{X}$ |
+        | Likelihood function | $\mathcal{L}(\para)$
+        | Model parameters | $\para$
+        | Probability density function | $\p{x}$ |
+        | Probability mass function | $\p{x}$ |
+        | Probability measure | $\prob$ |
+        | Random variable | $X$ |
+        | Sample space | $S$ |
+        | Standard deviation | $\std{X}$ |
+        | Variance | $\var{X}$ |
+    sub_OverviewModeling_notation: |
+        | Quantity | General notation |
+        | :------ | :------: |
+        | Dataset | $\data$ |
+        | Dependent or response variables (output) | $\outputs{}$ |
+        | Independent or predictor variables (input) | $\inputs{}$ |
+        | Model | $\model{\pars}{\inputs}$ |
+        | Model parameters | $\pars$ |
+        | Parameter optimum | $\optpars$ |
+    sub_StochasticProcesses_notation: |
+        | English | General notation |
+        | :------ | :------: |
+        | Acceptance probability | $A$ |
+        | Limiting distribution | |
+        | Markov chain | |
+        | Proposal distribution | $S$ |
+        | Random walk | |
+        | Reversibility | |
+        | Stationary distribution (or equilibrium distribution) | |
+        | Stochastic process | |
+        | Transition density| $T$ | 
+    sub_MachineLearning_notation: |
+        | Quantity | General notation |
+        | :------ | :------: |
+        | Activation | $z$ |
+        | Activation function | $f(z)$ |
+        | Bias (term) | ${b}$ or $\weight_0$ |
+        | Cost function | $C(\MLoutputs, \outputs)$ or alternatively $C(\pars)$ |
+        | Cross validation | CV |
+        | Error function | $E(\MLoutputs, \outputs)$ |
+        | False negative | FN |
+        | False positive | FP |
+        | Features | $\inputs$ |
+        | Machine learning model | $\MLmodel{\inputs}$ |
+        | Targets | $\targets$ or $\outputs$|
+        | Test input | $\testinputs$|
+        | Test output | $\testoutputs$|
+        | Training data | $\trainingdata = \left\{ (\inputs_i, \outputs_i) \right\}_{i=1}^{N_\mathrm{train}}$ or $\data_\mathrm{train}$ |
+        | True negative | TN |
+        | True positive | TP |
+        | Validation data | $\data_\mathrm{val}$ |
+        | Weights | $\weights$ |
+
+  myst_enable_extensions:  # default extensions to enable in the myst parser. The original config had only ["dollarmath", "amsmath","html_image"]. See https://myst-parser.readthedocs.io/en/latest/using/syntax-optional.html
+    - amsmath
+    - colon_fence
+    - deflist
+    - dollarmath
+    - html_admonition  # removed     - html
+    - html_image
+    - linkify
+    - replacements
+    - smartquotes
+    - substitution
+    - tasklist  # This enables checkboxes
+
+
+#######################################################################################
+# Launch button settings
+#launch_buttons:
+#  #colab_url                 : "https://colab.research.google.com"
+#  notebook_interface        : classic  # The interface interactive links will activate ["classic", "jupyterlab"]
+#  binderhub_url             : https://mybinder.org  # The URL of the BinderHub (e.g., https://mybinder.org)
+#  thebe                     : false  # Add a thebe button to pages (requires the repository to run on Binder)

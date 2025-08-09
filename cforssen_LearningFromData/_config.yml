@@ -1,0 +1,313 @@
+# Book settings
+title: Bayesian inference and machine learning
+author: Christian Forssén
+email: christian.forssen@chalmers.se
+logo: ./fig/logo.png
+description: >- # this means to ignore newlines
+  This book comprises the lecture notes for the course TIF385 Bayesian
+  inference and machine learning taught at Chalmers University of Technology.
+only_build_toc_files: true
+
+
+execute:
+  execute_notebooks         : auto  # Whether to execute notebooks at build time. Must be one of ("auto", "force", "cache", "off")
+  cache                     : ""    # A path to the jupyter cache that will be used to store execution artifacs. Defaults to `_build/.jupyter_cache/`
+  exclude_patterns          : ["exercise_Jupyter_Python_intro_01.ipynb","demo-cnn.ipynb"]    # A list of patterns to *skip* in execution (e.g. a notebook that takes a really long time)
+  timeout                   : 100    # The maximum time (in seconds) each notebook cell is allowed to run.
+  run_in_temp               : false # If `True`, then a temporary directory will be created and used as the command working directory (cwd),
+                                    # otherwise the notebook's parent directory will be the cwd.
+  allow_errors              : false # If `False`, when a code cell raises an error the execution is stopped, otherwise all cells are always run.
+  stderr_output             : remove-warn  # One of 'show', 'remove', 'remove-warn', 'warn', 'error', 'severe'
+
+#######################################################################################
+# LaTeX-specific settings
+latex:
+  latex_engine: xelatex             # one of 'pdflatex', 'xelatex' (recommended for unicode), 'luatex', 'platex', 'uplatex'
+  latex_documents:
+    targetname: book.tex
+
+bibtex_bibfiles:
+  - ./content/References/references.bib
+
+bibtex_reference_style:
+  - author_year
+
+#######################################################################################
+# Information about where the book exists on the web
+repository:
+  url                       : https://gitlab.com/cforssen/tif385-book  # The URL to your book's repository
+  path_to_book              : "./"  # A path to your book's folder, relative to the repository root.
+  branch                    : master  # Which branch of the repository should be used when creating links
+
+#######################################################################################
+# HTML-specific settings
+# Add GitHub buttons to your book
+# See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
+html:
+  use_multitoc_numbering    : true
+  favicon                   : ""  # A path to a favicon image
+  use_edit_page_button      : false  # Whether to add an "edit this page" button to pages. If `true`, repository information in repository: must be filled in
+  use_repository_button     : true  # Whether to add a link to your repository button
+  use_issues_button         : true  # Whether to add an "open an issue" button
+  extra_navbar              : Powered by <a href="https://jupyterbook.org">Jupyter Book</a>  # Will be displayed underneath the left navbar.
+  extra_footer              : ""  # Will be displayed underneath the footer.
+  google_analytics_id       : ""  # A GA id that can be used to track book views.
+  comments:
+    hypothesis              : false
+#  home_page_in_navbar       : true  # Whether to include your home page in the left Navigation Bar
+#  baseurl                   : ""  # The base URL where your book will be hosted. Used for creating image previews and social links. e.g.: https://mypage.com/mybook/    
+
+#######################################################################################
+# Customize LaTeX via Sphinx
+# see also https://www.sphinx-doc.org/en/master/latex.html
+
+# old settings...
+#sphinx:
+#  config:
+#    bibtex_reference_style: label
+#    bibtex_default_style: 'alpha'  
+#    # By default MathJax version 2 is currently used. If you are using a lot of math, you may want to try using version 3, which claims to improve load speeds by 60 - 80%:  
+#    #mathjax_path: https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+#    mathjax_path: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+#    #myst_override_mathjax: true
+ 
+sphinx:
+  config:
+    # From "residuals" is for the BLR chapter. REVISIT and SEE BELOW
+    mathjax3_config:
+      tex:
+        macros:
+          "para": "\\theta"
+          "pars": "\\boldsymbol{\\theta}"
+          "optpara": "\\para^*"
+          "optpars": "\\pars^*"
+          "prob": "\\mathbb{P}"
+          "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)",2]
+          "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)",3]
+          "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)",2]
+          "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)",3]
+          "p": ["p \\left( #1 \\right)",1]
+          "psub": ["p_{#1} \\left( #2 \\right)",2]
+          "data": "\\mathcal{D}"
+          "futuredata": "\\mathcal{F}"
+          "expect": ["\\mathbb{E} \\left[ #1 \\right]",1]
+          "var": ["\\text{Var} \\left( #1 \\right)",1]
+          "std": ["\\text{Std} \\left( #1 \\right)",1]
+          "cov": ["\\text{Cov} \\left( #1, #2 \\right)",2]
+          "dmat": "\\boldsymbol{X}"
+          "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)",2]
+          "model": ["M\\left( #1 \\, ; \\, #2 \\right)",2]
+          "modeloutputs": "\\boldsymbol{M}"
+          "modeloutput": "M"
+          "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)",1]
+          "MLoutputs": "\\boldsymbol{\\hat{y}}"
+          "MLoutput": "\\hat{y}"
+          "outputs": "\\boldsymbol{y}"
+          "inputs": "\\boldsymbol{x}"
+          "targets": "\\boldsymbol{t}"
+          "weights": "\\boldsymbol{w}"
+          "testoutputs": "\\boldsymbol{y}^\\odot"
+          "testinputs": "\\boldsymbol{x}^\\odot"
+          "output": "y"
+          "inputt": "x"
+          "target": "t"
+          "weight": "w"
+          "testoutput": "y^\\odot"
+          "MLtestoutput": "\\hat{y}^\\odot"
+          "testinput": "x^\\odot"
+          "trainingdata": "\\mathcal{T}"
+          "residual": "\\epsilon"
+          "residuals": "\\boldsymbol{\\epsilon}"
+          "zeros": "\\boldsymbol{0}"
+          "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}"
+          "covpars": "\\boldsymbol{\\Sigma_{\\pars}}"
+          "covrespars": "\\boldsymbol{\\Sigma_{\\residuals,\\pars}}"
+          "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}"
+          "sigmas": "\\boldsymbol{\\sigma}"
+          "sigmai": "\\sigma_i"
+          "sigmares": "\\sigma_{\\epsilon}"
+    # tex macros have to be repeated as latex_elements below. BE CAREFUL.
+    # Had to make renewcommand for some of these. Might be DANGEROUS.
+    # From \residuals is for the BLR chapter. BE CAREFUL
+    latex_elements:
+        preamble: |
+          \newcommand{\data}{\mathcal{D}}
+          \newcommand{\pars}{\boldsymbol{\theta}}
+          \newcommand{\para}{\theta}
+          \newcommand{\optpars}{\pars^*}
+          \newcommand{\optpara}{\para^*}
+          \newcommand{\prob}{\mathbb{P}}
+          \newcommand{\cprob}[2]{\prob\left( #1 \, \left\vert \, #2 \right. \right)}
+          \newcommand{\cprobsub}[3]{\prob_{#1}\left( #2 \, \left\vert \, #2 \right. \right)}
+          \newcommand{\pdf}[2]{p \left( #1 \, \left\vert \, #2 \right. \right)}
+          \newcommand{\pdfsub}[3]{p_{#1} \left( #2 \, \left\vert \, #3 \right. \right)}
+          \newcommand{\p}[1]{p \left( #1 \right)}
+          \newcommand{\psub}[2]{p_{#1} \left( #2 \right)}
+          \newcommand{\futuredata}{\mathcal{F}}
+          \newcommand{\expect}[1]{\mathbb{E} \left[ #1 \right]}
+          \newcommand{\var}[1]{\text{Var} \left( #1 \right)}
+          \newcommand{\std}[1]{\text{Std} \left( #1 \right)}
+          \newcommand{\cov}[2]{\text{Cov} \left( #1, #2 \right)}
+          \newcommand{\dmat}{\boldsymbol{X}}
+          \renewcommand{\models}[2]{\boldsymbol{M}\left( #1 \, ; \, #2 \right)}
+          \newcommand{\model}[2]{M\left( #1 \, ; \, #2 \right)}
+          \newcommand{\modeloutputs}{\boldsymbol{M}}
+          \newcommand{\modeloutput}{M}
+          \newcommand{\MLmodel}[1]{\boldsymbol{\hat{y}}\left( #1 \right)}
+          \newcommand{\MLoutputs}{\boldsymbol{\hat{y}}}
+          \newcommand{\MLoutput}{\hat{y}}
+          \newcommand{\outputs}{\boldsymbol{y}}
+          \newcommand{\inputs}{\boldsymbol{x}}
+          \newcommand{\targets}{\boldsymbol{t}}
+          \newcommand{\weights}{\boldsymbol{w}}
+          \newcommand{\testoutputs}{\boldsymbol{y}^\odot}
+          \newcommand{\testinputs}{\boldsymbol{x}^\odot}
+          \renewcommand{\output}{y}
+          \newcommand{\inputt}{x}
+          \newcommand{\target}{t}
+          \newcommand{\weight}{w}
+          \newcommand{\testoutput}{y^\odot}
+          \newcommand{\MLtestoutput}{\hat{y}^\odot}
+          \newcommand{\testinput}{x^\odot}
+          \newcommand{\trainingdata}{\mathcal{T}}
+          \renewcommand{\LaTeX}{\text{LaTeX}}
+          \newcommand{\residual}{\epsilon}
+          \newcommand{\residuals}{\boldsymbol{\epsilon}}
+          \newcommand{\zeros}{\boldsymbol{0}}
+          \newcommand{\covres}{\boldsymbol{\Sigma_{\epsilon}}}
+          \newcommand{\covpars}{\boldsymbol{\Sigma_{\pars}}}
+          \newcommand{\covrespars}{\boldsymbol{\Sigma_{\residuals,\pars}}}
+          \newcommand{\tildecovpars}{\boldsymbol{\widetilde{\Sigma}_{\pars}}}
+          \newcommand{\sigmas}{\boldsymbol{\sigma}}
+          \newcommand{\sigmai}{\sigma_i}
+          \newcommand{\sigmares}{\sigma_{\epsilon}} 
+    nb_custom_formats:
+      .Rmd:
+        - jupytext.reads
+        - fmt: Rmd
+  extra_extensions:
+    - sphinx_proof
+    - sphinx_exercise
+    # see https://sphinx-proof.readthedocs.io/en/latest/index.html
+    # see https://ebp-sphinx-exercise.readthedocs.io/en/latest/index.html
+    #- sphinx_inline_tabs
+    # https://jupyterbook.org/advanced/pdf.html#pdf-latex
+
+    
+#######################################################################################
+# Parse and render settings
+parse:
+  myst_url_schemes: [mailto, http, https]  # URI schemes that will be recognised as external URLs in Markdown links (kept from CFs config)
+  myst_substitutions:
+    sub_extra: "This section contains extra material."  
+    sub_extra_tif385: "This section contains extra material that is not included in the TIF385 course."  
+    sub_extra_admonition: |
+        ::::{admonition} extra material
+        :class: danger
+        {{ sub_extra  }}
+        ::::
+    sub_extra_tif385_admonition: |
+        ::::{admonition} extra material
+        :class: danger
+        {{ sub_extra_tif385  }}
+        ::::
+    sub_duplicate_admonition: |
+        ::::{admonition} duplicate material
+        :class: danger
+        This section contains duplicated material (to be removed).
+        ::::
+    sub_Statistics_notation: |
+        | English | Swedish | General notation |
+        | :------ | :------ | :------: |
+        | Conditional probability | Betingad sannolikhet | $\cprob{A}{B}$ |
+        | Covariance | Kovarians | $\cov{X}{Y}$ |
+        | Distribution function | Fördelningsfunktion | $P(x)$ |
+        | Empty set | Tomma mängden | $\emptyset$ |
+        | Event | Händelse | $A$ |
+        | Expectation value | Väntevärde | $\expect{X}$ |
+        | Independent and identically distributed | Oberoende och identiskt fördelade | i.i.d. |
+        | Likelihood function | Trolighetsfunktion | $\mathcal{L}(\theta)$
+        | Model parameters | Modellparametrar | $\para$
+        | Outcome | Utfall |
+        | Posterior distribution | À-posteriorifördelning | 
+        | Prior distribution | À-priorifördelning | 
+        | Probability density function | Täthetsfunktion | $\p{x}$ |
+        | Probability mass function | Frekvensfunktion | $\p{x}$ |
+        | Probability measure | Sannolikhetsmått | $\prob$ |
+        | Random variable | Slumpvariabel | $X$ |
+        | Sample space | Utfallsrum | $S$ |
+        | Standard deviation | Standardavvikelse | $\std{X}$ |
+        | Variance | Varians | $\var{X}$ |
+    sub_OverviewModeling_notation: |
+        | English | Swedish | General notation |
+        | :------ | :------ | :------: |
+        | Dataset | Datamängd | $\data$ |
+        | Dependent or response variables (output) | Beroende eller responsvariabler (utdata) | $\outputs{}$ |
+        | Gradient descent | Gradientstegsoptimering |  |
+        | Independent or predictor variables (input) | Oberoende eller prediktorvariabler (indata) | $\inputs{}$ |
+        | Model | Modell | $\model{\pars}{\inputs}$ |
+        | Model parameters | Modellparametrar | $\pars$ |
+        | Parameter optimum | Parameteroptimum | $\optpars$ |
+        | Regression analysis | Regressionsanalys |  |
+    sub_StochasticProcesses_notation: |
+        | English | Swedish | General notation |
+        | :------ | :------ | :------: |
+        | Acceptance probability | Acceptanssannolikhet | $A$ |
+        | Limiting distribution | Gränsfördelning | |
+        | Markov chain | Markovkedja | |
+        | Proposal distribution | Stegförslagsfördelning | $S$ |
+        | Random walk | Slumpvandring | |
+        | Reversibility | Reversibilitet (vändbarhet) | |
+        | Stationary distribution (or equilibrium distribution) | Stationärfördelning (eller jämviktsfördelning)| |
+        | Stochastic process | Stokastisk process | |
+        | Transition density| Övergångsdensitet | $T\left( x_i, x_j \right) \equiv \p {x_j \vert x_i}$ | 
+    sub_MachineLearning_notation: |
+        | English | Swedish | General notation |
+        | :------ | :------ | :------: |
+        | Activation | Aktivering | $z$ |
+        | Activation function | Aktiveringsfunktion | $f(z)$ |
+        | Bias (term) | Bias (konstant term i modell) | ${b}$ eller $\weight_0$ |
+        | Bias (error) | Metodiskt (systematiskt) fel |  |
+        | Bias-variance-tradeoff  | Systematiska-fel-eller-prediktionsvarians |  |
+        | Confusion matrix  | Sanningsmatris |  |
+        | Cost function | Kostnadsfunktion |  $C(\MLoutputs, \outputs)$ or alternatively $C(\pars)$ |
+        | Cross validation | Korsvalidering | CV |
+        | Data bias | Snedvriden data |  |
+        | Error function | Felmåttsfunktion |  $E(\MLoutputs, \outputs)$ |
+        | False negative | Falskt negativ | FN |
+        | False positive | Falskt positiv | FP |
+        | Features | Särdrag / prediktorer | $\inputs$ |
+        | $k$ fold cross validation | $k$-faldig korsvalidering |  |
+        | Learning algorithm | Inlärningsalgoritm |  |
+        | Learning rate | Inlärningshastighet | $\eta$ |
+        | Machine learning model | Maskininlärningsmodell | $\MLmodel{\inputs}$ |
+        | Regularization | Regularisering |  |
+        | Targets | Måldata | $\targets$ or $\outputs$|
+        | Test input | Test indata | $\testinputs$|
+        | Test output | Test utdata | $\testoutputs$|
+        | Training data | Träningsdata | $\trainingdata = \left\{ (\inputs_i, \outputs_i) \right\}_{i=1}^{N_\mathrm{train}}$ or $\data_\mathrm{train}$ |
+        | True negative | Sant negativ | TN |
+        | True positive | Sant positiv | TP |
+        | Validation data | Valideringsdata | $\data_\mathrm{val}$ |
+        | Weights | Vikter | $\weights$ |
+        
+  myst_enable_extensions:  # default extensions to enable in the myst parser. The original config had only ["dollarmath", "amsmath","html_image"]. See https://myst-parser.readthedocs.io/en/latest/using/syntax-optional.html
+    - amsmath
+    - colon_fence
+    - deflist
+    - dollarmath
+    - html_admonition
+    - html_image
+    - linkify
+    - replacements
+    - smartquotes
+    - substitution
+
+#######################################################################################
+# Launch button settings
+#launch_buttons:
+#  #colab_url                 : "https://colab.research.google.com"
+#  notebook_interface        : classic  # The interface interactive links will activate #["classic", "jupyterlab"]
+#  thebe                     : false  # Add a thebe button to pages (requires the repository to run on Binder)
+
+#binderhub_url             : https://mybinder.org  # The URL of the BinderHub (e.g., https://mybinder.org)
