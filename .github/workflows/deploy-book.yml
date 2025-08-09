@@ -14,6 +14,15 @@ jobs:
       - name: Checkout source (public repo main)
         uses: actions/checkout@v4
 
+      # Cache the downloaded Conda packages (safe & effective)
+      - name: Cache conda packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CONDA_PKGS_DIRS }}
+          key: ${{ runner.os }}-conda-pkgs-${{ hashFiles('environment.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-pkgs-
+
       # Set up Conda from environment.yml (commit this file to the public repo)
       - name: Set up Conda
         uses: conda-incubator/setup-miniconda@v2
