@@ -1,3 +1,3 @@
-# About LFD development
+# About LFD for Physicists
 
-Repository for developing Learning from Data material
+Repository for distributing Learning from Data for Physicsists material
