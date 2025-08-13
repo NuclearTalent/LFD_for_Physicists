@@ -1,5 +1,5 @@
 (sec:Invitation)=
-# Invitation
+# Invitation to inductive inference
 
 ## Demolition derbies, cows, and crocodiles
 
