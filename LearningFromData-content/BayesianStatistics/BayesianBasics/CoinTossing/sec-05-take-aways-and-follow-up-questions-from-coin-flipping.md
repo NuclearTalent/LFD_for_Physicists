@@ -65,7 +65,7 @@ So they are not different, as long as the tosses are independent.
     Suppose $D_1$ was 0, then $[p(\text{tails}|p_h,I)]^N \propto (1-p_h)^N p(p_h|I) \overset{N\rightarrow\infty}{\longrightarrow} \delta(p_h)$ (i.e., the posterior is only at $p_h=0$!). Similarly, if $D_1$ was 1, then $[p(\text{tails}|p_h,I)]^N \propto p_h^N p(p_h|I) \overset{N\rightarrow\infty}{\longrightarrow} \delta(1-p_h)$ (i.e., the posterior is only at $p_h=1$.)
 
     More generally, this bootstrapping procedure would cause the posterior to get narrower and narrower with each iteration so you think you are getting more and more certain, with no new data!
-    ```{image} ./figs/bootstrapping_cartoon.png
+    ```{image} ../figs/bootstrapping_cartoon.png
     :alt: bootstrapping
     :class: bg-primary
     :width: 300px
