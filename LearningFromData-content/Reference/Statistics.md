@@ -265,7 +265,7 @@ Probability densities are usually introduced in the context of random variables 
 ```
 
 
-
+(sec:ExpectationValuesAndMoments)=
 ### Expectation values and moments
 
 ```{prf:definition} Expectation value
@@ -314,7 +314,7 @@ for a discrete distribution.
 Qualitatively it represents the average value of the
 PDF and is therefore sometimes called the expectation value of $p(x)$.
 
-
+(sec:CentralMoments)=
 ### Central moments: Variance and Covariance
 
 Another special case of expectation values is the set of **central moments**, with the $n$-th central moment defined as
