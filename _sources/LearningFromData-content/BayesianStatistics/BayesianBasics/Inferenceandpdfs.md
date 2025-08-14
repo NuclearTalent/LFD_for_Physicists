@@ -70,15 +70,19 @@ and product rules. A proof that the Sum and Product rules follow in any consiste
 ### Sum rule
 If the set $\{x_i\}$ is *exhaustive* and *exclusive*
 
-\begin{equation}
+$$
    \sum_i \cprob{x_i}{I} = 1,
-\end{equation}
+$$ (eq:discrete_sum_rule)
 
 i.e., the sum of the probabilities of all possible outcomes is equal
 to one. In quantum mechanics we are used to this as the outcome of
 summing over a complete, orthonormal set of states, and indeed, in
 that case the basis includes all possible values (it's complete), and
 there is no overlap between its members (they are orthogonal). 
+
+:::{note}
+In {eq}`eq:discrete_sum_rule` we include $I$ (for "Information") generically as the quantities or statements that the probability of $x_i$ is contingent on. We use $I$ to avoid having to specify explicitly all the details, but we should remember that these probabilities (and probability densities introduced below) are always conditional on some information.
+:::
 
 The sum rule implies a key tool in the Bayesian's arsenal,
 _marginalization_ 
@@ -211,16 +215,16 @@ where $\p{x}$ is the PDF for the continuous variable $x$.
 
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
-What is the unit of $|\psi(\xvec)|^2$ in three dimensions?
+What is the unit of $p(\xvec)$ (or $|\psi(\xvec)|^2$) in three dimensions (assuming $\xvec$ is a vector of length)?
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-We can use the normalization equation:
+We can use the normalization equation (which is the sum rule):
 
 $$
-  \int d^3x\, |\psi(\xvec)|^2 = 1 ,
+  \int d^3x\, p(\xvec) = 1 ,
 $$ 
 
-which is dimensionless on the right side, so $|\psi(\xvec)|^2$ is the inverse unit of $d^3x$, or $1/\text{length}^3$.
+which is dimensionless on the right side, so the unit of $p(\xvec)$ (or $|\psi(\xvec)|^2$) is the inverse unit of $d^3x$, or $1/\text{length}^3$. Note that if $\xvec$ represented a different quantity, the unit of $p(\xvec)$ would differ accordingly.
 :::
 ::::
 
@@ -331,6 +335,84 @@ small number of samples.
 We have put on the table the axioms of probability theory and some of their consequences, in particular Bayes' theorem. 
 Before looking further at concrete applications of Bayesian inference, we provide further insight into Bayes' theorem in {ref}`sec:MoreBayesTheorem` and introduce some additional ingredients for Bayesian inference in {ref}`sec:DataModelsPredictions`. The latter include the idea of a statistical model, how to predict future data conditioned on (i.e., given) past data and background information (the posterior predictive distribution), and Bayesian parameter estimation.
 
-In Appendix A there is a summary and further details on {ref}`sec:Statistics`.
+In Appendix A there is a summary and further details on {ref}`sec:Statistics`. Particularly important are {ref}`sec:ExpectationValuesAndMoments` and {ref}`sec:CentralMoments`; we summarize the key discrete and continuous definitions here.
+
+:::{admonition} Brief summary of expectation values and moments
+The *expectation value* of a function $h$ of the random variable $X$ with respect to its distribution $p(x_i)$ (a PMF) or $p(x)$ (a PDF) is
+
+$$
+\mathbb{E}_{p}[h] =  \sum_{i}\! h(x_i)p(x_i) \quad\Longrightarrow\quad
+  \mathbb{E}_p[h] = \int_{-\infty}^\infty \! h(x)p(x)\,dx .
+$$
+
+The $p$ subscript is usually omitted. *Moments* correspond to $h(x) = x^n$, with $n=0$ giving 1 (this is the normalization condition) and the mean $\mu$ by $n=1$:
+
+$$
+\mathbb{E}[X] \equiv \mu =  \sum_{i}\! x_ip(x_i) \quad\Longrightarrow\quad
+  \mathbb{E}[X] \equiv \mu = \int_{-\infty}^\infty \! xp(x)\,dx .
+$$
+
+The variance and covariance are moments with respect to the mean for one and two random variables (we give only the continuous version here):
+
+$$\begin{align}
+\text{Var}(X) &\equiv \sigma^2  \equiv \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right)^2 \right] \\
+\text{Cov}(X,Y) &\equiv \sigma_{XY}^2 \equiv \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right) \left( Y - \mathbb{E}[Y] \right)  \right].
+\end{align}$$
+
+The standard deviation $\sigma$ is simply the square root of the variance $\sigma^2$. 
+The **correlation coefficient** of $X$ and $Y$ (for non-zero variances) is 
+
+$$
+\rho_{XY} \equiv \frac{\text{Cov}(X,Y)}{\sqrt{\text{Var}(X)\text{Var}(Y)}},
+$$
+:::
+
+
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+Show that we can also write
+
+$$
+\sigma^2 = \mathbb{E}[X^2]  - \mathbb{E}[X]^2
+$$
+:::{admonition} Answer 
+:class: dropdown, my-answer 
+$$\begin{align}
+\sigma^2 &= \int_{-\infty}^\infty (x-\mathbb{E}[X] )^2 p(x)dx\\
+&=  \int_{-\infty}^\infty \left(x^2 - 2 x \mathbb{E}[X] +\mathbb{E}[X]^2\right)p(x)dx \\
+& =  \mathbb{E}[X^2]  - 2 \mathbb{E}[X] \mathbb{E}[X]  + \mathbb{E}[X]^2 \\
+&=  \mathbb{E}[X^2]  - \mathbb{E}[X]^2
+\end{align}$$
+
+Make sure you can justify each step.
+:::
+::::
+
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+Show that the mean and variance of the normalized Gaussian distribution
+
+$$
+p \longrightarrow \mathcal{N}(x | \mu,\sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} \exp{\Bigl(-\frac{(x-\mu)^2}{2\sigma^2}\Bigr)},
+$$
+
+are $\mu$ and $\sigma^2$, respectively.
+:::{admonition} Answer 
+:class: dropdown, my-answer 
+Just do the integrals!
+
+$$\begin{align}
+  \mu &= \int_{-\infty}^\infty \! x \frac{1}{\sigma\sqrt{2\pi}} \exp{\Bigl(-\frac{(x-\mu)^2}{2\sigma^2}\Bigr)}\,dx = \mu \quad\checkmark \\
+  \sigma^2 &= \int_{-\infty}^\infty (x-\mu )^2 
+  \frac{1}{\sigma\sqrt{2\pi}} \exp{\Bigl(-\frac{(x-\mu)^2}{2\sigma^2}\Bigr)} \,dx
+  = \sigma^2 \quad\checkmark
+\end{align}$$
+
+In doing these integrals, simplify by changing the integration variable to $x' = x-\mu$ and use that the distribution is normalized (integrates to one) and that integrals of odd integrands are zero.
+:::
+::::
+
+
+
 
 

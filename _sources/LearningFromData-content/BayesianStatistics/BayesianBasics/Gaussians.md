@@ -332,9 +332,9 @@ $p(p_h|D) = p(D|p_h)p(p_h)$ $\longrightarrow$ `scipy.stats.beta.pdf(p_h,1+R,1+N-
 
 
 
-## Bayesian degree of belief intervals and frequentist confidence intervals
+## Bayesian credible intervals and frequentist confidence intervals
 
-In class on Wednesday we also talked about the difference between the
+We already commented on the difference between the
 68% degree of belief interval for the most likely value (in that case
 the bias weighting of the coin) and a frequentist $1 \sigma$ confidence
 interval.

@@ -3,10 +3,10 @@
 
 In this chapter we have a hands-on look at one- and two-dimensional probabilitiy distributions.
 
-* [](./Exploring_pdfs.ipynb) along with follow-up questions in {ref}`sec:ExploringPDFsFollowups`
+* We start with a demonstration Jupyter notebook on [](./Exploring_pdfs.ipynb) using Python libraries, with follow-up questions in {ref}`sec:ExploringPDFsFollowups`.
 
-* {ref}`sec:Gaussians` and [](./visualization_of_CLT.ipynb)
+* We continue with {ref}`sec:Gaussians`, with insight on why Gaussian distributions are so common, including a first look at the central limit theorem, plus some contrasts to frequentist statistics, such as the difference between Bayesian credible intervals and frequentist confidence intervals.  Also in this section is a demonstration notebook on the [](./visualization_of_CLT.ipynb)
 
-* {ref}`sec:Interpreting2Dposteriors`
+* The posteriors we will encounter will in general be multi-dimensional. We consider some aspects beyond one-dimensional (1D) posteriors in {ref}`sec:Interpreting2Dposteriors`.
 
-* [](./chi_squared_tests.ipynb)
+* In [](./chi_squared_tests.ipynb) we identify the origin of the $\chi^2$ distribution function from the sum of squares of Gaussian random variables. 
