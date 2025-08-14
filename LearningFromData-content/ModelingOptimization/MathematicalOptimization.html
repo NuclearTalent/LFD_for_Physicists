@@ -667,8 +667,8 @@ document.write(`
 <p>Given a function <span class="math notranslate nohighlight">\(C : V \to \mathbb{R}\)</span>, where <span class="math notranslate nohighlight">\(V\)</span> is a search space that possibly involves various constraints, we seek the element <span class="math notranslate nohighlight">\(\optpars \in V\)</span> such that <span class="math notranslate nohighlight">\(C(\optpars) \leq C(\pars), \; \forall \pars \in V\)</span>.</p>
 </section>
 </div><p>We will often use the shorthand notation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4b1ebc5a-77fe-4b79-ab83-fb506c6f2e83">
-<span class="eqno">(38.1)<a class="headerlink" href="#equation-4b1ebc5a-77fe-4b79-ab83-fb506c6f2e83" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0a055948-8d1d-41f6-94c8-2bde0f97a5c2">
+<span class="eqno">(38.1)<a class="headerlink" href="#equation-0a055948-8d1d-41f6-94c8-2bde0f97a5c2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \optpars = \underset{\pars \in V}{\operatorname{argmin}} C(\pars)
 \end{equation}\]</div>
 <p>to indicate the solution of a minimization problem.</p>
@@ -726,8 +726,8 @@ C(\optpars) \leq C(\pars), \; \forall \pars \in V, \; \text{where} \, \lVert \pa
 <section id="batch-stochastic-and-mini-batch-gradient-descent">
 <h2><span class="section-number">38.2. </span>Batch, stochastic and mini-batch gradient descent<a class="headerlink" href="#batch-stochastic-and-mini-batch-gradient-descent" title="Link to this heading">#</a></h2>
 <p>The use of the full data set in the cost function for every parameter update would correspond to <em>batch gradient descent</em> (BGD). The gradient of the cost function then has the following generic form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-db08f950-a01c-4d9f-8ad2-d32be896452d">
-<span class="eqno">(38.3)<a class="headerlink" href="#equation-db08f950-a01c-4d9f-8ad2-d32be896452d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4c883b0b-a2b5-41ba-80d8-4c2a74723ad2">
+<span class="eqno">(38.3)<a class="headerlink" href="#equation-4c883b0b-a2b5-41ba-80d8-4c2a74723ad2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \boldsymbol{\nabla} C_n \equiv \left. \boldsymbol{\nabla}_{\pars} C(\pars) \right|_{\pars=\pars_n}
 = \sum_{i=1}^{N_d} \left. \boldsymbol{\nabla}_{\pars} C^{(i)}(\pars) \right|_{\pars=\pars_n},
 \end{equation}\]</div>
@@ -752,8 +752,8 @@ C(\optpars) \leq C(\pars), \; \forall \pars \in V, \; \text{where} \, \lVert \pa
 </div>
 <p>where you should note the loop over all data instances for each epoch. Note that we shuffle the training data at every epoch.</p>
 <p>Finally, <em>mini-batch gradient descent</em> (MBGD) combines the best of the previous algorithms and performs an update for every mini-batch of data</p>
-<div class="amsmath math notranslate nohighlight" id="equation-be1ac4f7-a979-4381-9028-c6e26468be48">
-<span class="eqno">(38.4)<a class="headerlink" href="#equation-be1ac4f7-a979-4381-9028-c6e26468be48" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ad92d525-fa19-442d-9cf1-e1232bc46d0e">
+<span class="eqno">(38.4)<a class="headerlink" href="#equation-ad92d525-fa19-442d-9cf1-e1232bc46d0e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pars \mapsto \pars - \eta \boldsymbol{\nabla} C_{i*N_{mb}:(i+1)*N_{mb}}(\pars),
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(N_{mb}\)</span> is the mini-batch size. This way one can make use of highly optimized matrix optimizations for the reasonably sized mini-batch evaluations, and one usually finds much reduced variance of the parameter updates which can lead to more stable convergence. Mini-batch gradient descent is typically the algorithm of choice when training a neural network. The total number of iterations for MBGD is <span class="math notranslate nohighlight">\(N_\mathrm{epochs} \times N_d / N_{mb}\)</span>.</p>
@@ -774,13 +774,13 @@ C(\optpars) \leq C(\pars), \; \forall \pars \in V, \; \text{where} \, \lVert \pa
 <section id="adagrad">
 <h3>Adagrad<a class="headerlink" href="#adagrad" title="Link to this heading">#</a></h3>
 <p>Adagrad <span id="id4">[<a class="reference internal" href="../Backmatter/bibliography.html#id55" title="John Duchi, Elad Hazan, and Yoram Singer. Adaptive subgradient methods for online learning and stochastic optimization. Journal of Machine Learning Research, 12(61):2121–2159, 2011. URL: http://jmlr.org/papers/v12/duchi11a.html.">DHS11</a>]</span> is a simple algorithm that uses the history of past updates to adapt the learning rate to the different parameters. Let us introduce a shorthand notation <span class="math notranslate nohighlight">\(j_{n,i}\)</span> for the partial derivative of the cost function with respect to parameter <span class="math notranslate nohighlight">\(\para_i\)</span> at the position <span class="math notranslate nohighlight">\(\pars_n\)</span> corresponding to iteration <span class="math notranslate nohighlight">\(n\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-4688c1db-4c17-42b9-9bb4-7ee34da23675">
-<span class="eqno">(38.5)<a class="headerlink" href="#equation-4688c1db-4c17-42b9-9bb4-7ee34da23675" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-036d1e91-12fe-4c50-bb6c-fc817f9eb821">
+<span class="eqno">(38.5)<a class="headerlink" href="#equation-036d1e91-12fe-4c50-bb6c-fc817f9eb821" title="Permalink to this equation">#</a></span>\[\begin{equation}
 j_{n,i} \equiv \left. \frac{\partial C}{\partial \para_i} \right|_{\pars = \pars_n}.
 \end{equation}\]</div>
 <p>We also introduce a diagonal matrix <span class="math notranslate nohighlight">\(J^2_n \in \mathbb{R}^{N_p \times N_p}\)</span> where the <span class="math notranslate nohighlight">\(i\)</span>th diagonal element</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b6dbee3d-fad4-4d04-9bc6-7bc406fa91d6">
-<span class="eqno">(38.6)<a class="headerlink" href="#equation-b6dbee3d-fad4-4d04-9bc6-7bc406fa91d6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bc82e439-5658-4a9d-8de6-9daeed10abc3">
+<span class="eqno">(38.6)<a class="headerlink" href="#equation-bc82e439-5658-4a9d-8de6-9daeed10abc3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 J^2_{n,ii} \equiv \sum_{k=1}^{n} j_{k,i}^2
 \end{equation}\]</div>
 <p>is the sum of the squares of the gradients with respect to <span class="math notranslate nohighlight">\(\para_i\)</span> up to iteration <span class="math notranslate nohighlight">\(n\)</span>. In its update rule, at iteration <span class="math notranslate nohighlight">\(n\)</span>, Adagrad modifies the general learning rate <span class="math notranslate nohighlight">\(\eta_n\)</span> for every parameter <span class="math notranslate nohighlight">\(\para_i\)</span> based on the past gradients that have been computed as described by <span class="math notranslate nohighlight">\(J^2_{n,ii}\)</span>. The parameter <span class="math notranslate nohighlight">\(\para_i\)</span> at the next iteration <span class="math notranslate nohighlight">\(n+1\)</span> is then given by</p>
@@ -794,33 +794,33 @@ J^2_{n,ii} \equiv \sum_{k=1}^{n} j_{k,i}^2
 <section id="rmsprop">
 <h3>RMSprop<a class="headerlink" href="#rmsprop" title="Link to this heading">#</a></h3>
 <p>RMSprop is an extension of Adagrad that seeks to reduce its aggressive, monotonically decreasing learning rate. Instead of storing the sum of past squared gradients, the denominator is defined as a decaying average of past squared gradients. Labeling the decaying average at iteration <span class="math notranslate nohighlight">\(n\)</span> by <span class="math notranslate nohighlight">\(\bar{{J}^2}_{n,ii}\)</span>, we introduce a decay variable <span class="math notranslate nohighlight">\(\gamma\)</span> and define</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4f064d23-f8eb-4458-85f0-2c81f44a7e6e">
-<span class="eqno">(38.8)<a class="headerlink" href="#equation-4f064d23-f8eb-4458-85f0-2c81f44a7e6e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-394b0195-1600-455a-9ab0-0cd61e247868">
+<span class="eqno">(38.8)<a class="headerlink" href="#equation-394b0195-1600-455a-9ab0-0cd61e247868" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \bar{J}^2_{n,ii} = \gamma \bar{J}^2_{n-1,ii} + (1-\gamma) j_{n,i}^2.
 \end{equation}\]</div>
 <p>The inventor of RMSprop, Geoff Hinton, suggests setting the decay variable <span class="math notranslate nohighlight">\(\gamma=0.9\)</span> , while a good default value for the learning rate <span class="math notranslate nohighlight">\(\eta\)</span> is 0.001. The update rule in RMSprop is then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2d7f03c3-1ae9-4a56-aa70-fa275c8ae21d">
-<span class="eqno">(38.9)<a class="headerlink" href="#equation-2d7f03c3-1ae9-4a56-aa70-fa275c8ae21d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4953aadd-71f8-4533-94d8-7d45bc2cae92">
+<span class="eqno">(38.9)<a class="headerlink" href="#equation-4953aadd-71f8-4533-94d8-7d45bc2cae92" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\bar{J}^2_{n,ii} + \varepsilon}} j_{n,i}.
 \end{equation}\]</div>
 </section>
 <section id="adam">
 <h3>Adam<a class="headerlink" href="#adam" title="Link to this heading">#</a></h3>
 <p>Adaptive Moment Estimation (Adam) <span id="id5">[<a class="reference internal" href="../Backmatter/bibliography.html#id57" title="Diederik P. Kingma and Jimmy Ba. Adam: A Method for Stochastic Optimization. arXiv e-prints, pages arXiv:1412.6980, December 2014. arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">KingmaBa14</a>]</span> also computes adaptive learning rates for each parameter. However, in addition to storing an exponentially decaying average of past squared gradients like Adagrad and RMSprop, Adam also keeps an exponentially decaying average of past gradients similar to a momentum. Describing this latter quantity by the diagonal matrix <span class="math notranslate nohighlight">\(\hat{M}_n\)</span> (at iteration <span class="math notranslate nohighlight">\(n\)</span>) we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-52374010-c81c-4627-a28e-3fa73482c77f">
-<span class="eqno">(38.10)<a class="headerlink" href="#equation-52374010-c81c-4627-a28e-3fa73482c77f" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-ff2a8967-1b3f-4c28-8310-bcc805f0aa2d">
+<span class="eqno">(38.10)<a class="headerlink" href="#equation-ff2a8967-1b3f-4c28-8310-bcc805f0aa2d" title="Permalink to this equation">#</a></span>\[\begin{align}
 \bar{M}_{n,ii} &amp;= \gamma_1 \bar{M}_{n-1,ii} + (1-\gamma_1) j_{n,i}, \\
 \bar{J}^2_{n,ii} &amp;= \gamma_2 \bar{J}^2_{n-1,ii} + (1-\gamma_2) j_{n,i}^2.
 \end{align}\]</div>
 <p>Both of these quantities are initialized with zero vectors (<span class="math notranslate nohighlight">\(\bar{M}_{0,ii}=0\)</span> and <span class="math notranslate nohighlight">\(\bar{J}^2_{0,ii}=0\)</span> for all <span class="math notranslate nohighlight">\(i\)</span>) which tends to introduce a bias for early time steps. This bias can be large if <span class="math notranslate nohighlight">\(\gamma_1\)</span> and <span class="math notranslate nohighlight">\(\gamma_2\)</span> are close to one. It was therefore proposed to use bias-corrected first and second moment estimates</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b1127fd2-4587-417d-be45-f771a5357ae2">
-<span class="eqno">(38.11)<a class="headerlink" href="#equation-b1127fd2-4587-417d-be45-f771a5357ae2" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-ed017db3-2586-4669-a854-ba8d63e8c7b4">
+<span class="eqno">(38.11)<a class="headerlink" href="#equation-ed017db3-2586-4669-a854-ba8d63e8c7b4" title="Permalink to this equation">#</a></span>\[\begin{align}
 \hat{M}_{n,ii} &amp;= \frac{\bar{M}_{n,ii}}{1 - (\gamma_1)^n}, \\
 \hat{J}^2_{n,ii} &amp;= \frac{\bar{J}^2_{n,ii}}{1 - (\gamma_2)^n}.
 \end{align}\]</div>
 <p>The update rule then becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8ca4b1d7-696a-4b59-95e4-d59253d44cae">
-<span class="eqno">(38.12)<a class="headerlink" href="#equation-8ca4b1d7-696a-4b59-95e4-d59253d44cae" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0b493b2c-c57d-44a7-aa28-75f7434fedf2">
+<span class="eqno">(38.12)<a class="headerlink" href="#equation-0b493b2c-c57d-44a7-aa28-75f7434fedf2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\hat{J}^2_{n,ii}} + \varepsilon} \hat{M} _{n,ii}.
 \end{equation}\]</div>
 <p>Default, recommended values are <span class="math notranslate nohighlight">\(\gamma_1=0.9\)</span>, <span class="math notranslate nohighlight">\(\gamma_2=0.999\)</span>, and <span class="math notranslate nohighlight">\(\varepsilon=10^{-8}\)</span>.</p>
