@@ -11,7 +11,7 @@ You may already have Python on your computer, but it may not be the version we n
 
 **How to get Anaconda Python** **[Also see the Anaconda Distribution Starter Guide]**
 
-Step-by-step instructions for downloading and installing Anaconda are available for Windows, Mac OSX (Intel or Apple silicon), or Linux. Here we&#39;ll step through the relevant options for us (based on following the graphical installer, which is what you will get by default for Windows and Macs; for Linux it is assumed you can follow the instructions for Linux.
+Step-by-step instructions for downloading and installing Anaconda are available for Windows, Mac OSX (Intel or Apple silicon), or Linux. Here we&#39;ll step through the relevant options for us (based on following the graphical installer, which is what you will get by default for Windows and Macs; for Linux it is assumed you can follow the instructions for Linux (note: there is now a graphical installer option).
 
 1. Go to [https://www.anaconda.com/products/individual - Downloads](https://www.anaconda.com/download/success) and select the **Download** button for your type of computer (use the 64-bit installer).
 2. An installation program will be downloaded. Start it up (e.g., by double clicking).
