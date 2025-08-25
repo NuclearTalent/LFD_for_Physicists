@@ -285,7 +285,7 @@ probability density* of $x_1$ is the result when we marginalize the
 *joint probability distribution* over $x_2$: 
 
 $$
- \p{x_1} = \int \pdf{x_1}{x_2} \,dx_2 .
+ \p{x_1} = \int \p{x_1, x_2} \,dx_2 .
 $$
 
 So, in our quantum mechanical example, it's the probability
@@ -298,12 +298,15 @@ statistical model that account for the impact of defects in the
 measuring apparatus, but ultimately one is interested in the physics
 extracted with the imperfect apparatus. 
 
+:::{note}
+You may have noticed that we wrote $\p{x_1}$ and $\p{x_1, x_2}$ rather than $\pdf{x_1}{I}$ and $\pdf{x1,x2}{I}$, where "$I$" is information we know but do not specify explicitly. Our PDFs will always be contingent on *some* information, so we were really being sloppy by trying to be compact. (See {ref}`sec:continuum_limit` for more careful versions of these equations.)
+:::
 
 
 ### Visualizing PDFs
 
-It is worthwhile at this stage to jump ahead and work through the Jupyter notebook
-[Exploring PDFs](Exploring_pdfs.ipynb). In the notebook you will
+It is worthwhile at this stage to jump ahead and work through parts of the Jupyter notebook
+[Exploring PDFs](Exploring_pdfs.ipynb) to make a first pass at getting familiar with PDFs and how to visualize them. In the notebook you will
 work with the python package `scipy.stats`, which has many
 distributions built in. You can learn more about those distributions by
 reading the manual page (which you can find by googling).
