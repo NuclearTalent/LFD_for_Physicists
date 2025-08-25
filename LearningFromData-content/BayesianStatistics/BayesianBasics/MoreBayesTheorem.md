@@ -83,7 +83,7 @@ Given an exclusive and exhaustive list of hypotheses, $H_i$, we must have a norm
 which also leads to the marginalization property
 
 \begin{equation}
-  \prob(A|I) = \sum_i p(H_i|A,I) p(A|I) = \sum_i p(A,H_i|I),
+  \prob(A|I) = \sum_i \prob(H_i|A,I) \prob(A|I) = \sum_i \prob(A,H_i|I),
 \end{equation}
 
 where we used the product rule in the second step.
@@ -92,6 +92,7 @@ where we used the product rule in the second step.
 
 For example,let’s imagine that there are five candidates in a presidential election; then $H_1$ could be the proposition that the first candidate will win, and so on. The probability that $A$ is true, for example that unemployment will be lower in a year’s time (given all relevant information $I$, but irrespective of whoever becomes president) is given by $\sum_i \prob(A,H_i|I)$ as shown by using normalization and applying the product rule.
 
+(sec:continuum_limit)=
 ### The continuum limit
 
 In the continuum limit we will replace discrete propositions $X_i$ by a continuous variable $X$. Rather than discrete probabilities $\prob(X_i|I)$, the fundamental quantity will then be the probability density function $p_X(x|I)$ that we usually write simply as $p(x|I)$ (see {prf:ref}`definition:probability-density-function`).
