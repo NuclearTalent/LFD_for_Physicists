@@ -64,7 +64,8 @@ given information $I$ (we do not give the generalizations to pdfs here).
 ::::{admonition} Question 1
 :class: my-checkpoint
 Table 1 shows the number of blue- or brown-eyed and tall or short individuals in a population of 75.
-*(a) Fill in the blanks in Table 2 with probabilities (in decimals with three places, not fractions) based on the usual "frequentist" interpretations of probability* (which would say that the probability of randomly drawing an ace from a deck of cards is 4/52 = 1/13). *(b) Put x's in any row and/or column that illustrates marginalization and y's for entries illustrating the sum rule.*
+*(a) Fill in the blanks in Table 2 with probabilities (in decimals with three places, not fractions) based on the usual "frequentist" interpretations of probability* (which would say that the probability of randomly drawing an ace from a deck of cards is 4/52 = 1/13). 
+<br> *(b) Put x's in any row and/or column that illustrates marginalization and y's for entries illustrating the sum rule.*
 
 :::{admonition} Hint (a)
 :class: dropdown, my-hint
@@ -103,8 +104,7 @@ Table 1 shows the number of blue- or brown-eyed and tall or short individuals in
 
 ::::{admonition} Question 2
 :class: my-checkpoint
-*(a) What is $\prob(short, blue)$? Is this a joint or conditional probability?  (b) What is $\prob(blue)$? 
-<br> \(c\) From the product rule, what is $\prob(short | blue)$?  Can you read this result directly from the table?*
+*(a) What is $\prob(short, blue)$? Is this a joint or conditional probability? <br> (b) What is $\prob(blue)$? <br> \(c\) From the product rule, what is $\prob(short | blue)$?  Can you read this result directly from the table?*
 
 :::{admonition} Answer (a) 
 :class: dropdown, my-answer
