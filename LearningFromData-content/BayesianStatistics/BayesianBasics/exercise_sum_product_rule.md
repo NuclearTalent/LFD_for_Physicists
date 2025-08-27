@@ -64,18 +64,38 @@ given information $I$ (we do not give the generalizations to pdfs here).
 ::::{admonition} Question 1
 :class: my-checkpoint
 Table 1 shows the number of blue- or brown-eyed and tall or short individuals in a population of 75.
-*Fill in the blanks in Table 2 with probabilities (in decimals with three places, not fractions) based on the usual "frequentist" interpretations of probability* (which would say that the probability of randomly drawing an ace from a deck of cards is 4/52 = 1/13). *Put x's in any row and/or column that illustrates the sum rule.*
+*(a) Fill in the blanks in Table 2 with probabilities (in decimals with three places, not fractions) based on the usual "frequentist" interpretations of probability* (which would say that the probability of randomly drawing an ace from a deck of cards is 4/52 = 1/13). *(b) Put x's in any row and/or column that illustrates marginalization and y's for entries illustrating the sum rule.*
 
-:::{admonition} Answer 
+:::{admonition} Hint (a)
+:class: dropdown, my-hint
+**How many students are tall and blue-eyed? Just 1. There are 75 total students, so the probability is $1/75 \approx 0.013$, which goes in the first box.**
+:::
+
+:::{admonition} Answer (a)
+:class: dropdown, my-answer 
+
+|     TABLE 2     | Blue         | Brown         |  Total        |
+| :-------------: | :----------: | :-----------: | :-----------: |
+|  **Tall**           |      0.013    |   0.227        |   0.240       |
+| **Short**           |      0.493    |   0.267        |   0.760       |
+| **Total**           |      0.506    |   0.494        |   1.000       |
+:::
+
+:::{admonition} Hint (b)
+:class: dropdown, my-hint
+**Marginalization is $\prob(x \mid  I) = \sum_j \prob(x,y_j \mid I)$, where in this case one possibility is $x$ is "Tall" while $y_1$ is "Blue" and $y_2$ is "Brown". So $0.240 \overset{?}{=} 0.013 + 0.227$ $\Longrightarrow$ works!**
+:::
+
+:::{admonition} Answer (b)
 :class: dropdown, my-answer 
 
 |     TABLE 2     | Blue         | Brown         |  Total        |
 | :-------------: | :----------: | :-----------: | :-----------: |
 |  **Tall**           |      0.013    |   0.227        |   0.240 x      |
 | **Short**           |      0.493    |   0.267        |   0.760 x      |
-| **Total**           |      0.506 x  |   0.494 x      |   1.000 x      |
+| **Total**           |      0.506 x  |   0.494 x      |   1.000 y      |
 
-**The third (last) column and the third (last) row each illustrate the sum rule.**
+**The third (last) column and the third (last) row each illustrate marginalization (they are totals in the margin, get it?), while the grand total entry illustrates the sum rule.**
 
 :::
 ::::
@@ -83,18 +103,21 @@ Table 1 shows the number of blue- or brown-eyed and tall or short individuals in
 
 ::::{admonition} Question 2
 :class: my-checkpoint
-*What is $\prob(short, blue)$? Is this a joint or conditional probability?  What is $\prob(blue)$? 
-<br>From the product rule, what is $\prob(short | blue)$?  Can you read this result directly from the table?*
-<br>
-<br>
-<br>
-<br>
-:::{admonition} Answer 
+*(a) What is $\prob(short, blue)$? Is this a joint or conditional probability?  (b) What is $\prob(blue)$? 
+<br> \(c\) From the product rule, what is $\prob(short | blue)$?  Can you read this result directly from the table?*
+
+:::{admonition} Answer (a) 
 :class: dropdown, my-answer
-**$\prob(short,blue) = 0.493\ $.  This is a joint probability.**
+**$\prob(short,blue) = 0.493\,$.  This is a joint probability.**
+:::
 
-**$\prob(blue) = 0.506\ $.  Note that this is from the Total row.**
+:::{admonition} Answer (b) 
+:class: dropdown, my-answer
+**$\prob(blue) = 0.506\,$.  Note that this is from the Total row.**
+:::
 
+:::{admonition} Answer \(c\) 
+:class: dropdown, my-answer
 **The product rule says $\ \ \prob(short, blue) = \prob(short|blue)\, \prob(blue)\ $, so $\prob(short|blue) = 0.493/0.506 = 0.974$.  This number does not appear anywhere in the table.** 
 :::
 ::::
@@ -102,10 +125,6 @@ Table 1 shows the number of blue- or brown-eyed and tall or short individuals in
 ::::{admonition} Question 3
 :class: my-checkpoint
 *Apply Bayes' theorem to find $\prob(blue | short)$ from your answers to the last part.*
-<br>
-<br>
-<br>
-<br>
 :::{admonition} Answer 
 :class: dropdown, my-answer
 **Bayes' theorem says**
@@ -121,9 +140,6 @@ $$
 ::::{admonition} Question 4
 :class: my-checkpoint
 *What rule does the second row (the one starting with "Short") illustrate?  Write it out in $\prob(\cdot)$ notation.* 
-<br>
-<br>
-<br>
 :::{admonition} Answer 
 :class: dropdown, my-answer
 **The second row illustrates marginalization: $\ \ p(short,blue) + p(short,brown) = p(short)$.** 
@@ -133,9 +149,6 @@ $$
 ::::{admonition} Question 5
 :class: my-checkpoint
 *Are the probabilities of being tall and having brown eyes mutually independent?  Why or why not?*
-<br>
-<br>
-<br>
 :::{admonition} Hint
 :class: dropdown, my-hint
 **If the probabilities of being tall and brown *were* independent, what would the joint probability be in terms of the individual probabilities?**
