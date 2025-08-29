@@ -84,7 +84,7 @@ We'll use the notation:
 <br>
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-**You want to know if you have the disease, given that you have tested positively, therefore: $\ \ \pr(H | D)$**
+**You want to know if you have the disease, given that you have tested positively, therefore: $\ \ \prob(H | D)$**
 :::
 ::::
 
@@ -96,7 +96,7 @@ We'll use the notation:
 <br>
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-**The probability that you are trying to find is that you get a positive result on the test (so $D$ should be on the left of the bar) given that you don't actually have the disease (this is the "false" part).  So $\overline{H}$ on the right. (Again, when you talk about false positive it is about the test result, not the disease, so $D$ is on the left.) Overall with the probability we are given (derived from the rate):**  $\ \ \pr(D | \overline{H}) = 0.023$
+**The probability that you are trying to find is that you get a positive result on the test (so $D$ should be on the left of the bar) given that you don't actually have the disease (this is the "false" part).  So $\overline{H}$ on the right. (Again, when you talk about false positive it is about the test result, not the disease, so $D$ is on the left.) Overall with the probability we are given (derived from the rate):**  $\ \ \prob(D | \overline{H}) = 0.023$
 
 :::
 ::::
@@ -109,9 +109,9 @@ We'll use the notation:
 <br>
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-**False negative is the counterpart of false positive, so the probability of $\overline{D}$ given $H$:  $\ \ \pr(\overline{D}|H) = 0.014$.  For both false negative and false positive cases, the probability is the *outcome of the test*, given additional information. You might have been fooled by the wording above: "false negative means you have UD, but the test says you don't". This might cause you to think that $H$ should be on the left. But reword it as: "false negative means that the test says you don't have UD, but you do". This makes it clearer that the probability is about the test result, not about the disease itself.**
+**False negative is the counterpart of false positive, so the probability of $\overline{D}$ given $H$:  $\ \ \prob(\overline{D}|H) = 0.014$.  For both false negative and false positive cases, the probability is the *outcome of the test*, given additional information. You might have been fooled by the wording above: "false negative means you have UD, but the test says you don't". This might cause you to think that $H$ should be on the left. But reword it as: "false negative means that the test says you don't have UD, but you do". This makes it clearer that the probability is about the test result, not about the disease itself.**
 
-**The sum rule says $\ \ \pr(D|H) + \pr(\overline{D}|H) = 1\ $, therefore we know: $\ \ \pr(D|H) = 0.986$ This probability being so close to one is what makes us think the probability we have the disease is high.**
+**The sum rule says $\ \ \prob(D|H) + \prob(\overline{D}|H) = 1\ $, therefore we know: $\ \ \prob(D|H) = 0.986$ This probability being so close to one is what makes us think the probability we have the disease is high.**
 
 :::
 ::::
@@ -126,9 +126,9 @@ We'll use the notation:
 <br>
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-**$\pr(D|H) + \pr(D|\overline H) =  1.09 \neq 1\ \ $ so the first answer is no.  But the sum rule holds when summing over all possibilities on the *left* of the bar with the same statements on the right of the bar, which is not the case here.**
+**$\prob(D|H) + \prob(D|\overline H) =  1.09 \neq 1\ \ $ so the first answer is no.  But the sum rule holds when summing over all possibilities on the *left* of the bar with the same statements on the right of the bar, which is not the case here.**
 
-**The second sum *does* satisfy these conditions, so we expect the sum rule to hold and $\pr(D|H) + \pr(\overline D |H) = 1$, which we've already used.**
+**The second sum *does* satisfy these conditions, so we expect the sum rule to hold and $\prob(D|H) + \prob(\overline D |H) = 1$, which we've already used.**
 
 :::
 ::::
@@ -145,10 +145,10 @@ We'll use the notation:
 **Bayes' theorem with just the $p(\cdot|\cdot)$s:**
 
 $$
-  \pr(H|D) = \frac{\pr(D|H)\,\pr(H)}{\pr(D)}
+  \prob(H|D) = \frac{\prob(D|H)\,\prob(H)}{\prob(D)}
 $$
 
-**This is useful because we know $\pr(D|H)$.  But we still need $\pr(H)$ and $\pr(D)$.**
+**This is useful because we know $\prob(D|H)$.  But we still need $\prob(H)$ and $\prob(D)$.**
 :::
 ::::
 
@@ -161,9 +161,9 @@ Let's find the other results we need.  *What is $\prob(H)$?
 <br>
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-**We are told that 1 in 10,000 people have the disease, so $\ \ \pr(H) = 10^{-4}$**
+**We are told that 1 in 10,000 people have the disease, so $\ \ \prob(H) = 10^{-4}$**
 
-**That means by the sum rule that $\ \ \pr({\overline H}) = 1 - \pr(H) = 1 - 10^{-4}$**
+**That means by the sum rule that $\ \ \prob({\overline H}) = 1 - \prob(H) = 1 - 10^{-4}$**
 
 :::
 ::::
@@ -178,16 +178,16 @@ Finally, we need $\prob(D)$.  *Apply marginalization first, and then
 <br>
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-**The strategy here is to observe that we know various probabilities with $D$ on the left of the bar and statements on the right side of the bar.  Can we combine them to get $\pr(D)$?**
+**The strategy here is to observe that we know various probabilities with $D$ on the left of the bar and statements on the right side of the bar.  Can we combine them to get $\prob(D)$?**
 
-**Marginalization: $\ \ \pr(D) = \pr(D, H) + \pr(D, \overline{H})\ \ $ (recall that these are joint probabilities, not conditional probabilities).**
+**Marginalization: $\ \ \prob(D) = \prob(D, H) + \prob(D, \overline{H})\ \ $ (recall that these are joint probabilities, not conditional probabilities).**
 
-**Now apply the product rule to each term: $\ \ \pr(D, H) = \pr(D|H)\, \pr(H)\ \ $ and $\ \ \pr(D,\overline{H}) = \pr(D|\overline{H})\, \pr(\overline{H})$** 
+**Now apply the product rule to each term: $\ \ \prob(D, H) = \prob(D|H)\, \prob(H)\ \ $ and $\ \ \prob(D,\overline{H}) = \prob(D|\overline{H})\, \prob(\overline{H})$** 
 
 **Put it together with numbers:**
 
 $$
-\pr(D) = \pr(D|H)\, \pr(H) + \pr(D|\overline{H})\, \pr(\overline{H}) = 0.986\times 10^{-4} + 0.023\times(1 - 10^{-4}) \approx 0.023
+\prob(D) = \prob(D|H)\, \prob(H) + \prob(D|\overline{H})\, \prob(\overline{H}) = 0.986\times 10^{-4} + 0.023\times(1 - 10^{-4}) \approx 0.023
 $$
 
 :::
@@ -201,7 +201,7 @@ $$
 <br>
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-$$\pr(H|D) = \frac{0.986 \times 0.0001}{0.023} = 0.0043$$
+$$\prob(H|D) = \frac{0.986 \times 0.0001}{0.023} = 0.0043$$
 
 **or about $0.43\%$, which is really low!**
 
@@ -214,11 +214,11 @@ $$\pr(H|D) = \frac{0.986 \times 0.0001}{0.023} = 0.0043$$
 
 ::::{admonition} Follow-up question on 2.
 :class: my-checkpoint
-Why is it $p(H|D)$ and not $p(H,D)$?
+Why is it $\prob(H|D)$ and not $\prob(H,D)$?
 :::{admonition} Answer
 :class: dropdown, my-answer 
-Recall that $p(H,D) = p(H|D) \cdot p(D)$. You are generally interested in $p(H|D)$.
-If you know $p(D) = 1$, then they are the same.
+Recall that $\prob(H,D) = \prob(H|D) \cdot \prob(D)$. You are generally interested in $\prob(H|D)$.
+If you know $\prob(D) = 1$, then they are the same.
 :::
 ::::
 
@@ -227,9 +227,9 @@ If you know $p(D) = 1$, then they are the same.
 The emphasis here is on the sum rule. Why didn't any column except Total in the sum/product rule notebook add to 1?
 :::{admonition} Answer
 :class: dropdown, my-answer 
-Because were were looking at $p(\text{tall,blue}) + p(\text{short,blue}) \neq 1$, whereas $p(\text{tall}| \text{blue}) + p(\text{short}| \text{blue}) = 1$.
+Because were were looking at $\prob(\text{tall,blue}) + \prob(\text{short,blue}) \neq 1$, whereas $\prob(\text{tall}| \text{blue}) + \prob(\text{short}| \text{blue}) = 1$.
 :::
 ::::
 
-In general, and for question 6. in particular, we emphasize the usefulness of using Bayes' theorem to express $p(H|D)$ in terms of $p(D|H)$. 
+In general, and for question 6. in particular, we emphasize the usefulness of using Bayes' theorem to express $\prob(H|D)$ in terms of $\prob(D|H)$. 
 
