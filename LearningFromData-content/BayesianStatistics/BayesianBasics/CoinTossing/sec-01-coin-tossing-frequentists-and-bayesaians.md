@@ -39,7 +39,7 @@ thing to do is to update the state of our belief, our PDF for $\p{p_h|\rm{How~ma
 
 Note that in what follows we exploit the fungibility of mathematical symbols to let $I$ stand for different things at different stages of the coin tossing experiment. If we are going to "update" after every coin toss then $D$ is just the result of the $N$th coin toss and $I$ is what we know about the coin after $N-1$ coin tosses.
 
-The notebook is [](./demo-BayesianBasics) (non-widget) and/or [](./Bayesian_updating_coinflip_interactive.ipynb) (with widget). Try both!
+The notebook is [](../demo-BayesianBasics) (non-widget) and/or [](../Bayesian_updating_coinflip_interactive.ipynb). Try both!
 
 Let's first play a bit with the simulation and then come back and think of the details.
 
