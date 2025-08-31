@@ -532,7 +532,7 @@ where we used that $\residual_i \sim \mathcal{N}(0,\sigmai^2)$. Note that the pa
 Fill in the details for the steps in {eq}`eq:BayesianLinearRegression:likelihood_eq_1`.
 :::{admonition} Hint
 :class: dropdown, my-hint 
-Review the probability rules in {numref}`sec:ManipulatingPDFs`. The first step integrates in $\residual_i$.
+Review the probability rules in {numref}`Chapter %s <ch:Inferenceandpdfs>`. The first step integrates in $\residual_i$.
 :::
 :::{admonition} Answer
 :class: dropdown, my-answer
