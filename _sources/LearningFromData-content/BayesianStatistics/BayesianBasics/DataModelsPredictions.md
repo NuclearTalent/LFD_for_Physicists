@@ -28,14 +28,15 @@ We will touch upon $\delta M$ in two contexts in this text: in treating the trun
 Note that the model discrepancy remains present even if there is no uncertainty about $\pars$. In the following we subsume the choice of model and other decisions into the set of background knowledge $I$.
 
 ## The posterior predictive distribution
-The distribution of future data conditioned on past data and background information, i.e., $\pdf{\futuredata}{\data,I}$, is called a posterior predictive distribution. Assuming that we have a model $M(\pars)$ for the data-generating mechanism we can express this distribution by marginalizing over the uncertain model parameters $\pars \in \Omega$
+The distribution of future data conditioned on past data and background information, i.e., $\pdf{\futuredata}{\data,I}$, is called a posterior predictive distribution (ppd). Assuming that we have a model $M(\pars)$ for the data-generating mechanism we can express this distribution by marginalizing over the uncertain model parameters $\pars \in \Omega$
 
 ```{math}
 :label: eq_ppd
-\pdf{\futuredata}{\data,I} = \int_{\Omega} \pdf{\futuredata}{\pars,I}\pdf{\pars}{\data,I}\,{\rm d} \pars,
+\pdf{\futuredata}{\data,I} = \int_{\Omega} \pdf{\futuredata}{\pars,\data, I}\pdf{\pars}{\data,I}\,{\rm d} \pars.
 ```
 
-where we have used that $\futuredata$ is conditionally independent of $\data$. By performing this integral we account for the uncertainty in the model parameters $\pars$ when making predictions. In fact, one can marginalize (average) predictions over anything and everything that we are uncertain about as long as we have access to the necessary probability distributions. To evaluate the posterior for the model parameters we must employ Bayes' theorem
+If $\futuredata$ is conditionally independent of $\data$, we can replace $\pdf{\futuredata}{\pars,\data, I}$ by $\pdf{\futuredata}{\pars, I}$, but there are cases of ppds where this is not true and we must be more careful (e.g., when we include $\delta M$). 
+By performing this integral we account for the uncertainty in the model parameters $\pars$ when making predictions. In fact, one can marginalize (average) predictions over anything and everything that we are uncertain about as long as we have access to the necessary probability distributions. To evaluate the posterior for the model parameters we must employ Bayes' theorem
 
 ```{math}
 :label: eq_bayes
@@ -52,10 +53,10 @@ Unless we are interested in obtaining an absolutely normalized posterior distrib
 
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
-What did knowing that $\futuredata$ is *conditionally independent* of $\data$ allow us to do in {eq}`eq_ppd`?
+What would assuming that $\futuredata$ is *conditionally independent* of $\data$ allow us to do in {eq}`eq_ppd`?
 :::{admonition} Answer
 :class: dropdown, my-answer 
-Because if we know $\pars$, $\data$ gives no additional information, so we were able to replace $\pdf{\futuredata}{\pars,\data,I} \longrightarrow \pdf{\futuredata}{\pars,I}$.
+If we know $\pars$, then *if* $\data$ gives no additional information, we are able to replace $\pdf{\futuredata}{\pars,\data,I} \longrightarrow \pdf{\futuredata}{\pars,I}$.
 :::
 ::::
 

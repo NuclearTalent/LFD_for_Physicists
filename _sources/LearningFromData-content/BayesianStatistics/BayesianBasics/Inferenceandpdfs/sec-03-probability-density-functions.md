@@ -104,6 +104,61 @@ extracted with the imperfect apparatus.
 You may have noticed that we wrote $\p{x_1}$ and $\p{x_1, x_2}$ rather than $\pdf{x_1}{I}$ and $\pdf{x1,x2}{I}$, where "$I$" is information we know but do not specify explicitly. Our PDFs will always be contingent on *some* information, so we were really being sloppy by trying to be compact. (See {ref}`sec:continuum_limit` for more careful versions of these equations.)
 :::
 
+## Bayes' theorem applied to PDFs
+
+The rules applied to probabilities in {numref}`sec:Inference:manipulation` directly extend to continuous functions, i.e., PDFs; we'll summarize the extension briefly here.
+Conventionally we denote by $\thetavec$ a vector of continuous parameters we seek to determine (for now we'll use $\alphavec$ as another vector of parameters).
+As before, information $I$ is kept implicit.
+
+**Sum rule**
+
+Probabilities integrate to one (assuming exhaustive and exclusive $\thetavec$):
+
+$$
+  \int d\thetavec\, \pdf{\thetavec}{I} = 1 .
+$$
+
+The sum rule *implies* marginalization: 
+
+$$ 
+     p(\thetavec|I) = \int d\alphavec\, p(\thetavec, \alphavec | I) .
+$$
+
+**Product rule** 
+
+Expanding a joint probability of $\thetavec$ and $\alphavec$
+
+$$  
+   p(\thetavec, \alphavec| I) = p(\thetavec | \alphavec, I) p(\alphavec,I) = p(\alphavec| \thetavec,I) p(\thetavec,I) .
+$$ (eq:joint_prob)
+
+As with discrete probabilities, there is a symmetry between the first and second equalities.
+If $\thetavec$ and $\alphavec$ are *mutually independent*, then $p(\thetavec | \alphavec,I) = p(\thetavec | I)$ and
+
+$$
+  p(\thetavec,\alphavec | I) = p(\thetavec|I) \times p(\alphavec | I) .
+$$
+
+Rearranging the 2nd equality in {eq}`eq:joint_prob` yields **Bayes' Rule** (or Theorem) just like in the discrete case:
+
+$$
+  p(\thetavec | \alphavec,I) = \frac{p(\alphavec|\thetavec,I) p(\thetavec|I)}{p(\alphavec | I)}
+$$
+
+Bayes' rule tells us how to reverse the conditional: $p(\thetavec|\alphavec) \rightarrow p(\alphavec|\thetavec)$.
+A typical application is when $\alphavec$ is a vector of data $\data$. Then Bayes' rule is
+
+$$
+  \overbrace{ \pdf{\thetavec}{\data,I)} }^{\textrm{posterior}} =
+  \frac{ \color{red}{ \overbrace{ \pdf{\data}{\thetavec,I} }^{\textrm{likelihood}}} 
+ \color{black}{\ \times\ } 
+  \color{blue}{ \overbrace{ \pdf{\thetavec}{I}}^{\textrm{prior}}}    
+ } 
+ { \color{darkgreen}{ \underbrace{ \pdf{\data}{I} }_{\textrm{evidence}}} }
+$$
+
+Viewing the prior as the initial information we have about $\thetavec$ (i.e., before using the data $\data$), summarized as a probability density function, then Bayes' theorem tells us how to **update** that information after observing some data: this is the posterior PDF.  In {numref}`sec:UpdatingBayes` we will give some examples of how this plays out when tossing biased coins.
+
 
 ## Visualizing PDFs
 

@@ -657,7 +657,7 @@ document.write(`
 <!-- described in the introduction section about [](intro:inference). -->
 <p>A physical <em>model</em> <span class="math notranslate nohighlight">\(M\)</span> allows quantitative evaluation of the system under study. Any model we employ will always depend on model parameters <span class="math notranslate nohighlight">\(\pars\)</span> with uncertain numerical values. Moreover, <em>all models are wrong</em>. Indeed, there will always be some physics that we have neglected to include or are unaware of today. If we denote mismatch between model predictions and real world observations of the system, i.e., data, as <span class="math notranslate nohighlight">\(\delta M\)</span>, we can write</p>
 <div class="math notranslate nohighlight" id="equation-eq-datamodelspredictions-mismatch">
-<span class="eqno">(4.18)<a class="headerlink" href="#equation-eq-datamodelspredictions-mismatch" title="Link to this equation">#</a></span>\[
+<span class="eqno">(4.19)<a class="headerlink" href="#equation-eq-datamodelspredictions-mismatch" title="Link to this equation">#</a></span>\[
 \data = M(\pars) + \delta \data + \delta M.
 \]</div>
 <p>The mismatch term <span class="math notranslate nohighlight">\(\delta M\)</span> is often referred to as a model discrepancy. We are uncertain also about this term, so it must be represented as a random variable that is distributed in accordance with our beliefs about <span class="math notranslate nohighlight">\(\delta M\)</span>. It is no trivial task to incorporate model discrepancies in the analysis of scientific models and data, yet it is crucial to avoid overfitting the model parameters <span class="math notranslate nohighlight">\(\pars\)</span> and make overly confident model predictions.
@@ -666,24 +666,25 @@ We will touch upon <span class="math notranslate nohighlight">\(\delta M\)</span
 <p>Note that the model discrepancy remains present even if there is no uncertainty about <span class="math notranslate nohighlight">\(\pars\)</span>. In the following we subsume the choice of model and other decisions into the set of background knowledge <span class="math notranslate nohighlight">\(I\)</span>.</p>
 <section id="the-posterior-predictive-distribution">
 <h2>The posterior predictive distribution<a class="headerlink" href="#the-posterior-predictive-distribution" title="Link to this heading">#</a></h2>
-<p>The distribution of future data conditioned on past data and background information, i.e., <span class="math notranslate nohighlight">\(\pdf{\futuredata}{\data,I}\)</span>, is called a posterior predictive distribution. Assuming that we have a model <span class="math notranslate nohighlight">\(M(\pars)\)</span> for the data-generating mechanism we can express this distribution by marginalizing over the uncertain model parameters <span class="math notranslate nohighlight">\(\pars \in \Omega\)</span></p>
+<p>The distribution of future data conditioned on past data and background information, i.e., <span class="math notranslate nohighlight">\(\pdf{\futuredata}{\data,I}\)</span>, is called a posterior predictive distribution (ppd). Assuming that we have a model <span class="math notranslate nohighlight">\(M(\pars)\)</span> for the data-generating mechanism we can express this distribution by marginalizing over the uncertain model parameters <span class="math notranslate nohighlight">\(\pars \in \Omega\)</span></p>
 <div class="math notranslate nohighlight" id="equation-eq-ppd">
-<span class="eqno">(4.19)<a class="headerlink" href="#equation-eq-ppd" title="Link to this equation">#</a></span>\[\pdf{\futuredata}{\data,I} = \int_{\Omega} \pdf{\futuredata}{\pars,I}\pdf{\pars}{\data,I}\,{\rm d} \pars,\]</div>
-<p>where we have used that <span class="math notranslate nohighlight">\(\futuredata\)</span> is conditionally independent of <span class="math notranslate nohighlight">\(\data\)</span>. By performing this integral we account for the uncertainty in the model parameters <span class="math notranslate nohighlight">\(\pars\)</span> when making predictions. In fact, one can marginalize (average) predictions over anything and everything that we are uncertain about as long as we have access to the necessary probability distributions. To evaluate the posterior for the model parameters we must employ Bayes’ theorem</p>
+<span class="eqno">(4.20)<a class="headerlink" href="#equation-eq-ppd" title="Link to this equation">#</a></span>\[\pdf{\futuredata}{\data,I} = \int_{\Omega} \pdf{\futuredata}{\pars,\data, I}\pdf{\pars}{\data,I}\,{\rm d} \pars.\]</div>
+<p>If <span class="math notranslate nohighlight">\(\futuredata\)</span> is conditionally independent of <span class="math notranslate nohighlight">\(\data\)</span>, we can replace <span class="math notranslate nohighlight">\(\pdf{\futuredata}{\pars,\data, I}\)</span> by <span class="math notranslate nohighlight">\(\pdf{\futuredata}{\pars, I}\)</span>, but there are cases of ppds where this is not true and we must be more careful (e.g., when we include <span class="math notranslate nohighlight">\(\delta M\)</span>).
+By performing this integral we account for the uncertainty in the model parameters <span class="math notranslate nohighlight">\(\pars\)</span> when making predictions. In fact, one can marginalize (average) predictions over anything and everything that we are uncertain about as long as we have access to the necessary probability distributions. To evaluate the posterior for the model parameters we must employ Bayes’ theorem</p>
 <div class="math notranslate nohighlight" id="equation-eq-bayes">
-<span class="eqno">(4.20)<a class="headerlink" href="#equation-eq-bayes" title="Link to this equation">#</a></span>\[\pdf{\pars}{\data,I} = \frac{\pdf{\data}{\pars,I}\pdf{\pars}{I}}{\pdf{\data}{I}}.\]</div>
-<p>Here, we must insert a likelihood of the data <span class="math notranslate nohighlight">\(\pdf{\data}{\pars,I}\)</span> and a prior distribution of the model parameters <span class="math notranslate nohighlight">\(\pdf{\pars}{I}\)</span>. Unless we are able to select very particular combinations of likelihood and prior distributions we must use numerical methods to evaluate the posterior predictive distribution. We will discuss the likelihood and prior in great detail in the next chapter, and also specialize to a case where we can perform the marginal integral in Eq. <a class="reference internal" href="#equation-eq-ppd">(4.19)</a> analytically. The denominator in Eq. <a class="reference internal" href="#equation-eq-bayes">(4.20)</a> is sometimes referred to as the marginal likelihood or the evidence and normalizes the left-hand side such that it integrates to unity, i.e., we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8761f917-dea4-4521-be81-1d25ccd91749">
-<span class="eqno">(4.21)<a class="headerlink" href="#equation-8761f917-dea4-4521-be81-1d25ccd91749" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<span class="eqno">(4.21)<a class="headerlink" href="#equation-eq-bayes" title="Link to this equation">#</a></span>\[\pdf{\pars}{\data,I} = \frac{\pdf{\data}{\pars,I}\pdf{\pars}{I}}{\pdf{\data}{I}}.\]</div>
+<p>Here, we must insert a likelihood of the data <span class="math notranslate nohighlight">\(\pdf{\data}{\pars,I}\)</span> and a prior distribution of the model parameters <span class="math notranslate nohighlight">\(\pdf{\pars}{I}\)</span>. Unless we are able to select very particular combinations of likelihood and prior distributions we must use numerical methods to evaluate the posterior predictive distribution. We will discuss the likelihood and prior in great detail in the next chapter, and also specialize to a case where we can perform the marginal integral in Eq. <a class="reference internal" href="#equation-eq-ppd">(4.20)</a> analytically. The denominator in Eq. <a class="reference internal" href="#equation-eq-bayes">(4.21)</a> is sometimes referred to as the marginal likelihood or the evidence and normalizes the left-hand side such that it integrates to unity, i.e., we have</p>
+<div class="amsmath math notranslate nohighlight" id="equation-13c57748-0ac4-41a0-a988-07a1e1eb17ab">
+<span class="eqno">(4.22)<a class="headerlink" href="#equation-13c57748-0ac4-41a0-a988-07a1e1eb17ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\data}{I} = \int_{\Omega} \pdf{\data}{\pars} \pdf{\pars}{I}\, {\rm d}\pars.
 \end{equation}\]</div>
-<p>Unless we are interested in obtaining an absolutely normalized posterior distribution we can omit the denominator in Eq. <a class="reference internal" href="#equation-eq-bayes">(4.20)</a>. Indeed, this does not explicitly depend on <span class="math notranslate nohighlight">\(\pars\)</span>.</p>
+<p>Unless we are interested in obtaining an absolutely normalized posterior distribution we can omit the denominator in Eq. <a class="reference internal" href="#equation-eq-bayes">(4.21)</a>. Indeed, this does not explicitly depend on <span class="math notranslate nohighlight">\(\pars\)</span>.</p>
 <div class="my-checkpoint admonition">
 <p class="admonition-title">Checkpoint question</p>
-<p>What did knowing that <span class="math notranslate nohighlight">\(\futuredata\)</span> is <em>conditionally independent</em> of <span class="math notranslate nohighlight">\(\data\)</span> allow us to do in <a class="reference internal" href="#equation-eq-ppd">(4.19)</a>?</p>
+<p>What would assuming that <span class="math notranslate nohighlight">\(\futuredata\)</span> is <em>conditionally independent</em> of <span class="math notranslate nohighlight">\(\data\)</span> allow us to do in <a class="reference internal" href="#equation-eq-ppd">(4.20)</a>?</p>
 <div class="dropdown my-answer admonition">
 <p class="admonition-title">Answer</p>
-<p>Because if we know <span class="math notranslate nohighlight">\(\pars\)</span>, <span class="math notranslate nohighlight">\(\data\)</span> gives no additional information, so we were able to replace <span class="math notranslate nohighlight">\(\pdf{\futuredata}{\pars,\data,I} \longrightarrow \pdf{\futuredata}{\pars,I}\)</span>.</p>
+<p>If we know <span class="math notranslate nohighlight">\(\pars\)</span>, then <em>if</em> <span class="math notranslate nohighlight">\(\data\)</span> gives no additional information, we are able to replace <span class="math notranslate nohighlight">\(\pdf{\futuredata}{\pars,\data,I} \longrightarrow \pdf{\futuredata}{\pars,I}\)</span>.</p>
 </div>
 </div>
 </section>
@@ -699,14 +700,14 @@ We will touch upon <span class="math notranslate nohighlight">\(\delta M\)</span
 
 <p class="admonition-title"><span class="caption-number">Exercise 4.3 </span></p>
 <section id="exercise-content">
-<p>Derive Eq. <a class="reference internal" href="#equation-eq-ppd">(4.19)</a> using the rules of probability calculus and inference.</p>
+<p>Derive Eq. <a class="reference internal" href="#equation-eq-ppd">(4.20)</a> using the rules of probability calculus and inference.</p>
 </section>
 </div>
 <div class="exercise admonition" id="exercise:pdf_normalization">
 
 <p class="admonition-title"><span class="caption-number">Exercise 4.4 </span></p>
 <section id="exercise-content">
-<p>Can you think of a situation where you would have to compute the denominator in Eq. <a class="reference internal" href="#equation-eq-bayes">(4.20)</a></p>
+<p>Can you think of a situation where you would have to compute the denominator in Eq. <a class="reference internal" href="#equation-eq-bayes">(4.21)</a></p>
 </section>
 </div>
 <div class="exercise admonition" id="exercise:rain">

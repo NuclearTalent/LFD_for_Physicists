@@ -628,6 +628,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#joint-pdfs-marginal-pdfs-and-an-example-of-marginalization">Joint PDFs, marginal PDFs, and an example of marginalization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-theorem-applied-to-pdfs">Bayes’ theorem applied to PDFs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-pdfs">Visualizing PDFs</a></li>
 </ul>
             </nav>
@@ -729,6 +730,52 @@ extracted with the imperfect apparatus.</p>
 <p>You may have noticed that we wrote <span class="math notranslate nohighlight">\(\p{x_1}\)</span> and <span class="math notranslate nohighlight">\(\p{x_1, x_2}\)</span> rather than <span class="math notranslate nohighlight">\(\pdf{x_1}{I}\)</span> and <span class="math notranslate nohighlight">\(\pdf{x1,x2}{I}\)</span>, where “<span class="math notranslate nohighlight">\(I\)</span>” is information we know but do not specify explicitly. Our PDFs will always be contingent on <em>some</em> information, so we were really being sloppy by trying to be compact. (See <a class="reference internal" href="../MoreBayesTheorem.html#sec-continuum-limit"><span class="std std-ref">The continuum limit</span></a> for more careful versions of these equations.)</p>
 </div>
 </section>
+<section id="bayes-theorem-applied-to-pdfs">
+<h2>Bayes’ theorem applied to PDFs<a class="headerlink" href="#bayes-theorem-applied-to-pdfs" title="Link to this heading">#</a></h2>
+<p>The rules applied to probabilities in <a class="reference internal" href="sec-02-manipulating-probabilities-bayesian-rules-of-probability-as.html#sec-inference-manipulation"><span class="std std-numref">Section 4.2</span></a> directly extend to continuous functions, i.e., PDFs; we’ll summarize the extension briefly here.
+Conventionally we denote by <span class="math notranslate nohighlight">\(\thetavec\)</span> a vector of continuous parameters we seek to determine (for now we’ll use <span class="math notranslate nohighlight">\(\alphavec\)</span> as another vector of parameters).
+As before, information <span class="math notranslate nohighlight">\(I\)</span> is kept implicit.</p>
+<p><strong>Sum rule</strong></p>
+<p>Probabilities integrate to one (assuming exhaustive and exclusive <span class="math notranslate nohighlight">\(\thetavec\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[
+  \int d\thetavec\, \pdf{\thetavec}{I} = 1 .
+\]</div>
+<p>The sum rule <em>implies</em> marginalization:</p>
+<div class="math notranslate nohighlight">
+\[ 
+     p(\thetavec|I) = \int d\alphavec\, p(\thetavec, \alphavec | I) .
+\]</div>
+<p><strong>Product rule</strong></p>
+<p>Expanding a joint probability of <span class="math notranslate nohighlight">\(\thetavec\)</span> and <span class="math notranslate nohighlight">\(\alphavec\)</span></p>
+<div class="math notranslate nohighlight" id="equation-eq-joint-prob">
+<span class="eqno">(4.6)<a class="headerlink" href="#equation-eq-joint-prob" title="Link to this equation">#</a></span>\[  
+   p(\thetavec, \alphavec| I) = p(\thetavec | \alphavec, I) p(\alphavec,I) = p(\alphavec| \thetavec,I) p(\thetavec,I) .
+\]</div>
+<p>As with discrete probabilities, there is a symmetry between the first and second equalities.
+If <span class="math notranslate nohighlight">\(\thetavec\)</span> and <span class="math notranslate nohighlight">\(\alphavec\)</span> are <em>mutually independent</em>, then <span class="math notranslate nohighlight">\(p(\thetavec | \alphavec,I) = p(\thetavec | I)\)</span> and</p>
+<div class="math notranslate nohighlight">
+\[
+  p(\thetavec,\alphavec | I) = p(\thetavec|I) \times p(\alphavec | I) .
+\]</div>
+<p>Rearranging the 2nd equality in <a class="reference internal" href="#equation-eq-joint-prob">(4.6)</a> yields <strong>Bayes’ Rule</strong> (or Theorem) just like in the discrete case:</p>
+<div class="math notranslate nohighlight">
+\[
+  p(\thetavec | \alphavec,I) = \frac{p(\alphavec|\thetavec,I) p(\thetavec|I)}{p(\alphavec | I)}
+\]</div>
+<p>Bayes’ rule tells us how to reverse the conditional: <span class="math notranslate nohighlight">\(p(\thetavec|\alphavec) \rightarrow p(\alphavec|\thetavec)\)</span>.
+A typical application is when <span class="math notranslate nohighlight">\(\alphavec\)</span> is a vector of data <span class="math notranslate nohighlight">\(\data\)</span>. Then Bayes’ rule is</p>
+<div class="math notranslate nohighlight">
+\[
+  \overbrace{ \pdf{\thetavec}{\data,I)} }^{\textrm{posterior}} =
+  \frac{ \color{red}{ \overbrace{ \pdf{\data}{\thetavec,I} }^{\textrm{likelihood}}} 
+ \color{black}{\ \times\ } 
+  \color{blue}{ \overbrace{ \pdf{\thetavec}{I}}^{\textrm{prior}}}    
+ } 
+ { \color{darkgreen}{ \underbrace{ \pdf{\data}{I} }_{\textrm{evidence}}} }
+\]</div>
+<p>Viewing the prior as the initial information we have about <span class="math notranslate nohighlight">\(\thetavec\)</span> (i.e., before using the data <span class="math notranslate nohighlight">\(\data\)</span>), summarized as a probability density function, then Bayes’ theorem tells us how to <strong>update</strong> that information after observing some data: this is the posterior PDF.  In <a class="reference internal" href="../CoinTossing.html#sec-updatingbayes"><span class="std std-numref">Section 6</span></a> we will give some examples of how this plays out when tossing biased coins.</p>
+</section>
 <section id="visualizing-pdfs">
 <h2>Visualizing PDFs<a class="headerlink" href="#visualizing-pdfs" title="Link to this heading">#</a></h2>
 <p>It is worthwhile at this stage to jump ahead and work through parts of the Jupyter notebook
@@ -824,6 +871,7 @@ small number of samples.</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#joint-pdfs-marginal-pdfs-and-an-example-of-marginalization">Joint PDFs, marginal PDFs, and an example of marginalization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-theorem-applied-to-pdfs">Bayes’ theorem applied to PDFs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-pdfs">Visualizing PDFs</a></li>
 </ul>
   </nav></div>
