@@ -67,7 +67,7 @@
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="4.5. Exercise: Checking the sum and product rules" href="exercise_sum_product_rule.html" />
+    <link rel="next" title="4.1. Statements" href="Inferenceandpdfs/sec-01-statements.html" />
     <link rel="prev" title="3. Bayesian methods for scientific modeling" href="RootBayesianBasics.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -201,6 +201,10 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="RootBayesianBasics.html">3. Overview of Part I</a></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">4. Inference and PDFs</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Inferenceandpdfs/sec-01-statements.html">4.1. Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Inferenceandpdfs/sec-02-manipulating-probabilities-bayesian-rules-of-probability-as.html">4.2. Manipulating probabilities: Bayesian rules of probability as principles of logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Inferenceandpdfs/sec-03-probability-density-functions.html">4.3. Probability density functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Inferenceandpdfs/sec-04-summary.html">4.4. Looking ahead</a></li>
 <li class="toctree-l2"><a class="reference internal" href="exercise_sum_product_rule.html">4.5. Exercise: Checking the sum and product rules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="exercise_medical_example_by_Bayes.html">4.6. Exercise: Standard medical example using Bayes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="MoreBayesTheorem.html">4.7. More on Bayes’ theorem</a></li>
@@ -600,9 +604,7 @@ document.write(`
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -618,26 +620,6 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statements">4.1. Statements</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manipulating-probabilities-bayesian-rules-of-probability-as-principles-of-logic">4.2. Manipulating probabilities: Bayesian rules of probability as principles of logic</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sum-rule">Sum rule</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#product-rule">Product rule</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-theorem">Bayes’ theorem</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-density-functions">4.3. Probability density functions</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#joint-pdfs-marginal-pdfs-and-an-example-of-marginalization">Joint PDFs, marginal PDFs, and an example of marginalization</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-pdfs">Visualizing PDFs</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">4.4. Summary</a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -649,375 +631,19 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="inference-and-pdfs">
 <span id="ch-inferenceandpdfs"></span><h1><span class="section-number">4. </span>Inference and PDFs<a class="headerlink" href="#inference-and-pdfs" title="Link to this heading">#</a></h1>
-<section id="statements">
-<h2><span class="section-number">4.1. </span>Statements<a class="headerlink" href="#statements" title="Link to this heading">#</a></h2>
-<p>A Bayesian approach to the world assigns probabilities to truth
-claims. It also recognizes that the probability of claim <span class="math notranslate nohighlight">\(A\)</span> is
-contingent upon statement <span class="math notranslate nohighlight">\(B\)</span> being true. We therefore introduce
-notation for conditional probability:</p>
-<div class="math notranslate nohighlight">
-\[ 
-   \cprob{A}{B} \equiv \text{``probability of $A$ given $B$ is true''}.
-\]</div>
-<p>For a Bayesian <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> could stand for anything. But, whatever
-they are, statements can now be categorized as definitively true
-(probability 1), or definitively false (probability 0), or anything in
-between.</p>
-<p>Examples:</p>
+<p>In this chapter we put on the table the basic ingredients for Bayesian inference.
+The subsections are:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\cprob{\text{``Betty eats grass''}}{\text{``Betty is a cow'' and
-  ``All cows eat grass''}}=1\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\cprob{\text{``Lines A and B intersect''}}{\text{``A and B are
-  parallel lines in flat space''}}=0\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\cprob{\text{``Particle A is negatively charged''}}{\text{``A is an electron''}}=1\)</span></p></li>
+<li><p><a class="reference internal" href="Inferenceandpdfs/sec-01-statements.html#sec-inference-statements"><span class="std std-ref">Statements</span></a>: Notation for probability statements</p></li>
+<li><p><a class="reference internal" href="Inferenceandpdfs/sec-02-manipulating-probabilities-bayesian-rules-of-probability-as.html#sec-inference-manipulation"><span class="std std-ref">Manipulating probabilities: Bayesian rules of probability as principles of logic</span></a></p></li>
+<li><p><a class="reference internal" href="Inferenceandpdfs/sec-03-probability-density-functions.html#sec-inference-pdfs"><span class="std std-ref">Probability density functions</span></a>. Extension of the Bayesian rules of probability to continuous probability density functions.</p></li>
+<li><p><a class="reference internal" href="Inferenceandpdfs/sec-04-summary.html#sec-inference-looking-ahead"><span class="std std-ref">Looking ahead</span></a>: pointers to further insight on Bayes’ theorem</p></li>
+<li><p><a class="reference internal" href="exercise_sum_product_rule.html#exercise-checkingsumproduct"><span class="std std-ref">Exercise: Checking the sum and product rules</span></a>. Practice applying the sum and product rules (and their consequences: marginalization, Bayes’ theorem, conditional independence) using a simple frequentist example.</p></li>
+<li><p><a class="reference internal" href="exercise_medical_example_by_Bayes.html#exercise-medicalexample"><span class="std std-ref">Exercise: Standard medical example using Bayes</span></a>. Practice on translating English statements into probability notation and then applying the Bayesian rules.</p></li>
+<li><p><a class="reference internal" href="MoreBayesTheorem.html#sec-morebayestheorem"><span class="std std-ref">More on Bayes’ theorem</span></a>. Further details on Bayes’ theorem.</p></li>
+<li><p><a class="reference internal" href="Bayesian_epistemology.html#sec-bayesianepistemology"><span class="std std-ref">*Aside: Bayesian epistemology</span></a>. Philosophical remarks on the interpretation of probabilities.</p></li>
+<li><p><a class="reference internal" href="DataModelsPredictions.html#sec-datamodelspredictions"><span class="std std-ref">Data, models, and predictions</span></a>. Introduction to statistical models, posterior predictive distributions, and Bayesian parameter estimation.</p></li>
 </ul>
-<p>On the other hand something like <span class="math notranslate nohighlight">\(\cprob{\text{``below 0 deg,. C''}}{\text{``it is January in Ohio''}}\)</span> should be assigned a probability
-between 0 and 1. We might even estimate this probability based on our
-past experience of Januarys in Ohio. But even statements for which we
-cannot construct a <span class="math notranslate nohighlight">\(\text{``frequentist estimator''}\)</span> can be assigned
-probabilities, e.g.</p>
-<div class="math notranslate nohighlight">
-\[\cprob{\text{``String theory is true''}}{\text{``Data
-from all high-energy colliders and cosmology''}},\]</div>
-<p>or, less frivolously</p>
-<div class="math notranslate nohighlight">
-\[\cprob{\text{``I'll come to the party tonight''}}{\text{``You
-invited me''}}.\]</div>
-<p>This emphasizes that, for a Bayesian, the probability is interpreted
-as representative of the Bayesian’s current state of knowledge, and
-not necessarily as the long-term average of a set of
-many trials. After all, what would it mean to conduct a set of trials,
-in some of which string theory was true, and in some of which it was not?</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>It is easy to forget the meaning of the key word <em>given</em> and assume that <span class="math notranslate nohighlight">\(\cprob{A}{B}\)</span> means that we know <span class="math notranslate nohighlight">\(B\)</span> is actually true, which may or may not be the case.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Further discussion on the interpretation of probability can be found in <a class="reference internal" href="Bayesian_epistemology.html#sec-bayesianepistemology"><span class="std std-ref">*Aside: Bayesian epistemology</span></a>.</p>
-</div>
-</section>
-<section id="manipulating-probabilities-bayesian-rules-of-probability-as-principles-of-logic">
-<span id="sec-manipulatingpdfs"></span><h2><span class="section-number">4.2. </span>Manipulating probabilities: Bayesian rules of probability as principles of logic<a class="headerlink" href="#manipulating-probabilities-bayesian-rules-of-probability-as-principles-of-logic" title="Link to this heading">#</a></h2>
-<p>In the school of subjective probability you can assign whatever
-probability we want to the above statements. They represent, after
-all, your degree of belief. But you should beware! If your probability
-assignments are consistently capricious people may stop paying
-attention to them.</p>
-<p>A minimal set of rules for consistently keeping track of probabilities
-is provided by two basic rules of probability arithmetic. These are the sum
-and product rules. A proof that the Sum and Product rules follow in any consistent implementation of probabilistic reasoning is given by Cox <span id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id3" title="Richard Threlkeld Cox. The Algebra of Probable Inference. Johns Hopkins University Press, 1961.">Cox61</a>]</span>.</p>
-<section id="sum-rule">
-<h3>Sum rule<a class="headerlink" href="#sum-rule" title="Link to this heading">#</a></h3>
-<p>If the set <span class="math notranslate nohighlight">\(\{x_i\}\)</span> is <em>exhaustive</em> and <em>exclusive</em></p>
-<div class="math notranslate nohighlight" id="equation-eq-discrete-sum-rule">
-<span class="eqno">(4.1)<a class="headerlink" href="#equation-eq-discrete-sum-rule" title="Link to this equation">#</a></span>\[
-   \sum_i \cprob{x_i}{I} = 1,
-\]</div>
-<p>i.e., the sum of the probabilities of all possible outcomes is equal
-to one. In quantum mechanics we are used to this as the outcome of
-summing over a complete, orthonormal set of states, and indeed, in
-that case the basis includes all possible values (it’s complete), and
-there is no overlap between its members (they are orthogonal).</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>In <a class="reference internal" href="#equation-eq-discrete-sum-rule">(4.1)</a> we include <span class="math notranslate nohighlight">\(I\)</span> (for “Information”) generically as the quantities or statements that the probability of <span class="math notranslate nohighlight">\(x_i\)</span> is contingent on. We use <span class="math notranslate nohighlight">\(I\)</span> to avoid having to specify explicitly all the details, but we should remember that these probabilities (and probability densities introduced below) are always conditional on some information.</p>
-</div>
-<p>The sum rule implies a key tool in the Bayesian’s arsenal,
-<em>marginalization</em></p>
-<div class="amsmath math notranslate nohighlight" id="equation-37cb4ebd-56b7-428f-8c43-a57b2856a96c">
-<span class="eqno">(4.2)<a class="headerlink" href="#equation-37cb4ebd-56b7-428f-8c43-a57b2856a96c" title="Permalink to this equation">#</a></span>\[\begin{align}
-      \cprob{x}{I} = \sum_j \cprob{x, y_j}{I} 
-\end{align}\]</div>
-<p>with the second equality being the generalization of marginalization
-to the context of variables <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> that can take on a
-continuous set of values, rather
-than just a discrete set of outcomes <span class="math notranslate nohighlight">\(\{x_i\}\)</span> and <span class="math notranslate nohighlight">\(\{y_j\}\)</span>.</p>
-<p>We will use marginalization a lot! Note that the marginalization
-takes place in the presence of the conditional I, i.e., all
-probabilities involved are ``given the information I’’. The given
-information is held fixed, while the sum of all possibilities is
-constructed.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Although we alluded to the analogy between inserting a complete set
-of states and marginalization above this analogy breaks down in
-general. It’s ok to use this as a mnemonic though.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>A rule from probability says <span class="math notranslate nohighlight">\(\prob(A \cup B) = \prob(A) + \prob(B) - \prob(A \cap B)\)</span>. (That is, to calculate the probability of the union of <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> we need to subtract the probability of the intersection from the sum of probabilities.) This may seem to contradict our marginalization rule. The difference is that if <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> are <em>exclusive</em>, as we assume, then <span class="math notranslate nohighlight">\(\prob(A \cap B) = 0\)</span>.</p>
-</div>
-</section>
-<section id="product-rule">
-<h3>Product rule<a class="headerlink" href="#product-rule" title="Link to this heading">#</a></h3>
-<p>The product rule tells us how to expand the joint probability of <span class="math notranslate nohighlight">\(x\)</span>
-and <span class="math notranslate nohighlight">\(y\)</span>, i.e.,</p>
-<div class="math notranslate nohighlight" id="equation-eq-joint-prob">
-<span class="eqno">(4.3)<a class="headerlink" href="#equation-eq-joint-prob" title="Link to this equation">#</a></span>\[  
-\cprob{x,y}{I} = \cprob{x}{y, I} \cprob{y}{I} 
-\]</div>
-<p>In words we say that the probability of both <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> occurring is
-the probability that <span class="math notranslate nohighlight">\(x\)</span> occurs, given that <span class="math notranslate nohighlight">\(y\)</span> has occurred, times
-the probability that <span class="math notranslate nohighlight">\(y\)</span> occurs.</p>
-<p>Note, once again, that the given information I is held fixed, i.e., it
-if present on the left-hand side it appears in both probabilities on
-the right-hand side.</p>
-<p>If <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are <em>mutually independent</em>, then <span class="math notranslate nohighlight">\(\cprob{x}{y,I} = \cprob{x}{I}\)</span> and <a class="reference internal" href="#equation-eq-joint-prob">(4.3)</a> reduces to</p>
-<div class="math notranslate nohighlight" id="equation-eq-conditional-independence">
-<span class="eqno">(4.4)<a class="headerlink" href="#equation-eq-conditional-independence" title="Link to this equation">#</a></span>\[
-\cprob{x,y}{I} = \cprob{x}{I} \times \cprob{y}{I}
-\]</div>
-<p>This is a rule you are probably (but we hesitate to quantify our
-belief) familiar with. Crucially, <a class="reference internal" href="#equation-eq-joint-prob">(4.3)</a> does <em>not</em>
-rely on the independence of the events <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When considering whether <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are mutually independent, you can ask yourself: does knowing <span class="math notranslate nohighlight">\(y\)</span> is true give me any information about whether <span class="math notranslate nohighlight">\(x\)</span> is true? If yes, then we need to keep it on the right side of the bar in <span class="math notranslate nohighlight">\(\cprob{x}{y,I}\)</span>. If no, then it doesn’t change the probability of <span class="math notranslate nohighlight">\(x\)</span> whether it is there or not, so the probability of <span class="math notranslate nohighlight">\(x\)</span> being true is the same if <span class="math notranslate nohighlight">\(y\)</span> is omitted.
-Hence <span class="math notranslate nohighlight">\(\cprob{x}{y,I} = \cprob{x}{I}\)</span> follows.</p>
-</div>
-</section>
-<section id="bayes-theorem">
-<h3>Bayes’ theorem<a class="headerlink" href="#bayes-theorem" title="Link to this heading">#</a></h3>
-<p>It is just a short step from the product rule to Bayes’
-theorem. Although we wrote <a class="reference internal" href="#equation-eq-joint-prob">(4.3)</a> so that the
-<span class="math notranslate nohighlight">\(\cprob{x}{y,I}\)</span> appeared on the right-hand side there is no reason to
-privilege <span class="math notranslate nohighlight">\(x\)</span> over <span class="math notranslate nohighlight">\(y\)</span>. We could equally have written:</p>
-<div class="math notranslate nohighlight">
-\[  
-\cprob{x,y}{I} = \cprob{y}{x, I} \cprob{x}{I} 
-\]</div>
-<p>Equating this to the expression in <a class="reference internal" href="#equation-eq-joint-prob">(4.3)</a> yields <strong>Bayes’ Rule</strong> (or Theorem):</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d8da6fdb-6ac9-4a10-9e45-852552585886">
-<span class="eqno">(4.5)<a class="headerlink" href="#equation-d8da6fdb-6ac9-4a10-9e45-852552585886" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\cprob{x}{y,I} = \frac{\cprob{y}{x,I} \cprob{x}{I}}{\cprob{y}{I}}
-\end{equation}\]</div>
-<p>Bayes’ theorem tells us how to reverse the conditional: <span class="math notranslate nohighlight">\(\cprob{x}{y}
-\Rightarrow \cprob{y}{x}\)</span>. The first thing to realize is that these two
-probabilities are not the same thing.</p>
-<div class="my-checkpoint admonition">
-<p class="admonition-title">Checkpoint question</p>
-<p>Construct your own example of <span class="math notranslate nohighlight">\(\cprob{x}{y} \neq \cprob{y}{x}\)</span></p>
-<div class="dropdown my-hint admonition">
-<p class="admonition-title">Possible answers</p>
-<p>The probability that there is a cloud in the sky given that it is
-raining is not the same as the probability that it’s raining given
-that there is a cloud in the sky.</p>
-</div>
-</div>
-<div class="exercise admonition" id="exercise:Inferenceandpdfs:sumandproductrule">
-
-<p class="admonition-title"><span class="caption-number">Exercise 4.1 </span> (Practicing the sum and product rule with population characteristics)</p>
-<section id="exercise-content">
-<p>In the exercise <a class="reference internal" href="exercise_sum_product_rule.html#exercise-checkingsumproduct"><span class="std std-ref">Exercise: Checking the sum and product rules</span></a>
-you can go through some calculations based on the sum and product
-rule. You estimate the probabilities of finding an individual in a
-population with a particular characteristic (tall with brown eyes for
-example) based on what you’re told about the population and the usual
-frequentist interpretation of probability. Then the exercise will take
-you through applying the sum and product rules.</p>
-</section>
-</div>
-<div class="exercise admonition" id="exercise:Inferenceandpdfs:medicalexample">
-
-<p class="admonition-title"><span class="caption-number">Exercise 4.2 </span> (Using Bayesian rules of probability on a standard medical problem)</p>
-<section id="exercise-content">
-<p>In the exercise <a class="reference internal" href="exercise_medical_example_by_Bayes.html#exercise-medicalexample"><span class="std std-ref">Exercise: Standard medical example using Bayes</span></a> your goal is to find the probability that you actually have an unknown disease given some information about the test for it. This is a problem for which your intuition and personal probability reasoning logic is likely to fail. But Bayes leads the way to the correct answer! It is good practice in translating statements to probabilities (and distinguishing between joint and conditional probabilities).</p>
-</section>
-</div>
-</section>
-</section>
-<section id="probability-density-functions">
-<h2><span class="section-number">4.3. </span>Probability density functions<a class="headerlink" href="#probability-density-functions" title="Link to this heading">#</a></h2>
-<p>The key mathematical entity used over and over again throughout this book will be the “probability density function”, PDF for short. PDFs for continuous quantities are integrated to obtain probabilities. An example familiar to every physicist will be the probability density of a quantum-mechanical particle. Max Born somewhat belatedly decided to put a square on Schrodinger’s wave function when interpreting the integral from <span class="math notranslate nohighlight">\(x=a\)</span> to <span class="math notranslate nohighlight">\(x=b\)</span> as the probability of measuring the particle to be between <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[
-   \prob(a \leq x \leq b) = \int_a^b |\psi(x)|^2\, dx
-\]</div>
-<p>We note that the unit of <span class="math notranslate nohighlight">\(|\psi(x)|^2\)</span> is inverse length, and it is generally true that PDFs, unlike probabilities, have units. If we divorce the previous equation from the quantum-mechanical context we would write:</p>
-<div class="math notranslate nohighlight">
-\[
-   \prob(a \leq x \leq b) = \int_a^b \p{x}\, dx
-\]</div>
-<p>where <span class="math notranslate nohighlight">\(\p{x}\)</span> is the PDF for the continuous variable <span class="math notranslate nohighlight">\(x\)</span>.</p>
-<div class="my-checkpoint admonition">
-<p class="admonition-title">Checkpoint question</p>
-<p>What is the unit of <span class="math notranslate nohighlight">\(p(\xvec)\)</span> (or <span class="math notranslate nohighlight">\(|\psi(\xvec)|^2\)</span>) in three dimensions (assuming <span class="math notranslate nohighlight">\(\xvec\)</span> is a vector of length)?</p>
-<div class="dropdown my-answer admonition">
-<p class="admonition-title">Answer</p>
-<p>We can use the normalization equation (which is the sum rule):</p>
-<div class="math notranslate nohighlight">
-\[
-  \int d^3x\, p(\xvec) = 1 ,
-\]</div>
-<p>which is dimensionless on the right side, so the unit of <span class="math notranslate nohighlight">\(p(\xvec)\)</span> (or <span class="math notranslate nohighlight">\(|\psi(\xvec)|^2\)</span>) is the inverse unit of <span class="math notranslate nohighlight">\(d^3x\)</span>, or <span class="math notranslate nohighlight">\(1/\text{length}^3\)</span>. Note that if <span class="math notranslate nohighlight">\(\xvec\)</span> represented a different quantity, the unit of <span class="math notranslate nohighlight">\(p(\xvec)\)</span> would differ accordingly.</p>
-</div>
-</div>
-<p>We note that the case of a discrete random variable, e.g., the numbers
-that can be rolled on a die, mean that the PDF only is non-zero at a
-discrete set of numbers. In that case <span class="math notranslate nohighlight">\(\p{x}\)</span> can be represented as
-a sum of Dirac delta functions, and the resulting object is sometimes
-called a probability mass function. Thus the cases discussed above,
-in which <span class="math notranslate nohighlight">\(\prob\)</span> represented probability measured over a discrete set
-of outcomes, can be understood as special cases of pdfs.</p>
-<p>In fact, working this from the other end,  the sum and product rules
-to pdfs in just the same way as they do to probabilities. Therefore Bayes’ theorem (or
-rule) can also be applied to relate the pdf of x given y, <span class="math notranslate nohighlight">\(\pdf{x}{y}\)</span>
-to the pdf of <span class="math notranslate nohighlight">\(y\)</span> given <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(\pdf{y}{x}\)</span>.</p>
-<p>In Bayesian statistics there are PDFs (or PMFs if discrete) for
-everything. Here are a few examples:</p>
-<ul class="simple">
-<li><p>fit parameters — like the slope and intercept of a line in a
-straight-line fit</p></li>
-<li><p>experimental <em>and</em> theoretical imperfections that lead to
-uncertainties in the final result</p></li>
-<li><p>events (“Will it rain tomorrow?”)</p></li>
-</ul>
-<p>We will stick to the <span class="math notranslate nohighlight">\(\p{\cdot}\)</span> notation here, but it’s worth pointing out that many different variants of the letter <span class="math notranslate nohighlight">\(p\)</span> are used to represent probabilities and PDFs in the literature. If we are interested in the PDF in a higher-dimensional space (say the probability of finding a particle in 3D space) you might see <span class="math notranslate nohighlight">\(p(\vec x) = p(\mathbf{x}) = P(\vec x) = \text{pr}(\vec x) = \text{prob}(\vec x) = \ldots\)</span>.</p>
-<div class="my-checkpoint admonition">
-<p class="admonition-title">Checkpoint question</p>
-<p>What is the PDF <span class="math notranslate nohighlight">\(\p{x}\)</span> if we know <strong>definitely</strong> that <span class="math notranslate nohighlight">\(x = x_0\)</span> (i.e., fixed)?</p>
-<div class="dropdown my-answer admonition">
-<p class="admonition-title">Answer</p>
-<p><span class="math notranslate nohighlight">\(\p{x} = \delta(x-x_0)\quad\)</span>  [Note that <span class="math notranslate nohighlight">\(p(x)\)</span> is normalized.]</p>
-</div>
-</div>
-<section id="joint-pdfs-marginal-pdfs-and-an-example-of-marginalization">
-<h3>Joint PDFs, marginal PDFs, and an example of marginalization<a class="headerlink" href="#joint-pdfs-marginal-pdfs-and-an-example-of-marginalization" title="Link to this heading">#</a></h3>
-<p><span class="math notranslate nohighlight">\(\p{x_1, x_2}\)</span> is the <em>joint</em> probability density of <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(x_2\)</span>. In quantum mechanics the probability density <span class="math notranslate nohighlight">\(|\Psi(x_1, x_2)|^2\)</span> to find particle 1 at <span class="math notranslate nohighlight">\(x_1\)</span> and particle 2 at <span class="math notranslate nohighlight">\(x_2\)</span> is a joint probability density.</p>
-<div class="my-checkpoint admonition">
-<p class="admonition-title">Checkpoint question</p>
-<p>What is the probability to find particle 1 at <span class="math notranslate nohighlight">\(x_1\)</span> while particle 2 is <em>anywhere</em>?</p>
-<div class="dropdown my-answer admonition">
-<p class="admonition-title">Answer</p>
-<p><span class="math notranslate nohighlight">\(\int_{-\infty}^{+\infty} |\psi(x_1, x_2)|^2\, dx_2\ \ \)</span> or, more generally, integrated over the domain of <span class="math notranslate nohighlight">\(x_2\)</span>.</p>
-</div>
-</div>
-<p>This is a specific example of the marginalization rule, now in the pdf
-context, that we
-discussed the general form for probabilities above. The <em>marginal
-probability density</em> of <span class="math notranslate nohighlight">\(x_1\)</span> is the result when we marginalize the
-<em>joint probability distribution</em> over <span class="math notranslate nohighlight">\(x_2\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[
- \p{x_1} = \int \p{x_1, x_2} \,dx_2 .
-\]</div>
-<p>So, in our quantum mechanical example, it’s the probability
-density we get when we just focus on particle 1, and don’t care about
-particle 2. <em>Marginalizing</em> in the Bayesian context means
-``integrating out’’ a parameter one is–at least temporarily–not
-interested in, to leave the focus on the PDF of other parameters. This
-can be particularly useful if there are “nuisance” parameters in the
-statistical model that account for the impact of defects in the
-measuring apparatus, but ultimately one is interested in the physics
-extracted with the imperfect apparatus.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>You may have noticed that we wrote <span class="math notranslate nohighlight">\(\p{x_1}\)</span> and <span class="math notranslate nohighlight">\(\p{x_1, x_2}\)</span> rather than <span class="math notranslate nohighlight">\(\pdf{x_1}{I}\)</span> and <span class="math notranslate nohighlight">\(\pdf{x1,x2}{I}\)</span>, where “<span class="math notranslate nohighlight">\(I\)</span>” is information we know but do not specify explicitly. Our PDFs will always be contingent on <em>some</em> information, so we were really being sloppy by trying to be compact. (See <a class="reference internal" href="MoreBayesTheorem.html#sec-continuum-limit"><span class="std std-ref">The continuum limit</span></a> for more careful versions of these equations.)</p>
-</div>
-</section>
-<section id="visualizing-pdfs">
-<h3>Visualizing PDFs<a class="headerlink" href="#visualizing-pdfs" title="Link to this heading">#</a></h3>
-<p>It is worthwhile at this stage to jump ahead and work through parts of the Jupyter notebook
-<a class="reference internal" href="Exploring_pdfs.html"><span class="std std-doc">Exploring PDFs</span></a> to make a first pass at getting familiar with PDFs and how to visualize them. In the notebook you will
-work with the python package <code class="docutils literal notranslate"><span class="pre">scipy.stats</span></code>, which has many
-distributions built in. You can learn more about those distributions by
-reading the manual page (which you can find by googling).</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>See <a class="reference internal" href="../../Reference/Statistics.html#sec-statistics"><span class="std std-ref">Statistics concepts and notation</span></a> in Appendix A for further details on PDFs.</p>
-</div>
-<p>The diversity of distributions available there should make it clear
-that the “default” choice of a Gaussian distribution is just that: a
-default choice. In <a class="reference internal" href="Gaussians.html#sec-gaussians"><span class="std std-ref">Gaussians: A couple of frequentist connections</span></a> we will explore why this default
-choice is often the correct one. But often is not the same as all the
-time, and it is frequently the case that other distributions, such as
-the Student t, gives a better description of the way data is
-distributed.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Trivia: “Student” was the pen name of the Head Brewer at Guinness — a pioneer of small-sample experimental design (hence not necessarily Gaussian). His real name was William Sealy Gossett.</p>
-</div>
-<p>Because we can draw an arbitrary number of samples from the
-distributions defined in scipy.stats we can see how the distributions
-build up as the number of samples increases, and how there are
-fluctuations around the asymptotic distribution that are larger for a
-small number of samples.</p>
-</section>
-</section>
-<section id="summary">
-<h2><span class="section-number">4.4. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
-<p>We have put on the table the axioms of probability theory and some of their consequences, in particular Bayes’ theorem.
-Before looking further at concrete applications of Bayesian inference, we provide further insight into Bayes’ theorem in <a class="reference internal" href="MoreBayesTheorem.html#sec-morebayestheorem"><span class="std std-ref">More on Bayes’ theorem</span></a> and introduce some additional ingredients for Bayesian inference in <a class="reference internal" href="DataModelsPredictions.html#sec-datamodelspredictions"><span class="std std-ref">Data, models, and predictions</span></a>. The latter include the idea of a statistical model, how to predict future data conditioned on (i.e., given) past data and background information (the posterior predictive distribution), and Bayesian parameter estimation.</p>
-<p>In Appendix A there is a summary and further details on <a class="reference internal" href="../../Reference/Statistics.html#sec-statistics"><span class="std std-ref">Statistics concepts and notation</span></a>. Particularly important are <a class="reference internal" href="../../Reference/Statistics.html#sec-expectationvaluesandmoments"><span class="std std-ref">Expectation values and moments</span></a> and <a class="reference internal" href="../../Reference/Statistics.html#sec-centralmoments"><span class="std std-ref">Central moments: Variance and Covariance</span></a>; we summarize the key discrete and continuous definitions here.</p>
-<div class="admonition-brief-summary-of-expectation-values-and-moments admonition">
-<p class="admonition-title">Brief summary of expectation values and moments</p>
-<p>The <em>expectation value</em> of a function <span class="math notranslate nohighlight">\(h\)</span> of the random variable <span class="math notranslate nohighlight">\(X\)</span> with respect to its distribution <span class="math notranslate nohighlight">\(p(x_i)\)</span> (a PMF) or <span class="math notranslate nohighlight">\(p(x)\)</span> (a PDF) is</p>
-<div class="math notranslate nohighlight">
-\[
-\mathbb{E}_{p}[h] =  \sum_{i}\! h(x_i)p(x_i) \quad\Longrightarrow\quad
-  \mathbb{E}_p[h] = \int_{-\infty}^\infty \! h(x)p(x)\,dx .
-\]</div>
-<p>The <span class="math notranslate nohighlight">\(p\)</span> subscript is usually omitted. <em>Moments</em> correspond to <span class="math notranslate nohighlight">\(h(x) = x^n\)</span>, with <span class="math notranslate nohighlight">\(n=0\)</span> giving 1 (this is the normalization condition) and the mean <span class="math notranslate nohighlight">\(\mu\)</span> by <span class="math notranslate nohighlight">\(n=1\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[
-\mathbb{E}[X] \equiv \mu =  \sum_{i}\! x_ip(x_i) \quad\Longrightarrow\quad
-  \mathbb{E}[X] \equiv \mu = \int_{-\infty}^\infty \! xp(x)\,dx .
-\]</div>
-<p>The variance and covariance are moments with respect to the mean for one and two random variables (we give only the continuous version here):</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}
-\text{Var}(X) &amp;\equiv \sigma^2  \equiv \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right)^2 \right] \\
-\text{Cov}(X,Y) &amp;\equiv \sigma_{XY}^2 \equiv \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right) \left( Y - \mathbb{E}[Y] \right)  \right].
-\end{align}\end{split}\]</div>
-<p>The standard deviation <span class="math notranslate nohighlight">\(\sigma\)</span> is simply the square root of the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>.
-The <strong>correlation coefficient</strong> of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> (for non-zero variances) is</p>
-<div class="math notranslate nohighlight">
-\[
-\rho_{XY} \equiv \frac{\text{Cov}(X,Y)}{\sqrt{\text{Var}(X)\text{Var}(Y)}},
-\]</div>
-</div>
-<div class="my-checkpoint admonition">
-<p class="admonition-title">Checkpoint question</p>
-<p>Show that we can also write</p>
-<div class="math notranslate nohighlight">
-\[
-\sigma^2 = \mathbb{E}[X^2]  - \mathbb{E}[X]^2
-\]</div>
-<div class="dropdown my-answer admonition">
-<p class="admonition-title">Answer</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}
-\sigma^2 &amp;= \int_{-\infty}^\infty (x-\mathbb{E}[X] )^2 p(x)dx\\
-&amp;=  \int_{-\infty}^\infty \left(x^2 - 2 x \mathbb{E}[X] +\mathbb{E}[X]^2\right)p(x)dx \\
-&amp; =  \mathbb{E}[X^2]  - 2 \mathbb{E}[X] \mathbb{E}[X]  + \mathbb{E}[X]^2 \\
-&amp;=  \mathbb{E}[X^2]  - \mathbb{E}[X]^2
-\end{align}\end{split}\]</div>
-<p>Make sure you can justify each step.</p>
-</div>
-</div>
-<div class="my-checkpoint admonition">
-<p class="admonition-title">Checkpoint question</p>
-<p>Show that the mean and variance of the normalized Gaussian distribution</p>
-<div class="math notranslate nohighlight">
-\[
-p \longrightarrow \mathcal{N}(x | \mu,\sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} \exp{\Bigl(-\frac{(x-\mu)^2}{2\sigma^2}\Bigr)},
-\]</div>
-<p>are <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span>, respectively.</p>
-<div class="dropdown my-answer admonition">
-<p class="admonition-title">Answer</p>
-<p>Just do the integrals!</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}
-  \mu &amp;= \int_{-\infty}^\infty \! x \frac{1}{\sigma\sqrt{2\pi}} \exp{\Bigl(-\frac{(x-\mu)^2}{2\sigma^2}\Bigr)}\,dx = \mu \quad\checkmark \\
-  \sigma^2 &amp;= \int_{-\infty}^\infty (x-\mu )^2 
-  \frac{1}{\sigma\sqrt{2\pi}} \exp{\Bigl(-\frac{(x-\mu)^2}{2\sigma^2}\Bigr)} \,dx
-  = \sigma^2 \quad\checkmark
-\end{align}\end{split}\]</div>
-<p>In doing these integrals, simplify by changing the integration variable to <span class="math notranslate nohighlight">\(x' = x-\mu\)</span> and use that the distribution is normalized (integrates to one) and that integrals of odd integrands are zero.</p>
-</div>
-</div>
-</section>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -1062,11 +688,11 @@ p \longrightarrow \mathcal{N}(x | \mu,\sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} \e
       </div>
     </a>
     <a class="right-next"
-       href="exercise_sum_product_rule.html"
+       href="Inferenceandpdfs/sec-01-statements.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">4.5. </span>Exercise: Checking the sum and product rules</p>
+        <p class="prev-next-title"><span class="section-number">4.1. </span>Statements</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1076,33 +702,6 @@ p \longrightarrow \mathcal{N}(x | \mu,\sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} \e
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statements">4.1. Statements</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manipulating-probabilities-bayesian-rules-of-probability-as-principles-of-logic">4.2. Manipulating probabilities: Bayesian rules of probability as principles of logic</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sum-rule">Sum rule</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#product-rule">Product rule</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-theorem">Bayes’ theorem</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-density-functions">4.3. Probability density functions</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#joint-pdfs-marginal-pdfs-and-an-example-of-marginalization">Joint PDFs, marginal PDFs, and an example of marginalization</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-pdfs">Visualizing PDFs</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">4.4. Summary</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>
