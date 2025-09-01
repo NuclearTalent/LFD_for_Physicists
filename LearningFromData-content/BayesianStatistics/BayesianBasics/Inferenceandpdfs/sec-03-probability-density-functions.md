@@ -130,7 +130,7 @@ Expanding a joint probability of $\thetavec$ and $\alphavec$
 
 $$  
    p(\thetavec, \alphavec| I) = p(\thetavec | \alphavec, I) p(\alphavec,I) = p(\alphavec| \thetavec,I) p(\thetavec,I) .
-$$ (eq:joint_prob)
+$$ (eq:pdf_joint_prob)
 
 As with discrete probabilities, there is a symmetry between the first and second equalities.
 If $\thetavec$ and $\alphavec$ are *mutually independent*, then $p(\thetavec | \alphavec,I) = p(\thetavec | I)$ and
@@ -139,7 +139,7 @@ $$
   p(\thetavec,\alphavec | I) = p(\thetavec|I) \times p(\alphavec | I) .
 $$
 
-Rearranging the 2nd equality in {eq}`eq:joint_prob` yields **Bayes' Rule** (or Theorem) just like in the discrete case:
+Rearranging the 2nd equality in {eq}`eq:pdf_joint_prob` yields **Bayes' Rule** (or Theorem) just like in the discrete case:
 
 $$
   p(\thetavec | \alphavec,I) = \frac{p(\alphavec|\thetavec,I) p(\thetavec|I)}{p(\alphavec | I)}
