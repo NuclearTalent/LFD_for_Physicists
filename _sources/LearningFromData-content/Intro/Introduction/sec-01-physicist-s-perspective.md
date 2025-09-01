@@ -1,3 +1,4 @@
+(sec:Intro:Perspective)=
 # Physicist's perspective
 
 This is a book by physicists, for physicists. It is not a data science book _per se_. It is, instead, a book that we hope will help physicists learn about a set of tools and practices that will enable them to draw rigorous scientific conclusions from data. 

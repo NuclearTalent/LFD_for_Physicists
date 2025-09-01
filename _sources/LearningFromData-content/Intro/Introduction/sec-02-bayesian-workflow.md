@@ -1,3 +1,4 @@
+(sec:Intro:Workflow)=
 # Bayesian workflow
 
 We hope anyone, or at least anyone reading this book, wants to learn. As taught in this book the practice of learning from data has four steps, which we will revisit repeatedly:

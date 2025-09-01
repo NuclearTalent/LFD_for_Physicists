@@ -1,3 +1,4 @@
+(sec:Intro:Virtues)=
 # Virtues
 
 In carrying out a principled Bayesian approach to learning from data, there are virtues that we wish to uphold. A good list of these is reproduced here from the [paper by Gelman and Hennig](https://sites.stat.columbia.edu/gelman/research/published/gelman_hennig_full_discussion.pdf).
