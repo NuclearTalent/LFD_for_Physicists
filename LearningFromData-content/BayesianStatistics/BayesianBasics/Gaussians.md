@@ -49,7 +49,7 @@ maximum.)
 
 $$
  \Longrightarrow\ L(x) \equiv \log p(x|D,I) = 
-   L(x_0) + \left.\frac{dL}{dx}\right|_{x_0 = 0}
+   L(x_0) + \left.\frac{dL}{dx}\right|_{x_0 = 0}(x-x_0)
    + \frac{1}{2} \left.\frac{d^2L}{dx^2}\right|_{x_0 = 0}(x-x_0)^2 + \cdots
 $$
 
