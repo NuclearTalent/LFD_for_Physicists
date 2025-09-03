@@ -72,7 +72,7 @@ We'll use the notation:
 <br>
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-**It seems like it should be high because the false negative rate is low.  I.e., the test doesn't often miss finding UD.**
+**It seems like it should be high because the false positive rate is low.**
 :::
 ::::
 
@@ -227,7 +227,7 @@ If you know $\prob(D) = 1$, then they are the same.
 The emphasis here is on the sum rule. Why didn't any column except Total in the sum/product rule notebook add to 1?
 :::{admonition} Answer
 :class: dropdown, my-answer 
-Because were were looking at $\prob(\text{tall,blue}) + \prob(\text{short,blue}) \neq 1$, whereas $\prob(\text{tall}| \text{blue}) + \prob(\text{short}| \text{blue}) = 1$.
+Because we were looking at $\prob(\text{tall,blue}) + \prob(\text{short,blue}) \neq 1$, whereas $\prob(\text{tall}| \text{blue}) + \prob(\text{short}| \text{blue}) = 1$.
 :::
 ::::
 
