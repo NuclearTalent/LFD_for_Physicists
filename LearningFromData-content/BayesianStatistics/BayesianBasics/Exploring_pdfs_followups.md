@@ -38,7 +38,7 @@ Make sure to look at [](./Exploring_pdfs.ipynb)  first!
 *What does sampling mean?* 
 :::{admonition} Answer 
 :class: dropdown, my-answer
-**To sample a given distribution is to draw values with probabilities given by the distribution.** 
+**To sample a given distribution is to draw values with probabilities given by the distribution. In Bayesian inference one is most often sampling a posterior distribution.** 
 :::
 ::::
 
