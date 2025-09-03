@@ -28,7 +28,7 @@ Make sure to look at [](./Exploring_pdfs.ipynb)  first!
 *What are the characteristics (e.g., symmetry, heavy tails, ...) of different pdfs: normal, beta, student t, $\chi^2$, \ldots* 
 :::{admonition} Answer 
 :class: dropdown, my-answer
-**Answer** 
+**Check these yourself! Note that the answers will often depend on the parameter values for the distribution. A Student t distribution may have "heavy tails" (meaning more probability in the tails than a Gaussian would have) for some parameters but for others it approaches a normal distribution (so by construction no heavy tails).** 
 :::
 ::::
 
@@ -38,7 +38,7 @@ Make sure to look at [](./Exploring_pdfs.ipynb)  first!
 *What does sampling mean?* 
 :::{admonition} Answer 
 :class: dropdown, my-answer
-**Answer** 
+**To sample a given distribution is to draw values with probabilities given by the distribution. In Bayesian inference one is most often sampling a posterior distribution.** 
 :::
 ::::
 
@@ -47,7 +47,7 @@ Make sure to look at [](./Exploring_pdfs.ipynb)  first!
 *How do you know if a distribution is correctly sampled?* 
 :::{admonition} Answer 
 :class: dropdown, my-answer
-**Answer** 
+**One way is to look at the (normalized)histogram. If correctly sampled, this should approximate the distribution and the approximation should improve with more samples.** 
 :::
 ::::
 
