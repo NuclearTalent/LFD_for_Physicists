@@ -239,7 +239,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianLinearRegression/BayesianLinearRegression_rjf.html">7.3. Bayesian Linear Regression (BLR)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/ErrorPropagation.html">8. Error propagation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/ErrorPropagation.html">8. Error propagation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/ErrorPropagation/sec-01-error-propagation-i-nuisance-parameters-and-marginalization.html">8.1. Error propagation (I): Nuisance parameters and marginalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/ErrorPropagation/sec-02-error-propagation-ii-changing-variables.html">8.2. Error propagation (II): Changing variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/ErrorPropagation/sec-03-error-propagation-iii-a-useful-approximation.html">8.3. Error propagation (III): A useful approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/ErrorPropagation/sec-04-solutions.html">8.4. Solutions</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../BayesianStatistics/BayesianParameterEstimation/Exercises_parameter_estimation.html">9. Exercises for Part I</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/exercise_sum_product_rule.html">9.1. Exercise: Checking the sum and product rules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/BayesianBasics/exercise_medical_example_by_Bayes.html">9.2. Exercise: Standard medical example using Bayes</a></li>
@@ -754,15 +760,15 @@ document.write(`
 <li><p><span class="math notranslate nohighlight">\(\inputs_i=[x_{0,i}, x_{1,i}, \dots, x_{p-1,i}]\)</span>, with <span class="math notranslate nohighlight">\(x_{0,i} = 1 \, \forall i\)</span>.</p></li>
 </ul>
 <p>Following <a class="reference internal" href="../../ModelingOptimization/LinearModels.html#sec-linearmodels"><span class="std std-ref">Linear models</span></a> we will apply the linear machine learning model</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5b2b7f42-7787-4f85-a89c-5f7ac7f1d984">
-<span class="eqno">(23.16)<a class="headerlink" href="#equation-5b2b7f42-7787-4f85-a89c-5f7ac7f1d984" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d0bd280b-738d-468c-872b-50a297e3fcc2">
+<span class="eqno">(23.16)<a class="headerlink" href="#equation-d0bd280b-738d-468c-872b-50a297e3fcc2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \MLmodel{\weights \, ; \, \inputs_i} = \inputs_i \cdot \weights,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\weights\)</span> is a <span class="math notranslate nohighlight">\(p \times 1\)</span> column vector of model parameters. These are known as weights in this context. We might also simplify the notation and write <span class="math notranslate nohighlight">\(\MLoutput_i = \MLmodel{\inputs_i}\)</span>.</p>
 <p>A machine learning regression analysis aims at finding the model parameters <span class="math notranslate nohighlight">\(\weights\)</span> such that a selected cost function is minimized. This optimization step  is the learning part of the model. The cost function is supposed to measure the performance of the model</p>
 <p>The <span class="math notranslate nohighlight">\(p\)</span> features for the <span class="math notranslate nohighlight">\(N\)</span> cases in the training data set are collected in the <span class="math notranslate nohighlight">\(N \times p\)</span> design matrix <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> such that we get the simple matrix form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fce975e0-489b-4d39-8221-a3f18ab3a835">
-<span class="eqno">(23.17)<a class="headerlink" href="#equation-fce975e0-489b-4d39-8221-a3f18ab3a835" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-20b0f81a-eecc-4a0f-9ca8-11c8d889b1f8">
+<span class="eqno">(23.17)<a class="headerlink" href="#equation-20b0f81a-eecc-4a0f-9ca8-11c8d889b1f8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \MLoutputs = \mathbf{X} \weights
 \end{equation}\]</div>
 <p>The most common metric to quantify the performance of the model is the mean-squared error (MSE)</p>
@@ -776,21 +782,21 @@ document.write(`
 C(\weights)=\frac{1}{N} \left(\outputs-\boldsymbol{X}\weights\right)^T\left(\outputs-\boldsymbol{X}\weights\right).
 \]</div>
 <p>In general, the minimization of the cost function is an optimization problem that must be approached with numerical techniques such as <em>gradient descent</em>. For linear regression, however, the learning can be achieved analytically. The minimum of Eq. <a class="reference internal" href="#equation-eq-mlexamples-mse-cost">(23.19)</a> is found by solving the normal equation, and if <span class="math notranslate nohighlight">\(\boldsymbol{X}^T\boldsymbol{X}\)</span> is invertible we have the optimal model parameters</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b54a349e-1042-4380-bc96-d2f2d5d2fcd1">
-<span class="eqno">(23.20)<a class="headerlink" href="#equation-b54a349e-1042-4380-bc96-d2f2d5d2fcd1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ab0af41c-27d0-4a2f-b861-fe57194ff9fd">
+<span class="eqno">(23.20)<a class="headerlink" href="#equation-ab0af41c-27d0-4a2f-b861-fe57194ff9fd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \weights^* = \left(\boldsymbol{X}^T\boldsymbol{X}\right)^{-1}\boldsymbol{X}^T\outputs.
 \end{equation}\]</div>
 <section id="training-scores">
 <h3>Training scores<a class="headerlink" href="#training-scores" title="Link to this heading">#</a></h3>
 <p>The mean-squared error <a class="reference internal" href="#equation-eq-mlexamples-mse">(23.18)</a> is just one possible choice for the cost function. In general, such metrics are also known as <strong>training scores</strong>.</p>
 <p>Other choices are the <strong>mean absolute error</strong> (MAE), defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a3fd5f94-c428-4145-be97-056c236b60a9">
-<span class="eqno">(23.21)<a class="headerlink" href="#equation-a3fd5f94-c428-4145-be97-056c236b60a9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f85d4a36-8710-4028-b2ef-7f7f04dd073a">
+<span class="eqno">(23.21)<a class="headerlink" href="#equation-f85d4a36-8710-4028-b2ef-7f7f04dd073a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathrm{MAE}(\weights) = \frac{1}{N} \sum_{i=1}^N \left| \output_{i} - \MLoutput_i \right|,
 \end{equation}\]</div>
 <p>and the <span class="math notranslate nohighlight">\(R2\)</span> score, also known as <em>coefficient of determination</em></p>
-<div class="amsmath math notranslate nohighlight" id="equation-97d66655-9391-406e-b8fa-388c51a2a119">
-<span class="eqno">(23.22)<a class="headerlink" href="#equation-97d66655-9391-406e-b8fa-388c51a2a119" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-117d4f87-953d-491c-94e7-ec5249ac12bd">
+<span class="eqno">(23.22)<a class="headerlink" href="#equation-117d4f87-953d-491c-94e7-ec5249ac12bd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathrm{R2}(\weights) = 1 - \frac{\sum_{i=1}^N \left( \output_{i} - \MLoutput_{i} \right)^2}{\sum_{i=1}^N \left( \output_{i} - \bar{y} \right)^2},
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\bar{y} = \frac{1}{N} \sum_{i=1}^N \MLoutput_{i}\)</span> is the mean of the model predictions.</p>
@@ -895,8 +901,8 @@ C(\weights)=\frac{1}{N} \left(\outputs-\boldsymbol{X}\weights\right)^T\left(\out
 <section id="the-perceptron-classifier">
 <h3>The perceptron classifier<a class="headerlink" href="#the-perceptron-classifier" title="Link to this heading">#</a></h3>
 <p>We can achieve a mapping from the continuous output <span class="math notranslate nohighlight">\(z\)</span> of the linear regressor to a discrete one <span class="math notranslate nohighlight">\(\MLoutput \in \{ 0, 1 \}\)</span> using the <em>perceptron</em> model which is usually formulated using the sign function as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6c66b7bb-03a6-4b90-ba08-1a3b12972839">
-<span class="eqno">(23.23)<a class="headerlink" href="#equation-6c66b7bb-03a6-4b90-ba08-1a3b12972839" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5a18d5f5-4bed-4ad2-8fb0-c646bf92168e">
+<span class="eqno">(23.23)<a class="headerlink" href="#equation-5a18d5f5-4bed-4ad2-8fb0-c646bf92168e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \MLoutput = \frac{\mathrm{sign}(z)+1}{2}.
 \end{equation}\]</div>
 <p>A binary classifier, providing a discrete output, can then be obtained accoring to the simple rule</p>
@@ -935,8 +941,8 @@ regression, the probability that input <span class="math notranslate nohighlight
 <section id="k-nearest-neighbors-classification">
 <h2><span class="math notranslate nohighlight">\(k\)</span> nearest neighbors classification<a class="headerlink" href="#k-nearest-neighbors-classification" title="Link to this heading">#</a></h2>
 <p>Nearest-neighbor methods use the closest observations in the training data <span class="math notranslate nohighlight">\(\trainingdata\)</span> to make a prediction. Usually, the definition of “closest” is usually the Euclidean distance in the input space, i.e., the length <span class="math notranslate nohighlight">\(\left| \testinputs - \inputs_i \right|\)</span>. Specifically, the <span class="math notranslate nohighlight">\(k\)</span> nearest neighbor prediction for a target would be given by the average</p>
-<div class="amsmath math notranslate nohighlight" id="equation-051fd424-50ce-4579-8154-22a909e87d32">
-<span class="eqno">(23.25)<a class="headerlink" href="#equation-051fd424-50ce-4579-8154-22a909e87d32" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-563221b4-c6cd-40f3-8618-1575071eb910">
+<span class="eqno">(23.25)<a class="headerlink" href="#equation-563221b4-c6cd-40f3-8618-1575071eb910" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde\output(\testinputs) = \frac{1}{k} \sum_{\inputs_i \in N_k(\testinputs)} \output_i,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\( N_k(\testinputs)\)</span> is the neighborhood of <span class="math notranslate nohighlight">\(\testinputs\)</span> defined by the <span class="math notranslate nohighlight">\(k\)</span> nearest points <span class="math notranslate nohighlight">\(\testinputs_i\)</span> in the training data set. Forced to make a hard decision we would use the majority vote and assign <span class="math notranslate nohighlight">\(\MLtestoutput = 1\)</span> if <span class="math notranslate nohighlight">\(\tilde\output(\testinputs) &gt; 0.5\)</span>, and <span class="math notranslate nohighlight">\(\MLtestoutput = 0\)</span> if <span class="math notranslate nohighlight">\(\tilde\output(\testinputs) \leq 0.5\)</span>.</p>
@@ -952,8 +958,8 @@ regression, the probability that input <span class="math notranslate nohighlight
 <p>The <span class="math notranslate nohighlight">\(k\)</span>-nearest neighbor classifier is an example of a method for which it becomes very important to normalize the input data. Imagine that one of the two inputs, <span class="math notranslate nohighlight">\(x_1\)</span>, varies in a range <span class="math notranslate nohighlight">\([100,1000]\)</span> whereas the other one, <span class="math notranslate nohighlight">\(x_2\)</span>, is limited to <span class="math notranslate nohighlight">\([0,1]\)</span>. It is then obvious that the Euclidean distance will be dominated by the distance in <span class="math notranslate nohighlight">\(x_1\)</span> and our model will be almost insensitive to <span class="math notranslate nohighlight">\(x_2\)</span>.</p>
 <p>We can solve this by normalizing the input parameters by some transformation and scaling. For example, we could consider instead <span class="math notranslate nohighlight">\((\tilde{x}_1, x_2)\)</span>, where <span class="math notranslate nohighlight">\(\tilde{x}_1 \equiv \frac{x_1 - 100}{1000}\)</span>. Now both parameters will be in the <span class="math notranslate nohighlight">\([0,1]\)</span> range and the method will work much better.</p>
 <p>Another common normalization scheme is known as standardization</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8e647c09-5692-49d2-8db9-7f7a5fae3db4">
-<span class="eqno">(23.26)<a class="headerlink" href="#equation-8e647c09-5692-49d2-8db9-7f7a5fae3db4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b13c2cf5-b2cc-420d-84e9-9b3b413193ec">
+<span class="eqno">(23.26)<a class="headerlink" href="#equation-b13c2cf5-b2cc-420d-84e9-9b3b413193ec" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{x}_i = \frac{x_i - \bar{x}_i}{\sigma_i},
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\bar{x}_i\)</span> and <span class="math notranslate nohighlight">\(\sigma_i\)</span> is the mean and the variance, respectively, for each input variable evaluated over the training datat set.</p>

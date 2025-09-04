@@ -67,7 +67,7 @@
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="9. Exercises for Part I" href="../BayesianParameterEstimation/Exercises_parameter_estimation.html" />
+    <link rel="next" title="8.1. Error propagation (I): Nuisance parameters and marginalization" href="ErrorPropagation/sec-01-error-propagation-i-nuisance-parameters-and-marginalization.html" />
     <link rel="prev" title="7.3. Bayesian Linear Regression (BLR)" href="../BayesianLinearRegression/BayesianLinearRegression_rjf.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -239,7 +239,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../BayesianLinearRegression/BayesianLinearRegression_rjf.html">7.3. Bayesian Linear Regression (BLR)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">8. Error propagation</a></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">8. Error propagation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="ErrorPropagation/sec-01-error-propagation-i-nuisance-parameters-and-marginalization.html">8.1. Error propagation (I): Nuisance parameters and marginalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ErrorPropagation/sec-02-error-propagation-ii-changing-variables.html">8.2. Error propagation (II): Changing variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ErrorPropagation/sec-03-error-propagation-iii-a-useful-approximation.html">8.3. Error propagation (III): A useful approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ErrorPropagation/sec-04-solutions.html">8.4. Solutions</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../BayesianParameterEstimation/Exercises_parameter_estimation.html">9. Exercises for Part I</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="exercise_sum_product_rule.html">9.1. Exercise: Checking the sum and product rules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="exercise_medical_example_by_Bayes.html">9.2. Exercise: Standard medical example using Bayes</a></li>
@@ -675,9 +681,7 @@ document.write(`
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -693,17 +697,6 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-propagation-i-nuisance-parameters-and-marginalization">8.1. Error propagation (I): Nuisance parameters and marginalization</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-propagation-ii-changing-variables">8.2. Error propagation (II): Changing variables</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-propagation-iii-a-useful-approximation">8.3. Error propagation (III): A useful approximation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">8.4. Solutions</a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -715,571 +708,17 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="error-propagation">
 <span id="sec-errorpropagation"></span><h1><span class="section-number">8. </span>Error propagation<a class="headerlink" href="#error-propagation" title="Link to this heading">#</a></h1>
-<section id="error-propagation-i-nuisance-parameters-and-marginalization">
-<h2><span class="section-number">8.1. </span>Error propagation (I): Nuisance parameters and marginalization<a class="headerlink" href="#error-propagation-i-nuisance-parameters-and-marginalization" title="Link to this heading">#</a></h2>
-<p>The Bayesian approach offers a straightforward approach for dealing with (known) systematic uncertainties; namely by marginalization.</p>
-<p>Assume that we have a model with two parameters, <span class="math notranslate nohighlight">\(\theta,\phi\)</span>, although only one of them (say <span class="math notranslate nohighlight">\(\theta\)</span>) is of physical relevance. The other one is then labeled a nuisance parameter. Through a Bayesian data analysis we can get the the joint posterior PDF</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cd6a40af-a0a4-4114-9f1f-31cead3b31c1">
-<span class="eqno">(8.1)<a class="headerlink" href="#equation-cd6a40af-a0a4-4114-9f1f-31cead3b31c1" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\pdf{\theta, \phi}{\data, I}.
-\end{equation}\]</div>
-<p>The marginal posterior PDF <span class="math notranslate nohighlight">\(\pdf{\theta}{\data, I}\)</span> is obtained via marginalization</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fed6b249-74c1-45eb-962a-f4de1c9947ab">
-<span class="eqno">(8.2)<a class="headerlink" href="#equation-fed6b249-74c1-45eb-962a-f4de1c9947ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\pdf{\theta}{\data, I} = \int \pdf{\theta, \phi}{\data, I} d\phi.
-\end{equation}\]</div>
-<p>This simple procedure allows to propagate the uncertainty in <span class="math notranslate nohighlight">\(\phi\)</span> to the probability distribution for <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
-<p><a class="reference internal" href="#example:BayesianAdvantage:inferring-galactic-distances">Example 8.2</a> provides an illustration of this scenario.</p>
-<div class="tip admonition">
-<p class="admonition-title">Marginalization using samples</p>
-<p>Assume that we have <span class="math notranslate nohighlight">\(N\)</span> samples from the joint pdf <span class="math notranslate nohighlight">\(\pdf{\theta, \phi}{\data, I}\)</span>. This might a sample chain from an MCMC sampler: <span class="math notranslate nohighlight">\(\left\{ (\theta, \phi)_i \right\}_{i=0}^{N-1}\)</span>. Then the marginal distribution of <span class="math notranslate nohighlight">\(\theta\)</span> will be given by the same chain by simply ignoring the <span class="math notranslate nohighlight">\(\phi\)</span> column, i.e., <span class="math notranslate nohighlight">\(\left\{ \theta_{i} \right\}_{i=0}^{N-1}\)</span>.</p>
-<p>See the interactive demos created by Chi Feng for an illustration of this: <a class="reference external" href="https://chi-feng.github.io/mcmc-demo/">The Markov-chain Monte Carlo Interactive Gallery</a>.</p>
-</div>
-<p>A slightly more general scenario for which the marginalization procedure is useful is the following: Assume that we have measured or inferred the parameters <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>; what can we say about the difference <span class="math notranslate nohighlight">\(X-Y\)</span> or the raio <span class="math notranslate nohighlight">\(X/Y\)</span>, or the sum of their squares <span class="math notranslate nohighlight">\(X^2+Y^2\)</span>, etc?</p>
-<p>Such questions can be rephrased as: Given the joint PDF <span class="math notranslate nohighlight">\(\pdf{x,y}{I}\)</span>, what is <span class="math notranslate nohighlight">\(\pdf{z}{I}\)</span>, where <span class="math notranslate nohighlight">\(z=f(x,y)\)</span>? Here, and in the following, we use shorthands <span class="math notranslate nohighlight">\(\pdf{z}{I}\)</span>, <span class="math notranslate nohighlight">\(\pdf{x,y}{I}\)</span> instead of the more correct <span class="math notranslate nohighlight">\(p_Z(z|I)\)</span>, <span class="math notranslate nohighlight">\(p_{X,Y}(x,y|I)\)</span>. The context should make it clear which random variable(s) that are referred to.</p>
-<p>In this situation we can use marginalization and the product rule.</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b3adbc0e-6787-45cb-bdea-3873e99bf863">
-<span class="eqno">(8.3)<a class="headerlink" href="#equation-b3adbc0e-6787-45cb-bdea-3873e99bf863" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\pdf{z}{I} = \int \pdf{z,x,y}{I}dxdy = \int \pdf{z}{x,y,I} \pdf{x,y}{I}dxdy.
-\end{equation}\]</div>
-<p>We realize that <span class="math notranslate nohighlight">\(\pdf{z}{x,y,I} = \delta(z-f(x,y))\)</span> due to the functional relationship between the parameters.</p>
-<div class="admonition-dirac-delta-functions admonition">
-<p class="admonition-title">Dirac delta functions</p>
-<p>A delta function <span class="math notranslate nohighlight">\(\delta(x-x_0)\)</span> can be constructed as the limiting case of a distribution</p>
-<div class="math notranslate nohighlight">
-\[
-\delta(x-x_0) = \lim_{\varepsilon \to 0^+} h_{\varepsilon}(x-x_0).
-\]</div>
-<p>For example, it can be constructed as an infinitely narrow (and tall) normal distribution</p>
-<div class="math notranslate nohighlight">
-\[
-\delta(x-x_0) = \lim_{\varepsilon \to 0^+} \frac{1}{\sqrt{2\pi}\varepsilon} \exp\left( -\frac{(x-x_0)^2}{2\varepsilon^2}\right).
-\]</div>
-<p>This function will be zero for <span class="math notranslate nohighlight">\(x \neq x_0\)</span>, and goes to infinity at <span class="math notranslate nohighlight">\(x_0\)</span> in a way such that the integral <span class="math notranslate nohighlight">\(\int_{-\infty}^{+\infty} \delta(x-x_0) dx = 1\)</span>, which is a defining property.</p>
-<p>More general, for well-behaved functions <span class="math notranslate nohighlight">\(f(x)\)</span>, we have <span class="math notranslate nohighlight">\(\int_{-\infty}^{+\infty} f(x) \delta(x-x_0) dx = f(x_0)\)</span>.</p>
-</div>
-<p>The joint PDF for <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> becomes a product if the errors are independent <span class="math notranslate nohighlight">\(\pdf{x,y}{I} = \pdf{x}{I} \pdf{y}{I}\)</span> . The delta function can be used to evaluate one of the integrals, giving some inverse transformation <span class="math notranslate nohighlight">\(y=g(x,z)\)</span>, and the PDF for <span class="math notranslate nohighlight">\(Z\)</span> becomes a convolution</p>
-<div class="math notranslate nohighlight" id="equation-eq-bayesianadvantage-marginalization">
-<span class="eqno">(8.4)<a class="headerlink" href="#equation-eq-bayesianadvantage-marginalization" title="Link to this equation">#</a></span>\[
-\pdf{z}{I} = \int \pdf{x}{I} \pdf{y=g(x,z)}{I}dx.
-\]</div>
-<div class="proof example admonition" id="example:BayesianAdvantage:Z=X+Y">
-<p class="admonition-title"><span class="caption-number">Example 8.1 </span> (<span class="math notranslate nohighlight">\(Z = X + Y\)</span>)</p>
-<section class="example-content" id="proof-content">
-<p>Let us consider the situation where you are interested in the quantity <span class="math notranslate nohighlight">\(Z = X + Y\)</span>, and you have information <span class="math notranslate nohighlight">\(I\)</span> about <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> which tells you that <span class="math notranslate nohighlight">\(\expect{X} = x_0\)</span>, <span class="math notranslate nohighlight">\(\var{X} = \sigma_x^2\)</span> and <span class="math notranslate nohighlight">\(\expect{Y} = y_0\)</span>, <span class="math notranslate nohighlight">\(\var{Y} = \sigma_y^2\)</span>. If this is all the information that we have, it is reasonable to assume that <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> are independent and that we should assign Gaussian  PDFs (the argument for this is known as the Maximum Entropy principle)</p>
-<div class="amsmath math notranslate nohighlight" id="equation-63bc09d7-f209-4d4b-824b-6a697663eb10">
-<span class="eqno">(8.5)<a class="headerlink" href="#equation-63bc09d7-f209-4d4b-824b-6a697663eb10" title="Permalink to this equation">#</a></span>\[\begin{align}
-\pdf{x,y}{I} &amp;= \pdf{x}{I}\pdf{y}{I} \\
-&amp;= \frac{1}{2\pi\sigma_x\sigma_y} \exp\left[ - \frac{(x-x_0)^2}{2\sigma_x^2} \right] \exp\left[ - \frac{(y-y_0)^2}{2\sigma_y^2} \right].
-\end{align}\]</div>
-<p>Let us now use marginalization and the product rule to find</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4d69e675-2665-49f1-96c9-8fa2298809d4">
-<span class="eqno">(8.6)<a class="headerlink" href="#equation-4d69e675-2665-49f1-96c9-8fa2298809d4" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\pdf{z}{I} = \int \pdf{z,x,y}{I}dxdy = \int \pdf{z}{x,y,I} \pdf{x,y}{I}dxdy.
-\end{equation}\]</div>
-<p>We realize that <span class="math notranslate nohighlight">\(\pdf{z}{x,y,I} = \delta(z-(x+y))\)</span> due to the functional relationship between the parameters, and we have <span class="math notranslate nohighlight">\(\pdf{x,y}{I}\)</span> as a product of Gaussian  PDFs from above. The delta function can be used to evaluate one of the integrals, and the PDF for <span class="math notranslate nohighlight">\(Z\)</span> becomes a convolution</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dd3f3141-c47b-487d-bfbe-a7180bbf4e19">
-<span class="eqno">(8.7)<a class="headerlink" href="#equation-dd3f3141-c47b-487d-bfbe-a7180bbf4e19" title="Permalink to this equation">#</a></span>\[\begin{align}
-\pdf{z}{I} &amp;= \int \pdf{x}{I} \pdf{y=z-x}{I} dx \\
-&amp;= \frac{1}{2\pi\sigma_x\sigma_y} \int \exp\left[ - \frac{(x-x_0)^2}{2\sigma_x^2} \right] \exp\left[ - \frac{(z - x - y_0)^2}{2\sigma_y^2} \right] dx.
-\end{align}\]</div>
-<p>After some tedious algebra that involves completing the square for <span class="math notranslate nohighlight">\(X\)</span> in the exponent we obtain</p>
-<div class="math notranslate nohighlight" id="equation-eq-bayesianadvantage-sum-of-gaussians">
-<span class="eqno">(8.8)<a class="headerlink" href="#equation-eq-bayesianadvantage-sum-of-gaussians" title="Link to this equation">#</a></span>\[
-\pdf{z}{I} = \frac{1}{\sqrt{2\pi}\sigma_z} \exp\left[ - \frac{(z-z_0)^2}{2\sigma_z^2} \right], 
-\]</div>
-<p>with <span class="math notranslate nohighlight">\(z_0 = x_0 + y_0\)</span> and <span class="math notranslate nohighlight">\(\sigma_z^2 = \sigma_x^2 + \sigma_y^2\)</span>. Thus, the PDF for the sum <span class="math notranslate nohighlight">\(Z=X+Y\)</span>, with <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> being described by Gaussian  PDFs, is another Gaussian.</p>
-</section>
-</div><div class="exercise admonition" id="exercise:BayesianAdvantage:correlated-errors">
-
-<p class="admonition-title"><span class="caption-number">Exercise 8.1 </span> (Correlated errors)</p>
-<section id="exercise-content">
-<p>For correlated errors the joint PDF <span class="math notranslate nohighlight">\(\pdf{x,y}{I}\)</span> does not factorize into a product. Consider, for example, a situation with a bivariate normal distribution</p>
-<div class="math notranslate nohighlight">
-\[
-\pdf{x,y}{I} = \frac{1}{(2\pi) |\boldsymbol{\Sigma}|^{1/2}} \exp{ \left( -\frac{1}{2}(x, y)\boldsymbol{\Sigma}^{-1}(x, y)^T\right)}.
-\]</div>
-<p>Furthermore, let us assume that the variances in <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> are the same (<span class="math notranslate nohighlight">\(\sigma_x^2=\sigma_y^2\equiv\sigma^2\)</span>) and the covariance is positive and almost as large as the variance (i.e., errors are strongly correlated). Then, the linear transformation <span class="math notranslate nohighlight">\(S=(X-Y)/\sqrt{2}\)</span> and <span class="math notranslate nohighlight">\(T=(X+Y)/\sqrt{2}\)</span> gives two new random variables <span class="math notranslate nohighlight">\(S\)</span> and <span class="math notranslate nohighlight">\(T\)</span> that turn out to be independent. This implies</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\pdf{x,y}{I} = 
-\left\{ 
-\begin{array}{l}
-s = \frac{x-y}{\sqrt{2}} \\
-t = \frac{x+y}{\sqrt{2}} \\
-\end{array}
-\right\}
-= \frac{1}{\sqrt{2\pi}\sigma_s}\exp \left( - \frac{s^2}{2\sigma_s^2} \right) \frac{1}{\sqrt{2\pi}\sigma_t}\exp \left( - \frac{t^2}{2\sigma_t^2} \right).
-\end{split}\]</div>
-<p>Furthermore, given the strong positive correlation one finds that <span class="math notranslate nohighlight">\(\sigma_s \ll \sigma\)</span>. What is the PDF for the difference <span class="math notranslate nohighlight">\(Z=X-Y\)</span> in this situation?</p>
-</section>
-</div>
-<div class="exercise admonition" id="exercise:BayesianAdvantage:complete-the square">
-
-<p class="admonition-title"><span class="caption-number">Exercise 8.2 </span> (Sum of two Gaussian  PDFs)</p>
-<section id="exercise-content">
-<p>Complete the derivation of Eq. <a class="reference internal" href="#equation-eq-bayesianadvantage-sum-of-gaussians">(8.8)</a>.</p>
-</section>
-</div>
-<div class="proof example admonition" id="example:BayesianAdvantage:inferring-galactic-distances">
-<p class="admonition-title"><span class="caption-number">Example 8.2 </span> (Inferring galactic distances)</p>
-<section class="example-content" id="proof-content">
-<p>The Hubble constant <span class="math notranslate nohighlight">\(H\)</span> acts as a galactic ruler as it is used to measure astronomical distances (<span class="math notranslate nohighlight">\(d\)</span>) according to <span class="math notranslate nohighlight">\(v = H d\)</span> where <span class="math notranslate nohighlight">\(v\)</span> is the velocity that can be measured with observations of redshifts. An error in <span class="math notranslate nohighlight">\(H\)</span> will therefore correspond to a systematic uncertainty in such measurements.</p>
-<p>A modern value for the Hubble constant is <span class="math notranslate nohighlight">\(H = 70 \pm 10\)</span> km s<span class="math notranslate nohighlight">\(^{-1}\)</span> MPc<span class="math notranslate nohighlight">\(^{-1}\)</span>. We introduce the expectation value <span class="math notranslate nohighlight">\(\expect{H} = H_0 = 70\)</span> km s<span class="math notranslate nohighlight">\(^{-1}\)</span> MPc<span class="math notranslate nohighlight">\(^{-1}\)</span> and the standard deviation <span class="math notranslate nohighlight">\(\std{H} = \sigma_H = 10\)</span> km s<span class="math notranslate nohighlight">\(^{-1}\)</span> MPc<span class="math notranslate nohighlight">\(^{-1}\)</span>. Note that astronomical distances are usually measured in million parsecs (MPc). Suppose that a specific galaxy has a measured recessional velocity <span class="math notranslate nohighlight">\(v_0 = 100 \times 10^3\)</span> km/s with an observational error quantified by a standard deviation <span class="math notranslate nohighlight">\(\sigma_v = 5 \times 10^3\)</span> km/s. Determine the posterior PDF for the distance to a galaxy under the following analysis assumptions:</p>
-<ol class="arabic">
-<li><p>We use the expectation value of <span class="math notranslate nohighlight">\(H\)</span> in the analysis: <span class="math notranslate nohighlight">\(H = H_0 = 70\)</span> km s<span class="math notranslate nohighlight">\(^{-1}\)</span> MPc<span class="math notranslate nohighlight">\(^{-1}\)</span>.</p></li>
-<li><p>We include the uncertainty in the value of the Hubble constant via a Gaussian PDF:</p>
-<div class="math notranslate nohighlight">
-\[
-   \pdf{H}{I} = \frac{1}{\sqrt{2\pi}\sigma_H} \exp\left( - \frac{(H-H_0)^2}{2 \sigma_H^2} \right).
-   \]</div>
-</li>
-<li><p>We include the uncertainty in the value of the Hubble constant via a uniform PDF:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-   \pdf{H}{I} = \left\{ 
-   \begin{array}{ll}
-   \frac{1}{4 \sigma_H} &amp; \text{for } H_0 - 2\sigma_H \leq H \leq H_0 + 2\sigma_H, \\
-   0 &amp; \text{otherwise.}
-   \end{array}
-   \right.
-   \end{split}\]</div>
-</li>
-<li><p>In addition, an approximate propagation of errors is demonstrated in <a class="reference internal" href="#example:BayesianAdvantage:inferring-galactic-distances-revisited">Example 8.3</a>.</p></li>
-</ol>
-<p>Here we use marginalization to obtain the desired posterior PDF <span class="math notranslate nohighlight">\(\pdf{d}{\data,I}\)</span> from the joint distribution of <span class="math notranslate nohighlight">\(\pdf{d,H}{\data,I}\)</span></p>
-<div class="math notranslate nohighlight" id="equation-eq-marginalization-hubble">
-<span class="eqno">(8.9)<a class="headerlink" href="#equation-eq-marginalization-hubble" title="Link to this equation">#</a></span>\[
-\pdf{d}{\data,I} = \int_{-\infty}^\infty \pdf{d,H}{\data,I} dH .
-\]</div>
-<p>Using</p>
+<p>In Bayesian statistics, error propagation is the process of determining how uncertainties in input parameters, which are characterized by probability distributions, influence the uncertainty (again, as a PDF) in the final output of a model.
+In general, Bayesian methods use the full PDFs to propagate uncertainty, in contrast to frequentist approaches.
+In this chapter we look at three aspects of error propagation plus solutions to exercises:</p>
 <ul class="simple">
-<li><p>Bayes’ rule: <span class="math notranslate nohighlight">\(\pdf{d,H}{\data,I} \propto \pdf{\data}{d,H,I} \pdf{d,H}{I}\)</span>,</p></li>
-<li><p>the product rule: <span class="math notranslate nohighlight">\(\pdf{d,H}{I} = p(H|d,I)\pdf{d}{I}\)</span>,</p></li>
-<li><p>and the fact that <span class="math notranslate nohighlight">\(H\)</span> is independent of <span class="math notranslate nohighlight">\(d\)</span>: <span class="math notranslate nohighlight">\(p(H|d,I) = \pdf{H}{I}\)</span>,</p></li>
+<li><p><a class="reference internal" href="ErrorPropagation/sec-01-error-propagation-i-nuisance-parameters-and-marginalization.html#sec-errorpropagationi"><span class="std std-ref">Error propagation (I): Nuisance parameters and marginalization</span></a></p></li>
+<li><p><a class="reference internal" href="ErrorPropagation/sec-02-error-propagation-ii-changing-variables.html#sec-bayesianadvantages-changingvariables"><span class="std std-ref">Error propagation (II): Changing variables</span></a></p></li>
+<li><p><a class="reference internal" href="ErrorPropagation/sec-03-error-propagation-iii-a-useful-approximation.html#sec-errorpropagationiii"><span class="std std-ref">Error propagation (III): A useful approximation</span></a></p></li>
+<li><p><a class="reference internal" href="ErrorPropagation/sec-04-solutions.html#sec-errorpropagationsolutions"><span class="std std-ref">Solutions</span></a></p></li>
 </ul>
-<p>we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-584902bf-4f96-455e-a88f-0e3e02c056a0">
-<span class="eqno">(8.10)<a class="headerlink" href="#equation-584902bf-4f96-455e-a88f-0e3e02c056a0" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\pdf{d}{\data,I} \propto \pdf{d}{I} \int \pdf{H}{I} \pdf{\data}{d,H,I} dH ,
-\end{equation}\]</div>
-<p>which means that we have expressed the quantity that we want (the posterior of <span class="math notranslate nohighlight">\(d\)</span>) in terms of quantities that we can specify.</p>
-<p>First, we need to state our prior knowledge concerning the distance <span class="math notranslate nohighlight">\(\pdf{d}{I}\)</span>. You might ask yourself what information is contained in this quantity. It should summarize our state of knowledge <em>before</em> accumulating the new data. For starters, we do know that it is a distance (meaning that it is a positive quantity) and we would also expect it to be smaller than the (visible) size of the universe. We might argue that it should be at least as far away as the previously known closest galaxy. Further arguments can be made on the basis of indifference, but we will defer such discussions for now. For simplicity, we just assign a uniform PDF</p>
-<div class="math notranslate nohighlight">
-\[
-\pdf{d}{I} \propto 1,
-\]</div>
-<p>within some huge range <span class="math notranslate nohighlight">\(0 &lt; d  &lt; 10^9\)</span> MPc.</p>
-<p>The likelihood for the observed can be written down from a statistical model</p>
-<div class="math notranslate nohighlight">
-\[
-v_\mathrm{measured} = H d + e,
-\]</div>
-<p>where <span class="math notranslate nohighlight">\(H d\)</span> represents our model for the velocity and <span class="math notranslate nohighlight">\(e\)</span> is the observational error, which is a random variable. We know that <span class="math notranslate nohighlight">\(\expect{v_\mathrm{measured}} = v_0\)</span> and <span class="math notranslate nohighlight">\(\text{Var}(v_\mathrm{measured}) = \sigma_v^2\)</span>. Given this information it is motivated to use a Gaussian PDF (with this mean and variance) for the likelihood</p>
-<div class="math notranslate nohighlight">
-\[
-\pdf{\data}{d,H,I} = \frac{1}{\sqrt{2\pi}\sigma_v} \exp\left( - \frac{(v_0 - Hd)^2}{2\sigma_v^2} \right).
-\]</div>
-<p>The results for the different analysis strategies (1-3 in the list above) should be obtained in <a class="reference internal" href="#exercise:BayesianAdvantages:inferring-galactic-distances-ex"><span class="std std-numref">Exercise 8.3</span></a>. A comparison figure that also includes the approximative error propagation (4) is shown in the solution to this exercise.</p>
-</section>
-</div><div class="exercise admonition" id="exercise:BayesianAdvantages:inferring-galactic-distances-ex">
-
-<p class="admonition-title"><span class="caption-number">Exercise 8.3 </span> (Inferring galactic distances)</p>
-<section id="exercise-content">
-<p>Apply the first three analysis strategies and derive the posterior distribution <span class="math notranslate nohighlight">\(\pdf{d}{\data,I}\)</span>. The first case allows an analytical solution while the second and third are probably best approached numerically (although it is, in fact, possible to find an analytical result also for case 2). Plot the results.</p>
-<p>Hint 1: Since the goal is to extract a probability distribution, and we are already ignoring the denominator in Bayes’ theorem, it is allowed to ignore all normalization constants. The final  PDFs can be normalized by integration.</p>
-<p>Hint 2: A fixed value for <span class="math notranslate nohighlight">\(H\)</span> can be assigned with the PDF <span class="math notranslate nohighlight">\(\pdf{H}{I} = \delta(H-H_0)\)</span>, where <span class="math notranslate nohighlight">\(\delta(x)\)</span> is the Kronecker delta.</p>
-</section>
+<div class="toctree-wrapper compound">
 </div>
-</section>
-<section id="error-propagation-ii-changing-variables">
-<span id="sec-bayesianadvantages-changingvariables"></span><h2><span class="section-number">8.2. </span>Error propagation (II): Changing variables<a class="headerlink" href="#error-propagation-ii-changing-variables" title="Link to this heading">#</a></h2>
-<p>Let us consider a single variable <span class="math notranslate nohighlight">\(X\)</span> and a function <span class="math notranslate nohighlight">\(Y=f(X)\)</span> that offers a unique mapping between <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>. Assume that we know <span class="math notranslate nohighlight">\(X\)</span> via a PDF <span class="math notranslate nohighlight">\(\pdf{x}{I}\)</span>. What is the relation between <span class="math notranslate nohighlight">\(\pdf{x}{I}\)</span> and <span class="math notranslate nohighlight">\(\pdf{y}{I}\)</span>? In this scenario the extraction of <span class="math notranslate nohighlight">\(\pdf{y}{I}\)</span> turns out to be an exercise in transformation of variables.</p>
-<p>Consider a point <span class="math notranslate nohighlight">\(x^*\)</span> and a small interval <span class="math notranslate nohighlight">\(\delta x\)</span> around it. The probability that <span class="math notranslate nohighlight">\(X\)</span> lies within that interval can be written</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a84a3ffb-872e-43cb-bedd-c895922d4907">
-<span class="eqno">(8.11)<a class="headerlink" href="#equation-a84a3ffb-872e-43cb-bedd-c895922d4907" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\pdf{x^* - \frac{\delta x}{2} \le x &lt; x^* + \frac{\delta x}{2}}{I}
-\approx \pdf{x=x^*}{I} \delta x.
-\end{equation}\]</div>
-<p>Assume now, as stated above, that the function <span class="math notranslate nohighlight">\(f\)</span> maps the point <span class="math notranslate nohighlight">\(x=x^*\)</span> uniquely onto <span class="math notranslate nohighlight">\(y=y^*=f(x^*)\)</span>. Then there must be an interval <span class="math notranslate nohighlight">\(\delta y\)</span> around <span class="math notranslate nohighlight">\(y^*\)</span> so that the probability is conserved</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d43b0232-0315-4cb6-a6d1-73cd7f4b9511">
-<span class="eqno">(8.12)<a class="headerlink" href="#equation-d43b0232-0315-4cb6-a6d1-73cd7f4b9511" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\pdf{x=x^*}{I} \delta x = \pdf{y=y^*}{I} \delta y.
-\end{equation}\]</div>
-<p>In the limit of infinitesimally small intervals, and with the realization that this should be true for any point <span class="math notranslate nohighlight">\(x\)</span>, we obtain the relationship</p>
-<div class="math notranslate nohighlight" id="equation-eq-bayesianadvantage-transformation">
-<span class="eqno">(8.13)<a class="headerlink" href="#equation-eq-bayesianadvantage-transformation" title="Link to this equation">#</a></span>\[
-\pdf{x}{I} = p(y=y(x)|I) \left| \frac{dy}{dx} \right|,
-\]</div>
-<p>where the term on the far right is called the <em>Jacobian</em>. We also note that we can inverse the transformation</p>
-<div class="math notranslate nohighlight" id="equation-eq-bayesianadvantage-inverse-transformation">
-<span class="eqno">(8.14)<a class="headerlink" href="#equation-eq-bayesianadvantage-inverse-transformation" title="Link to this equation">#</a></span>\[
-\pdf{y}{I} = \pdf{x(y)}{I} \left| \frac{dx}{dy} \right|,
-\]</div>
-<p>The generalization to several variables, relating the PDF for <span class="math notranslate nohighlight">\(M\)</span> variables <span class="math notranslate nohighlight">\(\{ Xx_j \}\)</span> in terms of the same number of quantities <span class="math notranslate nohighlight">\(\{ y_j \}\)</span> related to them, is</p>
-<div class="math notranslate nohighlight" id="equation-eq-bayesianadvantage-multivariate-transformation">
-<span class="eqno">(8.15)<a class="headerlink" href="#equation-eq-bayesianadvantage-multivariate-transformation" title="Link to this equation">#</a></span>\[
-p(\{x_j\}|I) = p(\{y_j\}|I) \left| \frac{\partial (y_1, y_2, \ldots, y_M)}{\partial (x_1, x_2, \ldots, x_M)} \right|,
-\]</div>
-<p>where the multivariate Jacobian is given by the determinant of the <span class="math notranslate nohighlight">\(M \times M\)</span> matrix of partial derivatives <span class="math notranslate nohighlight">\(\partial y_i / \partial x_j\)</span>.</p>
-<div class="exercise admonition" id="exercise:BayesianAdvantages:standard-random-variable">
-
-<p class="admonition-title"><span class="caption-number">Exercise 8.4 </span> (The standard random variable)</p>
-<section id="exercise-content">
-<p>Find <span class="math notranslate nohighlight">\(\pdf{z}{I}\)</span> when <span class="math notranslate nohighlight">\(Z = (X-\mu)/\sigma\)</span> and <span class="math notranslate nohighlight">\(\pdf{x}{I} = \frac{1}{\sqrt{2\pi}\sigma} \exp \left( -\frac{(x-\mu)^2}{2\sigma^2} \right)\)</span>.</p>
-</section>
-</div>
-<div class="exercise admonition" id="exercise:BayesianAdvantages:square-root-of-a-number">
-
-<p class="admonition-title"><span class="caption-number">Exercise 8.5 </span> (The square root of a number)</p>
-<section id="exercise-content">
-<p>Find an expression for <span class="math notranslate nohighlight">\(\pdf{z}{I}\)</span> when <span class="math notranslate nohighlight">\(Z = \sqrt{X}\)</span> and <span class="math notranslate nohighlight">\(\pdf{x}{I} = \frac{1}{x_{\max} - x_{\min}}\)</span> for <span class="math notranslate nohighlight">\(x_{\min} \leq x \leq x_{\max}\)</span> and 0 elsewhere. Verify that <span class="math notranslate nohighlight">\(\pdf{z}{I}\)</span> is properly normalized.</p>
-</section>
-</div>
-<div class="tip admonition">
-<p class="admonition-title">Summary</p>
-<p>We have now seen the basic ingredients required for the propagation of errors: it either involves a transformation in the sense of Eq. <a class="reference internal" href="#equation-eq-bayesianadvantage-multivariate-transformation">(8.15)</a> or an integration as in Eq. <a class="reference internal" href="#equation-eq-bayesianadvantage-marginalization">(8.4)</a>.</p>
-</div>
-</section>
-<section id="error-propagation-iii-a-useful-approximation">
-<h2><span class="section-number">8.3. </span>Error propagation (III): A useful approximation<a class="headerlink" href="#error-propagation-iii-a-useful-approximation" title="Link to this heading">#</a></h2>
-<p>For practical purposes, we are often satisfied to approximate PDFs with Gaussians. Within such limits there is an easier method that is often used for error propagation. Note, however, that there are instances when this method fails miserably as will be shown in the example further down.</p>
-<p>Suppose that we have summarized the PDFs <span class="math notranslate nohighlight">\(\pdf{x}{I}\)</span> and <span class="math notranslate nohighlight">\(\pdf{y}{I}\)</span> as two Gaussians with mean and standard deviation <span class="math notranslate nohighlight">\(x_0, \sigma_x\)</span> and <span class="math notranslate nohighlight">\(y_0, \sigma_y\)</span>, respectively. Assume further that these two variables are not correlated, i.e., <span class="math notranslate nohighlight">\(\pdf{x,y}{I} = \pdf{x}{I} \pdf{y}{I}\)</span>.</p>
-<p>Suppose now that we are interested in <span class="math notranslate nohighlight">\(Z=X-Y\)</span>. Intuitively, we might guess that the best estimate <span class="math notranslate nohighlight">\(z_0 = x_0 - y_0\)</span>, but the standard deviation <span class="math notranslate nohighlight">\(\sigma_z\)</span> requires some more thought. Differentiate the relation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4bbc994c-b36b-45d6-86ba-e82abd9ffbf1">
-<span class="eqno">(8.16)<a class="headerlink" href="#equation-4bbc994c-b36b-45d6-86ba-e82abd9ffbf1" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\delta Z = \delta X - \delta Y.
-\end{equation}\]</div>
-<p>For error bars, we are interested in this relation around the optimum, i.e., <span class="math notranslate nohighlight">\(\delta X = X - x_0\)</span> and so on. Square both sides and integrate to get the expectation value</p>
-<div class="amsmath math notranslate nohighlight" id="equation-94fda330-7d64-43ec-966f-d7a890137ae2">
-<span class="eqno">(8.17)<a class="headerlink" href="#equation-94fda330-7d64-43ec-966f-d7a890137ae2" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\expect{\delta Z^2} = \expect{\delta X^2 + \delta Y^2 - 2 \delta X \delta Y}  = \expect{\delta X^2} + \expect {\delta Y^2} - 2 \expect{\delta X \delta Y},
-\end{equation}\]</div>
-<p>where we have employed the linear property for an integral over a sum of terms.</p>
-<p>Since we study the differential relation around the optimum, and we assumed that the PDFs for <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> were described by independent Gaussians, we get</p>
-<div class="math notranslate nohighlight" id="equation-eq-stddev">
-<span class="eqno">(8.18)<a class="headerlink" href="#equation-eq-stddev" title="Link to this equation">#</a></span>\[
-\expect{\delta X^2} = \sigma_x^2; \qquad \expect{\delta Y^2} = \sigma_y^2; \qquad \expect{\delta X \delta Y} = 0,
-\]</div>
-<p>and we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-da73991b-43f1-4363-aaa7-a595f1a54043">
-<span class="eqno">(8.19)<a class="headerlink" href="#equation-da73991b-43f1-4363-aaa7-a595f1a54043" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\sigma_z = \sqrt{ \expect{\delta Z^2} } = \sqrt{ \sigma_x^2 + \sigma_y^2 }.
-\end{equation}\]</div>
-<div class="proof example admonition" id="example:BayesianAdvantage:inferring-galactic-distances-revisited">
-<p class="admonition-title"><span class="caption-number">Example 8.3 </span> (Inferring galactic distances—revisited)</p>
-<section class="example-content" id="proof-content">
-<p>Consider, as a second example, the ratio of two parameters <span class="math notranslate nohighlight">\(Z = X/Y\)</span> that appeared in <a class="reference internal" href="#example:BayesianAdvantage:inferring-galactic-distances">Example 8.2</a> (in which we wanted to infer <span class="math notranslate nohighlight">\(x = v/H\)</span>). Differentiation gives</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ae7361fc-9b2f-4efb-af26-d69ccd857533">
-<span class="eqno">(8.20)<a class="headerlink" href="#equation-ae7361fc-9b2f-4efb-af26-d69ccd857533" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\delta Z = \frac{Y \delta X - X \delta Y}{Y^2} \quad \Leftrightarrow \quad \frac{\delta Z}{Z} = \frac{\delta X}{X} - \frac{\delta Y}{Y}.
-\end{equation}\]</div>
-<p>Squaring both sides and taking the expectation values, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b68acb64-1990-44d4-9a23-df630a021df3">
-<span class="eqno">(8.21)<a class="headerlink" href="#equation-b68acb64-1990-44d4-9a23-df630a021df3" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\frac{\expect{\delta Z^2}}{z_0^2} = \frac{\expect{\delta X^2}}{x_0^2} + \frac{\expect{\delta Y^2}}{y_0^2} - 2 \frac{\expect{\delta X} \expect{\delta Y}}{x_0 y_0},
-\end{equation}\]</div>
-<p>where the <span class="math notranslate nohighlight">\(X\)</span>, <span class="math notranslate nohighlight">\(Y\)</span> and <span class="math notranslate nohighlight">\(Z\)</span> in the denominator have been replaced by the constants <span class="math notranslate nohighlight">\(x_0\)</span>, <span class="math notranslate nohighlight">\(y_0\)</span> and <span class="math notranslate nohighlight">\(z_0 = x_0 / y_0\)</span> because we are interested in deviations from the peak of the PDF.</p>
-<p>Finally, substituting the information for the PDFs of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> as summarized in Eq. <a class="reference internal" href="#equation-eq-stddev">(8.18)</a> we finally obtain the propagated error for the ratio</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6b4cc44a-04c9-4804-a1cd-cd670d5667c3">
-<span class="eqno">(8.22)<a class="headerlink" href="#equation-6b4cc44a-04c9-4804-a1cd-cd670d5667c3" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\frac{\sigma_z}{z_0} = \sqrt{ \left( \frac{\sigma_x}{x_0} \right)^2 + \left( \frac{\sigma_y}{y_0} \right)^2}.
-\end{equation}\]</div>
-</section>
-</div><div class="exercise admonition" id="exercise:BayesianAdvantages:gaussian-sum-of-errors">
-
-<p class="admonition-title"><span class="caption-number">Exercise 8.6 </span> (Gaussian sum of errors)</p>
-<section id="exercise-content">
-<p>Consider <span class="math notranslate nohighlight">\(Z=X+Y\)</span> (again) and derive a PDF for <span class="math notranslate nohighlight">\(Z\)</span> assuming Gaussian errors in <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>. Compare with the result from the full convolution of  PDFs in <a class="reference internal" href="#example:BayesianAdvantage:Z=X+Y">Example 8.1</a>.</p>
-</section>
-</div>
-<div class="exercise admonition" id="exercise:BayesianAdvantages:gaussian-product-of-errors">
-
-<p class="admonition-title"><span class="caption-number">Exercise 8.7 </span> (Gaussian product of errors)</p>
-<section id="exercise-content">
-<p>Consider <span class="math notranslate nohighlight">\(Z=XY\)</span> and derive a PDF for <span class="math notranslate nohighlight">\(Z\)</span> assuming Gaussian errors in <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>.</p>
-</section>
-</div>
-<p>Despite its virtues, let us end our discussion of error-propagation with a salutary warning against the blind use of this nifty short cut.</p>
-<div class="proof example admonition" id="example:BayesianAdvantage:taking-square-root">
-<p class="admonition-title"><span class="caption-number">Example 8.4 </span> (Taking the square root of a number)</p>
-<section class="example-content" id="proof-content">
-<ul class="simple">
-<li><p>Assume that the amplitude of a Bragg peak is measured with an uncertainty <span class="math notranslate nohighlight">\(A = A_0 \pm \sigma_A\)</span> from a least-squares fit to experimental data.</p></li>
-<li><p>The Bragg peak amplitude is proportional to the square of a complex structure function: <span class="math notranslate nohighlight">\(A = |F|^2 \equiv f^2\)</span>.</p></li>
-<li><p>What is <span class="math notranslate nohighlight">\(f = f_0 \pm \sigma_f\)</span>?</p></li>
-</ul>
-<p>Obviously, we have that <span class="math notranslate nohighlight">\(f_0 = \sqrt{A_0}\)</span>. Differentiate the relation, square and take the expectation value</p>
-<div class="amsmath math notranslate nohighlight" id="equation-61750c5b-f6d2-41d3-b3b3-8b3dcc7a4876">
-<span class="eqno">(8.23)<a class="headerlink" href="#equation-61750c5b-f6d2-41d3-b3b3-8b3dcc7a4876" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\expect{\delta A^2} = 4 f_0^2 \expect{\delta f^2} \quad 
-\Leftrightarrow \quad 
-\sigma_f = \frac{\sigma_A}{2 \sqrt{A_0}},
-\end{equation}\]</div>
-<p>where we have used the Gaussian approximation for the PDFs.</p>
-<p>But what happens if the best fit gives <span class="math notranslate nohighlight">\(A_0 &lt; 0\)</span>, which would not be impossible if we have weak and strongly overlapping peaks. The above equation obviously does not work since <span class="math notranslate nohighlight">\(f_0\)</span> would be a complex number.</p>
-<p>We have made two mistakes:</p>
-<ol class="arabic simple">
-<li><p>Likelihood is not posterior!</p></li>
-<li><p>The Gaussian approximation around the peak does not always work.</p></li>
-</ol>
-<p>Consider first the best fit of the signal peak. It implies that the likelihood can be approximated by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-03306ea1-1b31-4f41-8f3b-f5afb61bbea7">
-<span class="eqno">(8.24)<a class="headerlink" href="#equation-03306ea1-1b31-4f41-8f3b-f5afb61bbea7" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\pdf{\data}{A,I} \propto \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right].
-\end{equation}\]</div>
-<p>However, the posterior for <span class="math notranslate nohighlight">\(A\)</span> is <span class="math notranslate nohighlight">\(\pdf{A}{{\data},I} \propto \pdf{\data}{A,I} \pdf{A}{I}\)</span> and we should use the fact that we know that <span class="math notranslate nohighlight">\(A \ge 0\)</span>.</p>
-<p>We will incorporate this information through a simple step-function prior</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2cfc17c3-4769-4521-bfd1-65424f8f41d9">
-<span class="eqno">(8.25)<a class="headerlink" href="#equation-2cfc17c3-4769-4521-bfd1-65424f8f41d9" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\pdf{A}{I} = \left\{
-\begin{array}{ll}
-\frac{1}{A_\mathrm{max}}, &amp; 0 \le A \le A_\mathrm{max}, \\
-0, &amp; \mathrm{otherwise}.
-\end{array}
-\right.
-\end{equation}\]</div>
-<p>This implies that the posterior will be a truncated Gaussian, and its maximum will always be above zero.</p>
-<p>This also implies that we cannot use the Gaussian approximation. Instead we will do the proper calculation using the transformation <a class="reference internal" href="#equation-eq-bayesianadvantage-transformation">(8.13)</a></p>
-<div class="amsmath math notranslate nohighlight" id="equation-087fccd3-4c4a-4e67-b6a5-74180b00a4cc">
-<span class="eqno">(8.26)<a class="headerlink" href="#equation-087fccd3-4c4a-4e67-b6a5-74180b00a4cc" title="Permalink to this equation">#</a></span>\[\begin{equation}
-p(f|{\data},I) = \pdf{A}{{\data},I} \left| \frac{dA}{df} \right| = 2 f \pdf{A}{{\data},I}
-\end{equation}\]</div>
-<p>In the end we find the proper Bayesian error propagation given by the PDF</p>
-<div class="amsmath math notranslate nohighlight" id="equation-69cb74b3-9db4-400a-a8de-6c98eeb855d1">
-<span class="eqno">(8.27)<a class="headerlink" href="#equation-69cb74b3-9db4-400a-a8de-6c98eeb855d1" title="Permalink to this equation">#</a></span>\[\begin{equation}
-p(f|{\data},I) \propto \left\{
-\begin{array}{ll}
-f \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right], &amp; 0 \le f \le \sqrt{A_\mathrm{max}}, \\
-0, &amp; \mathrm{otherwise}.
-\end{array}
-\right.
-\end{equation}\]</div>
-<p><a class="reference internal" href="#fig-example-bayesianadvantage-taking-square-root"><span class="std std-numref">Fig. 8.1</span></a> visualize the difference between the Bayesian and the naive error propagation for a few scenarios. The code to generate these plots is in the hidden cell below.</p>
-</section>
-</div><figure class="align-default" id="fig-example-bayesianadvantage-taking-square-root">
-<img alt="../../../_images/e1da1fdc1f751de8bc38acc2835d7dd353a4c78b2b8417ceef324163ce218491.png" src="../../../_images/e1da1fdc1f751de8bc38acc2835d7dd353a4c78b2b8417ceef324163ce218491.png" />
-<figcaption>
-<p><span class="caption-number">Fig. 8.1 </span><span class="caption-text">The left-hand panels show the posterior PDF for the amplitude of a Bragg peak in three different scenarios. The right-hand plots are the corresponding PDFs for the modulus of the structure factor <span class="math notranslate nohighlight">\(f=\sqrt{A}\)</span>. The solid lines correspond to a full Bayesian error propagation, while the dashed lines are obtained with the short-cut error propagation.</span><a class="headerlink" href="#fig-example-bayesianadvantage-taking-square-root" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<div class="cell tag_hide-cell docutils container">
-<details class="admonition hide above-input">
-<summary aria-label="Toggle hidden content">
-<p class="collapsed admonition-title">Show code cell content</p>
-<p class="expanded admonition-title">Hide code cell content</p>
-</summary>
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">myst_nb</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">A_posterior</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">A0</span><span class="p">,</span><span class="n">sigA</span><span class="p">):</span>
-    <span class="n">pA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">A</span><span class="o">-</span><span class="n">A0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sigA</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">pA</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">pA</span><span class="p">)</span>
-
-<span class="c1"># Wrong analysis</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">f_likelihood</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">A0</span><span class="p">,</span><span class="n">sigA</span><span class="p">):</span>
-    <span class="n">sigf</span> <span class="o">=</span> <span class="n">sigA</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A0</span><span class="p">))</span>
-    <span class="n">pf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">f</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A0</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sigf</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">pf</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">pf</span><span class="p">)</span>
-
-<span class="c1"># Correct error propagation</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">f_posterior</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">A0</span><span class="p">,</span><span class="n">sigA</span><span class="p">):</span>
-    <span class="n">pf</span> <span class="o">=</span> <span class="n">f</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">f</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">A0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sigA</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">pf</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">pf</span><span class="p">)</span>
-    
-<span class="n">fig_Af</span><span class="p">,</span><span class="n">axs</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
-<span class="k">for</span> <span class="n">iA</span><span class="p">,</span> <span class="p">(</span><span class="n">A0</span><span class="p">,</span><span class="n">sigA</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([(</span><span class="mi">9</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">9</span><span class="p">),(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span><span class="mi">9</span><span class="p">)]):</span>
-    <span class="n">maxA</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">A0</span><span class="p">,</span><span class="mi">3</span><span class="o">*</span><span class="n">sigA</span><span class="p">)</span>
-    <span class="n">A_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span><span class="n">maxA</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
-    <span class="n">f_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A_arr</span><span class="p">)</span>
-    <span class="n">axs</span><span class="p">[</span><span class="n">iA</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">A_arr</span><span class="p">,</span><span class="n">A_posterior</span><span class="p">(</span><span class="n">A_arr</span><span class="p">,</span><span class="n">A0</span><span class="p">,</span><span class="n">sigA</span><span class="p">))</span>
-    <span class="n">axs</span><span class="p">[</span><span class="n">iA</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f_arr</span><span class="p">,</span><span class="n">f_posterior</span><span class="p">(</span><span class="n">f_arr</span><span class="p">,</span><span class="n">A0</span><span class="p">,</span><span class="n">sigA</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Bayesian&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">A0</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">iA</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">f_arr</span><span class="p">,</span><span class="n">f_likelihood</span><span class="p">(</span><span class="n">f_arr</span><span class="p">,</span><span class="n">A0</span><span class="p">,</span><span class="n">sigA</span><span class="p">),</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Naive&#39;</span><span class="p">)</span>
-    <span class="n">axs</span><span class="p">[</span><span class="n">iA</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$p(A | \mathcal</span><span class="si">{D}</span><span class="s1">,I)$&#39;</span><span class="p">)</span>
-    <span class="n">axs</span><span class="p">[</span><span class="n">iA</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;$A_0=</span><span class="si">{</span><span class="n">A0</span><span class="si">}</span><span class="s1">$, $\sigma_A=</span><span class="si">{</span><span class="n">sigA</span><span class="si">}</span><span class="s1">$&#39;</span><span class="p">,</span> \
-    	<span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span>\
-    	<span class="n">transform</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">iA</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-    <span class="n">axs</span><span class="p">[</span><span class="n">iA</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">,</span><span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$p(f | \mathcal</span><span class="si">{D}</span><span class="s1">,I)$&#39;</span><span class="p">)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
-<span class="n">fig_Af</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">glue</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Af_fig&quot;</span><span class="p">,</span> <span class="n">fig_Af</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../../../_images/e1da1fdc1f751de8bc38acc2835d7dd353a4c78b2b8417ceef324163ce218491.png" src="../../../_images/e1da1fdc1f751de8bc38acc2835d7dd353a4c78b2b8417ceef324163ce218491.png" />
-</div>
-</details>
-</div>
-</section>
-<section id="solutions">
-<h2><span class="section-number">8.4. </span>Solutions<a class="headerlink" href="#solutions" title="Link to this heading">#</a></h2>
-<div class="solution dropdown admonition" id="solution:BayesianAdvantage:correlated-errors">
-
-<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:BayesianAdvantage:correlated-errors"> Exercise 8.1 (Correlated errors)</a></p>
-<section id="solution-content">
-<div class="amsmath math notranslate nohighlight">
-\[\begin{align*}
-\pdf{z}{I} &amp;= \int \pdf{z}{x,y,I} \pdf{x,y}{I} dxdy = \int \delta(z-\sqrt{2}s) p(s|I) p(t|I) dsdt
-\\
-&amp;= \left\{ 
-\begin{array}{l}
-\tilde{s}=\sqrt{2}s \, \Rightarrow \, ds = d\tilde{s}/\sqrt{2} \\
-\delta(z-\sqrt{2}s) \to \delta(z/\sqrt{2}-\tilde{s})
-\end{array}
-\right\}
-= \frac{1}{\sqrt{2}\sqrt{2\pi}\sigma_s}\exp \left( - \frac{z^2}{4\sigma_s^2} \right) \int p(t|I) dt .
-\end{align*}\]</div>
-<p>Here we can use that <span class="math notranslate nohighlight">\(\int p(t|I) dt = 1\)</span>. Defining <span class="math notranslate nohighlight">\(\sigma_z = \sqrt{2}\sigma_s\)</span> we find</p>
-<div class="math notranslate nohighlight">
-\[
-\pdf{z}{I} = \frac{1}{\sqrt{2\pi}\sigma_z}\exp \left( - \frac{z^2}{2\sigma_z^2} \right) ,
-\]</div>
-<p>i.e. a normal distribution for <span class="math notranslate nohighlight">\(z\)</span> with a small variance <span class="math notranslate nohighlight">\(2\sigma_s^2\)</span>.</p>
-</section>
-</div>
-<div class="solution dropdown admonition" id="solution:BayesianAdvantages:inferring-galactic-distances-ex">
-
-<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:BayesianAdvantages:inferring-galactic-distances-ex"> Exercise 8.3 (Inferring galactic distances)</a></p>
-<section id="solution-content">
-<ol class="arabic">
-<li><p>A fixed value for <span class="math notranslate nohighlight">\(H\)</span> can be assigned with the PDF <span class="math notranslate nohighlight">\(\pdf{H}{I} = \delta(H-H_0)\)</span>, where <span class="math notranslate nohighlight">\(\delta(x)\)</span> is the Kronecker delta. We note that integrals over a delta function are given by <span class="math notranslate nohighlight">\(\int_{-\infty}^{+\infty} f(x) \delta(x-x_0) dx = f(x_0)\)</span> such that</p>
-<div class="math notranslate nohighlight">
-\[
-   \pdf{d}{\data,I} \propto \exp\left( - \frac{(v_0 - H_0 d)^2}{2\sigma_v^2} \right),
-   \]</div>
-<p>where we have ignored all normalization coefficients.</p>
-</li>
-<li><p>With a Gaussian prior for <span class="math notranslate nohighlight">\(H\)</span> we will be left with an integral</p>
-<div class="math notranslate nohighlight">
-\[
-   \pdf{d}{\data,I} \propto \int_{-\infty}^{+\infty} dH \exp\left( - \frac{(H-H_0)^2}{2  \sigma_H^2} \right) \exp\left( - \frac{(v_0 - H d)^2}{2\sigma_v^2} \right).
-   \]</div>
-<p>We can perform this integral numerically, or we can solve it analytically by realizing that the product of two Gaussian distributions is another Gaussian distribution.</p>
-</li>
-<li><p>The uniform prior for <span class="math notranslate nohighlight">\(\pdf{H}{I}\)</span> implies that the final integral becomes</p>
-<div class="math notranslate nohighlight">
-\[
-   \pdf{d}{\data,I} \propto \int_{H_0 - 2\sigma_H}^{H_0 + 2\sigma_H} dH \exp\left( - \frac{(v_0 - H d)^2}{2\sigma_v^2} \right).
-   \]</div>
-</li>
-</ol>
-<p>For numerical integration, and plots of the results of the three inference strategies, see the hidden code block below.</p>
-</section>
-</div>
-<div class="cell tag_hide-cell docutils container">
-<details class="admonition hide above-input">
-<summary aria-label="Toggle hidden content">
-<p class="collapsed admonition-title">Show code cell content</p>
-<p class="expanded admonition-title">Hide code cell content</p>
-</summary>
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Common imports</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">integrate</span>
-
-<span class="c1"># Given information</span>
-<span class="n">H0</span><span class="o">=</span><span class="mi">70</span>
-<span class="n">sigH</span><span class="o">=</span><span class="mi">10</span>
-<span class="n">v0</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">5</span>
-<span class="n">sigv</span><span class="o">=</span><span class="mi">5000</span>
-
-<span class="c1"># grid for evaluating and plotting p(d|...)</span>
-<span class="n">dgrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mi">2500</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
-
-<span class="c1"># Case 1</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">pdf_1</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">v0</span><span class="o">-</span><span class="n">H0</span><span class="o">*</span><span class="n">d</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sigv</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
-<span class="c1"># Case 2</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">pdf_2</span><span class="p">(</span><span class="n">H</span><span class="p">,</span><span class="n">d</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">H</span><span class="o">-</span><span class="n">H0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sigH</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">v0</span><span class="o">-</span><span class="n">H</span><span class="o">*</span><span class="n">d</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sigv</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
-<span class="c1"># ... with numerical integration over H</span>
-<span class="n">pdf_2_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">dgrid</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i_d</span><span class="p">,</span><span class="n">di</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dgrid</span><span class="p">):</span>
-	<span class="n">I</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">pdf_2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">140</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">di</span><span class="p">))</span>
-	<span class="n">pdf_2_grid</span><span class="p">[</span><span class="n">i_d</span><span class="p">]</span> <span class="o">=</span> <span class="n">I</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">20</span>
-<span class="c1"># Case 3</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">pdf_3</span><span class="p">(</span><span class="n">H</span><span class="p">,</span><span class="n">d</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">v0</span><span class="o">-</span><span class="n">H</span><span class="o">*</span><span class="n">d</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sigv</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
-<span class="c1"># ... with numerical integration</span>
-<span class="n">pdf_3_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">dgrid</span><span class="p">)</span>
-<span class="n">deltaH</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="o">*</span><span class="n">sigH</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i_d</span><span class="p">,</span><span class="n">di</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dgrid</span><span class="p">):</span>
-	<span class="n">I</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">pdf_3</span><span class="p">,</span> <span class="n">H0</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">sigH</span><span class="p">,</span> <span class="n">H0</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">sigH</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">di</span><span class="p">))</span>
-	<span class="n">pdf_3_grid</span><span class="p">[</span><span class="n">i_d</span><span class="p">]</span> <span class="o">=</span> <span class="n">I</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">30</span>
-<span class="c1"># Case 4 (see example 9.3)</span>
-<span class="n">d0</span> <span class="o">=</span> <span class="n">v0</span><span class="o">/</span><span class="n">H0</span>
-<span class="n">sigd</span> <span class="o">=</span> <span class="n">d0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigH</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">H0</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">sigv</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">v0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">pdf_4</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">d</span><span class="o">-</span><span class="n">d0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sigd</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
-    
-<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dgrid</span><span class="p">,</span><span class="n">pdf_1</span><span class="p">(</span><span class="n">dgrid</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Case 1&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dgrid</span><span class="p">,</span><span class="n">pdf_2_grid</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Case 2&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dgrid</span><span class="p">,</span><span class="n">pdf_3_grid</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Case 3&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dgrid</span><span class="p">,</span><span class="n">pdf_4</span><span class="p">(</span><span class="n">dgrid</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Case 4&#39;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$d$ [Mpc]&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$p(d|\mathcal</span><span class="si">{D}</span><span class="s1">,I)$&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../../../_images/db66c98e1676b2f8e54966054853a9c4837dc1851a64014b2f2d2fc985d2d560.png" src="../../../_images/db66c98e1676b2f8e54966054853a9c4837dc1851a64014b2f2d2fc985d2d560.png" />
-</div>
-</details>
-</div>
-<div class="solution dropdown admonition" id="solution:BayesianAdvantages:standard-random-variable">
-
-<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:BayesianAdvantages:standard-random-variable"> Exercise 8.4 (The standard random variable)</a></p>
-<section id="solution-content">
-<p>The transformation <span class="math notranslate nohighlight">\(z = f(x) = (x-\mu)/\sigma\)</span> gives the inverse <span class="math notranslate nohighlight">\(x = f^{-1}(z) = \sigma z + \mu\)</span> and the Jacobian <span class="math notranslate nohighlight">\(|dx/dz = \sigma|\)</span>.</p>
-<p>Therefore <span class="math notranslate nohighlight">\(\pdf{z}{I} = \pdf{x}{I} \sigma\)</span>. With the given form of <span class="math notranslate nohighlight">\(\pdf{x}{I}\)</span> we get</p>
-<div class="math notranslate nohighlight">
-\[
-\pdf{z}{I} = \frac{1}{\sqrt{2\pi}} \exp \left( -\frac{z^2}{2}\right),
-\]</div>
-<p>which corresponds to a Gaussian distribution with mean zero and variance one, sometimes known as a standard random variable.</p>
-</section>
-</div>
-<div class="solution dropdown admonition" id="solution:BayesianAdvantages:square-root-of-a-number">
-
-<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:BayesianAdvantages:square-root-of-a-number"> Exercise 8.5 (The square root of a number)</a></p>
-<section id="solution-content">
-<p>With <span class="math notranslate nohighlight">\(z = f(x) = \sqrt{x}\)</span> we have <span class="math notranslate nohighlight">\(x = f^{-1}(z) = z^2\)</span> such that <span class="math notranslate nohighlight">\(|dx/dz| = 2|z|\)</span>. We note that <span class="math notranslate nohighlight">\(z\)</span> is positive such that <span class="math notranslate nohighlight">\(|z| = z\)</span> and we therefore have</p>
-<div class="math notranslate nohighlight">
-\[
-\pdf{z}{I} = 2 z \pdf{x}{I} = 2 z \frac{1}{x_{\max} - x_{\min}} \quad \text{for } \sqrt{x_{\min}} \leq z \leq \sqrt{x_{\max}},
-\]</div>
-<p>and 0 elsewhere.</p>
-<p>We check the normalization by performing the integral</p>
-<div class="math notranslate nohighlight">
-\[
-\int_0^\infty \pdf{z}{I} dz = \int_{\sqrt{x_{\min}}}^{\sqrt{x_{\max}}} \frac{2z}{x_{\max} - x_{\min}} dz = \frac{1}{x_{\max} - x_{\min}} \left[ z^2 \right]_{\sqrt{x_{\min}}}^{\sqrt{x_{\max}}} = 1.
-\]</div>
-</section>
-</div>
-<div class="solution dropdown admonition" id="solution:BayesianAdvantages:gaussian-sum-of-errors">
-
-<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:BayesianAdvantages:gaussian-sum-of-errors"> Exercise 8.6 (Gaussian sum of errors)</a></p>
-<section id="solution-content">
-<p>The PDF <span class="math notranslate nohighlight">\(\pdf{Z}{I}\)</span> is Gaussian with mean <span class="math notranslate nohighlight">\(\expect{Z} = z_0 = x_0+y_0\)</span> and variance <span class="math notranslate nohighlight">\(\var{Z} = \sigma_z^2 = \sigma_x^2 + \sigma_y^2\)</span>, where <span class="math notranslate nohighlight">\(x_0,y_0\)</span> and <span class="math notranslate nohighlight">\(\sigma_x^2, \sigma_y^2\)</span> are the means and variances of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>, respectively.</p>
-<p>This is the same result as in <a class="reference internal" href="#example:BayesianAdvantage:Z=X+Y">Example 8.1</a> which should not be surprising since the errors were in fact Gaussian.</p>
-</section>
-</div>
-<div class="solution dropdown admonition" id="solution:BayesianAdvantages:gaussian-product-of-errors">
-
-<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:BayesianAdvantages:gaussian-product-of-errors"> Exercise 8.7 (Gaussian product of errors)</a></p>
-<section id="solution-content">
-<p>The PDF <span class="math notranslate nohighlight">\(\pdf{Z}{I}\)</span> is Gaussian with mean <span class="math notranslate nohighlight">\(\expect{Z} = z_0 = x_0 y_0\)</span> and variance <span class="math notranslate nohighlight">\(\var{Z} = \sigma_z^2 = y_0^2 \sigma_x^2 + x_0^2 \sigma_y^2\)</span>, where <span class="math notranslate nohighlight">\(x_0,y_0\)</span> and <span class="math notranslate nohighlight">\(\sigma_x^2, \sigma_y^2\)</span> are the means and variances of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>, respectively.</p>
-</section>
-</div>
-</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1322,11 +761,11 @@ f \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right], &amp; 0 \le f \le \sqrt{A_
       </div>
     </a>
     <a class="right-next"
-       href="../BayesianParameterEstimation/Exercises_parameter_estimation.html"
+       href="ErrorPropagation/sec-01-error-propagation-i-nuisance-parameters-and-marginalization.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">9. </span>Exercises for Part I</p>
+        <p class="prev-next-title"><span class="section-number">8.1. </span>Error propagation (I): Nuisance parameters and marginalization</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1336,24 +775,6 @@ f \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right], &amp; 0 \le f \le \sqrt{A_
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-propagation-i-nuisance-parameters-and-marginalization">8.1. Error propagation (I): Nuisance parameters and marginalization</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-propagation-ii-changing-variables">8.2. Error propagation (II): Changing variables</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-propagation-iii-a-useful-approximation">8.3. Error propagation (III): A useful approximation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">8.4. Solutions</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>
