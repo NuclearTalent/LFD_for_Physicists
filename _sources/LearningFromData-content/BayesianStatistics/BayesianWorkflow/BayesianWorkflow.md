@@ -1,7 +1,7 @@
 (sec:BayesianWorkflow)=
 # Bayesian research workflow
 
-In {ref}`sec:Intro:BayesianWorkflow` we presented a four-step Bayesian workflow, repeated here:
+In {ref}`sec:Intro:Workflow` we presented a four-step Bayesian workflow, repeated here:
 
 
 :::{admonition} Four-step Bayesian workflow in brief
