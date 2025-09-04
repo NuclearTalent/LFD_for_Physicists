@@ -67,7 +67,7 @@
     <script src="../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="13.4. 📥 Model discrepancy example: The ball-drop experiment" href="MD_balldrop_v1.html" />
+    <link rel="next" title="13.1. KOH and BOH discrepancy models" href="DiscrepancyModels/sec-01-koh-and-boh-discrepancy-models.html" />
     <link rel="prev" title="12.2. Model mixing" href="../BayesianStatistics/ModelMixing/model_mixing.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -278,7 +278,10 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">13. Discrepancy Models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="MD_balldrop_v1.html">13.4. 📥 Ball-drop experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DiscrepancyModels/sec-01-koh-and-boh-discrepancy-models.html">13.1. KOH and BOH discrepancy models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DiscrepancyModels/sec-02-framework.html">13.2. Framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DiscrepancyModels/sec-03-the-ball-drop-model.html">13.3. The ball-drop model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MD_balldrop_v1.html">13.4. 📥 Ball-drop experiment notebook</a></li>
 </ul>
 </details></li>
 </ul>
@@ -625,9 +628,7 @@ document.write(`
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -643,16 +644,6 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#koh-and-boh-discrepancy-models">13.1. KOH and BOH discrepancy models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#framework">13.2. Framework</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-ball-drop-model">13.3. The ball-drop model</a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -664,128 +655,12 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="bayesian-approach-to-model-discrepancy">
 <span id="sec-modeldiscrepancy"></span><h1><span class="section-number">13. </span>Bayesian approach to model discrepancy<a class="headerlink" href="#bayesian-approach-to-model-discrepancy" title="Link to this heading">#</a></h1>
-<section id="koh-and-boh-discrepancy-models">
-<h2><span class="section-number">13.1. </span>KOH and BOH discrepancy models<a class="headerlink" href="#koh-and-boh-discrepancy-models" title="Link to this heading">#</a></h2>
-<p>In the following we’ll use the abbreviations KOH and BOH:</p>
-<ul class="simple">
-<li><p>KOH = Kennedy and O’Hagan, <a class="reference external" href="https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/1467-9868.00294"><em>Bayesian calibration of computer models</em></a></p></li>
-<li><p>BOH = Brynjarsdóttir and OʼHagan, <a class="reference external" href="https://iopscience.iop.org/article/10.1088/0266-5611/30/11/114007"><em>Learning about physical parameters: the importance of model discrepancy</em></a>. This content is particularly important if you are trying to extract the value of physical parameters from modeling data.</p></li>
-</ul>
-<p>Comparisons between theoretical models and experimental data are at the heart of scientific inquiry. Theoretical models guide our understanding of complex systems by translating hypotheses into quantitative predictions that can be tested experimentally. Traditionally, a close fit between a model’s predictions and measured data is interpreted as a sign of success, often implying that the model parameters capture the underlying physical processes. However, this paradigm assumes that the model fully represents the complexity of actual systems – an assumption that is rarely justified in practice. All models have inherent limitations beyond their domains of validity, and using them beyond these regimes without accounting for theoretical uncertainties can lead to biased parameter estimates, reducing these parameters to mere “fitting variables” rather than meaningful physical quantities,. Moreover, discrepancies between certain measurements and otherwise successful models sometimes lead researchers to assign lower weights to these data, thereby diminishing their utility and limiting the potential insights they can provide.</p>
-<p>A model discrepancy framework employing Gaussian processes (GPs) was introduced in KOH  and variations have been explored in many studies. <!-- \cite{Higdon2004, Bayarri01052007, Arendt:etal2012:1, Arendt:etal2012:2, Brynjarsdottir_2014, GARDNER2021107381}.-->
-In these approaches, the discrepancy between experimental data and theoretical model predictions, stemming from missing physics or approximations, is modeled using a GP. However, one persistent challenge is the need to constrain the GP’s covariance kernel. For example, in BOH, the authors emphasized the importance of incorporating knowledge of the theory’s validity at specific points in the input space (i.e., the domain in which observables are measured) so that both the GP and its derivative could be accurately constrained. In practice, however, specifying such accurate knowledge about the theory is often difficult. In this chapter, we construct the GP covariance kernel based on only qualitative prior knowledge of the theory’s domain of validity across the input space. This type of knowledge – for example, recognizing that “<em>the theory is more reliable in this regime than in that one</em>” – is typically easier to provide and often available. By leveraging this information, the framework prioritizes the accurate extraction of model parameters rather than simply optimizing the fit to the observables. We perform Bayesian parameter inference to simultaneously estimate both the model parameters and the GP hyperparameters, thereby quantifying uncertainties from both the experimental data and the theoretical model.</p>
-</section>
-<section id="framework">
-<h2><span class="section-number">13.2. </span>Framework<a class="headerlink" href="#framework" title="Link to this heading">#</a></h2>
-<p>We begin by setting up the model discrepancy framework following KOH. Let the <span class="math notranslate nohighlight">\(i\)</span>-th measurement for an observable <span class="math notranslate nohighlight">\(y\)</span> be denoted as</p>
-<div class="math notranslate nohighlight" id="equation-eq-stat-true">
-<span class="eqno">(13.1)<a class="headerlink" href="#equation-eq-stat-true" title="Link to this equation">#</a></span>\[
-    y(x_i) \sim \zeta(x_i) + \epsilon_i \,,
-    \qquad \epsilon_i \sim \mathcal{N}(0,\sigma_i^2) \,.
+<p>In <a class="reference internal" href="../BayesianStatistics/BayesianBasics/DataModelsPredictions.html#sec-datamodelspredictions"><span class="std std-numref">Section 4.9</span></a> we introduced the mismatch term <span class="math notranslate nohighlight">\(\delta M\)</span>, typically referred to as a model discrepancy, in the statistical model</p>
+<div class="math notranslate nohighlight" id="equation-eq-discrepancymodels-mismatch">
+<span class="eqno">(13.1)<a class="headerlink" href="#equation-eq-discrepancymodels-mismatch" title="Link to this equation">#</a></span>\[
+\data = M(\pars) + \delta \data + \delta M.
 \]</div>
-<p>Here, the index <span class="math notranslate nohighlight">\(i\)</span> corresponds to the point in input space <span class="math notranslate nohighlight">\(x\)</span> where the <span class="math notranslate nohighlight">\(i\)</span>-th observation is made (e.g., a specific time in the ball drop experiment described below). Independent observation errors <span class="math notranslate nohighlight">\(\epsilon_i\)</span> are assumed to follow Gaussian distributions with zero mean and standard deviation <span class="math notranslate nohighlight">\(\sigma_i\)</span>. Here, <span class="math notranslate nohighlight">\(\zeta(x_i)\)</span> represents the true value of the observable at <span class="math notranslate nohighlight">\(x_i\)</span>. (We assume that <span class="math notranslate nohighlight">\(x\)</span> is made unitless by scaling it with a suitable reference scale <span class="math notranslate nohighlight">\(x_0\)</span>.)</p>
-<p>We denote the prediction from a theoretical model for the observable <span class="math notranslate nohighlight">\(y\)</span> as <span class="math notranslate nohighlight">\(\eta(x, \pars)\)</span>, where <span class="math notranslate nohighlight">\(\pars\)</span> is the vector of true but unknown model parameters. The model for <span class="math notranslate nohighlight">\(\eta(x,\pars)\)</span> is then defined as:</p>
-<div class="math notranslate nohighlight" id="equation-eq-md">
-<span class="eqno">(13.2)<a class="headerlink" href="#equation-eq-md" title="Link to this equation">#</a></span>\[
-    \zeta(x) = \eta(x, \pars) + \delta(x) ;
-\]</div>
-<p>here <span class="math notranslate nohighlight">\(\delta(x)\)</span> quantifies the discrepancy between the theoretical model prediction and the true system value at input setting <span class="math notranslate nohighlight">\(x\)</span>. Combining the above equations, we express the observation <span class="math notranslate nohighlight">\(y(x_i)\)</span> as</p>
-<div class="math notranslate nohighlight" id="equation-eq-stat-md">
-<span class="eqno">(13.3)<a class="headerlink" href="#equation-eq-stat-md" title="Link to this equation">#</a></span>\[
-    y(x_i) \sim \eta(x_i, \pars) + \delta(x_i) + \epsilon_i .
-\]</div>
-<p>Thus, each observation is modeled as the sum of the model output (evaluated at the true <span class="math notranslate nohighlight">\(\pars\)</span>), the model discrepancy <span class="math notranslate nohighlight">\(\delta\)</span> at <span class="math notranslate nohighlight">\(x_i\)</span>, and the observational error <span class="math notranslate nohighlight">\(\epsilon_i\)</span>.
-The statiscal model is summarized in <a class="reference internal" href="#fig-statistical-model"><span class="std std-numref">Fig. 13.1</span></a>.</p>
-<figure class="align-default" id="fig-statistical-model">
-<a class="reference internal image-reference" href="../../_images/statistical_model.png"><img alt="../../_images/statistical_model.png" src="../../_images/statistical_model.png" style="height: 100px;" />
-</a>
-<figcaption>
-<p><span class="caption-number">Fig. 13.1 </span><span class="caption-text">Statistical model.</span><a class="headerlink" href="#fig-statistical-model" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<p>Following KOH, we represent <span class="math notranslate nohighlight">\(\delta(x)\)</span> as a zero-mean Gaussian process (GP):</p>
-<div class="math notranslate nohighlight">
-\[
-    \delta(\cdot \mid\boldsymbol{\phi}) \sim {\rm GP} \left(\boldsymbol{0}, K(\cdot,\cdot \mid\boldsymbol{\phi}) \right) \,,
-\]</div>
-<p>where <span class="math notranslate nohighlight">\(K(\cdot,\cdot \mid\boldsymbol{\phi})\)</span> is the covariance kernel, which depends on a set of hyperparameters <span class="math notranslate nohighlight">\(\boldsymbol{\phi}\)</span>. A GP specifies a distribution over functions, with the covariance kernel <span class="math notranslate nohighlight">\(K\)</span> serving as the central object that defines the properties of the functions in the distribution. In this framework, we incorporate prior knowledge about the theoretical model’s uncertainties through the choice of the covariance kernel. Adopting a Bayesian approach, we assign prior probability distributions to both the model parameters <span class="math notranslate nohighlight">\(\pars\)</span> and the GP hyperparameters <span class="math notranslate nohighlight">\(\boldsymbol{\phi}\)</span>, and update these to obtain their posterior distributions conditioned on the observations. In all examples discussed in this work, uniform priors (in appropriate ranges) are used for both the model parameters and the GP hyperparameters.</p>
-<p>The particular <span class="math notranslate nohighlight">\(K\)</span> we use for the test case explored here is</p>
-<div class="math notranslate nohighlight" id="equation-eq-balldrop-kernel">
-<span class="eqno">(13.4)<a class="headerlink" href="#equation-eq-balldrop-kernel" title="Link to this equation">#</a></span>\[
-K(x_i, x_j) = {\color{ForestGreen}{\bar{c}}}^2 (x_i x_j)^{\color{ForestGreen}{r}} \exp\left(- \frac{\lVert x_i-x_j\rVert^2}{2{\color{ForestGreen}{\ell}}^2} \right)
-\]</div>
-<p>The hyperparameters control the nature of the possible random draws, as illustrated in <a class="reference internal" href="#fig-gp-nonstationary-comparison"><span class="std std-numref">Fig. 13.2</span></a>. The parameter <span class="math notranslate nohighlight">\(\bar{c}\)</span>, which is fixed at <span class="math notranslate nohighlight">\(\bar{c}=1\)</span> in the figure, controls the overall scale over which the random functions vary. The parameter <span class="math notranslate nohighlight">\(\ell\)</span> is the correlation length between any two points; as <span class="math notranslate nohighlight">\(|x -x'|\)</span> becomes greater than <span class="math notranslate nohighlight">\(\ell\)</span>, the points become increasingly uncorrelated. Comparing <span class="math notranslate nohighlight">\(\ell=1\)</span> to <span class="math notranslate nohighlight">\(\ell=3\)</span> shows that the latter curves have a longer “wavelength”. Finally, <span class="math notranslate nohighlight">\(r\)</span> is a parameter introduced to generate functions that increase with <span class="math notranslate nohighlight">\(x\)</span> for <span class="math notranslate nohighlight">\(r&gt;0\)</span>.</p>
-<figure class="align-default" id="fig-gp-nonstationary-comparison">
-<a class="reference internal image-reference" href="../../_images/GP_nonstationary_comparison.png"><img alt="../../_images/GP_nonstationary_comparison.png" src="../../_images/GP_nonstationary_comparison.png" style="height: 500px;" />
-</a>
-<figcaption>
-<p><span class="caption-number">Fig. 13.2 </span><span class="caption-text">Five draws from each of four GPs of the form in Eq. <a class="reference internal" href="#equation-eq-balldrop-kernel">(13.4)</a> with hyperparameters <span class="math notranslate nohighlight">\(\ell\)</span>, <span class="math notranslate nohighlight">\(\bar c\)</span>, and <span class="math notranslate nohighlight">\(r\)</span> as listed.</span><a class="headerlink" href="#fig-gp-nonstationary-comparison" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If sampled at any one input point <span class="math notranslate nohighlight">\(x\)</span>, the prior GP will yield a Gaussian distribution with mean and variance specified by the GP definition. In many cases, the prior GP is taken to be mean zero with a constant variance for all <span class="math notranslate nohighlight">\(x\)</span>. If sampled at any two input points <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(x'\)</span>, the joint distribution will be a bivariate Gaussian, with covariance given by <span class="math notranslate nohighlight">\(K(x,x'|\boldsymbol{\phi})\)</span>.</p>
-</div>
-</section>
-<section id="the-ball-drop-model">
-<h2><span class="section-number">13.3. </span>The ball-drop model<a class="headerlink" href="#the-ball-drop-model" title="Link to this heading">#</a></h2>
-<p>Sunil Jaiswal has developed a nice Jupyter notebook illustrating with the Ball Drop Experiment how the BOH approach works for robust extraction of physical quantities from a calibration. In the example one seeks a value for the acceleration due to gravity <span class="math notranslate nohighlight">\(g\)</span> using a theoretical model without air resistance fitted to data on height vs. time that includes air resistance and measurement errors. (A more general version with results shown below also has measurements of velocity and acceleration.) One first sees that a discrepancy model is essential; using a radial basis function (RBF) GP is standard (see <a class="reference external" href="https://en.wikipedia.org/wiki/Radial_basis_function_kernel">Wikipedia RBF article</a>) and one finds good predictions for times where there is data (this is KOH). But the discrepancy model must be more informed for a robust extraction of <span class="math notranslate nohighlight">\(g\)</span>; this leads to using a nonstationary GP.  Sunil has given permission for us to adapt his notebook. This example has many extensions available to students.</p>
-<p>We test the model discrepancy framework on a simple system (popularized by statistician Dave Higdon) in which a ball is dropped from a tower of height <span class="math notranslate nohighlight">\(h_0=60\,\)</span>m at time <span class="math notranslate nohighlight">\(t=0\,\)</span>s. Measurements of the ball’s height above the ground, velocity, and acceleration are recorded at discrete time points until <span class="math notranslate nohighlight">\(t=1\)</span>,s. (In this example <span class="math notranslate nohighlight">\(x=t\)</span>/(1,s) serves as the unitless input parameter, <span class="math notranslate nohighlight">\(0\leq x \leq 1\)</span>.)
-The true theory, used to generate mock experimental data, incorporates a gravitational force <span class="math notranslate nohighlight">\(\mathbf{f}_G=-Mg\,\hat{\bf z}\)</span> and a drag force given by <span class="math notranslate nohighlight">\(\mathbf{f}_D = -0.4 v^2\, \hat{\bf{v}}\)</span>.
-Here, <span class="math notranslate nohighlight">\(M=1\,\)</span>kg is the mass of the ball, <span class="math notranslate nohighlight">\(g=9.8\,{\rm m/s}^2\)</span> the acceleration due to gravity, and we set the initial velocity <span class="math notranslate nohighlight">\(v_0\)</span> to <span class="math notranslate nohighlight">\(v_0=0\,\)</span>m/s.</p>
-<p>We assume that the observational errors for height, velocity, and acceleration are independent and identically distributed Gaussian random variables.</p>
-<!-- with standard deviations of $\sigma = 0.1$, $0.2$, and $0.3$, respectively.--> Mock experimental data are generated by sampling from Gaussian distributions with specified standard deviations and with means given by the predictions of the true theory, which are determined by the equations of motion:
-<div class="math notranslate nohighlight" id="equation-eq-bd-evol">
-<span class="eqno">(13.5)<a class="headerlink" href="#equation-eq-bd-evol" title="Link to this equation">#</a></span>\[
-    a = \frac{d v}{dt} = g - 0.4 v |v| \,, \qquad 
-\frac{dh}{dt} = -v .
-\]</div>
-<figure class="align-default" id="fig-ball-drop-data">
-<a class="reference internal image-reference" href="../../_images/ball_drop_data.png"><img alt="../../_images/ball_drop_data.png" src="../../_images/ball_drop_data.png" style="height: 200px;" />
-</a>
-<figcaption>
-<p><span class="caption-number">Fig. 13.3 </span><span class="caption-text">Data for the ball drop experiment, including measurement errors.</span><a class="headerlink" href="#fig-ball-drop-data" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<p>We compare these mock data with a theoretical model that neglects the drag force and is governed by the simpler equations of motion:</p>
-<div class="math notranslate nohighlight">
-\[
-    v = v_0 + g t \,, \qquad h = h_0 - v_0 t - \frac{1}{2} g t^2 .
-\]</div>
-<p>Here <span class="math notranslate nohighlight">\(h_0=60\,\)</span>m is fixed to the value used in generating the mock experimental data. The parameters <span class="math notranslate nohighlight">\(g\)</span> and <span class="math notranslate nohighlight">\(v_0\)</span> are model parameters, which we infer using Bayesian parameter inference (in the notebook, for simplicity, only <span class="math notranslate nohighlight">\(g\)</span> is inferred). We incorporate our prior knowledge about the theory’s domain using the two distinct GP kernels discussed earlier. Since our model neglects drag forces, we are more confident in its predictions at earlier times (small <span class="math notranslate nohighlight">\(x\)</span>), when the velocity is lower, than at later times (larger <span class="math notranslate nohighlight">\(x\)</span>).</p>
-<figure class="align-default" id="fig-balldrop-height-only">
-<a class="reference internal image-reference" href="../../_images/balldrop_height_only.png"><img alt="../../_images/balldrop_height_only.png" src="../../_images/balldrop_height_only.png" style="height: 400px;" />
-</a>
-<figcaption>
-<p><span class="caption-number">Fig. 13.4 </span><span class="caption-text">Balldrop analysis with only the height measurements.</span><a class="headerlink" href="#fig-balldrop-height-only" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<p><a class="reference internal" href="#fig-balldrop-height-only"><span class="std std-numref">Fig. 13.4</span></a> shows both the inferred posteriors for the model parameters and the corresponding model predictions when only the height data is used. We perform Bayesian parameter inference under three scenarios: (i) without the model discrepancy (MD) term (red), (ii) with MD using GP-kernel <span class="math notranslate nohighlight">\(\texttt{I}\)</span> (blue), and (iii) with MD using GP-kernel <span class="math notranslate nohighlight">\(\texttt{II}\)</span> (green). The kernels are defined in <a class="reference internal" href="#kernels-for-balldrop2"><span class="std std-numref">Fig. 13.5</span></a>; their hyperparameters are learned at the same time as the model parameters. Parameter inference is carried out by sequentially incorporating additional observables to examine their influence on the inferred posteriors. The posteriors and predictions for when height and velocity are included are shown in <a class="reference internal" href="#fig-balldrop-height-velocity"><span class="std std-numref">Fig. 13.6</span></a> and when height, velocity, and acceleration included are shown in <a class="reference internal" href="#fig-balldrop-all-three"><span class="std std-numref">Fig. 13.7</span></a>.</p>
-<!--In the top row of Fig.~\ref{fig:balldrop}, the left panel shows the corner plot when only height measurements are considered, the middle panel adds measurements of the velocity, and the right panel includes all observables. The vertical dashed gray lines in the diagonal panels mark the true parameter values used to generate the mock data, and the shaded purple regions denote the priors.-->
-<figure class="align-default" id="kernels-for-balldrop2">
-<a class="reference internal image-reference" href="../../_images/kernels_for_balldrop2.png"><img alt="../../_images/kernels_for_balldrop2.png" src="../../_images/kernels_for_balldrop2.png" style="height: 180px;" />
-</a>
-<figcaption>
-<p><span class="caption-number">Fig. 13.5 </span><span class="caption-text">GP kernels <span class="math notranslate nohighlight">\(\texttt{I}\)</span> and <span class="math notranslate nohighlight">\(\texttt{II}\)</span> for the balldrop analysis.</span><a class="headerlink" href="#kernels-for-balldrop2" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<figure class="align-default" id="fig-balldrop-height-velocity">
-<a class="reference internal image-reference" href="../../_images/balldrop_height_velocity.png"><img alt="../../_images/balldrop_height_velocity.png" src="../../_images/balldrop_height_velocity.png" style="height: 400px;" />
-</a>
-<figcaption>
-<p><span class="caption-number">Fig. 13.6 </span><span class="caption-text">Balldrop analysis with both the height and velocity measurements.</span><a class="headerlink" href="#fig-balldrop-height-velocity" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<figure class="align-default" id="fig-balldrop-all-three">
-<a class="reference internal image-reference" href="../../_images/balldrop_all_three.png"><img alt="../../_images/balldrop_all_three.png" src="../../_images/balldrop_all_three.png" style="height: 400px;" />
-</a>
-<figcaption>
-<p><span class="caption-number">Fig. 13.7 </span><span class="caption-text">Balldrop analysis with  height, velocity, and acceleration measurements.</span><a class="headerlink" href="#fig-balldrop-all-three" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<p>The posteriors incorporating MD (blue and green) consistently cover the true values and become narrower as more observables are included. In particular, the posteriors with MD using Kernel <span class="math notranslate nohighlight">\(\texttt{II}\)</span> (green), which encodes strong prior information about the theory’s domain of validity, are consistently tighter, reflecting greater constraining power, yet remain consistent with those obtained using the more conservative Kernel <span class="math notranslate nohighlight">\(\texttt{I}\)</span> (blue). Remarkably, when acceleration data are included (<a class="reference internal" href="#fig-balldrop-all-three"><span class="std std-numref">Fig. 13.7</span></a>), the posterior with Kernel <span class="math notranslate nohighlight">\(\texttt{II}\)</span> nearly recovers the true parameter values, even though the model predicts a constant acceleration that does not capture the observed decreasing trend in the data. In contrast, the posteriors from the inference without the MD term (red) deviate significantly from the truth and become increasingly narrow as more observables are added, resulting in model parameter estimates that are both incorrect <em>and</em> overconfident.</p>
-<p>In the right panels of the figures, the mock experimental data are compared with the model predictions generated using the inferred parameter posteriors from the left panels. Notably, predictions with MD (blue, green) match the data at early times and deviate at later times, a behavior that directly results from incorporating prior knowledge about the theory’s domain of applicability into the covariance kernel. In contrast, predictions without MD (red) prioritize achieving the best fit to the data, leading to inaccurate and overconfident parameter estimates.</p>
-</section>
+<p>In this chapter, we describe and illustrate an approach to model discrepancy that uses Gaussian processes (see <a class="reference internal" href="../MachineLearning/GP/RootGP.html#sec-rootgp"><span class="std std-numref">Section 20</span></a>) to model <span class="math notranslate nohighlight">\(\delta M\)</span>.</p>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -830,11 +705,11 @@ Here, <span class="math notranslate nohighlight">\(M=1\,\)</span>kg is the mass 
       </div>
     </a>
     <a class="right-next"
-       href="MD_balldrop_v1.html"
+       href="DiscrepancyModels/sec-01-koh-and-boh-discrepancy-models.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">13.4. </span>📥 Model discrepancy example: The ball-drop experiment</p>
+        <p class="prev-next-title"><span class="section-number">13.1. </span>KOH and BOH discrepancy models</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -844,23 +719,6 @@ Here, <span class="math notranslate nohighlight">\(M=1\,\)</span>kg is the mass 
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#koh-and-boh-discrepancy-models">13.1. KOH and BOH discrepancy models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#framework">13.2. Framework</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-ball-drop-model">13.3. The ball-drop model</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>
