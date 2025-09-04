@@ -1,5 +1,5 @@
 (sec:MoreBayesTheorem)=
-# More on Bayes' theorem
+# Review of Bayes' theorem
 
 ```{epigraph}
 > "Prediction is very difficult, especially about the future."

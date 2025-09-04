@@ -105,7 +105,7 @@ Output distributions from repeated sampling at the same input point, each plot b
 
 :::{figure} ./figs/ANNFT_Tanh_MAE_loss.png
 :height: 350px
-:name: fig-ANNFT_ReLU_MAE_loss
+:name: fig-ANNFT_Tanh_MAE_loss
 
 :::
 
