@@ -5,6 +5,7 @@ We have put on the table the axioms of probability theory and some of their cons
 Before looking further at concrete applications of Bayesian inference, we provide further insight into Bayes' theorem in {ref}`sec:MoreBayesTheorem` and introduce some additional ingredients for Bayesian inference in {ref}`sec:DataModelsPredictions`. The latter include the idea of a statistical model, how to predict future data conditioned on (i.e., given) past data and background information (the posterior predictive distribution), and Bayesian parameter estimation.
 
 In Appendix A there is a summary and further details on {ref}`sec:Statistics`. Particularly important are {ref}`sec:ExpectationValuesAndMoments` and {ref}`sec:CentralMoments`; we summarize the key discrete and continuous definitions here.
+Note: there are multiple notations out there for these quantities!
 
 :::{admonition} Brief summary of expectation values and moments
 The *expectation value* of a function $h$ of the random variable $X$ with respect to its distribution $p(x_i)$ (a PMF) or $p(x)$ (a PDF) is
@@ -21,7 +22,7 @@ $$
   \mathbb{E}[X] \equiv \mu = \int_{-\infty}^\infty \! xp(x)\,dx .
 $$
 
-The variance and covariance are moments with respect to the mean for one and two random variables (we give only the continuous version here):
+The variance and covariance are moments with respect to the mean for one and two random variables:
 
 $$\begin{align}
 \text{Var}(X) &\equiv \sigma^2  \equiv \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right)^2 \right] \\
