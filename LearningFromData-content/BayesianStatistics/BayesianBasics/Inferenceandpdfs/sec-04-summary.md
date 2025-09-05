@@ -19,13 +19,15 @@ The $p$ subscript is usually omitted. *Moments* correspond to $h(x) = x^n$, with
 
 $$
 \mathbb{E}[X] \equiv \mu =  \sum_{i}\! x_ip(x_i) \quad\Longrightarrow\quad
-  \mathbb{E}[X] \equiv \mu = \int_{-\infty}^\infty \! xp(x)\,dx .
+  \mathbb{E}[X] \equiv \mu = \int_{-\infty}^\infty \! xp(x)\,dx \equiv \langle x \rangle \equiv \bar x ,
 $$
+
+where we have also indicated two other common notations for the mean.
 
 The variance and covariance are moments with respect to the mean for one and two random variables:
 
 $$\begin{align}
-\text{Var}(X) &\equiv \sigma^2  \equiv \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right)^2 \right] \\
+\text{Var}(X) &\equiv \sigma_{X}^2  \equiv \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right)^2 \right] \\
 \text{Cov}(X,Y) &\equiv \sigma_{XY}^2 \equiv \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right) \left( Y - \mathbb{E}[Y] \right)  \right].
 \end{align}$$
 
@@ -35,6 +37,18 @@ The **correlation coefficient** of $X$ and $Y$ (for non-zero variances) is
 $$
 \rho_{XY} \equiv \frac{\text{Cov}(X,Y)}{\sqrt{\text{Var}(X)\text{Var}(Y)}},
 $$
+
+The **covariance matrix** $\Sigma_{XY}$ is
+
+$$
+ \Sigma_{XY} 
+  = \pmatrix{\sigma_X^2 &  \sigma_{XY}^2 \\
+                    \sigma_{XY}^2 & \sigma_Y^2}
+  = \pmatrix{\sigma_X^2 & \rho_{XY} \sigma_X\sigma_Y \\
+                    \rho_{XY}\sigma_X\sigma_Y & \sigma_Y^2}
+        \quad\mbox{with}\ 0 < \rho_{XY}^2 < 1  .          
+$$
+
 :::
 
 
@@ -81,6 +95,31 @@ $$\begin{align}
 In doing these integrals, simplify by changing the integration variable to $x' = x-\mu$ and use that the distribution is normalized (integrates to one) and that integrals of odd integrands are zero.
 :::
 ::::
+
+
+:::{admonition} Covariance matrix for a bivariate (two-dimensional) normal distribution 
+
+With vector $\boldsymbol{x} = \pmatrix{x_1\\ x_2}$, the distribution is
+
+$$
+  p(\boldsymbol{x}|\boldsymbol{\mu},\Sigma) = \frac{1}{\sqrt{\det(2\pi\Sigma)}}
+    e^{-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^\intercal\Sigma^{-1}(\boldsymbol{x}-\boldsymbol{\mu})}
+$$
+
+with mean and covariance matrix:
+
+$$
+  \boldsymbol{\mu} = \pmatrix{\mu_1\\ \mu_2} \quad\mbox{and}\quad
+  \Sigma = \pmatrix{\sigma_1^2 & \rho_{12} \sigma_1\sigma_2 \\
+                    \rho_{12}\sigma_1\sigma_2 & \sigma_2^2}
+        \quad\mbox{with}\ 0 < \rho_{12}^2 < 1  .          
+$$
+
+Note that $\Sigma$ is symmetric and positive definite.
+See the {doc}`../Visualizing_correlated_gaussians` notebook for plotting what this looks like.
+
+:::
+
 
 
 
