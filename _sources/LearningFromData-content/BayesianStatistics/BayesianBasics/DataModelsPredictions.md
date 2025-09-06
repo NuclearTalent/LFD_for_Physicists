@@ -9,11 +9,15 @@
 
 <!-- The use of probability theory to quantify uncertainty plays a central role in science and the scientific method for inferring new knowledge about the universe. Before we can elaborate on this topic of inductive inference we must briefly discuss the nature of science in terms of data, theories, and models. In the next chapter we will exemplify this using a linear model and some test data. But for now we will remain general and slightly more abstract.-->
 
+## A statistical model for our data
+
 Before continuing with concrete applications of Bayes' theorem, let's step back and briefly discuss the nature of science in terms of data, theories, and models in more abstract terms.
 
 Let us start with the *data* $\data$ already obtained through a measurement process, e.g., an experiment in a laboratory or an observation of some astronomical event. It is obviously so that all data are equipped with uncertainties of various origin, let us denote this $\delta \data$. Surely you can think of several examples. Nevertheless, given some data $\data$, one would immediately ask what this data can tell us about data we have not yet collected or used in the inference. We call this future data $\futuredata$. At present, we are uncertain about any future data, and we describe as a (conditional) probability $\cprob{\futuredata}{\data,I}$. All we have said so far is that _predictions are uncertain_. The obvious and interesting question is: how uncertain is the prediction? To answer that, we must go from this abstract probability to something that we can evaluate quantitatively. The first step is to develop a *theory*, e.g., Newtonian mechanics, within which we can define a *model* to describe, e.g., the structural stability of a residential house or some planetary motion, to analyze the relevant data.
 
+:::{admonition} Theories in physics
 In physics, a *theory* is very often some framework that postulates, or deduces from some axioms, a master equation that governs the spacetime dependence of a system of interacting bodies, e.g., Einstein’s field equations in the general theory of relativity or Heisenberg’s equations of motion in quantum mechanics. There is no recipe for how to develop a realistic theory. All we can do is to use our imagination, try to discover patterns and/or symmetries, collaborate with other experts, and have some luck on the way! No theory is complete and we always seek improvement or sometimes face a fundamental change of interpretation, i.e., a paradigm shift. In that sense, a theory always comes with some probability for being true, and, besides for purely logical statements, this probability can never be exactly 0 or 1. In such cases, no new evidence/data will ever have any influence. In this sense, *all theories are wrong*, i.e., they are never correct with absolute certainty. This is at some level a provocative statement that is designed to draw attention to the fact that all theories can be improved or replaced, and we do this all the time using the scientific method.
+:::
 <!-- described in the introduction section about [](intro:inference). -->
 
 A physical *model* $M$ allows quantitative evaluation of the system under study. Any model we employ will always depend on model parameters $\pars$ with uncertain numerical values. Moreover, *all models are wrong*. Indeed, there will always be some physics that we have neglected to include or are unaware of today. If we denote mismatch between model predictions and real world observations of the system, i.e., data, as $\delta M$, we can write
@@ -36,7 +40,25 @@ The distribution of future data conditioned on past data and background informat
 ```
 
 If $\futuredata$ is conditionally independent of $\data$, we can replace $\pdf{\futuredata}{\pars,\data, I}$ by $\pdf{\futuredata}{\pars, I}$, but there are cases of ppds where this is not true and we must be more careful (e.g., when we include $\delta M$). 
-By performing this integral we account for the uncertainty in the model parameters $\pars$ when making predictions. In fact, one can marginalize (average) predictions over anything and everything that we are uncertain about as long as we have access to the necessary probability distributions. To evaluate the posterior for the model parameters we must employ Bayes' theorem
+By performing this integral we account for the uncertainty in the model parameters $\pars$ when making predictions. In fact, one can marginalize (average) predictions over anything and everything that we are uncertain about as long as we have access to the necessary probability distributions. 
+
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+How would you notate the statement that $\futuredata$ is *conditionally independent* of $\data$ in {eq}`eq_ppd`?
+:::{admonition} Answer
+:class: dropdown, my-answer 
+If we know $\pars$, then *if* $\data$ gives no additional information, we are able to replace $\pdf{\futuredata}{\pars,\data,I} \longrightarrow \pdf{\futuredata}{\pars,I}$.
+:::
+::::
+
+
+## Bayesian parameter estimation
+
+Quantifying the posterior distribution $\pdf{\pars}{\data,I}$ for the parameters of a model is called *Bayesian parameter estimation*, and is a staple of Bayesian inference. This is a probabilistic generalization of parameter optimization and maximum likelihood estimation whereby one tries to find an extremum parameter value of some objective function or data likelihood, respectively. We will see multiple examples of this in the coming chapters.
+<!-- chapter on [](sec:LinearModels).-->
+
+
+To evaluate the posterior for the model parameters we must employ Bayes' theorem
 
 ```{math}
 :label: eq_bayes
@@ -51,19 +73,8 @@ Here, we must insert a likelihood of the data $\pdf{\data}{\pars,I}$ and a prior
 
 Unless we are interested in obtaining an absolutely normalized posterior distribution we can omit the denominator in Eq. {eq}`eq_bayes`. Indeed, this does not explicitly depend on $\pars$. 
 
-::::{admonition} Checkpoint question
-:class: my-checkpoint
-What would assuming that $\futuredata$ is *conditionally independent* of $\data$ allow us to do in {eq}`eq_ppd`?
-:::{admonition} Answer
-:class: dropdown, my-answer 
-If we know $\pars$, then *if* $\data$ gives no additional information, we are able to replace $\pdf{\futuredata}{\pars,\data,I} \longrightarrow \pdf{\futuredata}{\pars,I}$.
-:::
-::::
 
 
-## Bayesian parameter estimation
-Quantifying the posterior distribution $\pdf{\pars}{\data,I}$ for the parameters of a model is called *Bayesian parameter estimation*, and is a staple of Bayesian inference. This is a probabilistic generalization of parameter optimization and maximum likelihood estimation whereby one tries to find an extremum parameter value of some objective function or data likelihood, respectively. We will see multiple examples of this in the coming chapters.
-<!-- chapter on [](sec:LinearModels).-->
 
 Bayesian parameter estimation can sometimes be very challenging. In the chapter on [](sec:BayesianLinearRegression) we will se an example of where we can perform analytical calculations throughout. However, in most realistic applications the posterior must be evaluated numerically, and most often using [](sec:MCMC). This is no silver bullet and to quantify (or characterize) a multi-dimensional posterior, sometimes with a complicated geometry, for an intricate physical model, is by no means guaranteed to succeed. At least not in finite time. Nevertheless, obtaining posterior distributions to represent uncertainties is the gold standard in any inferential analysis. 
 
