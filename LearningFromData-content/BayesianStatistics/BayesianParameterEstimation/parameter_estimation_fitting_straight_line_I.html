@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>9.6. Parameter estimation example: fitting a straight line &#8212; Combined Learning from Data materials</title>
+    <title>9.6. 📥 Parameter estimation example: fitting a straight line &#8212; Combined Learning from Data materials</title>
   
   
   
@@ -256,7 +256,7 @@
 <li class="toctree-l2"><a class="reference internal" href="parameter_estimation_Gaussian_noise.html">9.3. 📥 Parameter estimation I: Gaussian mean and variance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="radioactive_lighthouse_exercise.html">9.4. 📥 Radioactive lighthouse problem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amplitude_in_presence_of_background.html">9.5. 📥 Amplitude of a signal in the presence of background</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">9.6. Parameter estimation example: fitting a straight line</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">9.6. 📥 Parameter estimation example: fitting a straight line</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parameter_estimation_fitting_straight_line_II.html">9.7. 📥 Parameter estimation example: fitting a straight line II</a></li>
 </ul>
 </details></li>
@@ -681,7 +681,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Parameter estimation example: fitting a straight line</h1>
+    <h1>📥 Parameter estimation example: fitting a straight line</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -717,7 +717,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="parameter-estimation-example-fitting-a-straight-line">
-<h1><span class="section-number">9.6. </span>Parameter estimation example: fitting a straight line<a class="headerlink" href="#parameter-estimation-example-fitting-a-straight-line" title="Link to this heading">#</a></h1>
+<h1><span class="section-number">9.6. </span>📥 Parameter estimation example: fitting a straight line<a class="headerlink" href="#parameter-estimation-example-fitting-a-straight-line" title="Link to this heading">#</a></h1>
 <p>Adapted from BayesianAstronomy.
 <span class="math notranslate nohighlight">\(% Some LaTeX definitions we'll use.
 \newcommand{\pr}{{p}}
@@ -780,37 +780,42 @@ y_{\textrm{th}}(x) = mx + b
 <p>where our parameter vector will be</p>
 <div class="math notranslate nohighlight">
 \[
-\theta = [b, m]
+\boldsymbol{\theta} = [b, m]
 \]</div>
 <p>But this is only half the picture: what we mean by a “model” in a Bayesian sense is not only this expected value <span class="math notranslate nohighlight">\(y_{\textrm{th}}(x;\theta)\)</span>, but a <strong>probability distribution</strong> for our data.
-That is, we need an expression to compute the likelihood <span class="math notranslate nohighlight">\(\pr(D\mid\theta, I)\)</span> for our data as a function of the parameters <span class="math notranslate nohighlight">\(\theta\)</span> (<span class="math notranslate nohighlight">\(I\)</span> stands for all other information).
+That is, we need an expression to compute the likelihood <span class="math notranslate nohighlight">\(p(D\mid\boldsymbol{\theta}, I)\)</span> for our data as a function of the parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> (<span class="math notranslate nohighlight">\(I\)</span> stands for all other information).
 Here <span class="math notranslate nohighlight">\(D\)</span> is the set of all <span class="math notranslate nohighlight">\((x,y)\)</span> pairs that we know about (or measure).</p>
-<p>[Note: At this stage we are (implicitly) assuming that our theoretical model is perfect.  But it is not!  We’ll come back eventually to talk about adding a theory error <span class="math notranslate nohighlight">\(\delta y_{\textrm{th}}\)</span>.]</p>
+<p>[<strong>Note:</strong> At this stage we are (implicitly) assuming that our theoretical model is perfect.  But it is not!  We’ll come back in a future notebook to talk about adding a theory error <span class="math notranslate nohighlight">\(\delta y_{\textrm{th}}\)</span>.]</p>
 <p>We are given data with simple error bars, which imply that the probability for any <em>single</em> data point (labeled by <span class="math notranslate nohighlight">\(i\)</span>) is a normal distribution with mean given by the true value. That is,</p>
 <div class="math notranslate nohighlight">
 \[
-y_i \sim \mathcal{N}(y_{\textrm{th}}(x_i;\theta), \varepsilon_i^2)
+y_i \sim \mathcal{N}(y_{\textrm{th}}(x_i;\boldsymbol{\theta}), \varepsilon_i^2)
 \]</div>
 <p>or, in other words,</p>
 <div class="math notranslate nohighlight">
 \[
-\pr(y_i\mid x_i,\theta,  I) = \frac{1}{\sqrt{2\pi\varepsilon_i^2}} \exp\left(\frac{-\left[y_i - y_{\textrm{th}}(x_i;\theta)\right]^2}{2\varepsilon_i^2}\right)
+p(y_i\mid x_i,\boldsymbol{\theta},  I) = \frac{1}{\sqrt{2\pi\varepsilon_i^2}} \exp\left(\frac{-\left[y_i - y_{\textrm{th}}(x_i;\boldsymbol{\theta})\right]^2}{2\varepsilon_i^2}\right)
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(\varepsilon_i\)</span> are the (known) measurement errors indicated by the error bars.</p>
-<p>Assuming all the points are independent, we can find the full likelihood by multiplying the individual likelihoods together:</p>
+<p>where <span class="math notranslate nohighlight">\(\varepsilon_i\)</span> are the (known) measurement errors indicated by the error bars. We can write out the full statistical model as</p>
 <div class="math notranslate nohighlight">
 \[
-\pr(D\mid\theta, I) = \prod_{i=1}^N \pr(y_i\mid x_i,\theta, I)
+  y = y_{\textrm{th}} + \delta y_{\textrm{th}} + \varepsilon ,
+\]</div>
+<p>(elsewhere we’ve used <span class="math notranslate nohighlight">\(y_{\textrm{exp}}\)</span> for the left side and recall we are taking <span class="math notranslate nohighlight">\(\delta y_{\textrm{th}}\)</span> to be negligible).</p>
+<p>We have assumed that all the points are independent, so we can find the full likelihood by multiplying the individual likelihoods together:</p>
+<div class="math notranslate nohighlight">
+\[
+p(D\mid\boldsymbol{\theta}, I) = \prod_{i=1}^N p(y_i\mid x_i,\boldsymbol{\theta}, I)
 \]</div>
 <p>For convenience (and also for numerical accuracy) this is often expressed in terms of the log-likelihood:</p>
 <div class="math notranslate nohighlight">
 \[
-\log \pr(D\mid\theta, I) = -\frac{1}{2}\sum_{i=1}^N\left(\log(2\pi\varepsilon_i^2) + \frac{\left[y_i - y_M(x_i;\theta)\right]^2}{\varepsilon_i^2}\right)
+\log p(D\mid\boldsymbol{\theta}, I) = -\frac{1}{2}\sum_{i=1}^N\left(\log(2\pi\varepsilon_i^2) + \frac{\left[y_i - y_M(x_i;\boldsymbol{\theta})\right]^2}{\varepsilon_i^2}\right)
 \]</div>
 <section id="exercises">
 <h3>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h3>
 <ol class="arabic simple">
-<li><p>Write a Python function which computes the log-likelihood given a parameter vector <span class="math notranslate nohighlight">\(\theta\)</span>, an array of errors <span class="math notranslate nohighlight">\(\varepsilon\)</span>, and an array of <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> values</p></li>
+<li><p>Write a Python function which computes the log-likelihood given a parameter vector <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>, an array of errors <span class="math notranslate nohighlight">\(\varepsilon\)</span>, and an array of <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> values</p></li>
 <li><p>Use tools in <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/optimize.html"><code class="docutils literal notranslate"><span class="pre">scipy.optimize</span></code></a> to maximize this likelihood (i.e. minimize the negative log-likelihood). How close is this result to the input <code class="docutils literal notranslate"><span class="pre">theta_true</span></code> above?  Is that expected or unexpected?</p></li>
 <li><p>Change the random number seed to get different results and comment on how the maximum likelihood results fluctuate? How are size of the fluctuations related to the number of data points <span class="math notranslate nohighlight">\(N\)</span> and the data error standard deviation <span class="math notranslate nohighlight">\(dy\)</span>?  (Try changing them!)</p></li>
 </ol>
@@ -864,7 +869,7 @@ y_i \sim \mathcal{N}(y_{\textrm{th}}(x_i;\theta), \varepsilon_i^2)
 </section>
 <section id="the-prior">
 <h2>The Prior<a class="headerlink" href="#the-prior" title="Link to this heading">#</a></h2>
-<p>We have computed the likelihood, now we need to think about the prior <span class="math notranslate nohighlight">\(\pr(\theta\mid I)\)</span>.</p>
+<p>We have computed the likelihood, now we need to think about the prior <span class="math notranslate nohighlight">\(\pr(\delta y_{\textrm{th}}\mid I)\)</span>.</p>
 <p><em>So… what can we actually say about the slope and intercept before we fit our data?</em></p>
 <p>There are several approaches to choosing priors that you’ll come across in practice.  Here we will just introduce some vocabulary and definitions and come back to details and options later.</p>
 <ol class="arabic simple">
