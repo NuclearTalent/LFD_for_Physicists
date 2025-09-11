@@ -765,8 +765,8 @@ E_\mathrm{val} &amp;= \frac{1}{N_\mathrm{val}} \sum_{i=1}^{N_\mathrm{val}} E(\ML
 <p>An underfit model has a <em>high bias</em>, which means that it gives a rather poor fit and the error function will be rather large in average. This will be true for both the training and the validation sets.</p>
 <p>An overfit model will depend sensitively on the choice of training data. A different split into training and validation sets will give very different predictions. We therefore say that the model displays a <em>high variance</em>. While the overfit model usually reproduces training data very well (low bias), it does not generalize well and gives a poor reproduction of validation data. The average values for the error function are therefore very different for the training and validation sets.</p>
 <p>Another sign of overfitting is the appearance of very large fit parameters that are needed for the fine tunings of cancellations of different terms in the model. The fits from our example has the following root-mean-square parameters</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5e86f1e4-8c72-4d83-a884-6135dde7ad14">
-<span class="eqno">(24.17)<a class="headerlink" href="#equation-5e86f1e4-8c72-4d83-a884-6135dde7ad14" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d2639aed-bdfa-4499-91a2-50a4f7d2178b">
+<span class="eqno">(24.17)<a class="headerlink" href="#equation-d2639aed-bdfa-4499-91a2-50a4f7d2178b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_\mathrm{rms} \equiv \frac{1}{p} \sqrt{ \sum_{i=0}^{p-1} \theta_i^2 } \equiv \| \pars \|_2^2 / p.
 \end{equation}\]</div>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -797,49 +797,49 @@ E_\mathrm{val} &amp;= \frac{1}{N_\mathrm{val}} \sum_{i=1}^{N_\mathrm{val}} E(\ML
 <h2>Regularization: Ridge and Lasso<a class="headerlink" href="#regularization-ridge-and-lasso" title="Link to this heading">#</a></h2>
 <p>Assuming that overfitting is characterized by large fit parameters, we can attempt to avoid this scenario by <em>regularizing</em> the model parameters. We will introduce two kinds of regularization: Ridge and Lasso. In addition, so called elastic net regularization is also in use and basically corresponds to a linear combination of the Ridge and Lasso penalty functions.</p>
 <p>Let us remind ourselves about the expression for the standard Mean Squared Error (MSE) which we used to define our cost function and the equations for the ordinary least squares (OLS) method. That is our optimization problem is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-824d4935-3704-4e72-ad26-f7b7c10d7a42">
-<span class="eqno">(24.18)<a class="headerlink" href="#equation-824d4935-3704-4e72-ad26-f7b7c10d7a42" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3574841e-e916-43de-a8a7-e008a74b4010">
+<span class="eqno">(24.18)<a class="headerlink" href="#equation-3574841e-e916-43de-a8a7-e008a74b4010" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \boldsymbol{\theta}^* = \underset{\boldsymbol{\theta}\in {\mathbb{R}}^{p}}{\operatorname{argmin}} \frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{	\theta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\right)\right\}.
 \end{equation}\]</div>
 <p>or we can state it as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b956cb77-8ac1-4455-a46c-2729bae3a319">
-<span class="eqno">(24.19)<a class="headerlink" href="#equation-b956cb77-8ac1-4455-a46c-2729bae3a319" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1a91ceb0-1dd3-4316-a8cd-4fe853610b24">
+<span class="eqno">(24.19)<a class="headerlink" href="#equation-1a91ceb0-1dd3-4316-a8cd-4fe853610b24" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \boldsymbol{\theta}^* = \underset{\boldsymbol{\theta}\in {\mathbb{R}}^{p}}{\operatorname{argmin}}
 \frac{1}{n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2
 = \underset{\boldsymbol{\theta}\in {\mathbb{R}}^{p}}{\operatorname{argmin}}
 \frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2,
 \end{equation}\]</div>
 <p>where we have used the definition of  a norm-2 vector, that is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cb25399a-4748-4073-b122-764f5ca31e06">
-<span class="eqno">(24.20)<a class="headerlink" href="#equation-cb25399a-4748-4073-b122-764f5ca31e06" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bb52a660-3915-4b92-92b7-acd5473df180">
+<span class="eqno">(24.20)<a class="headerlink" href="#equation-bb52a660-3915-4b92-92b7-acd5473df180" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \vert\vert \boldsymbol{\epsilon}\vert\vert_2^2 = \sum_i \epsilon_i^2. 
 \end{equation}\]</div>
 <p>By minimizing the above equation with respect to the parameters
 <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> we could then obtain an analytical expression for the
 parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>.  We can add a regularization parameter <span class="math notranslate nohighlight">\(\lambda\)</span> by
 defining a new cost function to be minimized, that is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1cb006ac-e07f-425a-9a79-fe6c63b2ac75">
-<span class="eqno">(24.21)<a class="headerlink" href="#equation-1cb006ac-e07f-425a-9a79-fe6c63b2ac75" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-470ebbba-0113-4c7c-ab2e-53e632c80083">
+<span class="eqno">(24.21)<a class="headerlink" href="#equation-470ebbba-0113-4c7c-ab2e-53e632c80083" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C_{\lambda,2} \left( \pars \right) \equiv
 \frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\theta}\vert\vert_2^2 
 \end{equation}\]</div>
 <p>which leads to the <em>Ridge regression</em> minimization problem where we
 constrain the parameters via <span class="math notranslate nohighlight">\(\vert\vert \boldsymbol{\theta}\vert\vert_2^2\)</span> and the optimization equation becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a98019bd-cc6a-49fd-9325-24dfcd50e1f1">
-<span class="eqno">(24.22)<a class="headerlink" href="#equation-a98019bd-cc6a-49fd-9325-24dfcd50e1f1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f9920931-80c4-4292-9751-462561c1d257">
+<span class="eqno">(24.22)<a class="headerlink" href="#equation-f9920931-80c4-4292-9751-462561c1d257" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \boldsymbol{\theta}^* = \underset{\boldsymbol{\theta}\in {\mathbb{R}}^{p}}{\operatorname{argmin}}
 C_{\lambda,2}\left( \boldsymbol{X}, \boldsymbol{\theta} \right)
 .
 \end{equation}\]</div>
 <p>Alternatively, <em>Lasso regularization</em> can be performed by defining</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a8aa7ebb-032d-48d1-b03d-5e6fd784d4f1">
-<span class="eqno">(24.23)<a class="headerlink" href="#equation-a8aa7ebb-032d-48d1-b03d-5e6fd784d4f1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-04b26e88-5fbb-49b1-9d92-e6f4e06a37ab">
+<span class="eqno">(24.23)<a class="headerlink" href="#equation-04b26e88-5fbb-49b1-9d92-e6f4e06a37ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C_{\lambda,1} \left( \boldsymbol{\theta} \right) \equiv
 \frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\theta}\vert\vert_1.
 \end{equation}\]</div>
 <p>Here we have defined the norm-1 as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-74feba35-355e-4993-b75b-483a0ab2c70a">
-<span class="eqno">(24.24)<a class="headerlink" href="#equation-74feba35-355e-4993-b75b-483a0ab2c70a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1ab6312a-87a6-4d95-bedb-ec3dbe72b34b">
+<span class="eqno">(24.24)<a class="headerlink" href="#equation-1ab6312a-87a6-4d95-bedb-ec3dbe72b34b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \vert\vert \boldsymbol{\epsilon}\vert\vert_1 = \sum_i \vert \epsilon_i\vert. 
 \end{equation}\]</div>
 <p>Lasso stands for least absolute shrinkage and selection operator.</p>
@@ -852,15 +852,15 @@ C_{\lambda,1} \left( \boldsymbol{\theta} \right) \equiv
 <section id="more-on-ridge-regression">
 <h3>More on Ridge Regression<a class="headerlink" href="#more-on-ridge-regression" title="Link to this heading">#</a></h3>
 <p>Using the matrix-vector expression for Ridge regression,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d68d2bcf-9b05-4ad3-b7fd-615befd84cab">
-<span class="eqno">(24.25)<a class="headerlink" href="#equation-d68d2bcf-9b05-4ad3-b7fd-615befd84cab" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-31e37aed-8b6a-4d2d-b8c0-46bcbdf1a6fb">
+<span class="eqno">(24.25)<a class="headerlink" href="#equation-31e37aed-8b6a-4d2d-b8c0-46bcbdf1a6fb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C(\boldsymbol{X},\boldsymbol{\theta})=\frac{1}{n}\left\{(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta})^T(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta})\right\}+\lambda\boldsymbol{\theta}^T\boldsymbol{\theta},
 \end{equation}\]</div>
 <p>by taking the derivatives with respect to <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> we obtain then
 a slightly modified matrix inversion problem which for finite values
 of <span class="math notranslate nohighlight">\(\lambda\)</span> does not suffer from singularity problems. We obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ddec714b-5106-47cd-9df6-aa1a46da2570">
-<span class="eqno">(24.26)<a class="headerlink" href="#equation-ddec714b-5106-47cd-9df6-aa1a46da2570" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-99d8afa7-c6f1-4c57-96ad-11c972c963bd">
+<span class="eqno">(24.26)<a class="headerlink" href="#equation-99d8afa7-c6f1-4c57-96ad-11c972c963bd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \boldsymbol{\theta}^{\mathrm{Ridge}} = \left(\boldsymbol{X}^T\boldsymbol{X}+\lambda\boldsymbol{I}\right)^{-1}\boldsymbol{X}^T\boldsymbol{y},
 \end{equation}\]</div>
 <p>with <span class="math notranslate nohighlight">\(\boldsymbol{I}\)</span> being a <span class="math notranslate nohighlight">\(p\times p\)</span> identity matrix</p>
@@ -868,8 +868,8 @@ of <span class="math notranslate nohighlight">\(\lambda\)</span> does not suffer
 OLS with a modified diagonal term added to <span class="math notranslate nohighlight">\(\boldsymbol{X}^T\boldsymbol{X}\)</span>. The
 consequences, in particular for our discussion of the bias-variance
 are rather interesting. Ridge regression imposes a constraint on the model parameters</p>
-<div class="amsmath math notranslate nohighlight" id="equation-935f3ab2-1d21-4627-925d-be23a56a9be9">
-<span class="eqno">(24.27)<a class="headerlink" href="#equation-935f3ab2-1d21-4627-925d-be23a56a9be9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d75dbcaa-15a6-4a97-9824-8ec874b88523">
+<span class="eqno">(24.27)<a class="headerlink" href="#equation-d75dbcaa-15a6-4a97-9824-8ec874b88523" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \sum_{i=0}^{p-1} \theta_i^2 \leq t,
 \end{equation}\]</div>
 <p>with <span class="math notranslate nohighlight">\(t\)</span> a finite positive number.</p>
@@ -880,8 +880,8 @@ are rather interesting. Ridge regression imposes a constraint on the model param
 <h2>The bias-variance tradeoff<a class="headerlink" href="#the-bias-variance-tradeoff" title="Link to this heading">#</a></h2>
 <p>We will discuss the bias-variance tradeoff in the context of continuous predictions such as regression. However, many of the intuitions and ideas discussed here also carry over to classification tasks.</p>
 <p>Consider observations that are related to the true data-generating process <span class="math notranslate nohighlight">\(f\)</span> via experimental noise. For a specific observation <span class="math notranslate nohighlight">\(i\)</span> we can write</p>
-<div class="amsmath math notranslate nohighlight" id="equation-adcbcff0-0be3-45d9-94e8-7126b54de2b5">
-<span class="eqno">(24.28)<a class="headerlink" href="#equation-adcbcff0-0be3-45d9-94e8-7126b54de2b5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-968c77e4-2fdd-4fb9-8b9e-fbf2b18486c4">
+<span class="eqno">(24.28)<a class="headerlink" href="#equation-968c77e4-2fdd-4fb9-8b9e-fbf2b18486c4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \output_i = f({\inputs_i}) + {\epsilon}_{i},
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\({\epsilon}_{i}\)</span> is an irreducible error described by a random variable. That is, even if we could find the deta-generating process <span class="math notranslate nohighlight">\(f\)</span> we would not reproduce the data more accurately than <span class="math notranslate nohighlight">\(\epsilon\)</span> permits. Let us assume that these errors are i.i.d. with expectation value <span class="math notranslate nohighlight">\(\expect{\epsilon} = 0\)</span> and variance <span class="math notranslate nohighlight">\(\var{\epsilon} = \sigma^2_\epsilon\)</span><a class="footnote-reference brackets" href="#variance" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
@@ -914,25 +914,25 @@ Imagine the following repeated model calibrations:</p>
 </section>
 </div><div class="proof admonition" id="proof">
 <p>Proof. To derive the <a class="reference internal" href="#theorem:ModelValidation:bias-variance">bias-variance-tradeoff</a>, we start from</p>
-<div class="amsmath math notranslate nohighlight" id="equation-31bfb368-2dc2-41d8-ae24-e0b0238afe20">
-<span class="eqno">(24.30)<a class="headerlink" href="#equation-31bfb368-2dc2-41d8-ae24-e0b0238afe20" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2ef92e0d-1181-48e9-a28d-ab1523c89f7d">
+<span class="eqno">(24.30)<a class="headerlink" href="#equation-2ef92e0d-1181-48e9-a28d-ab1523c89f7d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \testoutput = f^\odot+\epsilon^\odot
 \end{equation}\]</div>
 <p>and realize that the variances of <span class="math notranslate nohighlight">\(\testoutput\)</span> and <span class="math notranslate nohighlight">\(\epsilon^\odot\)</span> are both equal to <span class="math notranslate nohighlight">\(\sigma^2_\epsilon\)</span>, since the data-generating process <span class="math notranslate nohighlight">\(f^\odot = f(\testinputs)\)</span> is deterministic. The mean value of <span class="math notranslate nohighlight">\(\epsilon^\odot\)</span> is equal to zero which means that <span class="math notranslate nohighlight">\(\expect{\testoutput} = f^\odot\)</span>. The desired expectation value</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f5f6d2ad-1767-4dbb-a1e1-23a6276dbadd">
-<span class="eqno">(24.31)<a class="headerlink" href="#equation-f5f6d2ad-1767-4dbb-a1e1-23a6276dbadd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4515550b-b225-45b8-95dc-f015ff66914f">
+<span class="eqno">(24.31)<a class="headerlink" href="#equation-4515550b-b225-45b8-95dc-f015ff66914f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \expect{\left(\testoutput-\MLtestoutput\right)^2} = \expect{\left(f^\odot+\epsilon^\odot-\MLtestoutput\right)^2},
 \end{equation}\]</div>
 <p>can be rewritten by subtracting and adding <span class="math notranslate nohighlight">\(\expect{\MLtestoutput}\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-13bd4727-3416-422f-a930-0556fea674a8">
-<span class="eqno">(24.32)<a class="headerlink" href="#equation-13bd4727-3416-422f-a930-0556fea674a8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4826a0cd-729a-49f5-a588-21d77cf305e6">
+<span class="eqno">(24.32)<a class="headerlink" href="#equation-4826a0cd-729a-49f5-a588-21d77cf305e6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \expect{\left(\testoutput-\MLtestoutput)^2}=\expect{(f^\odot + \epsilon^\odot - \expect{\MLtestoutput} + \expect{\MLtestoutput}-\MLtestoutput\right)^2}.
 \end{equation}\]</div>
 <p>Using the linearity of expectation values we can rewrite this expression as a sum of three terms:</p>
 <ul>
 <li><p>The first one is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-79f6bd1d-ac92-4f53-9f3e-f33876385b35">
-<span class="eqno">(24.33)<a class="headerlink" href="#equation-79f6bd1d-ac92-4f53-9f3e-f33876385b35" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-1e708437-0c66-4df0-abb1-5097d28707e1">
+<span class="eqno">(24.33)<a class="headerlink" href="#equation-1e708437-0c66-4df0-abb1-5097d28707e1" title="Permalink to this equation">#</a></span>\[\begin{align}
 \expect{\left(f^\odot-\expect{\MLtestoutput}+\epsilon^\odot\right)^2} &amp;= \expect{\left(f^\odot-\expect{\MLtestoutput}\right)^2} + \expect{{\epsilon^\odot}^2} \\
 &amp; \qquad + 2 \left(f^\odot-\expect{\MLtestoutput}\right)\expect{\epsilon} \\
 &amp;= \left(f^\odot-\expect{\MLtestoutput}\right)^2 + \sigma_\epsilon^2
@@ -940,15 +940,15 @@ Imagine the following repeated model calibrations:</p>
 <p>where we use the known expectation values, plus the fact that the model bias <span class="math notranslate nohighlight">\(f^\odot-\expect{\MLtestoutput}\)</span> is a fixed number. Thus, this term becomes the (squared) model bias plus the irreducible data error <span class="math notranslate nohighlight">\(\sigma_\epsilon^2\)</span></p>
 </li>
 <li><p>The second term is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-993f0e9f-aa15-4e23-a75b-5cd30e2ca59e">
-<span class="eqno">(24.34)<a class="headerlink" href="#equation-993f0e9f-aa15-4e23-a75b-5cd30e2ca59e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1c27411c-fd7e-40eb-93dc-58cb23bd9729">
+<span class="eqno">(24.34)<a class="headerlink" href="#equation-1c27411c-fd7e-40eb-93dc-58cb23bd9729" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \expect{\left(\expect{\MLtestoutput} - \MLtestoutput\right)^2} = \var{\MLtestoutput}.
 \end{equation}\]</div>
 <p>It corresponds to the variance of model predictions.</p>
 </li>
 <li><p>The last (mixing) term is zero</p>
-<div class="amsmath math notranslate nohighlight" id="equation-74fa5a66-33f4-4bcc-8680-3cc79cb1abc0">
-<span class="eqno">(24.35)<a class="headerlink" href="#equation-74fa5a66-33f4-4bcc-8680-3cc79cb1abc0" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-ce1d793e-35ea-4392-ba26-beac303222d2">
+<span class="eqno">(24.35)<a class="headerlink" href="#equation-ce1d793e-35ea-4392-ba26-beac303222d2" title="Permalink to this equation">#</a></span>\[\begin{align}
 &amp; 2\expect{\left(\testoutput-\expect{\MLtestoutput}\right) \left(\expect{\MLtestoutput}-\MLtestoutput\right)} \\
 &amp; \quad = 2\expect{\left(\testoutput-\expect{\MLtestoutput}\right)} \left( \expect{\expect{\MLtestoutput}} -  \expect{\MLtestoutput}\right) = 0.
 \end{align}\]</div>
