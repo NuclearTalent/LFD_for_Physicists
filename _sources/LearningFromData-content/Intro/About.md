@@ -1,5 +1,7 @@
-(sec:AboutJB)=
-# About this Jupyter Book
+# Learning from data for physicists
+## Bayesian and machine learning methods
+
+by [Christian Forssén](https://www.chalmers.se/en/persons/f2bcf/), [Dick Furnstahl](https://physics.osu.edu/people/furnstahl.1), and [Daniel Phillips](https://www.ohio.edu/cas/phillid1). 
 
 ```{epigraph}
 > "We demand rigidly defined areas of doubt and uncertainty!"
@@ -7,11 +9,14 @@
 -- Douglas Adams, *The Hitchhiker's Guide to the Galaxy*
 ```
 
+(sec:AboutJB)=
+## About this book
+
 This text is aimed at physicists seeking to learn from data using Bayesian methods. It is particularly designed for an advanced-level course but should be broadly accessible to those with a physics background.
 
 <!--## About these lecture notes-->
 
-The content has emerged from previous work authored by [Christian Forssén](https://www.chalmers.se/en/persons/f2bcf/) and by [Dick Furnstahl](https://physics.osu.edu/people/furnstahl.1) and [Daniel Phillips](https://www.ohio.edu/cas/phillid1). 
+The content has emerged from previous work and courses taught by the authors.
 The materials are released under a [Creative Commons BY-NC license](https://creativecommons.org/licenses/by-nc/4.0/).
 
 The book format is powered by [Jupyter Book](https://jupyterbook.org/). 
