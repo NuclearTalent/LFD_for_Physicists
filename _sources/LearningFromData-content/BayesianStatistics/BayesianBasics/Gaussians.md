@@ -156,7 +156,7 @@ $$
    = \sum_{j=1}^n \frac{x_j}{\sqrt{n}} ,   
 $$
 
-(we scale by $1/\sqrt{n}$ so that $X$ is finite in the $n\rightarrow\infty$ limit).
+(we scale by $1/\sqrt{n}$ so that the variance of $X$ is constant in the $n\rightarrow\infty$ limit).
 
 What is the distribution of $X$?
 $\Longrightarrow$ call it $p(X|I)$, where $I$ is the information about the probability distribution for $x_j$. 
@@ -242,6 +242,34 @@ d\omega e^{i \omega X} e^{- \omega^2 \sigma^2/2}=\frac{1}{\sqrt{2
 \end{align}
 $$
 
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+How did we use the large $n$ limit to get the first equality on the last line?
+:::{admonition} Answer
+:class: dropdown, my-answer 
+We used
+
+$$
+  \lim_{n\rightarrow\infty} (1 + \frac{z}{n})^n = e^z \quad \text{for any $z$, here applied to }
+  z = -\frac{\omega^2 \sigma^2}{2}.
+$$
+
+We can understand this intuitively by multiplying out 
+
+$$ \begin{align}
+    \underbrace{(1 + \frac{z}{n})(1 + \frac{z}{n})\cdots(1 + \frac{z}{n})}_{n\ \text{terms}}
+    &= 1 + n\cdot\frac{z}{n} + \binom{n}{2}\frac{z^2}{n^2} + \binom{n}{3}\frac{z^3}{n^3} + \ldots
+    \\
+    &\overset{n\rightarrow\infty}{\longrightarrow} 1 + z + \frac{z^2}{2!} + \frac{z^3}{3!} + \ldots 
+\end{align} $$
+
+In getting this result we have dropped terms that are of order $1/n$ and $1/n^2$.
+All terms that we dropped in truncating the Taylor expansions for each Fourier integral will also be suppressed by inverse powers (or half powers) of $n$.
+
+:::
+::::
+
+
 
 
 #### Notebook:
@@ -250,42 +278,39 @@ Look at [](./visualization_of_CLT.ipynb).
 
 Things to think about:
 
-* What does "large" number of degrees of freedom actually mean? Does
-it matter where we look?
+* *What does "large" number of degrees of freedom actually mean? Does
+it matter where we look?*
 
-* If we have a large number of draws from a uniform distribution, does the CLT imply that the histogrammed distribution should look like a Gaussian?
+* *If we have a large number of draws from a uniform distribution, does the CLT imply that the histogrammed distribution should look like a Gaussian?*
 
-* Can you identify a case where the CLT will fail?
+* *Can you identify a case where the CLT will fail?*
 
 
 ## p-values: when all you can do is falsify
 
-* A common way for a frequentist to discuss a theory/model, or put a
+A common way for a frequentist to discuss a theory/model, or put a
 bound on a parameter value, is to quote a p-value.
+This is set up using something called the null hypothesis. Somewhat
+perversely you should pick the null hypothesis to be the opposite of
+what you want to prove. So if you want to discover the Higgs boson,
+the null hypothesis is that the Higgs boson does not exist.
 
-* This is set up using something called the null hypothesis. Somewhat
-  perversely you should pick the null hypothesis to be the opposite of
-  what you want to prove. So if you want to discover the Higgs boson,
-  the null hypothesis is that the Higgs boson does not exist.
+Then you pick a level of proof you are comfortable with. For the
+Higgs boson (and for many other particle physics experiments) it is
+"5 sigma''. *How do you think we convert this statement to a
+probability?* [Hint: refer to a Gaussian distribution.]
+One minus the resulting probability is called the $p$-value. We will
+denote it $p_{\rm crit}$. There is nothing
+God-given about it. It is a standard (like "beyond a reasonable
+doubt") that has been agreed upon in a research community for
+determining that something is (likely) going on. 
 
-* Then you pick a level of proof you are comfortable with. For the
-  Higgs boson (and for many other particle physics experiments) it is
-  "5 sigma''. How do you think we convert this statement to a
-  probability?
-
-* One minus the resulting probability is called the $p$-value. We will
-  denote it $p_{\rm crit}$. There is nothing
-  God-given about it. It is a standard (like "beyond a reasonable
-  doubt") that has been agreed upon in a research community for
-  determining that something is (likely) going on. 
-
-* You then take data and compute $p(D|{\rm null~hypothesis})$. If
-  $p(D|{\rm null~ hypothesis}) < p_{\rm crit}$ then you conclude that the "the null
-  hypothesis is rejected at the $p_{\rm crit}$ significance level''.
-
-* Note that if $p(D|{\rm null~hypothesis}) > p_{\rm crit}$ you cannot
-  conclude that the null hypothesis is true. It just means "no effect
-  was observed".
+You then take data and compute $p(D|{\rm null~hypothesis})$. If
+$p(D|{\rm null~ hypothesis}) < p_{\rm crit}$ then you conclude that the "the null
+hypothesis is rejected at the $p_{\rm crit}$ significance level''.
+Note that if $p(D|{\rm null~hypothesis}) > p_{\rm crit}$ you cannot
+conclude that the null hypothesis is true. It just means "no effect
+was observed".
 
 :::{admonition} Exercise
   Look at

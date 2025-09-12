@@ -38,6 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -182,7 +183,7 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../../Intro/About.html">
-                    Learning from data for physicists
+                    Learning from data for physicists:
                 </a>
             </li>
         </ul>
@@ -820,7 +821,7 @@ of degrees of freedom (e.q., for large <span class="math notranslate nohighlight
   X = \frac{1}{\sqrt{n}}(x_1 + x_2 + \cdots + x_n)
    = \sum_{j=1}^n \frac{x_j}{\sqrt{n}} ,   
 \]</div>
-<p>(we scale by <span class="math notranslate nohighlight">\(1/\sqrt{n}\)</span> so that <span class="math notranslate nohighlight">\(X\)</span> is finite in the <span class="math notranslate nohighlight">\(n\rightarrow\infty\)</span> limit).</p>
+<p>(we scale by <span class="math notranslate nohighlight">\(1/\sqrt{n}\)</span> so that the variance of <span class="math notranslate nohighlight">\(X\)</span> is constant in the <span class="math notranslate nohighlight">\(n\rightarrow\infty\)</span> limit).</p>
 <p>What is the distribution of <span class="math notranslate nohighlight">\(X\)</span>?
 <span class="math notranslate nohighlight">\(\Longrightarrow\)</span> call it <span class="math notranslate nohighlight">\(p(X|I)\)</span>, where <span class="math notranslate nohighlight">\(I\)</span> is the information about the probability distribution for <span class="math notranslate nohighlight">\(x_j\)</span>.</p>
 <p><strong>Plan:</strong> Use the sum and product rules and their consequences to relate <span class="math notranslate nohighlight">\(p(X)\)</span> to what we know of <span class="math notranslate nohighlight">\(p(x_j)\)</span>. (Note: we’ll suppress <span class="math notranslate nohighlight">\(I\)</span> to keep the formulas from getting too cluttered.)</p>
@@ -899,45 +900,66 @@ d\omega e^{i \omega X} e^{- \omega^2 \sigma^2/2}=\frac{1}{\sqrt{2
 \pi}} e^{-X^2/(2 \sigma^2)}.
 \end{align}
 \end{split}\]</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>How did we use the large <span class="math notranslate nohighlight">\(n\)</span> limit to get the first equality on the last line?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>We used</p>
+<div class="math notranslate nohighlight">
+\[
+  \lim_{n\rightarrow\infty} (1 + \frac{z}{n})^n = e^z \quad \text{for any $z$, here applied to }
+  z = -\frac{\omega^2 \sigma^2}{2}.
+\]</div>
+<p>We can understand this intuitively by multiplying out</p>
+<div class="math notranslate nohighlight">
+\[\begin{split} \begin{align}
+    \underbrace{(1 + \frac{z}{n})(1 + \frac{z}{n})\cdots(1 + \frac{z}{n})}_{n\ \text{terms}}
+    &amp;= 1 + n\cdot\frac{z}{n} + \binom{n}{2}\frac{z^2}{n^2} + \binom{n}{3}\frac{z^3}{n^3} + \ldots
+    \\
+    &amp;\overset{n\rightarrow\infty}{\longrightarrow} 1 + z + \frac{z^2}{2!} + \frac{z^3}{3!} + \ldots 
+\end{align} \end{split}\]</div>
+<p>In getting this result we have dropped terms that are of order <span class="math notranslate nohighlight">\(1/n\)</span> and <span class="math notranslate nohighlight">\(1/n^2\)</span>.
+All terms that we dropped in truncating the Taylor expansions for each Fourier integral will also be suppressed by inverse powers (or half powers) of <span class="math notranslate nohighlight">\(n\)</span>.</p>
+</div>
+</div>
 </section>
 <section id="notebook">
 <h4>Notebook:<a class="headerlink" href="#notebook" title="Link to this heading">#</a></h4>
 <p>Look at <a class="reference internal" href="visualization_of_CLT.html"><span class="std std-doc">📥 Visualization of the Central Limit Theorem</span></a>.</p>
 <p>Things to think about:</p>
 <ul class="simple">
-<li><p>What does “large” number of degrees of freedom actually mean? Does
-it matter where we look?</p></li>
-<li><p>If we have a large number of draws from a uniform distribution, does the CLT imply that the histogrammed distribution should look like a Gaussian?</p></li>
-<li><p>Can you identify a case where the CLT will fail?</p></li>
+<li><p><em>What does “large” number of degrees of freedom actually mean? Does
+it matter where we look?</em></p></li>
+<li><p><em>If we have a large number of draws from a uniform distribution, does the CLT imply that the histogrammed distribution should look like a Gaussian?</em></p></li>
+<li><p><em>Can you identify a case where the CLT will fail?</em></p></li>
 </ul>
 </section>
 </section>
 </section>
 <section id="p-values-when-all-you-can-do-is-falsify">
 <h2>p-values: when all you can do is falsify<a class="headerlink" href="#p-values-when-all-you-can-do-is-falsify" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>A common way for a frequentist to discuss a theory/model, or put a
-bound on a parameter value, is to quote a p-value.</p></li>
-<li><p>This is set up using something called the null hypothesis. Somewhat
+<p>A common way for a frequentist to discuss a theory/model, or put a
+bound on a parameter value, is to quote a p-value.
+This is set up using something called the null hypothesis. Somewhat
 perversely you should pick the null hypothesis to be the opposite of
 what you want to prove. So if you want to discover the Higgs boson,
-the null hypothesis is that the Higgs boson does not exist.</p></li>
-<li><p>Then you pick a level of proof you are comfortable with. For the
+the null hypothesis is that the Higgs boson does not exist.</p>
+<p>Then you pick a level of proof you are comfortable with. For the
 Higgs boson (and for many other particle physics experiments) it is
-“5 sigma’’. How do you think we convert this statement to a
-probability?</p></li>
-<li><p>One minus the resulting probability is called the <span class="math notranslate nohighlight">\(p\)</span>-value. We will
+“5 sigma’’. <em>How do you think we convert this statement to a
+probability?</em> [Hint: refer to a Gaussian distribution.]
+One minus the resulting probability is called the <span class="math notranslate nohighlight">\(p\)</span>-value. We will
 denote it <span class="math notranslate nohighlight">\(p_{\rm crit}\)</span>. There is nothing
 God-given about it. It is a standard (like “beyond a reasonable
 doubt”) that has been agreed upon in a research community for
-determining that something is (likely) going on.</p></li>
-<li><p>You then take data and compute <span class="math notranslate nohighlight">\(p(D|{\rm null~hypothesis})\)</span>. If
+determining that something is (likely) going on.</p>
+<p>You then take data and compute <span class="math notranslate nohighlight">\(p(D|{\rm null~hypothesis})\)</span>. If
 <span class="math notranslate nohighlight">\(p(D|{\rm null~ hypothesis}) &lt; p_{\rm crit}\)</span> then you conclude that the “the null
-hypothesis is rejected at the <span class="math notranslate nohighlight">\(p_{\rm crit}\)</span> significance level’’.</p></li>
-<li><p>Note that if <span class="math notranslate nohighlight">\(p(D|{\rm null~hypothesis}) &gt; p_{\rm crit}\)</span> you cannot
+hypothesis is rejected at the <span class="math notranslate nohighlight">\(p_{\rm crit}\)</span> significance level’’.
+Note that if <span class="math notranslate nohighlight">\(p(D|{\rm null~hypothesis}) &gt; p_{\rm crit}\)</span> you cannot
 conclude that the null hypothesis is true. It just means “no effect
-was observed”.</p></li>
-</ul>
+was observed”.</p>
 <div class="admonition-exercise admonition">
 <p class="admonition-title">Exercise</p>
 <p>Look at

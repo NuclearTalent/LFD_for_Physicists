@@ -1,5 +1,10 @@
-# Learning from data for physicists
-## Bayesian and machine learning methods
+{.tight-h1}
+# Learning from data for physicists:
+
+<span style="font-size: 1.8em; font-weight: bold; font-style:italic; display:inline-block; margin-bottom:0.5em;">
+&nbsp;&nbsp; Bayesian and machine learning methods</span>
+
+<!--## Bayesian and machine learning methods-->
 
 by [Christian Forssén](https://www.chalmers.se/en/persons/f2bcf/), [Dick Furnstahl](https://physics.osu.edu/people/furnstahl.1), and [Daniel Phillips](https://www.ohio.edu/cas/phillid1). 
 

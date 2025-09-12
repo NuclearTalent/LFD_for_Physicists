@@ -38,6 +38,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -182,7 +183,7 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../../Intro/About.html">
-                    Learning from data for physicists
+                    Learning from data for physicists:
                 </a>
             </li>
         </ul>
@@ -719,21 +720,21 @@ document.write(`
 \[
   \nu = N_{\text{data}} - N_{\text{fit parameters}} .
 \]</div>
-<p>The rule of thumb is generally that <span class="math notranslate nohighlight">\(\chi^2 \gg 1\)</span> means a poor fit and <span class="math notranslate nohighlight">\(\chi^2 &lt; 1\)</span> indicates overfitting.
+<p>The rule of thumb is generally that <span class="math notranslate nohighlight">\(\chi^2/\text{dof} \gg 1\)</span> means a poor fit and <span class="math notranslate nohighlight">\(\chi^2/\text{dof} &lt; 1\)</span> indicates overfitting.
 <em>Where does this come from and under what conditions is it a statistically valid thing to analyze fit models this way?</em>
-(Note that in contrast to the Bayesian evidence, we are not assessing the model in general, but a particular fit to the model.)</p>
+(Note that in contrast to the Bayesian evidence, we are not assessing the model in general, but a particular fit to the model identified by <span class="math notranslate nohighlight">\(\hat\pars\)</span>.)</p>
 <p>Underlying this use of <span class="math notranslate nohighlight">\(\chi^2\)</span>/dof is a particular, familiar statistical model</p>
 <div class="math notranslate nohighlight">
 \[
-    y_{\text expt} = y_{\text th} + \delta y_{\text expt} + \delta y_{\text th}
+    y_{\text{expt}} = y_{\text{th}} + \delta y_{\text{expt}} + \delta y_{\text{th}}
 \]</div>
-<p>in which the theory is <span class="math notranslate nohighlight">\(y_{{\text th},i} = f(x_i;\hat\pars)\)</span>, the experimental error is  <em>independent</em> Gaussian distributed noise with mean zero and standard deviation <span class="math notranslate nohighlight">\(\sigma_i\)</span>, that is <span class="math notranslate nohighlight">\(\delta y_{\text expt} \sim \mathcal{N}(0,\Sigma)\)</span> with <span class="math notranslate nohighlight">\(\Sigma_{ij} = \sigma_i^2 \delta_{ij}\)</span>, and <span class="math notranslate nohighlight">\(\delta y_{\text th}\)</span> is neglected (i.e., no model discrepancy is included). The prior is (usually implicitly) taken to be uniform, so</p>
+<p>in which the theory is <span class="math notranslate nohighlight">\(y_{\text{th},i} = f(x_i;\hat\pars)\)</span>, the experimental error is  <em>independent</em> Gaussian distributed noise with mean zero and standard deviation <span class="math notranslate nohighlight">\(\sigma_i\)</span>, that is <span class="math notranslate nohighlight">\(\delta y_{\text{expt}} \sim \mathcal{N}(0,\Sigma)\)</span> with <span class="math notranslate nohighlight">\(\Sigma_{ij} = \sigma_i^2 \delta_{ij}\)</span>, and <span class="math notranslate nohighlight">\(\delta y_{\text{th}}\)</span> is neglected (i.e., no model discrepancy is included). The prior is (usually implicitly) taken to be uniform, so</p>
 <div class="math notranslate nohighlight">
 \[
-     y_{\text expt} \sim \mathcal{N}\bigl(f(x_i;\hat\pars), \Sigma\bigr) .
+     y_{\text{expt}} \sim \mathcal{N}\bigl(f(x_i;\hat\pars), \Sigma\bigr) .
 \]</div>
 <p>The likelihood (and the posterior, with a uniform prior) is then proportional to <span class="math notranslate nohighlight">\(e^{-\chi^2(\hat\pars)/2}\)</span>.</p>
-<p>According to this model, each squared term in <span class="math notranslate nohighlight">\(\chi^2\)</span> is drawn from a <em>standard</em> normal distribution. In this context, “standard” means that the distribution has mean zero and variance 1. This is exactly what happens when we take as the random variables <span class="math notranslate nohighlight">\(\bigl(y_i - f(x_i;\hat\pars)\bigr)/\sigma_i\)</span>.
+<p>According to this model, each term in <span class="math notranslate nohighlight">\(\chi^2\)</span> before being squared is a draw from a <em>standard</em> normal distribution. In this context, “standard” means that the distribution has mean zero and variance 1. This is exactly what happens when we take as the random variables <span class="math notranslate nohighlight">\(\bigl(y_i - f(x_i;\hat\pars)\bigr)/\sigma_i\)</span>.
 But the sum of the squares of <span class="math notranslate nohighlight">\(k\)</span> <em>independent</em> standard normal random variables has a known distribution, called the <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution with <span class="math notranslate nohighlight">\(k\)</span> degrees of freedom.
 So the sum of the normalized residuals squared should be distributed (if you generated many sets of them) as a <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution. How many degrees of freedom? This should be the number of independent pieces of information. But we have found the fitted parameters <span class="math notranslate nohighlight">\(\hat\pars\)</span> by minimizing <span class="math notranslate nohighlight">\(\chi^2\)</span>, i.e., by setting <span class="math notranslate nohighlight">\(\partial \chi^2(\pars)/\partial \theta_j\)</span> for <span class="math notranslate nohighlight">\(j = 1,\ldots,N_{\text{fit parameters}}\)</span>, which means <span class="math notranslate nohighlight">\(N_{\text{fit parameters}}\)</span> constraints. Therefore the number of dofs is given by <span class="math notranslate nohighlight">\(\nu = N_{\text{data}} - N_{\text{fit parameters}}\)</span>.</p>
 <p>Now what do we do with this information? We only have one draw from the (supposed) <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution. But if that distribution is narrow, we should be close to the mean. The mean of a <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution with <span class="math notranslate nohighlight">\(k = \nu\)</span> dofs is <span class="math notranslate nohighlight">\(\nu\)</span>, with variance <span class="math notranslate nohighlight">\(2\nu\)</span>.
@@ -743,7 +744,7 @@ One might use two or three times <span class="math notranslate nohighlight">\(\s
 If there are 1000 data points, then <span class="math notranslate nohighlight">\(\sigma \approx 0.045\)</span>, so <span class="math notranslate nohighlight">\(0.91 \leq \chi^2/{\rm dof} \leq 1.09\)</span> would be an acceptable range at the 95% confidence level (<span class="math notranslate nohighlight">\(2\sigma\)</span>). With fewer data points this range grows significantly.
 <strong>So in making the comparison of <span class="math notranslate nohighlight">\(\chi^2/\nu\)</span> to one, be sure to take into account the width of the distribution, i.e., consider <span class="math notranslate nohighlight">\(\pm \sqrt{2/\nu}\)</span> roughly.</strong> For a small number of data points, do a better analysis!</p>
 <p>What can go wrong? Lots! See
-<a class="reference external" href="https://arxiv.org/pdf/1012.3754.pdf">“Do’s and Don’ts of reduced chi-squared”</a> for a thorough discussion. But we’ve assumed that the data is Gaussian and independent, that data is dominated by experimental and not theoretical errors, and that the constraints from fitting are linearly independent. We’ve also assumed a lot of data and
+<a class="reference external" href="https://arxiv.org/pdf/1012.3754.pdf">“Do’s and Don’ts of reduced chi-squared”</a> for a thorough discussion. But we’ve made assumptions that might not hold: that the data is Gaussian distributed and independent, that the data is dominated by experimental and not theoretical errors, and that the constraints from fitting are linearly independent. We’ve also assumed a lot of data and
 we’ve ignored informative (or, more precisely, non-uniform priors) priors.</p>
 </section>
 <section id="test-the-sum-of-normal-variables-squared">
@@ -781,7 +782,7 @@ we’ve ignored informative (or, more precisely, non-uniform priors) priors.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/055bb0091c07155ffdbab9ef484dc07320d4d4f67f22ff58583c3f931959b7ff.png" src="../../../_images/055bb0091c07155ffdbab9ef484dc07320d4d4f67f22ff58583c3f931959b7ff.png" />
+<img alt="../../../_images/4d466d4ba9b8852711ba4abfd75bc5ad489144bc6683af8a043a4b76176e0d84.png" src="../../../_images/4d466d4ba9b8852711ba4abfd75bc5ad489144bc6683af8a043a4b76176e0d84.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -821,7 +822,7 @@ we’ve ignored informative (or, more precisely, non-uniform priors) priors.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/d5e7a30a234b5a2ba7d4d90d4c1c1c53b0d7584fe351b83bd273d7c87e6f7cbb.png" src="../../../_images/d5e7a30a234b5a2ba7d4d90d4c1c1c53b0d7584fe351b83bd273d7c87e6f7cbb.png" />
+<img alt="../../../_images/46393d3f680f3d1399ab9d45305e2d9cf77d95445c0ea2f7b17e67c8cd1dd877.png" src="../../../_images/46393d3f680f3d1399ab9d45305e2d9cf77d95445c0ea2f7b17e67c8cd1dd877.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -847,7 +848,7 @@ we’ve ignored informative (or, more precisely, non-uniform priors) priors.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/f98a07fb7339d3636eeb7cace43a22ea4f5f915be4386d2ae98bce7dcd465f83.png" src="../../../_images/f98a07fb7339d3636eeb7cace43a22ea4f5f915be4386d2ae98bce7dcd465f83.png" />
+<img alt="../../../_images/e834468c988f60dcfbec4086bc9cd7323ad36e59dfa8dfa77a8d7dd5c7da7961.png" src="../../../_images/e834468c988f60dcfbec4086bc9cd7323ad36e59dfa8dfa77a8d7dd5c7da7961.png" />
 </div>
 </div>
 </section>
