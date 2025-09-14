@@ -27,4 +27,6 @@ constitute ``eventually"? Clearly it depends on $p_h$ and how close you want the
 * $p_h = 0.9$ $\Longrightarrow$ much longer for the informative prior than the others.
 :::
 
+Choosing priors: a good reference is the Stan page on [Prior Choice Recommendations](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations).
+
 
