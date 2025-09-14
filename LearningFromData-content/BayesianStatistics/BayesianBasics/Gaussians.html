@@ -689,7 +689,7 @@ document.write(`
 <span id="sec-gaussians"></span><h1><span class="section-number">5.3. </span>Gaussians: A couple of frequentist connections<a class="headerlink" href="#gaussians-a-couple-of-frequentist-connections" title="Link to this heading">#</a></h1>
 <section id="the-near-ubiquity-of-gaussians">
 <h2>The near ubiquity of Gaussians<a class="headerlink" href="#the-near-ubiquity-of-gaussians" title="Link to this heading">#</a></h2>
-<p>In <a class="reference internal" href="../BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html"><span class="std std-doc">📥 Parameter estimation example: Gaussian noise and averages I</span></a> we sampled a Gaussian distribution and
+<p>In <a class="reference internal" href="../BayesianParameterEstimation/parameter_estimation_Gaussian_noise.html"><span class="std std-doc">📥 Parameter estimation example: Gaussian noise and averages I</span></a> we sample a Gaussian distribution and
 estimated its mean and variance. We are going to see a lot of Gaussian
 distributions in this course. And indeed some people implicitly always
 assume Gaussian distributions. So this seems like as good a place as
@@ -719,9 +719,9 @@ how sharp this maximum is: is <span class="math notranslate nohighlight">\(p(x)\
 is the maximum kind-of shallow? To work this out we’ll do a Taylor
 expansion around <span class="math notranslate nohighlight">\(x=x_0\)</span>.
 <span class="math notranslate nohighlight">\(p(x)\)</span> itself
-varies too fast, but since <span class="math notranslate nohighlight">\(p(x)\)</span> is positive definite we can
+varies very rapidly, but since <span class="math notranslate nohighlight">\(p(x)\)</span> is positive definite we can
 Taylor expand <span class="math notranslate nohighlight">\(\log p\)</span> instead. (See the box below for a strict mathematical
-reason why it’s a bad idea to directly Taylor expand <span class="math notranslate nohighlight">\(p(x)\)</span> around its
+reason why it’s problematic for our purposes to directly Taylor expand <span class="math notranslate nohighlight">\(p(x)\)</span> around its
 maximum.)</p>
 <div class="math notranslate nohighlight">
 \[
@@ -729,13 +729,13 @@ maximum.)</p>
    L(x_0) + \left.\frac{dL}{dx}\right|_{x_0 = 0}(x-x_0)
    + \frac{1}{2} \left.\frac{d^2L}{dx^2}\right|_{x_0 = 0}(x-x_0)^2 + \cdots
 \]</div>
-<p>Note that <span class="math notranslate nohighlight">\(\left.\frac{dL}{dx}\right|_{x_0 = 0}=0\)</span> (<span class="math notranslate nohighlight">\(L(x_0)\)</span> is also a maximum) and  <span class="math notranslate nohighlight">\(\left.\frac{d^2L}{dx^2}\right|_{x_0 = 0} &lt; 0\)</span>.
+<p>Note that <span class="math notranslate nohighlight">\(\left.\frac{dL}{dx}\right|_{x_0 = 0}=0\)</span>, because <span class="math notranslate nohighlight">\(L(x_0)\)</span> is a maximum if <span class="math notranslate nohighlight">\(p(x_0)\)</span> is, and  <span class="math notranslate nohighlight">\(\left.\frac{d^2L}{dx^2}\right|_{x_0 = 0} &lt; 0\)</span>.
 If we can neglect higher-order terms, then when we re-exponentiate,</p>
 <div class="math notranslate nohighlight">
 \[
   p(x| D,I) \approx A\, e^{\frac{1}{2}\left.\frac{d^2L}{dx^2}\right|_{x_0 = 0}(x-x_0)^2} ,
 \]</div>
-<p>with <span class="math notranslate nohighlight">\(A\)</span> a normalization factor. So in this general circumstance we get a Gaussian. Comparing to</p>
+<p>with <span class="math notranslate nohighlight">\(A\)</span> a normalization factor. So in this general circumstance we get a Gaussian distribution. Comparing to</p>
 <div class="math notranslate nohighlight">
 \[
   p(x|D,I) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/\sigma^2}
@@ -743,23 +743,17 @@ If we can neglect higher-order terms, then when we re-exponentiate,</p>
   \mu = x_0, \ \sigma = \left(-\left.\frac{d^2L}{dx^2}\right|_{x_0}\right)^{-1/2},
 \]</div>
 <p>where we see the importance of the second derivative being negative.</p>
-<ul class="simple">
-<li><p>We usually quote <span class="math notranslate nohighlight">\(x = x_0 \pm \sigma\)</span>, because <em>if</em> it is a Gaussian this is <em>sufficient</em> to tell us the entire distribution and <span class="math notranslate nohighlight">\(n\)</span> standard deviations is <span class="math notranslate nohighlight">\(n\times \sigma\)</span>.</p></li>
-<li><p>But for a Bayesian, the full posterior <span class="math notranslate nohighlight">\(p(x|D,I)\)</span> for all <span class="math notranslate nohighlight">\(x\)</span> is
-the general result, and <span class="math notranslate nohighlight">\(x = x_0 \pm \sigma\)</span> may be only an
-approximate characterization.</p></li>
-</ul>
+<p>We usually characterize the distribution by <span class="math notranslate nohighlight">\(x_0 \pm \sigma\)</span> (e.g., with a point and symmetric error bars if this is data noise), because <em>if</em> it is a Gaussian this is <em>sufficient</em> to tell us the entire distribution. E.g., <span class="math notranslate nohighlight">\(n\)</span> standard deviations is <span class="math notranslate nohighlight">\(n\times \sigma\)</span>.
+But for a Bayesian, the full posterior <span class="math notranslate nohighlight">\(p(x|D,I)\)</span> for all <span class="math notranslate nohighlight">\(x\)</span> is the general result, and <span class="math notranslate nohighlight">\(x = x_0 \pm \sigma\)</span> may be only an approximate characterization.</p>
 <div class="admonition-to-think-about admonition">
 <p class="admonition-title">To think about …</p>
 <p>What if <span class="math notranslate nohighlight">\(p(x|D,I)\)</span> is asymmetric? What if it is multimodal?</p>
 </div>
 <div class="admonition-p-or-log-p admonition">
 <p class="admonition-title"><span class="math notranslate nohighlight">\(p\)</span> or <span class="math notranslate nohighlight">\(\log p\)</span>?</p>
-<ul class="simple">
-<li><p>We motivated Gaussian approximations from a Taylor expansion to quadratic order of the <em>logarithm</em> of a pdf.
+<p>We motivated Gaussian approximations from a Taylor expansion to quadratic order of the <em>logarithm</em> of a pdf.
 What would go wrong if we directly expanded the pdf? Well, if we do
-that we get:</p></li>
-</ul>
+that we get:</p>
 <div class="math notranslate nohighlight">
 \[
   p(x) \approx p(x_0) + \frac{1}{2}\left.\frac{d^2p}{dx^2}\right|_{x_0}(x-x_0)^2
@@ -769,9 +763,7 @@ that we get:</p></li>
 minus infinity.</p>
 <a class="bg-primary reference internal image-reference" href="../../../_images/pdf_expansion_cartoon.png"><img alt="pdf expansion" class="bg-primary align-center" src="../../../_images/pdf_expansion_cartoon.png" style="width: 400px;" />
 </a>
-<ul class="simple">
-<li><p>A pdf must be normalizable and positive definite, so this approximation violates these conditions!</p></li>
-</ul>
+<p>A pdf must be normalizable and positive definite, so this approximation violates these conditions!</p>
 </div>
 </section>
 <section id="the-central-limit-theorem">
@@ -821,7 +813,7 @@ of degrees of freedom (e.q., for large <span class="math notranslate nohighlight
   X = \frac{1}{\sqrt{n}}(x_1 + x_2 + \cdots + x_n)
    = \sum_{j=1}^n \frac{x_j}{\sqrt{n}} ,   
 \]</div>
-<p>(we scale by <span class="math notranslate nohighlight">\(1/\sqrt{n}\)</span> so that the variance of <span class="math notranslate nohighlight">\(X\)</span> is constant in the <span class="math notranslate nohighlight">\(n\rightarrow\infty\)</span> limit).</p>
+<p>scaling by <span class="math notranslate nohighlight">\(1/\sqrt{n}\)</span> so that the variance of <span class="math notranslate nohighlight">\(X\)</span> is constant in the <span class="math notranslate nohighlight">\(n\rightarrow\infty\)</span> limit.</p>
 <p>What is the distribution of <span class="math notranslate nohighlight">\(X\)</span>?
 <span class="math notranslate nohighlight">\(\Longrightarrow\)</span> call it <span class="math notranslate nohighlight">\(p(X|I)\)</span>, where <span class="math notranslate nohighlight">\(I\)</span> is the information about the probability distribution for <span class="math notranslate nohighlight">\(x_j\)</span>.</p>
 <p><strong>Plan:</strong> Use the sum and product rules and their consequences to relate <span class="math notranslate nohighlight">\(p(X)\)</span> to what we know of <span class="math notranslate nohighlight">\(p(x_j)\)</span>. (Note: we’ll suppress <span class="math notranslate nohighlight">\(I\)</span> to keep the formulas from getting too cluttered.)</p>
@@ -835,14 +827,14 @@ of degrees of freedom (e.q., for large <span class="math notranslate nohighlight
             p(X|x_1,\cdots,x_n)\,p(x_1)\cdots p(x_n) .     
 \end{align}\end{split}\]</div>
 <div class="dropdown admonition">
-<p class="admonition-title">Class: state the rule used to justify each step</p>
+<p class="admonition-title">State the rule used to justify each step</p>
 <ol class="arabic simple">
 <li><p>marginalization</p></li>
 <li><p>product rule</p></li>
 <li><p>independence</p></li>
 </ol>
 </div>
-<p>We might proceed by using a direct, normalized expression for <span class="math notranslate nohighlight">\(p(X|x_1,\cdots,x_n)\)</span>:</p>
+<p>We might proceed by using a direct, normalized expression for <span class="math notranslate nohighlight">\(p(X|x_1,\cdots,x_n)\)</span>,</p>
 <div class="my-checkpoint admonition">
 <p class="admonition-title">Checkpoint question</p>
 <p>What is <span class="math notranslate nohighlight">\(p(X|x_1,\cdots,x_n)\)</span>?</p>
@@ -851,7 +843,8 @@ of degrees of freedom (e.q., for large <span class="math notranslate nohighlight
 <p><span class="math notranslate nohighlight">\(p(X|x_1,\cdots,x_n) = \delta\Bigl(X - \frac{1}{\sqrt{n}}(x_1 + \cdots + x_n)\Bigr)\)</span></p>
 </div>
 </div>
-<p>Instead we will use a Fourier representation:</p>
+<p>and perform one of the integrations.
+Instead we will use a Fourier representation:</p>
 <div class="math notranslate nohighlight">
 \[
 p(X|x_1,\cdots,x_n) = \delta\Bigl(X - \frac{1}{\sqrt{n}}(x_1 + \cdots + x_n)\Bigr)
@@ -862,7 +855,7 @@ p(X|x_1,\cdots,x_n) = \delta\Bigl(X - \frac{1}{\sqrt{n}}(x_1 + \cdots + x_n)\Big
 <div class="math notranslate nohighlight">
 \[ 
  p(X) = \frac{1}{2\pi} \int_{-\infty}^{\infty} d\omega
-    \, e^{i\omega X} \prod_{j=1}^n \left[\int_{-\infty}^{\infty} dx_j\, e^{i\omega x_j / \sqrt{n}} p(x_j) \right] 
+    \, e^{i\omega X} \prod_{j=1}^n \left[\int_{-\infty}^{\infty} dx_j\, e^{i\omega x_j / \sqrt{n}} p(x_j) \right] . 
 \]</div>
 <ul class="simple">
 <li><p>Observe that the terms in []s have factorized into a product of independent integrals and they are all the same (just different labels for the integration variables).</p></li>
@@ -871,7 +864,7 @@ p(X|x_1,\cdots,x_n) = \delta\Bigl(X - \frac{1}{\sqrt{n}}(x_1 + \cdots + x_n)\Big
 <div class="math notranslate nohighlight">
 \[
   e^{i\omega x/\sqrt{n}} = 1 + \frac{i\omega x}{\sqrt{n}}
-    + \frac{(i\omega)^2 x^2}{2 n} + \mathcal{O}\left(\frac{\omega^3 x^3}{n^{3/2}}\right)
+    + \frac{(i\omega)^2 x^2}{2 n} + \mathcal{O}\left(\frac{\omega^3 x^3}{n^{3/2}}\right) .
 \]</div>
 <p>Then, using that <span class="math notranslate nohighlight">\(p(x)\)</span> is normalized (i.e., <span class="math notranslate nohighlight">\(\int_{-\infty}^{\infty} dx\, p(x) = 1\)</span>),</p>
 <div class="math notranslate nohighlight">
@@ -885,7 +878,7 @@ p(x)&amp;=
 n} \langle x^2 \rangle + \langle x^3 \rangle
 \frac{\omega^3}{n^{3/2}}\\
 &amp;=1 - \frac{\omega^2 \sigma^2}{2 n} +
-\mathcal{O}\left(\frac{\omega^3}{n^{3/2}}\right)
+\mathcal{O}\left(\frac{\omega^3}{n^{3/2}}\right) .
 \end{align}
 \end{split}\]</div>
 <p>Now we can substitute into the posterior for <span class="math notranslate nohighlight">\(X\)</span> and take the large
