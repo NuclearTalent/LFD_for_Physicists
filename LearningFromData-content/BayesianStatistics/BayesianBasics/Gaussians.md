@@ -4,7 +4,7 @@
 
 ## The near ubiquity of Gaussians
 
-In [](../BayesianParameterEstimation/parameter_estimation_Gaussian_noise.ipynb) we sampled a Gaussian distribution and
+In [](../BayesianParameterEstimation/parameter_estimation_Gaussian_noise.ipynb) we sample a Gaussian distribution and
 estimated its mean and variance. We are going to see a lot of Gaussian
 distributions in this course. And indeed some people implicitly always
 assume Gaussian distributions. So this seems like as good a place as
@@ -41,9 +41,9 @@ how sharp this maximum is: is $p(x)$ sharply peaked around $x=x_0$ or
 is the maximum kind-of shallow? To work this out we'll do a Taylor
 expansion around $x=x_0$. 
 $p(x)$ itself
-varies too fast, but since $p(x)$ is positive definite we can
+varies very rapidly, but since $p(x)$ is positive definite we can
 Taylor expand $\log p$ instead. (See the box below for a strict mathematical
-reason why it's a bad idea to directly Taylor expand $p(x)$ around its
+reason why it's problematic for our purposes to directly Taylor expand $p(x)$ around its
 maximum.)
 
 
@@ -53,14 +53,14 @@ $$
    + \frac{1}{2} \left.\frac{d^2L}{dx^2}\right|_{x_0 = 0}(x-x_0)^2 + \cdots
 $$
 
-Note that $\left.\frac{dL}{dx}\right|_{x_0 = 0}=0$ ($L(x_0)$ is also a maximum) and  $\left.\frac{d^2L}{dx^2}\right|_{x_0 = 0} < 0$.
+Note that $\left.\frac{dL}{dx}\right|_{x_0 = 0}=0$, because $L(x_0)$ is a maximum if $p(x_0)$ is, and  $\left.\frac{d^2L}{dx^2}\right|_{x_0 = 0} < 0$.
 If we can neglect higher-order terms, then when we re-exponentiate,
 
 $$
   p(x| D,I) \approx A\, e^{\frac{1}{2}\left.\frac{d^2L}{dx^2}\right|_{x_0 = 0}(x-x_0)^2} ,
 $$
 
-with $A$ a normalization factor. So in this general circumstance we get a Gaussian. Comparing to
+with $A$ a normalization factor. So in this general circumstance we get a Gaussian distribution. Comparing to
 
 $$
   p(x|D,I) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/\sigma^2}
@@ -70,11 +70,8 @@ $$
 
 where we see the importance of the second derivative being negative.
 
-* We usually quote $x = x_0 \pm \sigma$, because *if* it is a Gaussian this is *sufficient* to tell us the entire distribution and $n$ standard deviations is $n\times \sigma$.
-
-* But for a Bayesian, the full posterior $p(x|D,I)$ for all $x$ is
-  the general result, and $x = x_0 \pm \sigma$ may be only an
-  approximate characterization.
+We usually characterize the distribution by $x_0 \pm \sigma$ (e.g., with a point and symmetric error bars if this is data noise), because *if* it is a Gaussian this is *sufficient* to tell us the entire distribution. E.g., $n$ standard deviations is $n\times \sigma$.
+But for a Bayesian, the full posterior $p(x|D,I)$ for all $x$ is the general result, and $x = x_0 \pm \sigma$ may be only an approximate characterization.
 
 :::{admonition} To think about ...
 What if $p(x|D,I)$ is asymmetric? What if it is multimodal?
@@ -82,7 +79,7 @@ What if $p(x|D,I)$ is asymmetric? What if it is multimodal?
 
 
 :::{admonition} $p$ or $\log p$?
-* We motivated Gaussian approximations from a Taylor expansion to quadratic order of the *logarithm* of a pdf. 
+We motivated Gaussian approximations from a Taylor expansion to quadratic order of the *logarithm* of a pdf. 
 What would go wrong if we directly expanded the pdf? Well, if we do
 that we get:
 
@@ -100,7 +97,7 @@ minus infinity.
 :align: center
 ```
 
-* A pdf must be normalizable and positive definite, so this approximation violates these conditions!
+A pdf must be normalizable and positive definite, so this approximation violates these conditions!
 :::
 
 ### The Central Limit Theorem
@@ -156,7 +153,7 @@ $$
    = \sum_{j=1}^n \frac{x_j}{\sqrt{n}} ,   
 $$
 
-(we scale by $1/\sqrt{n}$ so that the variance of $X$ is constant in the $n\rightarrow\infty$ limit).
+scaling by $1/\sqrt{n}$ so that the variance of $X$ is constant in the $n\rightarrow\infty$ limit.
 
 What is the distribution of $X$?
 $\Longrightarrow$ call it $p(X|I)$, where $I$ is the information about the probability distribution for $x_j$. 
@@ -172,14 +169,14 @@ $$\begin{align}
             p(X|x_1,\cdots,x_n)\,p(x_1)\cdots p(x_n) .     
 \end{align}$$
 
-:::{admonition} Class: state the rule used to justify each step
+:::{admonition} State the rule used to justify each step
 :class: dropdown 
 1. marginalization
 1. product rule
 1. independence
 :::
 
-We might proceed by using a direct, normalized expression for $p(X|x_1,\cdots,x_n)$:
+We might proceed by using a direct, normalized expression for $p(X|x_1,\cdots,x_n)$,
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
 What is $p(X|x_1,\cdots,x_n)$?
@@ -189,6 +186,7 @@ $p(X|x_1,\cdots,x_n) = \delta\Bigl(X - \frac{1}{\sqrt{n}}(x_1 + \cdots + x_n)\Bi
 :::
 ::::
 
+and perform one of the integrations.
 Instead we will use a Fourier representation:
 
 $$
@@ -201,7 +199,7 @@ Substituting into $p(X)$ and gathering together all pieces with $x_j$ dependence
 
 $$ 
  p(X) = \frac{1}{2\pi} \int_{-\infty}^{\infty} d\omega
-    \, e^{i\omega X} \prod_{j=1}^n \left[\int_{-\infty}^{\infty} dx_j\, e^{i\omega x_j / \sqrt{n}} p(x_j) \right] 
+    \, e^{i\omega X} \prod_{j=1}^n \left[\int_{-\infty}^{\infty} dx_j\, e^{i\omega x_j / \sqrt{n}} p(x_j) \right] . 
 $$ 
 
 * Observe that the terms in []s have factorized into a product of independent integrals and they are all the same (just different labels for the integration variables).
@@ -209,7 +207,7 @@ $$
 
 $$
   e^{i\omega x/\sqrt{n}} = 1 + \frac{i\omega x}{\sqrt{n}}
-    + \frac{(i\omega)^2 x^2}{2 n} + \mathcal{O}\left(\frac{\omega^3 x^3}{n^{3/2}}\right)
+    + \frac{(i\omega)^2 x^2}{2 n} + \mathcal{O}\left(\frac{\omega^3 x^3}{n^{3/2}}\right) .
 $$
 
 Then, using that $p(x)$ is normalized (i.e., $\int_{-\infty}^{\infty} dx\, p(x) = 1$), 
@@ -225,7 +223,7 @@ p(x)&=
 n} \langle x^2 \rangle + \langle x^3 \rangle
 \frac{\omega^3}{n^{3/2}}\\
 &=1 - \frac{\omega^2 \sigma^2}{2 n} +
-\mathcal{O}\left(\frac{\omega^3}{n^{3/2}}\right)
+\mathcal{O}\left(\frac{\omega^3}{n^{3/2}}\right) .
 \end{align}
 $$
 
