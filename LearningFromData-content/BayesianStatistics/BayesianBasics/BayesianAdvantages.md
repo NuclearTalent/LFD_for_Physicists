@@ -100,7 +100,7 @@ Joint pdf for the masses of two black holes merging obtained from the data analy
   :class: tip
   Premise: We have a set of different models, $\{M_i\}_{i=1}^N$, each with a parameter vector $\pars_i$. The number of parameters (length of $\pars_i$) might be different for different models. 
   
-  $\Rightarrow$ How do they compare with each other? Do we have evidence to say that, e.g. $M_1$, is better than $M_2$? Note: *best* must be defined.
+  $\Rightarrow$ How do they compare with each other? Do we have evidence to say that, e.g. $M_1$, is better than $M_2$? Note: *better* must be defined.
 ```
 
 ```{Admonition} Combining models:
@@ -114,7 +114,7 @@ Joint pdf for the masses of two black holes merging obtained from the data analy
   :class: tip
   Premise: Given a statistical model for experimental predictions.
   
-  $\Rightarrow$ How should we design an experiment to provide most information for addressing a specific scientific question? 
+  $\Rightarrow$ How should we design an experiment to provide the most information for addressing a specific scientific question? 
 ```
   
 Further discussion on Bayesian approaches to all of these will appear in subsequent chapters. 
