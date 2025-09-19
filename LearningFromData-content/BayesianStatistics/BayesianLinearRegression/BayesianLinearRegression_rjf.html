@@ -758,7 +758,7 @@ This is called Bayesian linear regression (BLR).
 In this context “linear” means that the parameters we seek to infer appear in the model only to the first power (specific examples below).
 You may already be familiar with ordinary (frequentist) linear regression, such as making a least-squares fit of a polynomial to data; later in this chapter we will show how this is related to BLR.</p>
 <p>The advantages of doing <em>Bayesian</em> instead of frequentist linear regression are many. The Bayesian approach yields a probability distribution for the unknown parameters and for future model predictions. It also enables us to make all assumptions explicit whereas the frequentist approach puts nearly all emphasis on the collected data. These assumptions can be more general as well; e.g., they allow you to specify prior beliefs on the parameters (such as slope and intercept for a straight line model). Finally, we can do straightforward model checking and add a discrepancy model to account for limitations of the linear model being considered.</p>
-<p>We will use BLR to exemplify the general Bayesian workflow we have summarized in <a class="reference internal" href="../BayesianWorkflow/BayesianWorkflow.html#sec-bayesianworkflow"><span class="std std-numref">Section 8.2</span></a> <em>[or somewhere else?]</em>.
+<p>We will use BLR to exemplify the general Bayesian workflow we have summarized in <a class="reference internal" href="../../Intro/Introduction/sec-02-bayesian-workflow.html#sec-intro-workflow"><span class="std std-numref">Section 2.2</span></a> and <a class="reference internal" href="../BayesianWorkflow/BayesianWorkflow.html#sec-bayesianworkflow"><span class="std std-numref">Section 8.2</span></a>.
 To do so, we first need to more precisely define what we mean by linear models.</p>
 <section id="background-on-linear-models">
 <h2>Background on linear models<a class="headerlink" href="#background-on-linear-models" title="Link to this heading">#</a></h2>
@@ -786,8 +786,8 @@ M(\parsLR;\inputt) = \sum_{j=0}^{N_p-1} \paraLR_j \inputt^j.
 <p class="admonition-title"><span class="caption-number">Example 8.2 </span> (Liquid-drop model for nuclear binding energies)</p>
 <section class="example-content" id="proof-content">
 <p>The liquid drop model is useful for a phenomenological description of nuclear binding energies (BE) as a function of the mass number <span class="math notranslate nohighlight">\(A\)</span> and the number of protons <span class="math notranslate nohighlight">\(Z\)</span>, neutrons <span class="math notranslate nohighlight">\(N\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d79bcba6-0ca3-4d40-9b63-e012a9eb6551">
-<span class="eqno">(8.5)<a class="headerlink" href="#equation-d79bcba6-0ca3-4d40-9b63-e012a9eb6551" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-17964c0c-e591-4db9-9997-7c62d042dfbc">
+<span class="eqno">(8.5)<a class="headerlink" href="#equation-17964c0c-e591-4db9-9997-7c62d042dfbc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \text{BE}(A,N,Z) = a_0+a_1A+a_2A^{2/3}+a_3 Z^2 A^{-1/3}+a_4 (N-Z)^2 A^{-1}.
 \end{equation}\]</div>
 <p>We have five features: the intercept (constant term, bias), the <span class="math notranslate nohighlight">\(A\)</span> dependent volume term, the <span class="math notranslate nohighlight">\(A^{2/3}\)</span> surface term and the Coulomb <span class="math notranslate nohighlight">\(Z^2 A^{-1/3}\)</span> and pairing <span class="math notranslate nohighlight">\((N-Z)^2 A^{-1}\)</span> terms. Although the features are somewhat complicated functions of the independent variables <span class="math notranslate nohighlight">\(A,N,Z\)</span>, we note that the <span class="math notranslate nohighlight">\(p=5\)</span> regression parameters <span class="math notranslate nohighlight">\(\parsLR = (a_0, a_1, a_2, a_3, a_4)\)</span> enter linearly.</p>
@@ -822,7 +822,7 @@ Note that with finite <span class="math notranslate nohighlight">\(N\)</span> th
 \begin{align}
   (a)\quad  &amp; f(x) = \beta_0 + \beta_1 \sqrt{x}  \quad \text{with } \parsLR = (\beta_0, \beta_1)\\
   (b)\quad  &amp; E(N) = E_\infty + a e^{-b N} \quad \text{with } \parsLR = (E_\infty, a, b) \\
-  (c)\quad  &amp;
+  (c)\quad  &amp; g(z) = a e^{-z} + b e^{-2z} + c e^{-3z} \quad \text{with } \parsLR = (a, b, c)
 \end{align}
 \end{split}\]</div>
 <div class="dropdown my-hint admonition">
@@ -838,13 +838,13 @@ Note that with finite <span class="math notranslate nohighlight">\(N\)</span> th
 <section id="converting-linear-models-to-matrix-form">
 <h3>Converting linear models to matrix form<a class="headerlink" href="#converting-linear-models-to-matrix-form" title="Link to this heading">#</a></h3>
 <p>When using a linear model we have access to a set of data <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> for the dependent variable, e.g., the <span class="math notranslate nohighlight">\(N_d\)</span> values</p>
-<div class="amsmath math notranslate nohighlight" id="equation-91110fe3-736b-4a0e-b2c0-1dc78895154c">
-<span class="eqno">(8.6)<a class="headerlink" href="#equation-91110fe3-736b-4a0e-b2c0-1dc78895154c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-61638331-8143-45cf-aee2-6bf470eec547">
+<span class="eqno">(8.6)<a class="headerlink" href="#equation-61638331-8143-45cf-aee2-6bf470eec547" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \data = [y_1, y_2,\dots, y_{N_d}]^T.
 \end{equation}\]</div>
 <p>For each datum <span class="math notranslate nohighlight">\(y_i\)</span> there is an independent variable <span class="math notranslate nohighlight">\(x_i\)</span>, and our model for the <span class="math notranslate nohighlight">\(i^{\text{th}}\)</span> datum  is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-444d1d84-2f5b-43ce-becd-177061e39833">
-<span class="eqno">(8.7)<a class="headerlink" href="#equation-444d1d84-2f5b-43ce-becd-177061e39833" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fced2bd6-16d9-4753-866a-68cf790c2562">
+<span class="eqno">(8.7)<a class="headerlink" href="#equation-fced2bd6-16d9-4753-866a-68cf790c2562" title="Permalink to this equation">#</a></span>\[\begin{equation}
 M_i \equiv M(\parsLR;x_i) = \sum_{j=0}^{N_p-1} \paraLR_j f_j(x_i).
 \end{equation}\]</div>
 <p>We can collect the basis functions evaluated at each independent variable <span class="math notranslate nohighlight">\(x_i\)</span> in a matrix <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> of dimension <span class="math notranslate nohighlight">\(N_d \times N_p\)</span>:</p>
@@ -863,8 +863,8 @@ M_i \equiv M(\parsLR;x_i) = \sum_{j=0}^{N_p-1} \paraLR_j f_j(x_i).
 <p class="admonition-title"><span class="caption-number">Example 8.3 </span> (The design matrix for polynomial models)</p>
 <section class="example-content" id="proof-content">
 <p>The design matrix for a linear model with polynomial basis functions becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4701a215-103e-4d31-b1dd-0fc0a54ea5e4">
-<span class="eqno">(8.9)<a class="headerlink" href="#equation-4701a215-103e-4d31-b1dd-0fc0a54ea5e4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ad803525-31cb-4830-8325-5da9910de1fa">
+<span class="eqno">(8.9)<a class="headerlink" href="#equation-ad803525-31cb-4830-8325-5da9910de1fa" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \dmat =
 \begin{bmatrix} 
 1 &amp; x_{1}^1 &amp; x_{1}^2 &amp; \dots &amp; x_{1}^{p-1} \\
@@ -892,8 +892,8 @@ Fourier cosine expansion of <span class="math notranslate nohighlight">\(f(x)\)<
 <div class="dropdown my-answer admonition">
 <p class="admonition-title">Answer</p>
 <p>For convenience, let <span class="math notranslate nohighlight">\(\omega = \pi/L\)</span>. Then the design matrix is:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c17dac62-b80d-4dc9-a361-604446497272">
-<span class="eqno">(8.10)<a class="headerlink" href="#equation-c17dac62-b80d-4dc9-a361-604446497272" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b84207e4-f059-4548-8ed4-02791804bd0d">
+<span class="eqno">(8.10)<a class="headerlink" href="#equation-b84207e4-f059-4548-8ed4-02791804bd0d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{bmatrix}
 1 &amp; \cos(\omega x_1) &amp; \cos(2\omega x_1) &amp; \dots  &amp; \cos(N_p \omega x_1) \\
 1 &amp; \cos(\omega x_2) &amp; \cos(2\omega x_2) &amp; \dots  &amp; \cos(N_p \omega x_2) \\
@@ -905,8 +905,8 @@ Fourier cosine expansion of <span class="math notranslate nohighlight">\(f(x)\)<
 </div>
 </div>
 <p>Next, using the column vector <span class="math notranslate nohighlight">\(\parsLR\)</span> for the parameters,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bb61876a-55d6-4068-b0ff-09bebefdf3c9">
-<span class="eqno">(8.11)<a class="headerlink" href="#equation-bb61876a-55d6-4068-b0ff-09bebefdf3c9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6cd04e17-7068-4c83-be96-a4d7c2b707ed">
+<span class="eqno">(8.11)<a class="headerlink" href="#equation-6cd04e17-7068-4c83-be96-a4d7c2b707ed" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \parsLR = [\paraLR_0,\paraLR_1, \paraLR_2,\dots, \paraLR_{N_p-1}]^T,
 \end{equation}\]</div>
 <p>we can write the general (additive) statistical model</p>
@@ -920,8 +920,8 @@ Fourier cosine expansion of <span class="math notranslate nohighlight">\(f(x)\)<
    \data = \dmat \parsLR + \residuals.
 \]</div>
 <p>The last term <span class="math notranslate nohighlight">\(\residuals\)</span> is a column vector of so-called <strong>residuals</strong>. This term includes both the data uncertainty <span class="math notranslate nohighlight">\(\delta\data\)</span> and the model uncertainty <span class="math notranslate nohighlight">\(\delta M\)</span>, i.e., it expresses the part of the dependent variable, for which we have data, that we cannot describe using a linear model. Formally, we can therefore write <span class="math notranslate nohighlight">\(\residual_i = y_i - M_i\)</span> and define the vector <span class="math notranslate nohighlight">\(\residuals\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6a2315ef-12c8-4f41-a47b-f803d0f8a2bb">
-<span class="eqno">(8.14)<a class="headerlink" href="#equation-6a2315ef-12c8-4f41-a47b-f803d0f8a2bb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cf0e06ab-6a0f-43f8-91be-e98d68dc7c91">
+<span class="eqno">(8.14)<a class="headerlink" href="#equation-cf0e06ab-6a0f-43f8-91be-e98d68dc7c91" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \residuals = [\residual_1,\residual_2, \residual_3,\dots, \residual_{N_d}]^T.
 \end{equation}\]</div>
 <p>It is important to realize that our model <span class="math notranslate nohighlight">\(M\)</span> provides an approximate description of the data. For now we will take <span class="math notranslate nohighlight">\(\delta M = 0\)</span>; that is, we assume that the entire residual is explained by data uncertainty.
@@ -965,15 +965,15 @@ C(\parsLR)\equiv \sum_{i=1}^{N_d} \residual_i^2 = \sum_{i=1}^{N_d}\left(y_i-M_i\
 </section>
 </div><div class="proof admonition" id="proof">
 <p>Proof. Due to its quadratic form, the Euclidean norm <span class="math notranslate nohighlight">\(\left| \residuals \right|_2^2 = \left(\data-\dmat\parsLR\right)^T\left(\data-\dmat\parsLR\right) \equiv C(\parsLR)\)</span> is bounded from below and we just need to find the single extremum. That is we need to solve the problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b86f58a5-bc72-448a-8c9e-2b619358d57c">
-<span class="eqno">(8.18)<a class="headerlink" href="#equation-b86f58a5-bc72-448a-8c9e-2b619358d57c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-07ae3591-b59b-43cd-a3d9-80877404034a">
+<span class="eqno">(8.18)<a class="headerlink" href="#equation-07ae3591-b59b-43cd-a3d9-80877404034a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \parsLR^* =
 {\displaystyle \mathop{\mathrm{arg} \min}_{\parsLR\in
 {\mathbb{R}}^{N_p}}} \left(\data-\dmat\parsLR\right)^T\left(\data-\dmat\parsLR\right).
 \end{equation}\]</div>
 <p>In practical terms it means we will require</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dc685003-fe7b-4910-8cbc-6af1d88b1bf9">
-<span class="eqno">(8.19)<a class="headerlink" href="#equation-dc685003-fe7b-4910-8cbc-6af1d88b1bf9" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-f8ec16ba-eb2d-4307-9cd6-43217ab5641d">
+<span class="eqno">(8.19)<a class="headerlink" href="#equation-f8ec16ba-eb2d-4307-9cd6-43217ab5641d" title="Permalink to this equation">#</a></span>\[\begin{align}
 \frac{\partial C(\parsLR)}{\partial \paraLR_j} = \frac{\partial }{\partial \paraLR_j} \Bigg[  \sum_{i=1}^{N_d}\Big(y_i &amp;-\paraLR_0 f_0(x_i)-\paraLR_1f_1(x_i)-\paraLR_2f_2(x_i)-\dots \\
 &amp;-  \paraLR_{N_p-1}f_{N_p-1}(x_i)\Big)^2\Bigg] = 0, 
 \end{align}\]</div>
@@ -1024,18 +1024,19 @@ s^2 = \frac{(\residuals^*)^T\residuals^*}{N_d-N_p},
 </section>
 <section id="workflow-for-bayesian-linear-regression">
 <h2>Workflow for Bayesian linear regression<a class="headerlink" href="#workflow-for-bayesian-linear-regression" title="Link to this heading">#</a></h2>
-<p>In following the idealized BDA3 three-step workflow for Bayesian inference <span id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id2" title="A. Gelman, J.B. Carlin, H.S. Stern, D.B. Dunson, A. Vehtari, and D.B. Rubin. Bayesian Data Analysis, Third Edition. Chapman &amp; Hall/CRC Texts in Statistical Science. Taylor &amp; Francis, 2013. URL: http://www.stat.columbia.edu/~gelman/book/BDA3.pdf.">GCS+13</a>]</span>, we need to</p>
+<p>In following the four-step workflow for Bayesian inference (see <a class="reference internal" href="../../Intro/Introduction/sec-02-bayesian-workflow.html#sec-intro-workflow"><span class="std std-numref">Section 2.2</span></a>), we need to</p>
 <ol class="arabic simple">
-<li><p>Identify the observable and unobservable quantities and then set up a full probability model, which is a joint probability distribution of these quantities. We need to consistently build in our knowledge of the underlying physics and of the data measurement process.</p></li>
-<li><p>Next we condition on the observed data, which entails calculating and interpreting the relevant posterior distribution. This is the conditional probability distribution of the unobserved quantities of interest, given the observed data.</p></li>
-<li><p>Finally, we do model checking: assess the fit of the model and the reasonableness of the conclusions, testing the sensitivity to model assumptions in step 1. From this assessment we modify the model appropriately and repeat the three steps.</p></li>
+<li><p>Identify the observable and unobservable quantities and formulate appropriately informative priors before new data is used.</p></li>
+<li><p>Set up a full statistical model relating the physics model and data, including all errors. We need to consistently build in our knowledge of the underlying physics and of the data measurement process.</p></li>
+<li><p>Calculate and interpret the relevant posterior distributions.  This is the conditional probability distribution of the unobserved quantities of interest, given the observed data.</p></li>
+<li><p>Do model checking: assess the fit of the model and the reasonableness of the conclusions, testing the sensitivity to model assumptions in steps 1 and 2. From this assessment we modify the model appropriately and repeat all four steps.</p></li>
 </ol>
-<p>To carry out step 1.,
+<p>To carry out steps 1. and 2. for BLR,
 we note that our goal is to relate data <span class="math notranslate nohighlight">\(\data\)</span> to the output of a linear model expressed in terms of its design matrix <span class="math notranslate nohighlight">\(\dmat\)</span> and its model parameters <span class="math notranslate nohighlight">\(\parsLR\)</span> by Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-eq-statmodel">(8.12)</a>.
 We consider the special case of one dependent response variable (<span class="math notranslate nohighlight">\(\output\)</span>) and a single independent variable (<span class="math notranslate nohighlight">\(\inputt\)</span>), for which the data set (<span class="math notranslate nohighlight">\(\data\)</span>) and the residual vector (<span class="math notranslate nohighlight">\(\residuals\)</span>) are both <span class="math notranslate nohighlight">\(N_d \times 1\)</span> column vectors with <span class="math notranslate nohighlight">\(N_d\)</span> the length of the data set. The design matrix (<span class="math notranslate nohighlight">\(\dmat\)</span>) has dimension <span class="math notranslate nohighlight">\(N_d \times N_p\)</span> and the parameter vector (<span class="math notranslate nohighlight">\(\parsLR\)</span>) is <span class="math notranslate nohighlight">\(N_p \times 1\)</span>.</p>
 <p>For the residuals, consider a statistical model that describes the mismatch between our model and observations as in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-eq-statmodel">(8.12)</a> (recall that we assume here that <span class="math notranslate nohighlight">\(\Delta M = 0\)</span>). Knowledge (and/or assumptions) concerning measurement uncertainties, or modeling errors, then allows to describe the residuals as a vector of random variables that are distributed according to a PDF</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3ceb3e87-d96c-41d3-829d-54e905567392">
-<span class="eqno">(8.25)<a class="headerlink" href="#equation-3ceb3e87-d96c-41d3-829d-54e905567392" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5f43641e-0e24-46dd-b408-22ddfa5346aa">
+<span class="eqno">(8.25)<a class="headerlink" href="#equation-5f43641e-0e24-46dd-b408-22ddfa5346aa" title="Permalink to this equation">#</a></span>\[\begin{equation}
   \residuals \sim \pdf{\residuals}{I},
 \end{equation}\]</div>
 <p>where we introduce the relation <span class="math notranslate nohighlight">\(\sim\)</span> to indicate how a (random) variable is <em>distributed</em>.
@@ -1085,7 +1086,7 @@ Having such a statistical model for the errors makes it possible to derive an ex
 <section id="the-prior">
 <h2>The prior<a class="headerlink" href="#the-prior" title="Link to this heading">#</a></h2>
 <p>First we assign a prior probability <span class="math notranslate nohighlight">\(\pdf{\parsLR}{I}\)</span> for the model parameters. In order to facilitate analytical expressions we will explore two options: (i) a very broad, uniform prior, and (ii) a Gaussian prior. For simplicity, we consider both these priors to have zero mean and with all model parameters being i.i.d.</p>
-<p>As discussed earlier (<em>I think?</em>), we rarely want to use a truly uniform prior, preferring a wide beta distribution instead.
+<p>As discussed earlier, we rarely want to use a truly uniform prior, preferring a wide beta distribution instead.
 We will assume that the width is large enough that it will be effectively flat where our Bayesian linear regression likelihood is not negligible.
 Then for the analytic calculations here we can take the uniform prior for the <span class="math notranslate nohighlight">\(N_p\)</span> parameters to be</p>
 <div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-uniform-iid-prior">
@@ -1147,8 +1148,8 @@ Then for the analytic calculations here we can take the uniform prior for the <s
 \end{split}\]</div>
 <p>and <span class="math notranslate nohighlight">\(\sigmai^2\)</span> is the variance for residual <span class="math notranslate nohighlight">\(\residual_i\)</span>.</p>
 <p>Let’s first consider a single datum <span class="math notranslate nohighlight">\(\data_i\)</span> and the corresponding model prediction <span class="math notranslate nohighlight">\(M_i = \left( \dmat \parsLR \right)_i\)</span>. We are interested in the likelihood for this single data point</p>
-<div class="amsmath math notranslate nohighlight" id="equation-49ecb7d0-c235-4c24-970d-2ed68f4766ee">
-<span class="eqno">(8.31)<a class="headerlink" href="#equation-49ecb7d0-c235-4c24-970d-2ed68f4766ee" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-290e6815-2173-465b-8a4d-f4523a6d43c7">
+<span class="eqno">(8.31)<a class="headerlink" href="#equation-290e6815-2173-465b-8a4d-f4523a6d43c7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\data_i}{\parsLR,\sigmai^2,I}.
 \end{equation}\]</div>
 <p>Since the relation between data and residual is a simple additive transformation <span class="math notranslate nohighlight">\(\data_i = \modeloutput_i + \residual_i\)</span>,
@@ -1209,8 +1210,8 @@ we can use the standard probability rules to obtain (alternatively we can apply 
 <li><p>View 2: Focusing on the data <span class="math notranslate nohighlight">\(\data_\mathrm{obs}\)</span> that we have; how does the likelihood for this data set depend on the values of the model parameters?</p></li>
 </ul>
 <p>This second view is the one that we will be adopting when allowing model parameters to be associated with probability distributions. The likelihood still describes the probability for observing a set of data, but we emphasize its parameter dependence by writing</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8c868a64-72f4-46f9-a343-66d768ae5948">
-<span class="eqno">(8.36)<a class="headerlink" href="#equation-8c868a64-72f4-46f9-a343-66d768ae5948" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c9e25a08-73ac-4f59-a861-f59b3b71ac4e">
+<span class="eqno">(8.36)<a class="headerlink" href="#equation-c9e25a08-73ac-4f59-a861-f59b3b71ac4e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\data}{\parsLR,\sigma^2,I} = \mathcal{L}(\parsLR).
 \end{equation}\]</div>
 <p>This function is <strong>not</strong> a probability distribution for model parameters. The parameter posterior, left-hand side of Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-eq-bayes">(8.27)</a>, regains status as a probability density for <span class="math notranslate nohighlight">\(\parsLR\)</span> since the likelihood is multiplied with the prior <span class="math notranslate nohighlight">\(\pdf{\parsLR}{I}\)</span> and normalized by the evidence <span class="math notranslate nohighlight">\(\pdf{\data}{I}\)</span>.</p>
@@ -1272,8 +1273,8 @@ we can use the standard probability rules to obtain (alternatively we can apply 
 <section id="posterior-with-a-uniform-prior">
 <h3>Posterior with a uniform prior<a class="headerlink" href="#posterior-with-a-uniform-prior" title="Link to this heading">#</a></h3>
 <p>Let us first consider a uniform prior as expressed in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-uniform-iid-prior">(8.28)</a>. The prior can be considered very broad if its boundaries <span class="math notranslate nohighlight">\(\pm \Delta\para/2\)</span> are very far from the mode of the likelihood <a class="reference internal" href="#equation-eq-bayesianlinearregression-likelihood-pars-b">(8.37)</a>. “Distance” in this context is measured in terms of standard deviations. A “far distance”, therefore, implies that <span class="math notranslate nohighlight">\(\pdf{\data}{\parsLR,\sigmares^2,I}\)</span> is very close to zero. This implies that the posterior</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c60e42e5-85e3-4287-9fdf-f60c878e6aad">
-<span class="eqno">(8.39)<a class="headerlink" href="#equation-c60e42e5-85e3-4287-9fdf-f60c878e6aad" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1929a87c-4455-40ef-92f5-99dfa287fbc0">
+<span class="eqno">(8.39)<a class="headerlink" href="#equation-1929a87c-4455-40ef-92f5-99dfa287fbc0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\parsLR}{\data,\sigmares^2,I} \propto \pdf{\data}{\parsLR,\sigmares^2,I} \pdf{\parsLR}{I},
 \end{equation}\]</div>
 <p>simply becomes proportional to the data likelihood (with the prior just truncating the distribution at very large distances). Thus we find from Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-likelihood-pars-b">(8.37)</a></p>
@@ -1707,7 +1708,7 @@ L(\parsLR) = L(\optparsLR) + \frac{1}{2} (\parsLR-\optparsLR)^T \frac{\dmat^T\dm
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>model type      : polynomial
-true parameters : [-2.90992541 -4.42886266]
+true parameters : [2.18988655 4.49633099]
 Nd = 10
 </pre></div>
 </div>
@@ -1743,7 +1744,7 @@ Nd = 10
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/366fd69324ceadff2d3d0170297b9e4f1a35dbb13d0c4aad677074c8dd123a54.png" src="../../../_images/366fd69324ceadff2d3d0170297b9e4f1a35dbb13d0c4aad677074c8dd123a54.png" />
+<img alt="../../../_images/df45601bf5256cbc66eadcd0ea974b12f497b3e5e9f0316dd7f81255d25fcfab.png" src="../../../_images/df45601bf5256cbc66eadcd0ea974b12f497b3e5e9f0316dd7f81255d25fcfab.png" />
 </div>
 </div>
 <p>Linear regression proceeds via the design matrix. We will analyze this data using a linear polynomial model of order 1. The following code will allow you to setup the corresponding design matrix <span class="math notranslate nohighlight">\(\dmat\)</span> for any polynomial order (referred to as poldeg below)</p>
@@ -1809,8 +1810,8 @@ M(\parsLR;\inputt) = \paraLR_0 + \paraLR_1 \inputt.
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ndata = 10
-theta_ols 	[-2.53329427 -4.11850191]
-theta_true 	[-2.90992541 -4.42886266]
+theta_ols 	[2.35345581 4.65726089]
+theta_true 	[2.18988655 4.49633099]
 </pre></div>
 </div>
 </div>
@@ -1848,7 +1849,7 @@ theta_true 	[-2.90992541 -4.42886266]
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/77832335d9182e1c65ecea70ecd9e08a27f4e4ee818a38181be4d2556d22eb29.png" src="../../../_images/77832335d9182e1c65ecea70ecd9e08a27f4e4ee818a38181be4d2556d22eb29.png" />
+<img alt="../../../_images/bbabe23765b9ef584cef7982f04d80cc4198f1bb400f82520fd66426aa151898.png" src="../../../_images/bbabe23765b9ef584cef7982f04d80cc4198f1bb400f82520fd66426aa151898.png" />
 </div>
 </div>
 <p>To conclude, we also compute the sample variance <span class="math notranslate nohighlight">\(s^2\)</span></p>
@@ -1864,7 +1865,7 @@ theta_true 	[-2.90992541 -4.42886266]
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>s^2       	0.186
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>s^2       	0.383
 sigma_e^2 	0.250
 </pre></div>
 </div>
