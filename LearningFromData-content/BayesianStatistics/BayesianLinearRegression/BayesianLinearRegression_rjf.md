@@ -28,7 +28,7 @@ You may already be familiar with ordinary (frequentist) linear regression, such 
 
 The advantages of doing *Bayesian* instead of frequentist linear regression are many. The Bayesian approach yields a probability distribution for the unknown parameters and for future model predictions. It also enables us to make all assumptions explicit whereas the frequentist approach puts nearly all emphasis on the collected data. These assumptions can be more general as well; e.g., they allow you to specify prior beliefs on the parameters (such as slope and intercept for a straight line model). Finally, we can do straightforward model checking and add a discrepancy model to account for limitations of the linear model being considered. 
 
-We will use BLR to exemplify the general Bayesian workflow we have summarized in {numref}`sec:BayesianWorkflow` *[or somewhere else?]*.
+We will use BLR to exemplify the general Bayesian workflow we have summarized in {numref}`sec:Intro:Workflow` and {numref}`sec:BayesianWorkflow`.
 To do so, we first need to more precisely define what we mean by linear models.
 
 
@@ -108,7 +108,7 @@ $$
 \begin{align}
   (a)\quad  & f(x) = \beta_0 + \beta_1 \sqrt{x}  \quad \text{with } \parsLR = (\beta_0, \beta_1)\\
   (b)\quad  & E(N) = E_\infty + a e^{-b N} \quad \text{with } \parsLR = (E_\infty, a, b) \\
-  (c)\quad  &
+  (c)\quad  & g(z) = a e^{-z} + b e^{-2z} + c e^{-3z} \quad \text{with } \parsLR = (a, b, c)
 \end{align}
 $$
 :::{admonition} Hint
@@ -354,14 +354,14 @@ In frequentist linear regression using the ordinary least-squares method we make
 
 
 
+In following the four-step workflow for Bayesian inference (see {numref}`sec:Intro:Workflow`), we need to
+1. Identify the observable and unobservable quantities and formulate appropriately informative priors before new data is used.
+2. Set up a full statistical model relating the physics model and data, including all errors. We need to consistently build in our knowledge of the underlying physics and of the data measurement process. 
+3. Calculate and interpret the relevant posterior distributions.  This is the conditional probability distribution of the unobserved quantities of interest, given the observed data.
+4. Do model checking: assess the fit of the model and the reasonableness of the conclusions, testing the sensitivity to model assumptions in steps 1 and 2. From this assessment we modify the model appropriately and repeat all four steps. 
 
-In following the idealized BDA3 three-step workflow for Bayesian inference {cite}`gelman2013bayesian`, we need to
-1. Identify the observable and unobservable quantities and then set up a full probability model, which is a joint probability distribution of these quantities. We need to consistently build in our knowledge of the underlying physics and of the data measurement process. 
-2. Next we condition on the observed data, which entails calculating and interpreting the relevant posterior distribution. This is the conditional probability distribution of the unobserved quantities of interest, given the observed data.
-3. Finally, we do model checking: assess the fit of the model and the reasonableness of the conclusions, testing the sensitivity to model assumptions in step 1. From this assessment we modify the model appropriately and repeat the three steps. 
 
-
-To carry out step 1., 
+To carry out steps 1. and 2. for BLR, 
 we note that our goal is to relate data $\data$ to the output of a linear model expressed in terms of its design matrix $\dmat$ and its model parameters $\parsLR$ by Eq. {eq}`eq:BayesianLinearRegression:eq_StatModel`.
 We consider the special case of one dependent response variable ($\output$) and a single independent variable ($\inputt$), for which the data set ($\data$) and the residual vector ($\residuals$) are both $N_d \times 1$ column vectors with $N_d$ the length of the data set. The design matrix ($\dmat$) has dimension $N_d \times N_p$ and the parameter vector ($\parsLR$) is $N_p \times 1$.
 
@@ -431,7 +431,7 @@ Having such a statistical model for the errors makes it possible to derive an ex
 
 First we assign a prior probability $\pdf{\parsLR}{I}$ for the model parameters. In order to facilitate analytical expressions we will explore two options: (i) a very broad, uniform prior, and (ii) a Gaussian prior. For simplicity, we consider both these priors to have zero mean and with all model parameters being i.i.d. 
 
-As discussed earlier (*I think?*), we rarely want to use a truly uniform prior, preferring a wide beta distribution instead. 
+As discussed earlier, we rarely want to use a truly uniform prior, preferring a wide beta distribution instead. 
 We will assume that the width is large enough that it will be effectively flat where our Bayesian linear regression likelihood is not negligible.
 Then for the analytic calculations here we can take the uniform prior for the $N_p$ parameters to be
 
