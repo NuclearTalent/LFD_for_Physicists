@@ -58,52 +58,27 @@ Did the Leprechaun drink your wine, or is there a simpler explanation?
 Inductive inference with parametric models is a very important tool in the natural sciences.
 * Consider $N$ different models $M_i$ ($i = 1, \ldots, N$), each with a parameter vector $\pars_i$. The number of parameters (length of $\pars_i$) might be different for different models. Each of them implies a sampling distribution for possible data
 
-\begin{equation}
-p(\data|{\pars}_i, M_i)
-\end{equation}
-
-* The likelihood function is the pdf of the actual, observed data ($\data_\mathrm{obs}$) given a set of parameters $\boldsymbol{\theta}_i$:
+* Consider a scientific model $M$ with a parameter vector $\pars$. Together with error models this implies a statistical model that gives a sampling distribution for possible data
 
 \begin{equation}
-{\mathcal{L}}_i (\pars_i) \equiv p(\data_\mathrm{obs}|\pars_i, M_i)
+p(\data|{\pars}, M)
 \end{equation}
-* We may be uncertain about $M_i$ (model uncertainty),
-* or uncertain about $\pars_i$ (parameter uncertainty).
+
+* The likelihood function is the pdf of the actual, observed data ($\data_\mathrm{obs}$) given a set of parameters $\boldsymbol{\theta}$:
+
+\begin{equation}
+{\mathcal{L}}_i (\pars) \equiv p(\data_\mathrm{obs}|\pars, M)
+\end{equation}
+
+With these ingredients, several types of scientific inquiry can be addressed using a Bayesian framework.
 
 ### Some key types of Bayesian inference with parametric models
 
-```{Admonition} Parameter estimation:
+````{Admonition} Parameter estimation:
   :class: tip
-  Premise: We have chosen a model (say $M_1$)
+  Premise: We have chosen a model (say $M_1$) and have access to a set of observed data ($\data_\mathrm{obs}$)
   
-  $\Rightarrow$ What can we say about its parameters $\boldsymbol{\theta}_1$?
-```
-```{Admonition} Calibrated model predictions:
-  :class: tip
-  Premise: We have a calibrated model (say $M_1$ and a posterior for parameters $\boldsymbol{\theta}_1$ given data).
-  
-  $\Rightarrow$ What can we say about predictions for new data (posterior predictive distribution)?
-```
-```{Admonition} Model comparison:
-  :class: tip
-  Premise: We have a set of different models $\{M_i\}$
-  
-  $\Rightarrow$ How do they compare with each other? Do we have evidence to say that, e.g. $M_1$, is better than $M_2$?
-```
-```{Admonition} Combining models:
-  :class: tip
-  Premise: We have models $M_1$, $M_2$, $M_3$.
-  
-  $\Rightarrow$ How can we combine them to make better inferences than any single model?
-```
-```{Admonition} Experimental design:
-  :class: tip
-  Premise: Given a statistical model for experimental predictions.
-  
-  $\Rightarrow$ How should we design an optimal experiment to measure data? 
-```
-  
-Further discussion on Bayesian approaches to all of these will appear in subsequent chapters. 
+  $\Rightarrow$ What can we infer about the model parameters $\boldsymbol{\theta}_1$?
 
 ```{figure} ./figs/m1m2.png
 :name: fig-m1m2
@@ -112,6 +87,35 @@ Further discussion on Bayesian approaches to all of these will appear in subsequ
 
 Joint pdf for the masses of two black holes merging obtained from the data analysis of a gravitational wave signal. This representation of a joint pdf is known as a corner plot. 
 ```
+````
 
+```{Admonition} Calibrated model predictions:
+  :class: tip
+  Premise: We have a calibrated model (say $M_1$ and a posterior for parameters $\boldsymbol{\theta}_1$ given data).
+  
+  $\Rightarrow$ What can we predict for new (not measured) data (posterior predictive distribution)?
+```
 
+```{Admonition} Model comparison:
+  :class: tip
+  Premise: We have a set of different models, $\{M_i\}_{i=1}^N$, each with a parameter vector $\pars_i$. The number of parameters (length of $\pars_i$) might be different for different models. 
+  
+  $\Rightarrow$ How do they compare with each other? Do we have evidence to say that, e.g. $M_1$, is better than $M_2$? Note: *best* must be defined.
+```
+
+```{Admonition} Combining models:
+  :class: tip
+  Premise: We have models $M_1$, $M_2$, $M_3$.
+  
+  $\Rightarrow$ How can we combine them to make better inferences than any single model?
+```
+
+```{Admonition} Experimental design:
+  :class: tip
+  Premise: Given a statistical model for experimental predictions.
+  
+  $\Rightarrow$ How should we design an experiment to provide most information for addressing a specific scientific question? 
+```
+  
+Further discussion on Bayesian approaches to all of these will appear in subsequent chapters. 
 
