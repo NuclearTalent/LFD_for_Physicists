@@ -1,5 +1,5 @@
 (sec:Inference:looking_ahead)=
-# Looking ahead
+# Expectation values and moments
 
 We have put on the table the axioms of probability theory and some of their consequences, in particular Bayes' theorem. 
 Before looking further at concrete applications of Bayesian inference, we provide further insight into Bayes' theorem in {ref}`sec:MoreBayesTheorem` and introduce some additional ingredients for Bayesian inference in {ref}`sec:DataModelsPredictions`. The latter include the idea of a statistical model, how to predict future data conditioned on (i.e., given) past data and background information (the posterior predictive distribution), and Bayesian parameter estimation.
@@ -120,6 +120,37 @@ See the {doc}`../Visualizing_correlated_gaussians` notebook for plotting what th
 
 :::
 
+
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+What can't we have $\rho > 1$ or $\rho < -1$?
+
+:::{admonition} Answer 
+:class: dropdown, my-answer 
+The bounds on the correlation coefficient $\rho$ arise from the [Cauchy-Schwarz inequality](https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality), which says that if $\langle\cdot,\cdot\rangle$ defines an inner product, then for all vectors $\uvec,\vvec$ in the space, this inequality holds:
+
+$$
+  |\langle\uvec,\vvec\rangle|^2 \leq |\langle \uvec,\uvec\rangle| |\langle\vvec,\vvec\rangle| .
+$$
+
+The expectation value of a random variable satisfies the conditions to be an inner product,
+so that the Cauchy-Schwarz inequality implies that
+
+$$
+  |\mathbb{E}[UV]| \leq \sqrt{\mathbb{E}[U]}\sqrt{\mathbb{E}[V]}.
+$$
+
+With $U = X - \mu_{X}$ and $V = Y - \mu_{Y}$, the inequality implies that
+
+$$
+   |\text{Cov}(X,Y)| \leq \sigma_X \sigma_Y . 
+$$
+
+Dividing through by $\sigma_X \sigma_Y$ yields $-1 \leq \rho \leq 1$.
+
+A consequence is that the matrix $\Sigma$ would not be a valid covariance matrix because the determinant would be negative.
+:::
+::::
 
 
 
