@@ -137,7 +137,7 @@ The expectation value of a random variable satisfies the conditions to be an inn
 so that the Cauchy-Schwarz inequality implies that
 
 $$
-  |\mathbb{E}[UV]| \leq \sqrt{\mathbb{E}[U]}\sqrt{\mathbb{E}[V]}.
+  |\mathbb{E}[UV]| \leq \sqrt{\mathbb{E}[U^2]}\sqrt{\mathbb{E}[V^2]}.
 $$
 
 With $U = X - \mu_{X}$ and $V = Y - \mu_{Y}$, the inequality implies that
