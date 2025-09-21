@@ -7,13 +7,13 @@
 -- Niels Bohr
 ```
 
-Here we continue the discussion of Bayes' theorem, which is the starting point for all Bayesian methods. We will elaborate on how it encapsulates the process of learning from data, and show how it results from foundational axioms of probability theory.  Finally, we introduce a first application of Bayes' theorem with the classical example of a coin tossing experiment (which you will revisit interactively). 
+Here we continue the discussion of Bayes' theorem, which is the starting point for all Bayesian methods. We will elaborate on how it encapsulates the process of learning from data, and show how it results from foundational axioms of probability theory.  Finally, we introduce an application of Bayes' theorem: the classical example of a coin tossing experiment (which you will revisit interactively). 
 
 
 (sec:BayesTheorem:axioms)=
 ## Axioms of probability theory
 
-Andrey Kolmogorov's axioms of probability form the standard theoretical framework in which the probability (measure) $\mathbb{P}$ is introduced. You encountered those axioms in the definition of [](introduction:definitions). The most important aspect of his formalization of probability is not the axioms themselves but rather that he showed that probabilities can be incorporated into mathematics using the existing theory of measures. In fact, since then other axiomatic constructs of probability where, e.g., the conditional probability is taken as the primitive notion, has been constructed. In this course we rely on Kolmogorov's axioms from which the following two useful rules for how to manipulate probabilities and uncertainties can be derived
+Andrey Kolmogorov's axioms of probability form the standard theoretical framework in which the probability (measure) $\mathbb{P}$ is introduced. You can read more about those axioms in the definition of [](introduction:definitions). The most important aspect of his formalization of probability is not the axioms themselves but rather that he showed that probabilities can be incorporated into mathematics using the existing theory of measures. In fact, since then other axiomatic constructs of probability where, e.g., the conditional probability is taken as the primitive notion, has been constructed. In this book we rely on Kolmogorov's axioms from which the following two useful rules for how to manipulate probabilities and uncertainties can be derived
 
 ```{prf:property} Product rule
 :label: property:product_rule
@@ -90,7 +90,7 @@ where we used the product rule in the second step.
   ```
   
 
-For example,let’s imagine that there are five candidates in a presidential election; then $H_1$ could be the proposition that the first candidate will win, and so on. The probability that $A$ is true, for example that unemployment will be lower in a year’s time (given all relevant information $I$, but irrespective of whoever becomes president) is given by $\sum_i \prob(A,H_i|I)$ as shown by using normalization and applying the product rule.
+For example, let’s imagine that there are five candidates in a presidential election; then $H_1$ could be the proposition that the first candidate will win, and so on. The probability that $A$ is true, for example that unemployment will be lower in a year’s time (given all relevant information $I$, but irrespective of whoever becomes president) is given by $\sum_i \prob(A,H_i|I)$ as shown by using normalization and applying the product rule.
 
 (sec:continuum_limit)=
 ### The continuum limit
