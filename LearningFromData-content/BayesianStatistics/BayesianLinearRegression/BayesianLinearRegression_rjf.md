@@ -295,14 +295,14 @@ In practical terms it means we will require
 where $y_i$ and $f_j(x_i)$ are the elements of $\data$ and $\dmat$, respectively. Performing the derivative results in
 
 $$
-\frac{\partial C(\parsLR)}{\partial \paraLR_j} = -2\Bigg[ \sum_{i=1}^{N_d}f_j(x_i)\Big(y_i &-\paraLR_0 f_0(x_i)-\para_1f_1(x_i)-\paraLR_2f_2(x_i)-\dots \\
+\frac{\partial C(\parsLR)}{\partial \paraLR_j} = -2\Bigg[ \sum_{i=1}^{N_d}f_j(x_i)\Big(y_i &-\paraLR_0 f_0(x_i)-\paraLR_1 f_1(x_i)-\paraLR_2f_2(x_i)-\dots \\
 &-\paraLR_{N_p-1}f_{N_p-1}(x_i)\Big)\Bigg]=0,
 $$ (eq:BayesianLinearRegressioin:gradient-elements)
 
 which is one element of the full gradient vector. This gradient vector can be succinctly expressed in matrix-vector form as
 
 $$
-\boldsymbol{\nabla}_{\pars} C(\parsLR) = -2 \dmat^T\left( \data-\dmat\parsLR\right).  
+\boldsymbol{\nabla}_{\parsLR} C(\parsLR) = -2 \dmat^T\left( \data-\dmat\parsLR\right).  
 $$ (eq:BayesianLinearRegression:gradient)
 
 The minimum of $C$, where $\boldsymbol{\nabla}_{\parsLR} C(\parsLR) = 0$, then corresponds to 
@@ -431,7 +431,7 @@ Having such a statistical model for the errors makes it possible to derive an ex
 
 First we assign a prior probability $\pdf{\parsLR}{I}$ for the model parameters. In order to facilitate analytical expressions we will explore two options: (i) a very broad, uniform prior, and (ii) a Gaussian prior. For simplicity, we consider both these priors to have zero mean and with all model parameters being i.i.d. 
 
-As discussed earlier, we rarely want to use a truly uniform prior, preferring a wide beta distribution instead. 
+As discussed earlier, we rarely want to use a truly uniform prior, preferring a wide beta  or Gaussian distribution instead. 
 We will assume that the width is large enough that it will be effectively flat where our Bayesian linear regression likelihood is not negligible.
 Then for the analytic calculations here we can take the uniform prior for the $N_p$ parameters to be
 
@@ -489,6 +489,10 @@ What is implied (i.e., what are you assuming) if you use a truly uniform prior f
 :::{admonition} Hint
 :class: dropdown, my-hint 
 Is it possible that the parameters could be arbitrarily large?
+:::
+:::{admonition} Answer
+:class: dropdown, my-answer
+It is implied that not only is any magnitude possible for the model parameters, but all values for a given parameter are equally likely. This is very unlikely to be true.
 :::
 ::::
 
