@@ -96,26 +96,53 @@ Joint pdf for the masses of two black holes merging obtained from the data analy
   $\Rightarrow$ What can we predict for new (not measured) data (posterior predictive distribution)?
 ```
 
-```{Admonition} Model comparison:
+````{Admonition} Model comparison:
   :class: tip
   Premise: We have a set of different models, $\{M_i\}_{i=1}^N$, each with a parameter vector $\pars_i$. The number of parameters (length of $\pars_i$) might be different for different models. 
   
   $\Rightarrow$ How do they compare with each other? Do we have evidence to say that, e.g. $M_1$, is better than $M_2$? Note: *better* must be defined.
-```
 
-```{Admonition} Combining models:
+```{figure} ./figs/fitting_polynomials.png
+:name: fig-fit_poly
+:width: 750px
+:align: center
+
+Three polynomial models $M_1$, $M_2$, $M_3$ and their "best fits" to noisy data (the "true" curve is in red). The model comparison problem is to objectively compare the models.
+```
+````
+
+````{Admonition} Combining models:
   :class: tip
   Premise: We have models $M_1$, $M_2$, $M_3$.
   
   $\Rightarrow$ How can we combine them to make better inferences than any single model?
-```
 
-```{Admonition} Experimental design:
+```{figure} ./figs/fig-model_mixed_eos.png
+:name: fig-model_mixed_eos
+:width: 450px
+:align: center
+
+Mixed model equation of state (scaled pressure vs. scaled density) for symmetric nuclear matter. Models with theory errors at low density (red) and very high density (blue) are mixed to bridge the gap between them (purple). One sigma error bands are shown. The figure is from Semposki et al., [arxiv:2404.06323](https://arxiv.org/pdf/2404.06323).
+```
+````
+
+
+
+````{Admonition} Experimental design:
   :class: tip
   Premise: Given a statistical model for experimental predictions.
-  
+
+
   $\Rightarrow$ How should we design an experiment to provide the most information for addressing a specific scientific question? 
+
+```{figure} ./figs/experimental_design_model.png
+:name: fig-exp_des_mod
+:width: 550px
+:align: center
+
+Schematic signal with background from [Amplitude of a Signal in the Presence of Background](https://nucleartalent.github.io/LFD_for_Physicists/LearningFromData-content/BayesianStatistics/BayesianParameterEstimation/amplitude_in_presence_of_background.html). The experimental design problem is how to best extract the signal properties from optimizing a function that gives the cost of experimental choices, such as the resolution of the detector and the number of counts recorded.
 ```
+````
   
 Further discussion on Bayesian approaches to all of these will appear in subsequent chapters. 
 
