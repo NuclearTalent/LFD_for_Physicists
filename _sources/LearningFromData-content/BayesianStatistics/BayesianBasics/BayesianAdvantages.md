@@ -89,12 +89,19 @@ Joint pdf for the masses of two black holes merging obtained from the data analy
 ```
 ````
 
-```{Admonition} Calibrated model predictions:
+````{Admonition} Calibrated model predictions:
   :class: tip
   Premise: We have a calibrated model (say $M_1$ and a posterior for parameters $\boldsymbol{\theta}_1$ given data).
   
   $\Rightarrow$ What can we predict for new (not measured) data (posterior predictive distribution)?
+```{figure} ./figs/ppd_toy.png
+:name: fig-ppd_toy
+:width: 400px
+:align: center
+
+Posterior predictive distributions (ppds) for a toy effective field theory (a truncated Taylor expansion) given data with errors as shown, compared to the true underlying function. The two ppds correspond to including or not including correlations. 
 ```
+````
 
 ````{Admonition} Model comparison:
   :class: tip
