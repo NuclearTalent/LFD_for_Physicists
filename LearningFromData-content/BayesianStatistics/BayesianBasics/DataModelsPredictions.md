@@ -10,8 +10,8 @@
 ## How do we make statistical predictions?
 
 Let us consider a common scenario:
-* We have a model $M$ with parameters $\pars$ (which is a vector of parameters in general).
-* We have some (noisy) data $\data$ that we can use to calibrate the parameters (i.e., do parameter estimation).  Generically label the input values by $x$ (a vector) and the quantities of interest by $y = y(x)$.
+* We have a model $M$ with parameters $\pars$.
+* We have some (noisy) data $\data$ that we can use to calibrate the parameters.  Generically label the input values by $x$ (a vector) and the quantities of interest by $y = y(x)$.
 * Then we want to predict at other input points $x^\ast \rightarrow y^\ast$. 
 
 How shall we proceed? Let's first say a bit more about the ingredients.
@@ -36,13 +36,13 @@ In physics, a *theory* is very often some framework that postulates, or deduces 
 -->
 <!-- described in the introduction section about [](intro:inference). -->
 
-A physical *model* $M$ allows quantitative evaluation of the system under study. Any model we employ will always depend on model parameters $\pars$ with uncertain numerical values. Moreover, *all models are wrong*. Indeed, there will always be some physics that we have neglected to include or are unaware of today. If we denote mismatch between model predictions and real world observations of the system, i.e., data, as $\delta M$, we can write
+A physical *model* $M$ allows quantitative evaluation of the system under study. Any model we employ will always depend on model parameters $\pars$ with uncertain numerical values. Moreover, *all models are wrong*, in the sense that there will always be some physics that we have neglected to include or are unaware of today. If we denote mismatch between model predictions and real world observations of the system, i.e., data, as $\delta M$, we can write
 
 $$
 \data = M(\pars) + \delta \data + \delta M.
 $$ (eq:DataModelsPredictions:mismatch)
 
-The mismatch term $\delta M$ is often referred to as a model discrepancy. We are uncertain also about this term, so it must be represented as a random variable that is distributed in accordance with our beliefs about $\delta M$. It is no trivial task to incorporate model discrepancies in the analysis of scientific models and data, yet it is crucial to avoid overfitting the model parameters $\pars$ and make overly confident model predictions. 
+The mismatch term $\delta M$ is often referred to as a model discrepancy. We are uncertain also about this term, so it must be represented as a random variable that is distributed in accordance with our beliefs about $\delta M$. It is no trivial task to incorporate model discrepancies in the analysis of scientific models and data, yet it is crucial to avoid overfitting the model parameters $\pars$ and making overly confident model predictions. 
 We will touch upon $\delta M$ in two contexts in this text: in treating the truncation error in expansions such as encountered in effective field theories and with a prototypical example (the "Ball-Drop Experiment") of using Gaussian processes to model $\delta M$ (see {ref}`sec:ModelDiscrepancy` and the [](../../OtherTopics/MD_balldrop_v1.ipynb) notebook).  
 <!-- Although important, we will for the most part in this course neglect $\delta M$. There is simply no time to cover also this aspect of the scientific method.--> 
 Note that the model discrepancy remains present even if there is no uncertainty about $\pars$. In the following we subsume the choice of model and other decisions into the set of background knowledge $I$.
@@ -77,34 +77,38 @@ $$
 These equations encode the relationship between the random variables $y_i$, $\yth(x_i;\pars)$, $\delta\yexp(x_i)$ and  $\delta\yth(x_i)$.
 The underlying $\ytrue$ describing the observables used for parameter estimation and for new observations could be the same, but in general $\ytrue$ may be completely different for the predicted observable.
 
-The correspondence to the notation earlier in this section is $y \rightarrow \data$, $\delta\yexp(x_i) \rightarrow \delta\data$, $\yth(x_i;\pars) \rightarrow M(\pars)$, and $\delta\yth(x_i) \rightarrow \delta M$.
+The correspondence to the notation for the same statistical model {eq}`eq:DataModelsPredictions:mismatch` is $y \rightarrow \data$, $\delta\yexp(x_i) \rightarrow \delta\data$, $\yth(x_i;\pars) \rightarrow M(\pars)$, and $\delta\yth(x_i) \rightarrow \delta M$.
 
 :::
 
 
 ## Bayesian parameter estimation
 
-Quantifying the posterior distribution $\pdf{\pars}{\data,I}$ for the parameters of a model is called *Bayesian parameter estimation*, and is a staple of Bayesian inference. This is a probabilistic generalization of parameter optimization and maximum likelihood estimation whereby one tries to find an extremum parameter value of some objective function or data likelihood, respectively. We will see multiple examples of this in the coming chapters.
+Quantifying the posterior distribution $\pdf{\pars}{\data,I}$ for the parameters of a model is called *Bayesian parameter estimation*, and is a staple of Bayesian inference. This is a probabilistic generalization of parameter optimization and maximum likelihood estimation whereby one tries to find an extremum parameter value of some objective function or data likelihood, respectively. 
+Instead of single values characterizing the distribution ("point estimates"), we seek the full distribution. 
+We will see multiple examples of this in the coming chapters.
 <!-- chapter on [](sec:LinearModels).-->
 
 
-To evaluate the posterior for the model parameters we must employ Bayes' theorem
+To evaluate the posterior for the model parameters we must employ Bayes' theorem,
 
 ```{math}
 :label: eq_bayes
 \pdf{\pars}{\data,I} = \frac{\pdf{\data}{\pars,I}\pdf{\pars}{I}}{\pdf{\data}{I}}.
 ```
 
-Here, we must insert a likelihood of the data $\pdf{\data}{\pars,I}$ and a prior distribution of the model parameters $\pdf{\pars}{I}$. Unless we are able to select very particular combinations of likelihood and prior distributions (called conjugate priors) we must use numerical methods to evaluate the posterior predictive distribution.  The denominator in Eq. {eq}`eq_bayes` is sometimes referred to as the marginal likelihood or the evidence and normalizes the left-hand side such that it integrates to unity, i.e., we have
+Here, we must formulate a likelihood of the data $\pdf{\data}{\pars,I}$ and a prior distribution of the model parameters $\pdf{\pars}{I}$. 
+<!--Unless we are able to select very particular combinations of likelihood and prior distributions (called conjugate priors) we must use numerical methods to sample the posterior for use in predictions of new data.  -->
+The denominator in Eq. {eq}`eq_bayes` is sometimes referred to as the marginal likelihood or the evidence and normalizes the left-hand side such that it integrates to unity, i.e., we have
 
 \begin{equation}
 \pdf{\data}{I} = \int_{\Omega} \pdf{\data}{\pars} \pdf{\pars}{I}\, {\rm d}\pars.
 \end{equation}
 
-Unless we are interested in obtaining an absolutely normalized posterior distribution we can omit the denominator in Eq. {eq}`eq_bayes`. Indeed, this does not explicitly depend on $\pars$. 
+Often we do not need an absolutely normalized posterior distribution, so we can omit the denominator in Eq. {eq}`eq_bayes`. Indeed, the latter does not explicitly depend on $\pars$. 
 
 
-Bayesian parameter estimation can sometimes be very challenging. In the chapter on [](sec:BayesianLinearRegression) we will see an example of where we can perform analytical calculations throughout. However, in most realistic applications the posterior must be evaluated numerically, and most often using [](sec:MCMC). This is no silver bullet and to quantify (or characterize) a multi-dimensional posterior, sometimes with a complicated geometry, for an intricate physical model, is by no means guaranteed to succeed. At least not in finite time. Nevertheless, obtaining posterior distributions to represent uncertainties is the gold standard in any inferential analysis.
+Bayesian parameter estimation can sometimes be very challenging. In the chapter on [](sec:BayesianLinearRegression) we will see an example of where we can perform analytical calculations throughout. However, in most realistic applications the posterior must be evaluated numerically, and most often by sampling using [](sec:MCMC). This is no silver bullet and to quantify (or characterize) a multi-dimensional posterior, sometimes with a complicated geometry, for an intricate physical model, is by no means guaranteed to succeed. At least not in finite time. Nevertheless, obtaining posterior distributions to represent uncertainties is the gold standard in any inferential analysis.
 
 
 
@@ -116,7 +120,7 @@ The distribution of future data conditioned on past data and background informat
 \pdf{\futuredata}{\data,I} = \int_{\Omega} \pdf{\futuredata}{\pars,\data, I}\pdf{\pars}{\data,I}\,{\rm d} \pars.
 ```
 
-If $\futuredata$ is conditionally independent of $\data$, we can replace $\pdf{\futuredata}{\pars,\data, I}$ by $\pdf{\futuredata}{\pars, I}$, but there are cases of ppds where this is not true and we must be more careful (e.g., when we include $\delta M$). 
+If $\futuredata$ is conditionally independent of $\data$, we can replace $\pdf{\futuredata}{\pars,\data, I}$ by $\pdf{\futuredata}{\pars, I}$, but there are cases of ppds where this is not true and we must be more careful (e.g., sometimes when we include $\delta M$). 
 By performing this integral we account for the uncertainty in the model parameters $\pars$ when making predictions. In fact, one can marginalize (average) predictions over anything and everything that we are uncertain about as long as we have access to the necessary probability distributions. 
 
 ::::{admonition} Checkpoint question
