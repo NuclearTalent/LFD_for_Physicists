@@ -112,7 +112,7 @@ Bayesian parameter estimation can sometimes be very challenging. In the chapter 
 
 
 
-## The posterior predictive distribution
+## The posterior predictive distribution 
 The distribution of future data conditioned on past data and background information, i.e., $\pdf{\futuredata}{\data,I}$, is called a posterior predictive distribution (ppd). Assuming that we have a model $M(\pars)$ for the data-generating mechanism we can express this distribution by marginalizing over the uncertain model parameters $\pars \in \Omega$
 
 ```{math}
