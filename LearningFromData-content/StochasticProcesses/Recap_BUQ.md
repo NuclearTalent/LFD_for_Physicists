@@ -89,10 +89,14 @@ Class: map this problem onto the Metropolis algorithm.
 :::{hint}
 Use `shift-tab-tab` to check whether the normal function takes $\sigma$ or $\sigma^2$ as an argument.
 :::
-:::{admonition} What is $p(\thetavec_i|D,I)$?
-:class: dropdown
+::::{admonition} Checkpoint question 
+:class: my-checkpoint
+What is $p(\thetavec_i|D,I)$?
+:::{admonition} Answer
+:class: dropdown, my-answer
 It must be constant except for the borders $\Lra$ $U(-5,5)$
 :::
+::::
 * Check the answer. Change `np.random.seed(10)` to `np.random.seed()`
     * This will mean a different pseudo-random number sequence every time you re-run.
     * Note the fluctuations.
@@ -121,10 +125,10 @@ $$
 
 so that $\rho(h) = 1$ if fully correlated and if uncorrelated $\rho(h) = 0$. In practice if uncorrelated it will fluctuate around zero with increasing $h$. 
 It will often be found that $\rho(h) \propto e^{-h/\tau}$ for $h < 2\tau$.
-In terms of a sequence $X_t$ with nonzero mean $\Xbar$, we calculate $\rho(h)$ by sums over when $X_t$ and $X_{t+h}$ overlap ("ol"):
+In terms of a sequence $X_t$ with nonzero mean $\overline X$, we calculate $\rho(h)$ by sums over when $X_t$ and $X_{t+h}$ overlap ("ol"):
 
 $$
-  \rho(h) = \frac{\sum_{\text{ol}} \bigl[(X_t - \Xbar)(X_{t+h}-\Xbar)\bigr]}{\sqrt{\sum_{\text{ol}} (X_t - \Xbar)^2}\sqrt{\sum_{\text{ol}}(X_{t+h}-\Xbar)^2}}
+  \rho(h) = \frac{\sum_{\text{ol}} \bigl[(X_t - \overline X)(X_{t+h}-\overline X)\bigr]}{\sqrt{\sum_{\text{ol}} (X_t - \overline X)^2}\sqrt{\sum_{\text{ol}}(X_{t+h}-\overline X)^2}}
 $$
 
 In MCMC chains there will be a typical time until $\rho(h)$ fluctuates about 0, called the "autocorrelation time".
@@ -147,35 +151,50 @@ After equilibrium we look at the chain and note there are $N_A$ green boxes at $
 Let's consider each of the $X_A$ boxes in turn in the chain.
 Each of the boxes at $X_A$ had a chance with the next Monte Carlo step to go to $X_B$. Similarly,  each of the boxes at $X_B$ had a chance to go to $X_A$. For a steady-state situation, we need the number of actual moves in each direction to be the same. (This means that the *rates* are equal.)
 
-:::{admonition} What if the only moves accepted were those that went uphill (i.e., to higher probability density)? What would happen to $N_A$ and $N_B$ over time? Is this stationary?
-:class: dropdown
+::::{admonition} Checkpoint question 
+:class: my-checkpoint
+What if the only moves accepted were those that went uphill (i.e., to higher probability density)? What would happen to $N_A$ and $N_B$ over time? Is this stationary?
+:::{admonition} Answer
+:class: dropdown, my-answer
 If only uphill move were accepted, then $N_B$ would monotonically increase while $N_A$ would eventually monotonically decrease (it would get some input at first from lower probability values of $X$ but eventually those would all be gone).
 So all of the boxes would end up at $x_B$.
 This is stationary but not at the posterior we are sampling!
 :::
+::::
 
 Ok, so suppose $p(X|X')$ is the transition probability, that we'll move from $X'$ to $X$. 
-:::{admonition} In terms of $p(X_A|X_B)$, $p(X_B|X_A)$, $N_A$, and $N_B$, what is the condition that the exchanges between $A$ and $B$ cancel out? (For now assume a symmetric proposal distribution $q$.)
-:class: dropdown
+::::{admonition} Checkpoint question 
+:class: my-checkpoint
+In terms of $p(X_A|X_B)$, $p(X_B|X_A)$, $N_A$, and $N_B$, what is the condition that the exchanges between $A$ and $B$ cancel out? (For now assume a symmetric proposal distribution $q$.)
+:::{admonition} Answer
+:class: dropdown, my-answer
 
 $$
    N_A \cdot p(X_B|X_A) = N_B \cdot p(X_A | X_B)
 $$
 
 :::
+::::
 
-:::{admonition} How are $N_A$ and $N_B$ related to the total $N$ and the posteriors $p(X_A|D,I)$ and $p(X_B|D,I)$?
-:class: dropdown
+::::{admonition} Checkpoint question 
+:class: my-checkpoint
+How are $N_A$ and $N_B$ related to the total $N$ and the posteriors $p(X_A|D,I)$ and $p(X_B|D,I)$?
+:::{admonition} Answer
+:class: dropdown, my-answer
 
 $$
    N_A = N \cdot p(X_A|D,I) \qquad N_B = N \cdot p(X_B|D,I)
 $$
 
 :::
+::::
 
 Now let's put it together.
-:::{admonition} What is the ratio of $p(X_B|X_A)$ to $p(X_A|X_B)$ in terms of $p(X_A|D,I)$ and $p(X_B|D,I)$?
-:class: dropdown
+::::{admonition} Checkpoint question 
+:class: my-checkpoint
+What is the ratio of $p(X_B|X_A)$ to $p(X_A|X_B)$ in terms of $p(X_A|D,I)$ and $p(X_B|D,I)$?
+:::{admonition} Answer
+:class: dropdown, my-answer
 
 $$
   \frac{p(X_B|X_A)}{p(X_A|X_B)} = 
@@ -183,6 +202,7 @@ $$
 $$
 
 :::
+::::
 
 Now how do we realize a rule that satisfies the condition we just derived? We actually have a lot of freedom in doing so and the Metropolis choice is just one possibility. Let's verify that it works. 
 The Metropolis algorithm says
@@ -203,8 +223,12 @@ Let's check cases and see if it works. Here is a chart:
 | $p(X_A\vert D,I) \lt p(X_B\vert D,I)$ | *[fill in here]* | *[fill in here]* | 
 
 
-:::{admonition} Fill in the chart based on the Metropolis algorithm we are using and verify that the ratio of $p(X_B|X_A)$ to $p(X_A|X_B)$ agrees with the answer derived above.  
-:class: dropdown
+
+::::{admonition} Checkpoint question 
+:class: my-checkpoint
+Fill in the chart based on the Metropolis algorithm we are using and verify that the ratio of $p(X_B|X_A)$ to $p(X_A|X_B)$ agrees with the answer derived above. <br>  
+:::{admonition} Answer
+:class: dropdown, my-answer
 
 | | $p(X_B\vert X_A)$  |  $p(X_A\vert X_B)$ |
 | :-: | :-: | :-: |
@@ -214,15 +238,25 @@ Let's check cases and see if it works. Here is a chart:
 Dividing the 2nd by the 3rd columns for the 2nd and 3rd rows each gives the correct result!
 
 :::
+::::
 
 
 
 Ok, so it works. What if we have an asymmetric proposal distribution? So $q(X|X') \neq q(X'|X)$. Then we just need to go back to where we were equating rates and add the $q$s to each side of the equation. The bottom line is the Metropolis algorithm with the Metropolis ratio $r$ as we have summarized it at the beginning of this lecture.
 
-:::{admonition} Why do you think that this property is called detailed balance? Can you make an analogy with thermodynamic equilibrium for e.g. a collection of hydrogen atoms?
-:class: dropdown
+
+
+
+
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+Why do you think that this property is called detailed balance? Can you make an analogy with thermodynamic equilibrium for e.g. a collection of hydrogen atoms?
+:::{admonition} Answer
+:class: dropdown, my-answer 
 *You answer!*
 :::
+::::
+
 
 
 
