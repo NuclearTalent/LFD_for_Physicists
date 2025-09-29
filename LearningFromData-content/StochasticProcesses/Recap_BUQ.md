@@ -1,3 +1,4 @@
+(sec:MCMC_Recaps)=
 # Recaps
 
 ## Recap of Poisson MCMC example
