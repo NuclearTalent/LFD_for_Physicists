@@ -12,6 +12,7 @@ kernelspec:
   name: python3
 ---
 
+(sec:MarkovChains)=
 # Markov chains
 
 ```{epigraph}

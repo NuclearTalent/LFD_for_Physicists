@@ -1,3 +1,4 @@
+(sec:MCMC_BUQEYE)=
 # MCMC Intro from BUQEYE
 
 ## Why MCMC? 
@@ -234,7 +235,7 @@ Here are some comments and observations on the basic MH simulation.
 
 ## Metropolis Poisson example (Gregory, section 12.2)
 
-* See [](./Metropolis_Poisson_example.ipynb).
+* See [Metropolis Poisson example notebook](./demo-MCMC.ipynb).
 
 * We've already seen the Poisson distribution $p(k|\mu) = \mu^k e^{-\mu}/k!$ for integer $k\geq 0$ and we've sampled it through a `scipy.stats` script. Here we'll sample it via MCMC.
 
