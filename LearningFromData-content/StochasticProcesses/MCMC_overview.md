@@ -11,6 +11,6 @@ kernelspec:
 ---
 
 (sec:OverviewMCMC)=
-# Overview of Markov Chain Monte Carlo
+# Details of Markov Chain Monte Carlo
 
-In these sections we give an overview of MCMC.
+In these sections we provide a detailed treatment of MCMC and some examples.

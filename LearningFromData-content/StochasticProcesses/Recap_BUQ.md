@@ -2,7 +2,7 @@
 
 ## Recap of Poisson MCMC example
 
-Notebook: [](/notebooks/MCMC_sampling_I/Metropolis_Poisson_example.ipynb)
+Notebook: [Metropolis-Hasting MCMC sampling of a Poisson distribution](https://nucleartalent.github.io/LFD_for_Physicists/LearningFromData-content/StochasticProcesses/demo-MCMC.html)
 
 :::{admonition} Recall Metropolis algorithm for $p(\thetavec | D, I)$ (or any other posterior).
 * start with inital point $\thetavec_0$ (for each walker)
@@ -77,7 +77,7 @@ $\qquad$ where $f(\thetavec) = Z\, p(\thetavec)$ is unnormalized.
 
 ## MCMC random walk and sampling example
 
-Look at the notebook [](/notebooks/MCMC_sampling_I/MCMC-random-walk-and-sampling.ipynb). Let's do some of the first part together.
+Look at the notebook [Exercise: Random walk](https://nucleartalent.github.io/LFD_for_Physicists/LearningFromData-content/StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html). Let's do some of the first part together.
 
 **Part 1:** Random walk in the $[-5,5]$ region. The proposal step is drawn from a normal distribution with zero mean and standard deviation `proposal_width`.
 
