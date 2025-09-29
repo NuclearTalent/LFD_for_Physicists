@@ -310,7 +310,7 @@
 <li class="toctree-l2"><a class="reference internal" href="MCMC.html">18.2. Markov chain Monte Carlo sampling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="MCMC_intro_BUQ.html">18.3. Alternative MCMC introduction (Gregory)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="demo-MCMC.html">18.4. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">18.5. Recap of Poisson and more about MCMC</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">18.5. Recap of Poisson and general MCMC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BUQ/Assignment_extending_radioactive_lighthouse.html">18.6. Assignment: 2D radioactive lighthouse location using MCMC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-random-walk-and-sampling.html">18.7. Exercise: Random walk</a></li>
 </ul>
@@ -782,9 +782,13 @@ document.write(`
 <p class="admonition-title">Hint</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">shift-tab-tab</span></code> to check whether the normal function takes <span class="math notranslate nohighlight">\(\sigma\)</span> or <span class="math notranslate nohighlight">\(\sigma^2\)</span> as an argument.</p>
 </div>
-<div class="dropdown admonition">
-<p class="admonition-title">What is <span class="math notranslate nohighlight">\(p(\thetavec_i|D,I)\)</span>?</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>What is <span class="math notranslate nohighlight">\(p(\thetavec_i|D,I)\)</span>?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
 <p>It must be constant except for the borders <span class="math notranslate nohighlight">\(\Lra\)</span> <span class="math notranslate nohighlight">\(U(-5,5)\)</span></p>
+</div>
 </div>
 <ul>
 <li><p>Check the answer. Change <code class="docutils literal notranslate"><span class="pre">np.random.seed(10)</span></code> to <code class="docutils literal notranslate"><span class="pre">np.random.seed()</span></code></p>
@@ -818,10 +822,10 @@ If the mean is not zero, then subtract it first.</p>
 \]</div>
 <p>so that <span class="math notranslate nohighlight">\(\rho(h) = 1\)</span> if fully correlated and if uncorrelated <span class="math notranslate nohighlight">\(\rho(h) = 0\)</span>. In practice if uncorrelated it will fluctuate around zero with increasing <span class="math notranslate nohighlight">\(h\)</span>.
 It will often be found that <span class="math notranslate nohighlight">\(\rho(h) \propto e^{-h/\tau}\)</span> for <span class="math notranslate nohighlight">\(h &lt; 2\tau\)</span>.
-In terms of a sequence <span class="math notranslate nohighlight">\(X_t\)</span> with nonzero mean <span class="math notranslate nohighlight">\(\Xbar\)</span>, we calculate <span class="math notranslate nohighlight">\(\rho(h)\)</span> by sums over when <span class="math notranslate nohighlight">\(X_t\)</span> and <span class="math notranslate nohighlight">\(X_{t+h}\)</span> overlap (“ol”):</p>
+In terms of a sequence <span class="math notranslate nohighlight">\(X_t\)</span> with nonzero mean <span class="math notranslate nohighlight">\(\overline X\)</span>, we calculate <span class="math notranslate nohighlight">\(\rho(h)\)</span> by sums over when <span class="math notranslate nohighlight">\(X_t\)</span> and <span class="math notranslate nohighlight">\(X_{t+h}\)</span> overlap (“ol”):</p>
 <div class="math notranslate nohighlight">
 \[
-  \rho(h) = \frac{\sum_{\text{ol}} \bigl[(X_t - \Xbar)(X_{t+h}-\Xbar)\bigr]}{\sqrt{\sum_{\text{ol}} (X_t - \Xbar)^2}\sqrt{\sum_{\text{ol}}(X_{t+h}-\Xbar)^2}}
+  \rho(h) = \frac{\sum_{\text{ol}} \bigl[(X_t - \overline X)(X_{t+h}-\overline X)\bigr]}{\sqrt{\sum_{\text{ol}} (X_t - \overline X)^2}\sqrt{\sum_{\text{ol}}(X_{t+h}-\overline X)^2}}
 \]</div>
 <p>In MCMC chains there will be a typical time until <span class="math notranslate nohighlight">\(\rho(h)\)</span> fluctuates about 0, called the “autocorrelation time”.
 We’ll return later to look at autocorrelation and related diagnostics.</p>
@@ -837,35 +841,51 @@ But if our Metropolis-Hastings algorithm is correctly implemented, the histogram
 <p>After equilibrium we look at the chain and note there are <span class="math notranslate nohighlight">\(N_A\)</span> green boxes at <span class="math notranslate nohighlight">\(X_A\)</span> and <span class="math notranslate nohighlight">\(N_B\)</span> green boxes at <span class="math notranslate nohighlight">\(X_B\)</span>.
 Let’s consider each of the <span class="math notranslate nohighlight">\(X_A\)</span> boxes in turn in the chain.
 Each of the boxes at <span class="math notranslate nohighlight">\(X_A\)</span> had a chance with the next Monte Carlo step to go to <span class="math notranslate nohighlight">\(X_B\)</span>. Similarly,  each of the boxes at <span class="math notranslate nohighlight">\(X_B\)</span> had a chance to go to <span class="math notranslate nohighlight">\(X_A\)</span>. For a steady-state situation, we need the number of actual moves in each direction to be the same. (This means that the <em>rates</em> are equal.)</p>
-<div class="dropdown admonition">
-<p class="admonition-title">What if the only moves accepted were those that went uphill (i.e., to higher probability density)? What would happen to <span class="math notranslate nohighlight">\(N_A\)</span> and <span class="math notranslate nohighlight">\(N_B\)</span> over time? Is this stationary?</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>What if the only moves accepted were those that went uphill (i.e., to higher probability density)? What would happen to <span class="math notranslate nohighlight">\(N_A\)</span> and <span class="math notranslate nohighlight">\(N_B\)</span> over time? Is this stationary?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
 <p>If only uphill move were accepted, then <span class="math notranslate nohighlight">\(N_B\)</span> would monotonically increase while <span class="math notranslate nohighlight">\(N_A\)</span> would eventually monotonically decrease (it would get some input at first from lower probability values of <span class="math notranslate nohighlight">\(X\)</span> but eventually those would all be gone).
 So all of the boxes would end up at <span class="math notranslate nohighlight">\(x_B\)</span>.
 This is stationary but not at the posterior we are sampling!</p>
 </div>
+</div>
 <p>Ok, so suppose <span class="math notranslate nohighlight">\(p(X|X')\)</span> is the transition probability, that we’ll move from <span class="math notranslate nohighlight">\(X'\)</span> to <span class="math notranslate nohighlight">\(X\)</span>.</p>
-<div class="dropdown admonition">
-<p class="admonition-title">In terms of <span class="math notranslate nohighlight">\(p(X_A|X_B)\)</span>, <span class="math notranslate nohighlight">\(p(X_B|X_A)\)</span>, <span class="math notranslate nohighlight">\(N_A\)</span>, and <span class="math notranslate nohighlight">\(N_B\)</span>, what is the condition that the exchanges between <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> cancel out? (For now assume a symmetric proposal distribution <span class="math notranslate nohighlight">\(q\)</span>.)</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>In terms of <span class="math notranslate nohighlight">\(p(X_A|X_B)\)</span>, <span class="math notranslate nohighlight">\(p(X_B|X_A)\)</span>, <span class="math notranslate nohighlight">\(N_A\)</span>, and <span class="math notranslate nohighlight">\(N_B\)</span>, what is the condition that the exchanges between <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> cancel out? (For now assume a symmetric proposal distribution <span class="math notranslate nohighlight">\(q\)</span>.)</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
 <div class="math notranslate nohighlight">
 \[
    N_A \cdot p(X_B|X_A) = N_B \cdot p(X_A | X_B)
 \]</div>
 </div>
-<div class="dropdown admonition">
-<p class="admonition-title">How are <span class="math notranslate nohighlight">\(N_A\)</span> and <span class="math notranslate nohighlight">\(N_B\)</span> related to the total <span class="math notranslate nohighlight">\(N\)</span> and the posteriors <span class="math notranslate nohighlight">\(p(X_A|D,I)\)</span> and <span class="math notranslate nohighlight">\(p(X_B|D,I)\)</span>?</p>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>How are <span class="math notranslate nohighlight">\(N_A\)</span> and <span class="math notranslate nohighlight">\(N_B\)</span> related to the total <span class="math notranslate nohighlight">\(N\)</span> and the posteriors <span class="math notranslate nohighlight">\(p(X_A|D,I)\)</span> and <span class="math notranslate nohighlight">\(p(X_B|D,I)\)</span>?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
 <div class="math notranslate nohighlight">
 \[
    N_A = N \cdot p(X_A|D,I) \qquad N_B = N \cdot p(X_B|D,I)
 \]</div>
 </div>
+</div>
 <p>Now let’s put it together.</p>
-<div class="dropdown admonition">
-<p class="admonition-title">What is the ratio of <span class="math notranslate nohighlight">\(p(X_B|X_A)\)</span> to <span class="math notranslate nohighlight">\(p(X_A|X_B)\)</span> in terms of <span class="math notranslate nohighlight">\(p(X_A|D,I)\)</span> and <span class="math notranslate nohighlight">\(p(X_B|D,I)\)</span>?</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>What is the ratio of <span class="math notranslate nohighlight">\(p(X_B|X_A)\)</span> to <span class="math notranslate nohighlight">\(p(X_A|X_B)\)</span> in terms of <span class="math notranslate nohighlight">\(p(X_A|D,I)\)</span> and <span class="math notranslate nohighlight">\(p(X_B|D,I)\)</span>?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
 <div class="math notranslate nohighlight">
 \[
   \frac{p(X_B|X_A)}{p(X_A|X_B)} = 
   \frac{N p(X_B|D,I)}{N p(X_A|D,I)} = \frac{p(X_B|D,I)}{p(X_A|D,I)}
 \]</div>
+</div>
 </div>
 <p>Now how do we realize a rule that satisfies the condition we just derived? We actually have a lot of freedom in doing so and the Metropolis choice is just one possibility. Let’s verify that it works.
 The Metropolis algorithm says</p>
@@ -897,8 +917,11 @@ The Metropolis algorithm says</p>
 </tbody>
 </table>
 </div>
-<div class="dropdown admonition">
-<p class="admonition-title">Fill in the chart based on the Metropolis algorithm we are using and verify that the ratio of <span class="math notranslate nohighlight">\(p(X_B|X_A)\)</span> to <span class="math notranslate nohighlight">\(p(X_A|X_B)\)</span> agrees with the answer derived above.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Fill in the chart based on the Metropolis algorithm we are using and verify that the ratio of <span class="math notranslate nohighlight">\(p(X_B|X_A)\)</span> to <span class="math notranslate nohighlight">\(p(X_A|X_B)\)</span> agrees with the answer derived above. <br></p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head text-center"><p></p></th>
@@ -920,10 +943,15 @@ The Metropolis algorithm says</p>
 </div>
 <p>Dividing the 2nd by the 3rd columns for the 2nd and 3rd rows each gives the correct result!</p>
 </div>
+</div>
 <p>Ok, so it works. What if we have an asymmetric proposal distribution? So <span class="math notranslate nohighlight">\(q(X|X') \neq q(X'|X)\)</span>. Then we just need to go back to where we were equating rates and add the <span class="math notranslate nohighlight">\(q\)</span>s to each side of the equation. The bottom line is the Metropolis algorithm with the Metropolis ratio <span class="math notranslate nohighlight">\(r\)</span> as we have summarized it at the beginning of this lecture.</p>
-<div class="dropdown admonition">
-<p class="admonition-title">Why do you think that this property is called detailed balance? Can you make an analogy with thermodynamic equilibrium for e.g. a collection of hydrogen atoms?</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Why do you think that this property is called detailed balance? Can you make an analogy with thermodynamic equilibrium for e.g. a collection of hydrogen atoms?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
 <p><em>You answer!</em></p>
+</div>
 </div>
 </section>
 </section>
