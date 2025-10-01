@@ -132,7 +132,7 @@ When using a linear model we have access to a set of data $\mathcal{D}$ for the 
 For each datum $y_i$ there is an independent variable $x_i$, and our model for the $i^{\text{th}}$ datum  is
 
 \begin{equation}
-y_i \equiv M(\parsLR;x_i) = \sum_{j=0}^{N_p-1} \paraLR_j f_j(x_i).
+M_i \equiv M(\parsLR;x_i) = \sum_{j=0}^{N_p-1} \paraLR_j f_j(x_i).
 \end{equation}
 
 We can collect the basis functions evaluated at each independent variable $x_i$ in a matrix $\mathbf{X}$ of dimension $N_d \times N_p$:
