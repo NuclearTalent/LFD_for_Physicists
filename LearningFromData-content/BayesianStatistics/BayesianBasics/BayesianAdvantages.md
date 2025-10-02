@@ -19,7 +19,7 @@ kernelspec:
 -- Devinderjit Sivia 
 ```
 
-The Bayesian approach offers a number of distinct advantages in scientific applications. Some of them are listed below. In this chapter we introduce in particular the important tasks of inference with parametric models and the propagation of errors. 
+The Bayesian approach offers a number of distinct advantages in scientific applications. Some of them are listed below. In this chapter we introduce in particular the multiple ways of inference with parametric models. 
 
 ```{admonition} How the Bayesian approach helps in science
 1. Provides an elegantly simple and rational approach for answering any scientific question for a given state of information. The procedure is well-defined:
@@ -49,7 +49,7 @@ Occam’s razor is a principle attributed to the medieval philosopher William of
 :height: 250px
 :name: fig-Leprechaun
 
-Did the Leprechaun drink your wine, or is there a simpler explanation?
+Did the Leprechaun drink your wine, or is there a simpler explanation that does not involve mythical figures?
 ```
 ````
 
