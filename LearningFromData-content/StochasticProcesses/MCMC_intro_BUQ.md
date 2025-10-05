@@ -16,7 +16,7 @@ Suppose we have a theoretical model for this.
 And now we want to calculate the expectation value of a *function* of $\thetavec$, e.g., $\langle f(\thetavec)\rangle$.
 E.g., we identified the *particular* values of $\theta_1, \theta_2,\ldots\theta_n$ that specify a nuclear force Hamiltonian that best reproduced neutron-proton scattering data. Then we would want to calculate $\langle f(\thetavec)\rangle$, which might be the binding energy of a nucleus (a very complicated function in this case!).
 
-As we have discussed in {ref}`sec:Inference:looking_ahead`, the expectation value of $f(\thetavec)$ given the probability distribution p(\thetavec|D,I) is: 
+As we have discussed in {ref}`sec:Inference:looking_ahead`, the expectation value of $f(\thetavec)$ given the probability distribution $p(\thetavec|D,I)$ is: 
 
 $$
  \langle f(\thetavec)\rangle = 
@@ -86,20 +86,21 @@ Does this always work? No! (Cf., the radioactive lighthouse problem.) But if the
 
 ## Markov Chain Monte Carlo (MCMC)
 
-* **Key problem:** too much time is wasted sampling regions where $p(\thetavec|D,I)$ is very small.
-If for one parameter the fraction of significant strength is $10^{-1}$, in an $M$-parameter problem the fraction of the volume is $10^{-M}$.
-This necessitates *importance sampling*, which reweights the integrand to more appropriately distribution points (e.g., the program VEGAS), but this is difficult to accomplish in general.
+The key problem with the naive MC integration approach is that too much time is wasted sampling regions where $p(\thetavec|D,I)$ is very small.
+If, for one parameter, the fraction of significant strength is $10^{-1}$, in an $M$-parameter problem the fraction of the volume is $10^{-M}$, which gets very small rapidly with increasing $M$.
+This necessitates *importance sampling*, which reweighs the integrand to more appropriately distribution points. This is accomplished by the adaptive Monte Carlo integration program `VEGAS`, but it is difficult to accomplish in general.
 
-* **Bottom line:** it is not feasible to draw a series of independent random samples from $p(\thetavec|D,I)$ for larger sizes of $\thetavec$.
-     * Remember, independent means if $\thetavec_1, \thetavec_2, \ldots$ is the series, knowing $\thetavec_i$ doesn't tell us anything about $\thetavec_{i+1}$ (or any other $\thetavec$).
-
-*But the samples don't need to be independent.* We just need to generate $p(\thetavec|D,I)$ in the correct proportions (e.g., so it approximates $p(\thetavec|D,I)$ when histogramming the samples).
+The bottom line is that it is not feasible to draw a series of independent random samples from $p(\thetavec|D,I)$ for larger sizes of $\thetavec$.
+Remember, independent means if $\thetavec_1, \thetavec_2, \ldots$ is the series, knowing $\thetavec_i$ doesn't tell us anything about $\thetavec_{i+1}$ (or any other $\thetavec$).
+*But the samples don't need to be independent.* We just need to generate $p(\thetavec|D,I)$ in the correct proportions; e.g., so it approximates $p(\thetavec|D,I)$ when the samples are histogrammed.
 
 **Solution:** Do a *random walk* (diffusion) in the parameter space of $\thetavec$, so that the probability for being in a region is proportional to $p(\thetavec|D,I)$ for that region.
+The basic plan is:
 * $\thetavec_{i+1}$ follows from $\thetavec_i$ by a transition probability ("kernel") $\Lra$ $p(\thetavec_{i+1}|\thetavec_i)$.
-* The transition probability is assumed to be "time independent", so same $p(\thetavec_{i+1}|\thetavec_i)$ no matter when you do it  $\Lra$ *Markov chain* and the method is called Markov Chain Monte Carlo or MCMC.
+* The transition probability is assumed to be "time independent", so the same $p(\thetavec_{i+1}|\thetavec_i)$ holds no matter when you do it  $\Lra$ this is a *Markov chain* and the method is called Markov Chain Monte Carlo or MCMC.
 * Once we have a representative set of $N$ vectors $\{\thetavec_i\}$, then any expectation value of a function $f$ of $\thetavec$, which is the integral of $f(\thetavec) p(\thetavec|D,I)$ over $\thetavec$, is given simply by the average $\langle f\rangle = \frac{1}{N}\sum_i f(\thetavec_i)$.
-* We can think of the sampled distribution as a set of delta functions, whose normalization is trivial:
+
+We can think of the sampled distribution as a set of delta functions, whose normalization is trivial:
 
 $$ 
   p(\thetavec|D,I) \rightarrow \frac{1}{N}\sum_{i=1}^{N}\delta(\thetavec-\thetavec_i)
@@ -119,12 +120,12 @@ $$
   =\frac{1}{N}\sum_{i=1}^{N} f(\thetavec_i) .
 $$
 
-
-
 :::
 
 
 ## Basic structure of MCMC algorithm
+
+Let's elaborate on the structure of the MCMC algorithm.
 
 1. Given $\thetavec_i$, *propose* a value for $\thetavec_{i+1}$, call it the "candidate" $\phivec$, sampled from $q(\phivec|\thetavec_i)$. This $q$ could take many forms, so for concreteness imagine it as a multivariate normal distribution with mean given by $\thetavec_i$ and variance $\sigmavec^2$ (to be specified).
     * Decreased probability as you get further away from the current sample.
@@ -150,8 +151,7 @@ Decision:
 :::
 
 Note that the last case means you *do* have a $\theta_{i+1}$, but it is the same as $\theta_i$ (so you have multiple copies and the chain continues to grow).
-
-The acceptance probability is the minimum of $1,r$.
+We further note that the acceptance probability is the minimum of $1$ and $r$, which makes the (pseudo-)code particularly simple:
 
 :::{admonition} Algorithm pseudo-code:
 1. Initialize $\thetavec_i$, set $i=0$.
@@ -169,31 +169,19 @@ It's important to do the `else` step for $U \gt r$.
 :::
 
 
-**Plan:**
-1. Look at visualizations.
-1. Look at a basic example for the Poisson distribution. 
-1. Consider MCMC_random_walk_and_sampling notebook.
-1. Look at `emcee` example from Assignment 1. 
-
 ## Visualization of MCMC sampling
 
-There are excellent javascript visualizations of MCMC sampling out there.
+There are excellent javascript visualizations of MCMC sampling available on the web.
+A particularly effective set of interactive demos was created by Chi Feng, available at [https://chi-feng.github.io/mcmc-demo/](https://chi-feng.github.io/mcmc-demo/)
+These demos range from random walk Metropolis-Hastings (MH) to Adaptive MH to Hamiltonian Monte Carlo (HMC) to No-U-Turn Sampler (NUTS) to Metropolis-adjusted Langevin Algorithm (MALA) to Hesian-HMC (H2MC), to Stein Variational Gradient Descent (SVGD) to Nested Sampling with RadFriends (RadFriends-NS). We will only consider a subset of these samplers, but the reader is encouraged to explore further.
 
-* A particularly effective set of interactive demos was created by Chi Feng, available at [https://chi-feng.github.io/mcmc-demo/](https://chi-feng.github.io/mcmc-demo/)
-
-* These demos range from random walk Metropolis-Hastings (MH) to Adaptive MH to Hamiltonian Monte Carlo (HMC) to No-U-Turn Sampler (NUTS) to Metropolis-adjusted Langevin Algorithm (MALA) to Hesian-HMC (H2MC), to Stein Variational Gradient Descent (SVGD) to Nested Samplig with RadFriends (RadFriends-NS).
-
-* An accessible introduction to MCMC with simplified versions of Feng's visualization by Richard McElreath. Let's look at the first part of his blog entry at [http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/](http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/). 
-
-:::{admonition} Recall the basic structure of Metropolis-Hastings
+An accessible introduction to MCMC with simplified versions of Feng's visualization by Richard McElreath. Let's look at the first part of his blog entry at [http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/](http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/). 
+When looking at the visualizations, remember the basic structure of the MH algorithm:
 1. Make a random proposal for new parameter values.
 1. Accept or reject the proposal based on a Metropolis criterion.
-:::
-
-### Random Walk Metropolis-Hasting (MH)
 
 
-Here are some comments and observations on the basic MH simulation.
+Here are some comments and observations on the basic MH simulation from the McElreath blog.
 * The target distribution is a two-dimensional Gaussian (just the product of two one-dimensional Gaussians).
     :::{admonition} Question
       Is the distribution correlated? How do you know?
