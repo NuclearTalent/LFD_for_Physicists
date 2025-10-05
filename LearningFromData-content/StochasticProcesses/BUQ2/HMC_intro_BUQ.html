@@ -301,9 +301,10 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../RootMCMC.html">16. Overview of Part III</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../IntuitionMCMC.html">17. Intuition for MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../demo-MCMC-improved.html">17.1. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../Recap_BUQ.html">17.2. Recap of Poisson and general MCMC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../BUQ/MCMC-random-walk-and-sampling.html">17.3. Exercise: Random walk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MCMC_intro_BUQ.html">17.1. MCMC introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../demo-MCMC-improved.html">17.2. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Recap_BUQ.html">17.3. Recap of Poisson and general MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BUQ/MCMC-random-walk-and-sampling.html">17.4. Exercise: Random walk</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../TechnicalDetailsMCMC.html">18. Technical details of MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -316,11 +317,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../Advanced_MCMC.html">19. MCMC in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../MCMC.html">19.1. Markov chain Monte Carlo sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../MCMC_intro_BUQ.html">19.2. Alternative MCMC introduction (Gregory)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html">19.3. Advanced Markov chain Monte Carlo sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../BUQ/MCMC-diagnostics.html">19.4. Overview: MCMC Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html">19.2. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BUQ/MCMC-diagnostics.html">19.3. Overview: MCMC Diagnostics</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../BUQ/intuition_sampling.html">19.6. Intuition on sampling and best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BUQ/intuition_sampling.html">19.5. Intuition on sampling and best practices</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../Other_samplers.html">20. Advanced Sampling</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -679,14 +679,11 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="hamiltonian-monte-carlo-hmc-overview-and-visualization">
 <h1><span class="section-number">20.1. </span>Hamiltonian Monte Carlo (HMC) overview and visualization<a class="headerlink" href="#hamiltonian-monte-carlo-hmc-overview-and-visualization" title="Link to this heading">#</a></h1>
+<p>We’ve seen some different strategies for sampling difficult posteriors, such as an affine-invariant sampling approach (emcee) and a thermodynamic approach (parallel tempering).
+One of the most widespread techniques in contemporary samplers is Hamiltonian Monte Carlo, or HMC.
+Here we will look at some visualizations as motivation for HMC, then consider some examples using the PyMC library.</p>
+<p>We return to the excellent set of interactive demos by Chi Feng at <a class="reference external" href="https://chi-feng.github.io/mcmc-demo/">https://chi-feng.github.io/mcmc-demo/</a> and their adaptation by Richard McElreath at <a class="reference external" href="http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/">http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/</a>.</p>
 <ul class="simple">
-<li><p>We’ve seen some different strategies for sampling difficult posteriors, such as an affine-invariant sampling approach (emcee) and a thermodynamic approach (parallel tempering).</p></li>
-<li><p>One of the most widespread techniques in contemporary samplers is Hamiltonian Monte Carlo, or HMC.</p>
-<ul>
-<li><p>We’ll look at some visualizations as motivation, then consider some examples using PyMC.</p></li>
-</ul>
-</li>
-<li><p>We return to the excellent set of interactive demos by Chi Feng at <a class="reference external" href="https://chi-feng.github.io/mcmc-demo/">https://chi-feng.github.io/mcmc-demo/</a> and their adaptation by Richard McElreath at <a class="reference external" href="http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/">http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/</a>. These are also linked on the 8820 Carmen visualization page.</p></li>
 <li><p>The McElreath blog piece forcefully advocates abandoning Metropolis-Hasting (MH) sampling in favor of HMC. Let’s take a look.</p>
 <ul>
 <li><p>First recall the random walk MH:</p>
@@ -802,7 +799,7 @@ Most endpoints are within a high probability region, so a high percentage is acc
 <ul class="simple">
 <li><p>Reversability needed so that desired distribution is invariant.</p></li>
 <li><p>Conservation of the Hamiltonian (which is the energy here).</p></li>
-<li><p>Volume preservation - preserves volume in <span class="math notranslate nohighlight">\((q,p)\)</span> phase space - this is Liouville’s Theorem. (If we take a cluster of points and follow their time evolution, the volume they occupy is unchanged. See <a class="reference internal" href="#/notebooks/MCMC_sampling_II/Liouville_theorem_visualization.ipynb"><code class="xref myst docutils literal notranslate"><span class="pre">/notebooks/MCMC_sampling_II/Liouville_theorem_visualization.ipynb</span></code></a> notebook.) <span class="math notranslate nohighlight">\(\Lra\)</span> this is critical because a change in volume would mean we would have to make a nontreival adjustment to the proposal (because the normalization <span class="math notranslate nohighlight">\(Z\)</span> would change).</p></li>
+<li><p>Volume preservation - preserves volume in <span class="math notranslate nohighlight">\((q,p)\)</span> phase space - this is Liouville’s Theorem. (If we take a cluster of points and follow their time evolution, the volume they occupy is unchanged. See <a class="reference internal" href="Liouville_theorem_visualization.html"><span class="std std-doc">Liouville Theorem Visualization</span></a> notebook.) <span class="math notranslate nohighlight">\(\Lra\)</span> this is critical because a change in volume would mean we would have to make a nontreival adjustment to the proposal (because the normalization <span class="math notranslate nohighlight">\(Z\)</span> would change).</p></li>
 </ul>
 </li>
 <li><p>These requirements are satisfied by the exact Hamilton’s equations, but we are <em>approximating</em> the solution to these differential equations. This necessitates a <em>symplectic</em> (symmetry conserving) integration.</p>

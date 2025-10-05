@@ -301,9 +301,10 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../StochasticProcesses/RootMCMC.html">16. Overview of Part III</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/IntuitionMCMC.html">17. Intuition for MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/demo-MCMC-improved.html">17.1. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/Recap_BUQ.html">17.2. Recap of Poisson and general MCMC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">17.3. Exercise: Random walk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC_intro_BUQ.html">17.1. MCMC introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/demo-MCMC-improved.html">17.2. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/Recap_BUQ.html">17.3. Recap of Poisson and general MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">17.4. Exercise: Random walk</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/TechnicalDetailsMCMC.html">18. Technical details of MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -316,11 +317,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Advanced_MCMC.html">19. MCMC in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC.html">19.1. Markov chain Monte Carlo sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC_intro_BUQ.html">19.2. Alternative MCMC introduction (Gregory)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/AdvancedMCMC.html">19.3. Advanced Markov chain Monte Carlo sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html">19.4. Overview: MCMC Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/AdvancedMCMC.html">19.2. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html">19.3. Overview: MCMC Diagnostics</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/intuition_sampling.html">19.6. Intuition on sampling and best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/intuition_sampling.html">19.5. Intuition on sampling and best practices</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Other_samplers.html">20. Advanced Sampling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -790,15 +790,15 @@ document.write(`
 <li><p>Consider <span class="math notranslate nohighlight">\(N\)</span> different models <span class="math notranslate nohighlight">\(M_i\)</span> (<span class="math notranslate nohighlight">\(i = 1, \ldots, N\)</span>), each with a parameter vector <span class="math notranslate nohighlight">\(\pars_i\)</span>. The number of parameters (length of <span class="math notranslate nohighlight">\(\pars_i\)</span>) might be different for different models. Each of them implies a sampling distribution for possible data</p></li>
 <li><p>Consider a scientific model <span class="math notranslate nohighlight">\(M\)</span> with a parameter vector <span class="math notranslate nohighlight">\(\pars\)</span>. Together with error models this implies a statistical model that gives a sampling distribution for possible data</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-46e4fa6a-3c44-4d33-9af4-df34a496d797">
-<span class="eqno">(8.1)<a class="headerlink" href="#equation-46e4fa6a-3c44-4d33-9af4-df34a496d797" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c43092db-5ae6-44a2-bb29-95ac18feda50">
+<span class="eqno">(8.1)<a class="headerlink" href="#equation-c43092db-5ae6-44a2-bb29-95ac18feda50" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(\data|{\pars}, M)
 \end{equation}\]</div>
 <ul class="simple">
 <li><p>The likelihood function is the pdf of the actual, observed data (<span class="math notranslate nohighlight">\(\data_\mathrm{obs}\)</span>) given a set of parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>:</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-71cdf88b-b38e-4b0c-a520-38ee02ae3dde">
-<span class="eqno">(8.2)<a class="headerlink" href="#equation-71cdf88b-b38e-4b0c-a520-38ee02ae3dde" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-98dfe6ee-8319-4c2d-a99b-e0f2f277f399">
+<span class="eqno">(8.2)<a class="headerlink" href="#equation-98dfe6ee-8319-4c2d-a99b-e0f2f277f399" title="Permalink to this equation">#</a></span>\[\begin{equation}
 {\mathcal{L}}_i (\pars) \equiv p(\data_\mathrm{obs}|\pars, M)
 \end{equation}\]</div>
 <p>With these ingredients, several types of scientific inquiry can be addressed using a Bayesian framework.</p>

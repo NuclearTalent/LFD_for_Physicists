@@ -68,7 +68,7 @@
     <script src="../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="19.2. MCMC Intro from BUQEYE" href="MCMC_intro_BUQ.html" />
+    <link rel="next" title="19.2. Advanced Markov chain Monte Carlo sampling" href="../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html" />
     <link rel="prev" title="19. Advanced Markov Chain Monte Carlo" href="Advanced_MCMC.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -301,9 +301,10 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="RootMCMC.html">16. Overview of Part III</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="IntuitionMCMC.html">17. Intuition for MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="demo-MCMC-improved.html">17.1. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Recap_BUQ.html">17.2. Recap of Poisson and general MCMC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-random-walk-and-sampling.html">17.3. Exercise: Random walk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MCMC_intro_BUQ.html">17.1. MCMC introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-MCMC-improved.html">17.2. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Recap_BUQ.html">17.3. Recap of Poisson and general MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-random-walk-and-sampling.html">17.4. Exercise: Random walk</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="TechnicalDetailsMCMC.html">18. Technical details of MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -316,11 +317,10 @@
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="Advanced_MCMC.html">19. MCMC in practice</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">19.1. Markov chain Monte Carlo sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="MCMC_intro_BUQ.html">19.2. Alternative MCMC introduction (Gregory)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html">19.3. Advanced Markov chain Monte Carlo sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-diagnostics.html">19.4. Overview: MCMC Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html">19.2. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-diagnostics.html">19.3. Overview: MCMC Diagnostics</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="BUQ/intuition_sampling.html">19.6. Intuition on sampling and best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/intuition_sampling.html">19.5. Intuition on sampling and best practices</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="Other_samplers.html">20. Advanced Sampling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -761,8 +761,8 @@ document.write(`
 <li><p>The exploration of posterior predictions with a function <span class="math notranslate nohighlight">\(g(\pars)\)</span>;</p>
 <ul>
 <li><p>Finding the <strong>posterior predictive distribution</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-193d7c3e-6340-44e0-81f7-04edc72af8e4">
-<span class="eqno">(19.1)<a class="headerlink" href="#equation-193d7c3e-6340-44e0-81f7-04edc72af8e4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a42ecfab-8e78-414c-b609-39e283dbda26">
+<span class="eqno">(19.1)<a class="headerlink" href="#equation-a42ecfab-8e78-414c-b609-39e283dbda26" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \{ g(\pars) \; : \; \pars \sim p(\pars) \}
 \end{equation}\]</div>
 </li>
@@ -790,13 +790,13 @@ document.write(`
 <section id="quadrature-methods">
 <h3>Quadrature methods<a class="headerlink" href="#quadrature-methods" title="Link to this heading">#</a></h3>
 <p>For small dimensions, classical numerical integration using quadrature is often the method of choice. For example, the one-dimensional integral</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1b2a7c72-8283-4477-b85c-864ee425a546">
-<span class="eqno">(19.3)<a class="headerlink" href="#equation-1b2a7c72-8283-4477-b85c-864ee425a546" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-27985bf7-e518-4476-8729-7cede8571e95">
+<span class="eqno">(19.3)<a class="headerlink" href="#equation-27985bf7-e518-4476-8729-7cede8571e95" title="Permalink to this equation">#</a></span>\[\begin{equation}
 I = \int d\para f(\para),
 \end{equation}\]</div>
 <p>is approximated by a weighted average of the function <span class="math notranslate nohighlight">\(f\)</span> evaluated at a number of quadrature points <span class="math notranslate nohighlight">\(\{ \para_i \}_{i=1}^N\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-4990440a-7de2-41de-90f0-bbad92cd90a7">
-<span class="eqno">(19.4)<a class="headerlink" href="#equation-4990440a-7de2-41de-90f0-bbad92cd90a7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-428cd108-08b1-4f37-a30e-24788f6ab6e3">
+<span class="eqno">(19.4)<a class="headerlink" href="#equation-428cd108-08b1-4f37-a30e-24788f6ab6e3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 I \approx \sum_{i=1}^N w_i f(\para_i),
 \end{equation}\]</div>
 <p>where the different quadrature schemes are distinguished by using different sets of design points and weights. We note, however, that the number of design points that is required for a fixed precision grows exponentially with dimension. Assuming an integration scheme with <span class="math notranslate nohighlight">\(N\)</span> design points in one dimension, the same coverage in <span class="math notranslate nohighlight">\(D\)</span> dimensions requires <span class="math notranslate nohighlight">\(N^D\)</span> design points, which will be impractically large unless <span class="math notranslate nohighlight">\(D\)</span> is sufficiently small. This exponential increase in the number of required function evaluations with the dimensionality of the problem is often called the curse of dimensionality and is the main motivation for Monte Carlo integration.</p>
@@ -809,21 +809,21 @@ I \approx \sum_{i=1}^N w_i f(\para_i),
 I = \int_{V_D} d\pars f(\pars) \approx I_N \equiv \frac{V_D}{N} \sum_{i=1}^N f(\pars_i),
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(\{ \pars_i \}_{i=1}^N\)</span> are <span class="math notranslate nohighlight">\(N\)</span> uniformly distributed points in the <span class="math notranslate nohighlight">\(D\)</span> dimensional volume <span class="math notranslate nohighlight">\(V_D\)</span> of the parameter space. The convergence of this expression will not be proven here, but is a consequence of the law of large numbers. Furthermore, one can show that the error in this approximation (usually) decreases as <span class="math notranslate nohighlight">\(1/\sqrt{N}\)</span> regardless of the dimensionality <span class="math notranslate nohighlight">\(D\)</span>, which is the main reason for its usefulness when facing complicated, high-dimensional integrals. To be specific, the variance of <span class="math notranslate nohighlight">\(I_N\)</span> can be estimated by the sample variance</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ad2807a8-d225-4091-bd11-ae2686333d83">
-<span class="eqno">(19.6)<a class="headerlink" href="#equation-ad2807a8-d225-4091-bd11-ae2686333d83" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0510fb50-ba0f-4381-831d-062e7cef743e">
+<span class="eqno">(19.6)<a class="headerlink" href="#equation-0510fb50-ba0f-4381-831d-062e7cef743e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \sigma_N^2 = \frac{1}{N-1} \sum_{i=1}^N \left( f(\pars_i) - \langle f \rangle \right)^2,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\langle f \rangle\)</span> is the sample mean, and becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e7c6c14c-ff9a-4c7a-9092-e134032cc77d">
-<span class="eqno">(19.7)<a class="headerlink" href="#equation-e7c6c14c-ff9a-4c7a-9092-e134032cc77d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fc84fbb3-49c7-4bfe-b38c-fe073e975909">
+<span class="eqno">(19.7)<a class="headerlink" href="#equation-fc84fbb3-49c7-4bfe-b38c-fe073e975909" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \text{Var}(I_N)) = V_D^2 \frac{\sigma_N^2}{N}.
 \end{equation}\]</div>
 <div class="proof example admonition" id="example-0">
 <p class="admonition-title"><span class="caption-number">Example 19.1 </span> (Monte Carlo estimation of <span class="math notranslate nohighlight">\(\pi\)</span>)</p>
 <section class="example-content" id="proof-content">
 <p>A standard example of Monte Carlo integration is the estimation of <span class="math notranslate nohighlight">\(\pi\)</span> using the (circular) step function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f7db0ac6-12c7-4dcf-8eb2-0ffc1599cae8">
-<span class="eqno">(19.8)<a class="headerlink" href="#equation-f7db0ac6-12c7-4dcf-8eb2-0ffc1599cae8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b4bfc077-1ea1-4245-8169-d2a0d36473ba">
+<span class="eqno">(19.8)<a class="headerlink" href="#equation-b4bfc077-1ea1-4245-8169-d2a0d36473ba" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x,y) = \left\{ 
 \begin{array}{ll}
 1 &amp; \text{if $x^2+y^2 \leq 1$} \\
@@ -832,8 +832,8 @@ f(x,y) = \left\{
 \right.
 \end{equation}\]</div>
 <p>such that the integral</p>
-<div class="amsmath math notranslate nohighlight" id="equation-630594b4-923c-443c-a986-8a260d088c87">
-<span class="eqno">(19.9)<a class="headerlink" href="#equation-630594b4-923c-443c-a986-8a260d088c87" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0be47520-3d7d-4216-a6d7-8b76f2b26f41">
+<span class="eqno">(19.9)<a class="headerlink" href="#equation-0be47520-3d7d-4216-a6d7-8b76f2b26f41" title="Permalink to this equation">#</a></span>\[\begin{equation}
 I = \int_{-1}^1 dx \int_{-1}^1 dy f(x,y) = \pi.
 \end{equation}\]</div>
 <p>One can estimate <span class="math notranslate nohighlight">\(I\)</span> using <span class="math notranslate nohighlight">\(N\)</span> samples <span class="math notranslate nohighlight">\(\{ (x_i,y_i) \}_{i=1}^N \)</span> from the bivariate, uniform distribution <span class="math notranslate nohighlight">\(\mathcal{U} \left( [-1,1]^2 \right)\)</span> such that</p>
@@ -891,12 +891,12 @@ I \approx I_N = \frac{4}{N} \sum_{i=1}^N f(x_i,y_i),
 <p class="expanded admonition-title">Hide code cell output</p>
 </summary>
 <div class="cell_output docutils container">
-<img alt="../../_images/e1c0aca2f995e2390d0b6ca11affc36e676e293f0fda04f31c215e576efac501.png" src="../../_images/e1c0aca2f995e2390d0b6ca11affc36e676e293f0fda04f31c215e576efac501.png" />
+<img alt="../../_images/bcc893933c384f2429090e218cb66e0d0b923ab003638f8a7e2dcb5a73e635ce.png" src="../../_images/bcc893933c384f2429090e218cb66e0d0b923ab003638f8a7e2dcb5a73e635ce.png" />
 </div>
 </details>
 </div>
 <figure class="align-default" id="fig-mc-integration">
-<img alt="../../_images/e1c0aca2f995e2390d0b6ca11affc36e676e293f0fda04f31c215e576efac501.png" src="../../_images/e1c0aca2f995e2390d0b6ca11affc36e676e293f0fda04f31c215e576efac501.png" />
+<img alt="../../_images/bcc893933c384f2429090e218cb66e0d0b923ab003638f8a7e2dcb5a73e635ce.png" src="../../_images/bcc893933c384f2429090e218cb66e0d0b923ab003638f8a7e2dcb5a73e635ce.png" />
 <figcaption>
 <p><span class="caption-number">Fig. 19.1 </span><span class="caption-text">Relative error of the Monte Carlo integration <a class="reference internal" href="#equation-eq-mcmc-mc-integration-pi">(19.10)</a> as a function of the number of samples, demonstrating the <span class="math notranslate nohighlight">\(1/\sqrt{N}\)</span> scaling.</span><a class="headerlink" href="#fig-mc-integration" title="Link to this image">#</a></p>
 </figcaption>
@@ -917,8 +917,8 @@ I = \int_{V_D} d\pars g(\pars) p(\pars) \approx I_N \equiv \frac{1}{N} \sum_{i=1
 <h2>Sampling from a PDF<a class="headerlink" href="#sampling-from-a-pdf" title="Link to this heading">#</a></h2>
 <p>We have seen that the ability to draw samples from a probability distribution is very useful. If <span class="math notranslate nohighlight">\(p(\pars)\)</span> is of a standard form then it is straightforward to sample from it using available algorithms, most of which are based on nonlinear transformations of uniformly distributed random numbers. For example, a set of samples <span class="math notranslate nohighlight">\(\{ u_i\}_{i=1}^N\)</span> from the one-dimensional standard uniform distribution <span class="math notranslate nohighlight">\(\mathcal{U}([0,1])\)</span>
 can be tuned to a a set of samples <span class="math notranslate nohighlight">\(\{ \para_i \}_{i=1}^N\)</span> from the standard Gaussian distribution <span class="math notranslate nohighlight">\(\mathcal{N}(0,1)\)</span> via the transformation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8aefa7b1-5f1f-4d0a-900e-6c8a20d81eec">
-<span class="eqno">(19.12)<a class="headerlink" href="#equation-8aefa7b1-5f1f-4d0a-900e-6c8a20d81eec" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-218d646a-1271-45b5-863f-085634ec5d2e">
+<span class="eqno">(19.12)<a class="headerlink" href="#equation-218d646a-1271-45b5-863f-085634ec5d2e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_i = F^{-1}_{\mathcal{N}}(u_i),
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(F^{-1}_{\mathcal{N}}\)</span> is the <em>inverse</em> distribution function of the standard normal distribution. That is, we interpret <span class="math notranslate nohighlight">\(u_i\)</span> as a probability sample and use the above transformation to find the solution to <span class="math notranslate nohighlight">\(u_i = F(\para_i)\)</span>.</p>
@@ -929,8 +929,8 @@ can be tuned to a a set of samples <span class="math notranslate nohighlight">\(
 <p>How can we collect random samples from an arbitrary probability distribution <span class="math notranslate nohighlight">\(p(\pars)\)</span>? In particular, how can we perform this task when we might not even have a closed form expression for the PDF? It is common in Bayesian inference that we find ourselves in the situation that we can evaluate <span class="math notranslate nohighlight">\(p(\pars)\)</span> at any position <span class="math notranslate nohighlight">\(\pars\)</span>, but we don’t know beforehand if it will be large or small.</p>
 <p>We will now show that it is possible to construct a Markov chain that has <span class="math notranslate nohighlight">\(p(\pars)\)</span> as its stationary distribution. Once this chain has converged it will provide us with samples from <span class="math notranslate nohighlight">\(p(\pars)\)</span>.</p>
 <p>As we have learned, the evolution of positions is described by the transition density <span class="math notranslate nohighlight">\(T\)</span>. The generalization to continuous variables of the stationary-chain equilibrium described in Eq. <a class="reference internal" href="MarkovChains.html#equation-eq-markovchains-discrete-equlibrium">(18.16)</a> is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a753feab-af3a-477c-98fb-e4ef8f4b6a06">
-<span class="eqno">(19.13)<a class="headerlink" href="#equation-a753feab-af3a-477c-98fb-e4ef8f4b6a06" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-515eaa87-dc4f-46d5-be9b-93b5afbdb317">
+<span class="eqno">(19.13)<a class="headerlink" href="#equation-515eaa87-dc4f-46d5-be9b-93b5afbdb317" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(\pars) = \int_{\Omega'} p(\pars')T(\pars',\pars) d\pars'.
 \end{equation}\]</div>
 <p>This equilibrium condition can be replaced with the more stringent <strong>detailed-balance</strong> condition</p>
@@ -939,24 +939,24 @@ p(\pars) = \int_{\Omega'} p(\pars')T(\pars',\pars) d\pars'.
 p(\pars)T(\pars,\pars') = p(\pars') T(\pars',\pars),
 \]</div>
 <p>which can be understood from the integral relation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9edaa633-8c0b-4348-a7e6-48f17e7c7aa6">
-<span class="eqno">(19.15)<a class="headerlink" href="#equation-9edaa633-8c0b-4348-a7e6-48f17e7c7aa6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-aa68eaad-4890-4e24-9812-7ca843deb0ad">
+<span class="eqno">(19.15)<a class="headerlink" href="#equation-aa68eaad-4890-4e24-9812-7ca843deb0ad" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \int d\pars' p(\pars)T(\pars,\pars') = \int d\pars' p(\pars') T(\pars',\pars),
 \end{equation}\]</div>
 <p>that describes the balance between the transitions of probability density out of <span class="math notranslate nohighlight">\(\pars\)</span> and into <span class="math notranslate nohighlight">\(\pars\)</span>. At equilibrium, these integrals must be equal.</p>
 <p>The trick to achieve this for a certain <span class="math notranslate nohighlight">\(p(\pars)\)</span> is to write <span class="math notranslate nohighlight">\(T\)</span> as a product of a simple step proposal function <span class="math notranslate nohighlight">\(S(\pars,\pars')\)</span>, that provides probability densities for steps in <span class="math notranslate nohighlight">\(\pars\)</span>-space, and a function <span class="math notranslate nohighlight">\(A(\pars,\pars')\)</span> that we will call the <strong>acceptance probability</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-18239d24-174c-4be9-9e1b-3cdec1fce2cd">
-<span class="eqno">(19.16)<a class="headerlink" href="#equation-18239d24-174c-4be9-9e1b-3cdec1fce2cd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8daa7bb4-06fb-4ddb-8c5b-c4c76150b14e">
+<span class="eqno">(19.16)<a class="headerlink" href="#equation-8daa7bb4-06fb-4ddb-8c5b-c4c76150b14e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T(\pars,\pars') = A(\pars,\pars') S(\pars,\pars').
 \end{equation}\]</div>
 <p>The step proposal function can be almost anything, but a key property is that it should be easy to draw a sample from it. The probability for proposing a new position <span class="math notranslate nohighlight">\(\pars'\)</span> will depend on the current position <span class="math notranslate nohighlight">\(\pars\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-529abd75-16ad-4762-997d-66e712fac91e">
-<span class="eqno">(19.17)<a class="headerlink" href="#equation-529abd75-16ad-4762-997d-66e712fac91e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d9256a89-95ac-4bfd-ac87-47301b2352fa">
+<span class="eqno">(19.17)<a class="headerlink" href="#equation-d9256a89-95ac-4bfd-ac87-47301b2352fa" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\text{proposing $\pars'$}}{\text{current position}=\pars} = S(\pars,\pars')
 \end{equation}\]</div>
 <p>For example, assuming that <span class="math notranslate nohighlight">\(\pars\)</span> is a vector in a <span class="math notranslate nohighlight">\(D\)</span>-dimensional parameter space we can take <span class="math notranslate nohighlight">\(S(\pars,\pars')\)</span> to be a uniform distribution within a <span class="math notranslate nohighlight">\(D\)</span>-dimensional hypercube with side length <span class="math notranslate nohighlight">\(\Delta\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-ff91ce8e-85db-4adf-bdfe-dbf31f846320">
-<span class="eqno">(19.18)<a class="headerlink" href="#equation-ff91ce8e-85db-4adf-bdfe-dbf31f846320" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-71d86af4-0862-4400-84ad-7efacedc3ebc">
+<span class="eqno">(19.18)<a class="headerlink" href="#equation-71d86af4-0862-4400-84ad-7efacedc3ebc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 S(\pars,\pars') = \left\{ 
 \begin{array}{ll}
 \frac{1}{\Delta^D} &amp; \text{if $\left| \pars'_i - \pars_i \right| \leq \frac{\Delta}{2}$ for all $i \in \{1, \ldots, D\}$} \\
@@ -967,13 +967,13 @@ S(\pars,\pars') = \left\{
 <p>Alternatively we can use a multivariate Gaussian distribution with a mean that corresponds to the current position <span class="math notranslate nohighlight">\(\pars\)</span> and a covariance matrix that we can specify.</p>
 <p>The probability of actually accepting the proposed step from <span class="math notranslate nohighlight">\(\pars\)</span> to <span class="math notranslate nohighlight">\(\pars'\)</span> will then be given by <span class="math notranslate nohighlight">\(0 \leq A(\pars,\pars') \leq 1\)</span>.</p>
 <p>The detailed balance condition <a class="reference internal" href="#equation-eq-mcmc-detailed-balance">(19.14)</a> can be fulfilled by placing the following condition on the acceptance probability</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2bf3c7cf-9363-4e9e-98e4-c4ff6ea03ceb">
-<span class="eqno">(19.19)<a class="headerlink" href="#equation-2bf3c7cf-9363-4e9e-98e4-c4ff6ea03ceb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5ae6ddee-47be-4c49-adce-b3e80b7ca2c0">
+<span class="eqno">(19.19)<a class="headerlink" href="#equation-5ae6ddee-47be-4c49-adce-b3e80b7ca2c0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{A(\pars,\pars')}{A(\pars',\pars)} = \frac{p(\pars')S(\pars',\pars)}{p(\pars)S(\pars,\pars')}.
 \end{equation}\]</div>
 <p>The expression for <span class="math notranslate nohighlight">\(A\)</span> that fulfils this condition is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d4a73d58-f65f-4b15-a4d2-841844b388df">
-<span class="eqno">(19.20)<a class="headerlink" href="#equation-d4a73d58-f65f-4b15-a4d2-841844b388df" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1587ae3b-054f-47aa-ab00-d62d55d59780">
+<span class="eqno">(19.20)<a class="headerlink" href="#equation-1587ae3b-054f-47aa-ab00-d62d55d59780" title="Permalink to this equation">#</a></span>\[\begin{equation}
 A(\pars,\pars') = \text{min} \left( \frac{p(\pars')S(\pars',\pars)}{p(\pars)S(\pars,\pars')},1\right),
 \end{equation}\]</div>
 <p>and holds the probability by which we decide whether to accept the proposed position <span class="math notranslate nohighlight">\(\pars'\)</span>, or remain in the old one <span class="math notranslate nohighlight">\(\pars\)</span>. The ratio that appears in the acceptance probability is called the Metropolis-Hastings ratio and will here be denoted <span class="math notranslate nohighlight">\(r\)</span>. We note that it gets further simplified for symmetric proposal functions (for which it is sometimes referred to as the Metropolis ratio)</p>
@@ -1213,11 +1213,11 @@ T =
       </div>
     </a>
     <a class="right-next"
-       href="MCMC_intro_BUQ.html"
+       href="../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">19.2. </span>MCMC Intro from BUQEYE</p>
+        <p class="prev-next-title"><span class="section-number">19.2. </span>Advanced Markov chain Monte Carlo sampling</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

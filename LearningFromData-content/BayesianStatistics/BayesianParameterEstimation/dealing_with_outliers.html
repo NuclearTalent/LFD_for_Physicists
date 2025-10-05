@@ -301,9 +301,10 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../StochasticProcesses/RootMCMC.html">16. Overview of Part III</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/IntuitionMCMC.html">17. Intuition for MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/demo-MCMC-improved.html">17.1. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/Recap_BUQ.html">17.2. Recap of Poisson and general MCMC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">17.3. Exercise: Random walk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC_intro_BUQ.html">17.1. MCMC introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/demo-MCMC-improved.html">17.2. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/Recap_BUQ.html">17.3. Recap of Poisson and general MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">17.4. Exercise: Random walk</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/TechnicalDetailsMCMC.html">18. Technical details of MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -316,11 +317,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Advanced_MCMC.html">19. MCMC in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC.html">19.1. Markov chain Monte Carlo sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC_intro_BUQ.html">19.2. Alternative MCMC introduction (Gregory)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/AdvancedMCMC.html">19.3. Advanced Markov chain Monte Carlo sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html">19.4. Overview: MCMC Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ComputationalBayes/AdvancedMCMC.html">19.2. Advanced Markov chain Monte Carlo sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-diagnostics.html">19.3. Overview: MCMC Diagnostics</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/intuition_sampling.html">19.6. Intuition on sampling and best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/intuition_sampling.html">19.5. Intuition on sampling and best practices</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Other_samplers.html">20. Advanced Sampling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -812,8 +812,8 @@ p(y_i\mid x_i,\boldsymbol{\theta}) = \frac{1}{\sqrt{2\pi\sigma_0^2}} \exp\left(\
 p(D\mid\boldsymbol{\theta}, I) = \prod_{i=1}^N p(y_i\mid x_i,\boldsymbol{\theta}, I)
 \]</div>
 <p>For convenience (and also for numerical accuracy) this is often expressed in terms of the log-likelihood:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6f76304b-a12d-4f80-b1e7-27a5daee1f13">
-<span class="eqno">(13.1)<a class="headerlink" href="#equation-6f76304b-a12d-4f80-b1e7-27a5daee1f13" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-c1e3bd2a-ad76-4608-b879-5d1e46d82c84">
+<span class="eqno">(13.1)<a class="headerlink" href="#equation-c1e3bd2a-ad76-4608-b879-5d1e46d82c84" title="Permalink to this equation">#</a></span>\[\begin{align}
 \log p(D\mid\boldsymbol{\theta}, I) &amp;= -\frac{1}{2}\sum_{i=1}^N\left(\log(2\pi\sigma_0^2) + \frac{\left[ y_i - y_M(x_i;\theta)\right]^2}{\sigma_0^2}\right) \\
 &amp;= \text{constant} - \sum_{i=1}^N \frac{\left[ y_i - y_M(x_i;\boldsymbol{\theta})\right]^2}{2 \sigma_0^2}
 \end{align}\]</div>
@@ -974,8 +974,8 @@ p(\sigma|\sigma_0,I) = \frac{\sigma_0}{\sigma^2},
 \]</div>
 <p>for <span class="math notranslate nohighlight">\(\sigma \geq \sigma_0\)</span> and zero otherwise. (This enables us to do the integral up to infinity.) Conservative here means that we treat all data points with suspicion (i.e., we do not single out any points).</p>
 <p>The likelihood for a single data point <span class="math notranslate nohighlight">\(D_i\)</span>, given by <span class="math notranslate nohighlight">\((x_i,y_i,\sigma_i=\sigma_0)\)</span>, is then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ebcacedb-1f3b-483b-b5e9-9e38bc1fc48b">
-<span class="eqno">(13.2)<a class="headerlink" href="#equation-ebcacedb-1f3b-483b-b5e9-9e38bc1fc48b" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-94ae7283-4d8e-4953-ba05-60f5c88f4a4b">
+<span class="eqno">(13.2)<a class="headerlink" href="#equation-94ae7283-4d8e-4953-ba05-60f5c88f4a4b" title="Permalink to this equation">#</a></span>\[\begin{align}
 p(D_i | \boldsymbol{\theta}, \sigma_0, I) &amp;= 
   \int_{\sigma_0}^{\infty} \frac{1}{\sqrt{2\pi}\sigma}
     e^{-\sigma_0^2 R_i^2/2\sigma^2}\, \frac{\sigma_0}{\sigma^2}\, d\sigma
@@ -1182,12 +1182,12 @@ Log posterior: Std Gaussian
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>... EMCEE sampler performing 10000 samples.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.21 s, sys: 945 μs, total: 4.22 s
-Wall time: 4.21 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.2 s, sys: 3.02 ms, total: 4.21 s
+Wall time: 4.2 s
 done
 </pre></div>
 </div>
-<img alt="../../../_images/9dd10ace3c2eb4705b9d151b82a571f454b67f1bb6bd082016b9b736b90882e0.png" src="../../../_images/9dd10ace3c2eb4705b9d151b82a571f454b67f1bb6bd082016b9b736b90882e0.png" />
+<img alt="../../../_images/d9decec56d0fe8641e535ac7f51067013e516b333442f7ff5dacda2f53145780.png" src="../../../_images/d9decec56d0fe8641e535ac7f51067013e516b333442f7ff5dacda2f53145780.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Log posterior: Conservative
 ... EMCEE sampler performing 1000 warnup iterations.
 </pre></div>
@@ -1195,12 +1195,12 @@ done
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>... EMCEE sampler performing 10000 samples.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.81 s, sys: 4.85 ms, total: 4.82 s
-Wall time: 4.81 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.77 s, sys: 616 μs, total: 4.77 s
+Wall time: 4.77 s
 done
 </pre></div>
 </div>
-<img alt="../../../_images/e717d18836c43d49d9350e46ce39f2fca920fd4ed6ba12b6015f27c95ea00a97.png" src="../../../_images/e717d18836c43d49d9350e46ce39f2fca920fd4ed6ba12b6015f27c95ea00a97.png" />
+<img alt="../../../_images/aeb544ebfc57888112e63f4c2c43b19c3ceb8cdf946659ca5e6132bf7eb2c75e.png" src="../../../_images/aeb544ebfc57888112e63f4c2c43b19c3ceb8cdf946659ca5e6132bf7eb2c75e.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Log posterior: Cauchy
 ... EMCEE sampler performing 1000 warnup iterations.
 </pre></div>
@@ -1208,12 +1208,12 @@ done
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>... EMCEE sampler performing 10000 samples.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.63 s, sys: 1.57 ms, total: 4.63 s
-Wall time: 4.63 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.62 s, sys: 4.6 ms, total: 4.62 s
+Wall time: 4.62 s
 done
 </pre></div>
 </div>
-<img alt="../../../_images/9dff53f4cc9782d0f63c18eb58a303262e7b0c80bbc97dfca2acbcce5aeba76c.png" src="../../../_images/9dff53f4cc9782d0f63c18eb58a303262e7b0c80bbc97dfca2acbcce5aeba76c.png" />
+<img alt="../../../_images/8d80522e1f11292d6c653bf618625b645eb5938b4cf02662073f68806a477584.png" src="../../../_images/8d80522e1f11292d6c653bf618625b645eb5938b4cf02662073f68806a477584.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1239,12 +1239,12 @@ done
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Summary:             Mean offset  68% CR     Mean slope     68% CR
-        Std Gaussian    41.17   -1.21,+1.23     0.252    -0.028,+0.027
-        Conservative    31.66   -2.20,+2.31     0.449    -0.049,+0.049
-              Cauchy    31.63   -2.06,+2.06     0.449    -0.043,+0.043
+        Std Gaussian    41.14   -1.17,+1.20     0.254    -0.026,+0.028
+        Conservative    31.71   -2.21,+2.30     0.447    -0.050,+0.050
+              Cauchy    31.63   -2.08,+2.08     0.450    -0.043,+0.042
 </pre></div>
 </div>
-<img alt="../../../_images/da94520cd1d540586626b25d35c8bbb7c5f19366dd8d0aacc191f30501a4d146.png" src="../../../_images/da94520cd1d540586626b25d35c8bbb7c5f19366dd8d0aacc191f30501a4d146.png" />
+<img alt="../../../_images/4d8b9d86b2e0baca2cc1d409ca0e6c185a9b827e73c30cf8e42a24532f9807b0.png" src="../../../_images/4d8b9d86b2e0baca2cc1d409ca0e6c185a9b827e73c30cf8e42a24532f9807b0.png" />
 </div>
 </div>
 </section>
