@@ -361,11 +361,11 @@ In following the four-step workflow for Bayesian inference (see {numref}`sec:Int
 4. Do model checking: assess the fit of the model and the reasonableness of the conclusions, testing the sensitivity to model assumptions in steps 1 and 2. From this assessment we modify the model appropriately and repeat all four steps. 
 
 
-To carry out steps 1. and 2. for BLR, 
-we note that our goal is to relate data $\data$ to the output of a linear model expressed in terms of its design matrix $\dmat$ and its model parameters $\parsLR$ by Eq. {eq}`eq:BayesianLinearRegression:eq_StatModel`.
+To carry out this workflow for BLR, 
+we note that our goal is to relate data $\data$ to the output of a linear model expressed in terms of its design matrix $\dmat$ and its model parameters $\parsLR$ by $M = \dmat \parsLR$.
 We consider the special case of one dependent response variable ($\output$) and a single independent variable ($\inputt$), for which the data set ($\data$) and the residual vector ($\residuals$) are both $N_d \times 1$ column vectors with $N_d$ the length of the data set. The design matrix ($\dmat$) has dimension $N_d \times N_p$ and the parameter vector ($\parsLR$) is $N_p \times 1$.
 
-For the residuals, consider a statistical model that describes the mismatch between our model and observations as in Eq. {eq}`eq:BayesianLinearRegression:eq_StatModel` (recall that we assume here that $\Delta M = 0$). Knowledge (and/or assumptions) concerning measurement uncertainties, or modeling errors, then allows to describe the residuals as a vector of random variables that are distributed according to a PDF
+For the residuals, consider a statistical model that describes the mismatch between our model and observations as in Eq. {eq}`eq:BayesianLinearRegression:eq_StatModel` (recall that we assume here that $\delta M = 0$). Knowledge (and/or assumptions) concerning measurement uncertainties, or modeling errors, then allows to describe the residuals as a vector of random variables that are distributed according to a PDF
 
 
 \begin{equation}
