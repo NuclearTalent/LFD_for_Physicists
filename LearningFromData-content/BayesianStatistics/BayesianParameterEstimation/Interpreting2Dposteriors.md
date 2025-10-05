@@ -266,7 +266,7 @@ Comments on figures:
       \text{prior:}& \quad p(\mu,\sigma|I) \leftrightarrow p(x_0,y_0|I)
     \end{align}$$
 
-* You are generalizing the functions for log pdfs and the plotting of posteriors that are in notebook [](/notebooks/Basics/radioactive_lighthouse_exercise_key.ipynb).
+* You are generalizing the functions for log pdfs and the plotting of posteriors that are in notebook [](./radioactive_lighthouse_exercise.ipynb).
 * Note in [](./parameter_estimation_Gaussian_noise.ipynb) the functions for log-prior and log-likelihood.
     * Here $\pars = [\mu,\sigma]$ is a vector of parameters; cf.  $\pars = [x_0,y_0]$.
 * Step through the set up for `emcee`.
