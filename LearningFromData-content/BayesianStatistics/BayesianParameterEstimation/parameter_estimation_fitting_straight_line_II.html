@@ -68,7 +68,7 @@
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="10. Overview of Part II: Advanced Bayesian methods" href="../RootAdvancedMethods.html" />
+    <link rel="next" title="9.8. 📥 Parameter estimation example: Gaussian noise and averages II" href="../../StochasticProcesses/BUQ/parameter_estimation_Gaussian_noise-2.html" />
     <link rel="prev" title="9.6. 📥 Parameter estimation example: fitting a straight line" href="parameter_estimation_fitting_straight_line_I.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -259,6 +259,8 @@
 <li class="toctree-l2"><a class="reference internal" href="amplitude_in_presence_of_background.html">9.5. 📥 Amplitude of a signal in the presence of background</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parameter_estimation_fitting_straight_line_I.html">9.6. 📥 Parameter estimation example: fitting a straight line</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">9.7. 📥 Parameter estimation example: fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/parameter_estimation_Gaussian_noise-2.html">9.8. 📥 Parameter estimation example: Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Assignment_extending_radioactive_lighthouse.html">9.9. 📥 Assignment: 2D radioactive lighthouse location using MCMC</a></li>
 </ul>
 </details></li>
 </ul>
@@ -302,7 +304,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/StochasticProcesses/sec-03-definition-of-a-stochastic-process.html">17.1. Definition of a stochastic process</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/StochasticProcesses/sec-04-example-random-walk.html">17.2. Example: Random walk</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/StochasticProcesses/sec-05-special-case-gaussian-process.html">17.3. Special case: Gaussian process</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/parameter_estimation_Gaussian_noise-2.html">17.4. Parameter estimation example: Gaussian noise and averages II</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/MCMC_overview.html">18. Details of Markov Chain Monte Carlo</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -311,8 +312,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/MCMC_intro_BUQ.html">18.3. Alternative MCMC introduction (Gregory)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/demo-MCMC-improved.html">18.4. Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/Recap_BUQ.html">18.5. Recap of Poisson and general MCMC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/Assignment_extending_radioactive_lighthouse.html">18.6. Assignment: 2D radioactive lighthouse location using MCMC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">18.7. Exercise: Random walk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../StochasticProcesses/BUQ/MCMC-random-walk-and-sampling.html">18.6. Exercise: Random walk</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../StochasticProcesses/Advanced_MCMC.html">19. Advanced MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1221,8 +1221,8 @@ y_i \sim \mathcal{N}(y_M(x_i;\theta), \sigma)
 <p>Through application of Bayes’ rule we can readily evaluate the posterior pdf <span class="math notranslate nohighlight">\(p(x|D,I)\)</span> for the distance <span class="math notranslate nohighlight">\(x\)</span> to the galaxy.</p>
 <section id="case-1-fixed-h-0">
 <h4>Case 1: Fixed <span class="math notranslate nohighlight">\(H_0\)</span><a class="headerlink" href="#case-1-fixed-h-0" title="Link to this heading">#</a></h4>
-<div class="amsmath math notranslate nohighlight" id="equation-f6c8e855-a1b9-4c9f-8c72-218a7cf31e00">
-<span class="eqno">(9.2)<a class="headerlink" href="#equation-f6c8e855-a1b9-4c9f-8c72-218a7cf31e00" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-d5089770-2681-497e-8a5b-eb30d30cc2d5">
+<span class="eqno">(9.2)<a class="headerlink" href="#equation-d5089770-2681-497e-8a5b-eb30d30cc2d5" title="Permalink to this equation">#</a></span>\[\begin{align}
 p(x | D,I) &amp; \propto p(D | x, I) p(x|I) \\
 &amp; = \frac{1}{\sqrt{2\pi}\sigma_v} \exp \left( - \frac{(v_\mathrm{measured} - v_\mathrm{theory})^2}{2\sigma_v^2} \right) p(x|I)\\
 &amp;= \left\{ \begin{array}{ll} \frac{1}{\sqrt{2\pi}\sigma_v} \exp \left( - \frac{(v_\mathrm{measured} - H_0 x)^2}{2\sigma_v^2} \right) &amp; \text{with }x \in [x_\mathrm{min},x_\mathrm{max}] \\
@@ -1339,11 +1339,11 @@ p(x |D,I) = \int dH_0 p(H_0|I) p(D|x,H_0,I) \approx \frac{1}{N} \sum_{i=1}^N p(D
       </div>
     </a>
     <a class="right-next"
-       href="../RootAdvancedMethods.html"
+       href="../../StochasticProcesses/BUQ/parameter_estimation_Gaussian_noise-2.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">10. </span>Overview of Part II: Advanced Bayesian methods</p>
+        <p class="prev-next-title"><span class="section-number">9.8. </span>📥 Parameter estimation example: Gaussian noise and averages II</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
