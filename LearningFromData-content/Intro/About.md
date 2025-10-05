@@ -17,11 +17,12 @@ by [Christian Forssén](https://www.chalmers.se/en/persons/f2bcf/), [Dick Furnst
 (sec:AboutJB)=
 ## About this book
 
-This text is aimed at physicists seeking to learn from data using Bayesian methods. It is particularly designed for an advanced-level course but should be broadly accessible to those with a physics background.
+This text is aimed at physicists seeking to learn from data using Bayesian methods. It is particularly designed for use in an advanced-level course but should be broadly accessible to those with a physics background.
+
 
 <!--## About these lecture notes-->
 
-The content has emerged from previous work and courses taught by the authors.
+The content of this book has emerged from previous work and courses taught by the authors.
 The materials are released under a [Creative Commons BY-NC license](https://creativecommons.org/licenses/by-nc/4.0/).
 
 The book format is powered by [Jupyter Book](https://jupyterbook.org/). 
