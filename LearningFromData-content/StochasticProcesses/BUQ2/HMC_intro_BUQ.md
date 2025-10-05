@@ -1,11 +1,10 @@
 # Hamiltonian Monte Carlo (HMC) overview and visualization
 
-* We've seen some different strategies for sampling difficult posteriors, such as an affine-invariant sampling approach (emcee) and a thermodynamic approach (parallel tempering).
+We've seen some different strategies for sampling difficult posteriors, such as an affine-invariant sampling approach (emcee) and a thermodynamic approach (parallel tempering).
+One of the most widespread techniques in contemporary samplers is Hamiltonian Monte Carlo, or HMC.
+Here we will look at some visualizations as motivation for HMC, then consider some examples using the PyMC library.
 
-* One of the most widespread techniques in contemporary samplers is Hamiltonian Monte Carlo, or HMC.
-    * We'll look at some visualizations as motivation, then consider some examples using PyMC.
-
-* We return to the excellent set of interactive demos by Chi Feng at [https://chi-feng.github.io/mcmc-demo/](https://chi-feng.github.io/mcmc-demo/) and their adaptation by Richard McElreath at [http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/](http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/). These are also linked on the 8820 Carmen visualization page.
+We return to the excellent set of interactive demos by Chi Feng at [https://chi-feng.github.io/mcmc-demo/](https://chi-feng.github.io/mcmc-demo/) and their adaptation by Richard McElreath at [http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/](http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/). 
 
 * The McElreath blog piece forcefully advocates abandoning Metropolis-Hasting (MH) sampling in favor of HMC. Let's take a look.
     * First recall the random walk MH:
@@ -125,7 +124,7 @@ Two steps of the HMC algorithm:
 * Essential features:
     * Reversability needed so that desired distribution is invariant.
     * Conservation of the Hamiltonian (which is the energy here).
-    * Volume preservation - preserves volume in $(q,p)$ phase space - this is Liouville's Theorem. (If we take a cluster of points and follow their time evolution, the volume they occupy is unchanged. See [](/notebooks/MCMC_sampling_II/Liouville_theorem_visualization.ipynb) notebook.) $\Lra$ this is critical because a change in volume would mean we would have to make a nontreival adjustment to the proposal (because the normalization $Z$ would change).
+    * Volume preservation - preserves volume in $(q,p)$ phase space - this is Liouville's Theorem. (If we take a cluster of points and follow their time evolution, the volume they occupy is unchanged. See [](./Liouville_theorem_visualization.ipynb) notebook.) $\Lra$ this is critical because a change in volume would mean we would have to make a nontreival adjustment to the proposal (because the normalization $Z$ would change).
 
 * These requirements are satisfied by the exact Hamilton's equations, but we are *approximating* the solution to these differential equations. This necessitates a *symplectic* (symmetry conserving) integration.
     * Ordinary Runge-Kutta-type ODE solvers won't work because they are not time-reversal invariant.

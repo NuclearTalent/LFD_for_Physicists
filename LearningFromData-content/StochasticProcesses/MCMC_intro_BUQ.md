@@ -1,20 +1,22 @@
 (sec:MCMC_BUQEYE)=
-# MCMC Intro from BUQEYE
+# MCMC introduction
 
 ## Why MCMC? 
 
 *This discussion is based heavily on Gregory {cite}`Gregory2005`, Chapter 12.*
 
 
-We have been emphasizing that in the Bayesian approach, everything is a pdf. One type of pdf is for the parameters of a theory, which we'll denote by the vector $\thetavec$, given data $D$ and information $I$, namely $p(\thetavec|D,I)$.
+We have been emphasizing that in the Bayesian approach, (almost) everything is a PDF. One type of PDF is for the parameters of a theory (denoted by the vector $\thetavec$) given data $D$ and information $I$, namely $p(\thetavec|D,I)$.
 Suppose we have a theoretical model for this.
-:::{admonition} Examples
+:::{admonition} Examples of $\thetavec$
 * Parameters determining a density functional.
 * Low-energy constants for an effective field theory Hamiltonian.
+* $\thetavec$ characterizes a signal and background and we have a function of the signal.
 :::
 And now we want to calculate the expectation value of a *function* of $\thetavec$, e.g., $\langle f(\thetavec)\rangle$.
-* Another example would be if $\thetavec$ characterized a signal and background and we had a function of the signal.
-* As we discussed in doing the central limit theorem:
+E.g., we identified the *particular* values of $\theta_1, \theta_2,\ldots\theta_n$ that specify a nuclear force Hamiltonian that best reproduced neutron-proton scattering data. Then we would want to calculate $\langle f(\thetavec)\rangle$, which might be the binding energy of a nucleus (a very complicated function in this case!).
+
+As we have discussed in {ref}`sec:Inference:looking_ahead`, the expectation value of $f(\thetavec)$ given the probability distribution p(\thetavec|D,I) is: 
 
 $$
  \langle f(\thetavec)\rangle = 
@@ -23,19 +25,18 @@ $$
  \equiv \int g(\thetavec)\,d\thetavec .
 $$
 
-This is more involved than what is done in conventional calculations, in which we would have single values of $\thetavec$, maybe denoted $\widehat{\thetavec}$, that we might have found by minimizing a $\chi^2$ function.
-* E.g., we identified the *particular* values of $\theta_1, \theta_2,\ldots\theta_n$ that specify a nuclear force Hamiltonian that best reproduced neutron-proton scattering data. Then we would want to calculate $\langle f(\thetavec)\rangle$, which might be the binding energy of a nucleus (a very complicated function in this case!).
-* But $\langle f(\thetavec)\rangle$ means we must do a multidimensional *integral* over the full range of possible $\thetavec$ values, weighted by the probability density function $p(\thetavec|D,I)$, which we have worked out already.
-    * This is a lot more work!
-    * We frequently also have a situation where we want to integrate (marginalize) over a subset of parameters $\thetavec_B$ to find a posterior for the rest $\thetavec_A$. 
-    E.g., over parameters for the width of a signal and other parameters characterizing our model for the Higgs mass.
-    * These multidimensional integrals then become a necessity to do, but conventional methods for low dimension (e.g, Gaussian quadrature of Simpson's rule) become inadequate rapidly with the increase of dimension.
-    * The integrals in question are particularly problematic because the posteriors are very small in much of the integration volume, which will typically also be a challenging shape.
-* To approximate such integrals one turns to Monte Carlo (MC) methods.
+This is more involved than what is done in conventional frequentist calculations, in which we would have single values of $\thetavec$, maybe denoted $\widehat{\thetavec}$, that we might have found by minimizing a $\chi^2$ function.
+But $\langle f(\thetavec)\rangle$ means we must do a multidimensional *integral* over the full range of possible $\thetavec$ values, weighted by the probability density function $p(\thetavec|D,I)$, which we have worked out already. *This is a lot more work!*
+We also frequently have a situation where we want to integrate (marginalize) over a subset of parameters $\thetavec_B$ to find a posterior for the rest $\thetavec_A$. 
+E.g., over parameters for the width of a signal and other parameters characterizing our model for the Higgs mass.
+
+These multidimensional integrals then become a necessity to do, but conventional methods for low dimension (e.g, Gaussian quadrature or Simpson's rule) become inadequate rapidly with the increase of dimension. 
+The integrals in question are particularly problematic because the posteriors are very small in much of the integration volume, which will typically also be a challenging shape.
+To approximate such integrals one turns to Monte Carlo (MC) methods.
+
 The straight (naive) MC integration evaluates the integral by randomly distributing $n$ points in the multidimensional volume $V$ of possible $\thetavec$'s.
 $V$ has to be large enough to cover where $p(\thetavec|D,I)$ is significantly different from zero.
-
-* Then we have
+Then we have
 
 $$
  \langle f(\thetavec)\rangle = \int_V g(\thetavec)\, d\thetavec
@@ -47,8 +48,12 @@ where
 
 $$
   \langle g(\thetavec)\rangle = 
-  \frac{1}{n}\sum_{i=1}^{n} g(\thetavec_i)
+  \frac{1}{n}\sum_{i=1}^{n} g(\thetavec_i).
 $$
+
+The uncertainty is estimated assuming that a Gaussian approximation is valid.
+Note the dependence on $1/\sqrt{n}$, which means you can get a more precise answer by increasing $n$. But only *slowly* better; each additional decimal point accuracy costs you a factor of 100 in $n$.
+
 
 ```{caution} $\thetavec_i$ is the $i^{\text{th}}$ set of $\thetavec$ values, not a component of $\thetavec$.
 ```
@@ -78,8 +83,6 @@ $$
 Does this always work? No! (Cf., the radioactive lighthouse problem.) But if the central limit theorem applies, it should work, but maybe not efficiently.
 :::
 
-* The uncertainty is assuming that a Gaussian approximation is valid.
-Note the dependence on $1/\sqrt{n}$, which means you can get a more precise answer by increasing $n$. But *slowly* better; each additional decimal point accuracy costs you a factor of 100 in $n$.
 
 ## Markov Chain Monte Carlo (MCMC)
 
