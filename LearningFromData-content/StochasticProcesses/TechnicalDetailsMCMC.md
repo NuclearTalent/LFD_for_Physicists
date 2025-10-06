@@ -1,5 +1,5 @@
 (sec:TechnicalDetailsMCMC)=
-# Technical details of MCMC
+# Details of MCMC
 
 Here we provide formal and detailed discussions on:
 
