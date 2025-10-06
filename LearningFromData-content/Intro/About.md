@@ -1,5 +1,5 @@
 {.tight-h1}
-# Learning from data for physicists:
+# Learning from data for physicists
 
 <span style="font-size: 1.8em; font-weight: bold; font-style:italic; display:inline-block; margin-bottom:0.5em;">
 &nbsp;&nbsp; Bayesian and machine learning methods</span>
