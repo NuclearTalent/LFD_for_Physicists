@@ -9,6 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
+(sec:ExampleRandomWalk)=
 # Example: Random walk
 
 One of the simplest random processes is the so called *random walk*. This process can arise in many ways. A standard example is the coin-flip casino game in which a gambler G starts with a fortune $a$. The croupier tosses a (possibly biased) coin. Each time heads appears, the gambler gets one euro (let us assume that the game takes place in Monte Carlo). If tails appears, the player loses one euro. 

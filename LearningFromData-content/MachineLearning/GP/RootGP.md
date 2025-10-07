@@ -1,5 +1,5 @@
 (sec:RootGP)=
-# Overview of Gaussian process
+# Overview of Gaussian processes
 
 In this chapter we talk about Gaussian processes (GPs).
 
