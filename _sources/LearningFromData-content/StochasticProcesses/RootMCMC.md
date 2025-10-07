@@ -1,6 +1,12 @@
 (sec:RootMCMC)=
 # Overview of Part III: Sampling
 
+```{epigraph}
+> "I decry the current tendency to seek patents on algorithms. There are better ways to earn a living than to prevent other people from making use of one's contributions to computer science."
+
+-- Donald Knuth
+```
+
 We have already seem examples of the sampling of PDFs in previous chapters. Here we look in depth at Markov chain Monte Carlo (MCMC), which is the workhorse of sampling methods. We will give an overview of both the theory and practice, considering first the Random Walk Metropolis-Hastings algorithm and then other more efficient samplers.
 
 Chapters in this part:

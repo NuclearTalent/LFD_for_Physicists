@@ -36,3 +36,4 @@ A Gaussian process is completely determined by its *mean function* $\mu(X(t))$ a
 
 A Gaussian process is stationary if the mean function $\mu(X(t))$ is constant for all $t$ and if the covariance function fulfils $C(X(s), X(t)) = C(X(s+h), X(t+h))$ with $h \geq 0$. Note that stationarity is not a requirement for a Gaussian process.
 
+We return to discuss Gaussian processes in detail in {ref}`sec:RootGP`.
