@@ -142,19 +142,6 @@ In method 2, we have similar weighting of $f(x)$ near to and far from the peak o
 
 * Point of emphasis: "The key purpose of MCMC is *not* to explore the posterior but to estimate expectation values."
 
-### Figures to make every time you run MCMC (following Hogg and Foreman-Mackey sect. 9)
-
-* Trace plots
-    * The burn-in length can be seen; can identify problems with model or sampler; qualitative judge of convergence.
-    * Use convergence diagnostic such as Gelman-Rubin.
-
-* Corner plots
-    * If you have a $D$-dimensional parameter space, plot all $D$ diagonal and all ${D\choose 2}$ joint histograms to show low-level covariances and non-linearities.
-    * "... they are remarkable for locating expected and unexpected parameter relationships, and often invaluable for suggesting re-parameterizations and transformation that simplify your problem."
-
-* Posterior predictive plots 
-    * Take $K$ random samples from your chain, plot the prediction each sample makes for the data and over-plot the observed data.
-    * "This plot gives a qualitative sense of how well the model fits the data and it can identify problems with sampling or convergence."
 
 ### What to do about sampling from correlated distributions?
 

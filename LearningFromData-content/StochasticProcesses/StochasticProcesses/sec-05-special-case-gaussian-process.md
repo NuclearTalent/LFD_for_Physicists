@@ -9,6 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
+(sec:StochasticGP)=
 # Special case: Gaussian process
 
 {{ sub_extra_tif385_admonition }}
