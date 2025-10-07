@@ -9,6 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
+(sec:DefStochasticProcess)=
 # Definition of a stochastic process
 
 Using probability theory, a stochastic process $X$ is a family 

@@ -4,9 +4,12 @@
 Here we provide formal and detailed discussions on:
 
 
-* {ref}`sec:StochasticProcesses` has a general introduction to random processes and some examples to set up for more detailed MCMC background. 
+* {ref}`sec:StochasticProcesses` introduces the concept of a stochastic process, with an example. 
 
-* {ref}`sec:MarkovChains` has a detailed introduction to Markov chains and then MCMC, followed by demonstrations.
+* {ref}`sec:DefStochasticProcess` gives a formal definition, with a code examples and several exercises.
 
-* Markov Chains 
-* MCMC
+* {ref}`sec:StochasticGP` introduces the Gaussian process, which we will revisit in detail in {ref}`sec:RootGP`.
+
+* {ref}`sec:MarkovChains` has a detailed introduction to Markov chains, with examples.
+
+* {ref}`sec:MetropolisHastings` provides a complete definition and some exercises.
