@@ -12,7 +12,7 @@ We have already seem examples of the sampling of PDFs in previous chapters. Here
 Chapters in this part:
 * {ref}`sec:IntuitionMCMC` gives a general motivation for MCMC, builds intuition through visualizations and analogies to statistical mechanics, introduces the Metropolis-Hastings algorithm, and provides some basic examples, such as an application to Poisson processes.
 
-* {ref}`sec:TechnicalDetailsMCMC` provides formal and detailed discussion on stochastic processes in general, Markov chains, and MCMC.
+* {ref}`sec:TechnicalDetailsMCMC` provides formal and detailed discussion on stochastic processes in general, Markov chains, and Metropolis-Hastings MCMC.
 
 * {ref}`sec:Advanced_MCMC` looks at MCMC in practice, with convergence tests and other diagnostics.
 

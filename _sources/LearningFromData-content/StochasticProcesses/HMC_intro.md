@@ -20,6 +20,13 @@ kernelspec:
 (sec:AdvancedMCMC:HMC)=
 # Introduction to Hamilton Monte Carlo
 
+```{epigraph}
+> "Why walk when you can flow."
+
+-- Richard McElreath
+```
+
+
 The Hamiltonian Monte Carlo Method (HMC) is a Metropolis method that uses gradient information to reduce the random-walk behavior and to collect effectively independent samples. It was introduced in lattice QCD by Duane et al. {cite}`Duane:1987de`and was originally named Hybrid Monte Carlo as they were combining molecular dynamics with the Metropolis MCMC algorithm. A very good and detailed review of HMC is written by Radford Neal and is contained in the Handbook of Markov Chain Monte Carlo {cite}`brooks2011handbook`.
 
 In HMC, the state space $\pos$ is augmented by a conjugate momentum $\mom$. Note that $\pos$ will be the model parameters $\pars$ in our applications but here we will stick to $\pos,\mom$ to make the connection with Hamiltonian dynamics explicit. Let us define a *Hamiltonian*

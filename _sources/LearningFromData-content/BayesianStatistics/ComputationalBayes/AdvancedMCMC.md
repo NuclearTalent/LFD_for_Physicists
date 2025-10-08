@@ -18,28 +18,26 @@ kernelspec:
 ```
 
 (sec:AdvancedMCMC)=
-# Diagnostics for MCMC sampling
+# Overview of diagnostics for MCMC sampling
 
-```{epigraph}
-> "Why walk when you can flow."
 
--- Richard McElreath
-```
+We've seen that using MCMC with the Metropolis-Hastings algorithm (or an alternative algorithm) leads to a Markov chain: a set of configurations of the parameters we are sampling. This chain enables inference because they are samples of the posterior of interest.
+MCMC sampling is notoriously difficult to validate. In this section we will discuss some common convergence tests. 
 
-MCMC sampling is notoriously difficult to validate. In this chapter we will discuss some common convergence tests. Furthermore, we will consider two very useful sampling methods: Hamiltonian Monte Carlo and Sampling/Importance Resampling. Hamiltonian Monte Carlo is used in [Stan](https://mc-stan.org/), which is a state-of-the-art platform for statistical modeling and high-performance statistical computation. Sampling/Importance Resampling is mot a Markov chain method, but can be very useful for posterior updates and when working with a finite set of samples.
+<!--Furthermore, we will consider two very useful sampling methods: Hamiltonian Monte Carlo and Sampling/Importance Resampling. Hamiltonian Monte Carlo is used in [Stan](https://mc-stan.org/), which is a state-of-the-art platform for statistical modeling and high-performance statistical computation. Sampling/Importance Resampling is mot a Markov chain method, but can be very useful for posterior updates and when working with a finite set of samples.-->
 
 (sec:AdvancedMCMC:Convergence)=
 ## Convergence tests for MCMC sampling
 MCMC sampling can go wrong in (at least) three ways:
 
 1. No convergence---The limiting distribution is not reached.
-1. Pseudoconvergence---The chain seems stationary, but the limiting distribution is not reached.
+1. Pseudoconvergence---The chain seems stationary, but the limiting distribution is not actually reached.
 1. Highly correlated samples---Not really wrong, but inefficient.
 
 There is no unique solution to such problems, but they are typically adressed in three ways:
 
-1. Design the simulation runs for monitoring of convergence. In particular, run multiple sequences of the Markov chains with starting points dispersed over the sampling space. This is hard in high dimensions.
-1. Monitor the convergence of individual sampling dimensions, as well as predictied quantities of interest, by comparing variations within and between the different sequences. Here you are looking for stationarity (the running means are stable) and mixing (different sequences are sampling the same distribution). The Gelman-Rubin test (see below) is devised for this purpose.
+1. Design the simulation runs for monitoring of convergence. In particular, run multiple sequences of the Markov chains with starting points dispersed over the sampling space. This is difficult in high dimensions.
+1. Monitor the convergence of individual sampling dimensions, as well as predictied quantities of interest, by comparing variations within and between the different sequences (chains). Here you are looking for stationarity (the running means are stable) and mixing (different sequences are sampling the same distribution). The Gelman-Rubin test (see below) is devised for this purpose.
 1. Unacceptably inefficient sampling (too low acceptance rate) implies that the algorithm must be adjusted, or that an altogether different sampling algorithm should be used.
 
 The diagnostics that will be discussed below are all univariate. They work perfectly when there is only one parameter to estimate. In fact, most convergence tests are performed with univariate diagnostics applied to each sampling dimension one by one. 

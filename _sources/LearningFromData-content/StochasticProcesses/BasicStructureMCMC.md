@@ -55,7 +55,7 @@ We further note that the acceptance probability is the minimum of $1$ and $r$, w
    $i++$     
    \}
 
-It's important to do the `else` step for $U \gt r$.   
+It's important to do the `else` step for $U \gt r$ (see below).   
 :::
 
 ## Intuition for detailed balance and the MH algorithm
@@ -73,7 +73,7 @@ But if our Metropolis-Hastings algorithm is correctly implemented, the histogram
 
 After equilibrium we look at the chain and note there are $N_A$ green boxes at $X_A$ and $N_B$ green boxes at $X_B$.
 Let's consider each of the $X_A$ boxes in turn in the chain.
-Each of the boxes at $X_A$ had a chance with the next Monte Carlo step to go to $X_B$. Similarly,  each of the boxes at $X_B$ had a chance to go to $X_A$. For a steady-state situation, we need the number of actual moves in each direction to be the same. (This means that the *rates* are equal.)
+Each of the boxes at $X_A$ had a chance with the next Monte Carlo step to go to $X_B$. Similarly,  each of the boxes at $X_B$ had a chance to go to $X_A$. For a steady-state situation, we need the number of actual moves in each direction to be the same. This means that the two *rates* of all such transitions are equal; this is what we mean by "detailed balance".  
 
 ::::{admonition} Checkpoint question 
 :class: my-checkpoint
@@ -164,20 +164,16 @@ Dividing the 2nd by the 3rd columns for the 2nd and 3rd rows each gives the corr
 :::
 ::::
 
-
-
 Ok, so it works. What if we have an asymmetric proposal distribution? So $q(X|X') \neq q(X'|X)$. Then we just need to go back to where we were equating rates and add the $q$s to each side of the equation. The bottom line is the Metropolis algorithm with the Metropolis ratio $r$ as we have summarized it at the beginning of this lecture.
-
-
-
 
 
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
-Why do you think that this property is called detailed balance? Can you make an analogy with thermodynamic equilibrium for e.g. a collection of hydrogen atoms?
+Why do you think that this property is called detailed balance? Can you make an analogy with thermodynamic equilibrium for a collection of hydrogen atoms?
 :::{admonition} Answer
 :class: dropdown, my-answer 
-*You answer!*
+At an equilibrium temperature $T$, the different atoms will be distributed in different energy states according to the Boltzmann distribution. But equilibrium does not mean static; there are constant excitation and de-excitation transitions among the hydrogen atoms.
+Detailed balance requires that the forward and reverse rates of each particular microscopic transition are equal.
 :::
 ::::
 
@@ -205,9 +201,11 @@ Key questions: When are you converged? How many "warm-up" or "burn-in " steps to
 
 ## Repeating configurations 
 
-What if the $\thetavec_{i+1}=\thetavec_i$ step is not implemented as it should be? (I.e., so the chain is only incremented if the step is accepted.) This is not clearly intuitive. But see the figures below from the Poisson distribution example with 100,000 steps. The first one follows the Metropolis algorithm and adds the same step if the candidate is rejected; the second one does not. Not keeping the repeated steps invalidates the Markov chain conditions $\Lra$ wrong stationary distribution (not by a lot but noticeably and every time it is run).  
+What if the $\thetavec_{i+1}=\thetavec_i$ step is not implemented as it should be? I.e., what if the chain is only incremented if the step is accepted? You might find that this is  more intuitive to you. But consider an empirical demonstration: see the figures below from the Poisson distribution example with 100,000 steps. The first one follows the Metropolis algorithm and adds the same step if the candidate is rejected; the second one does not. Not keeping the repeated steps invalidates the Markov chain conditions $\Lra$ the wrong stationary distribution is reached (it is not wrong by a lot but is is noticeable and is seen every time the sampling is run).  
 <br/>
-<img src="./figs/MCMC_poisson_100000_with_repeats.png" alt="MCMC poisson results with repeats" class="bg-primary mb-1" width="450px"><img src="./figs/MCMC_poisson_100000_no_repeats.png" alt="MCMC poisson results with no repeats" class="bg-primary mb-1" width="450px">
+<img src="./figs/MCMC_poisson_100000_with_repeats.png" alt="MCMC poisson results with repeats" class="bg-primary mb-1" width="550px">
+
+<img src="./figs/MCMC_poisson_100000_no_repeats.png" alt="MCMC poisson results with no repeats" class="bg-primary mb-1" width="550px">
 
 
 

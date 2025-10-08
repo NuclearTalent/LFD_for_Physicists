@@ -304,24 +304,24 @@
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">17.1. Why MCMC?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BasicStructureMCMC.html">17.2. Basic structure and intuition for MH</a></li>
 <li class="toctree-l2"><a class="reference internal" href="VisualizingMCMC.html">17.3. Visualizations of MH</a></li>
-<li class="toctree-l2"><a class="reference internal" href="StochasticProcesses/sec-04-example-random-walk.html">17.4. Example: Random walk</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-MCMC-improved.html">17.5. Demo: MH sampling of Poisson</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-random-walk-and-sampling.html">17.6. Demo: Random walk and sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-MCMC-improved.html">17.4. Demo: MH sampling of Poisson</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-random-walk-and-sampling.html">17.5. Demo: Random walk and sampling</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="TechnicalDetailsMCMC.html">18. Details of MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="StochasticProcesses.html">18.1. Stochastic processes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="StochasticProcesses/sec-03-definition-of-a-stochastic-process.html">18.2. Definition of a stochastic process</a></li>
-<li class="toctree-l2"><a class="reference internal" href="StochasticProcesses/sec-05-special-case-gaussian-process.html">18.3. Special case: Gaussian process</a></li>
-<li class="toctree-l2"><a class="reference internal" href="MarkovChains.html">18.4. Markov chains</a></li>
-<li class="toctree-l2"><a class="reference internal" href="MetropolisHastings.html">18.5. The Metropolis-Hastings algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="StochasticProcesses/sec-04-example-random-walk.html">18.3. Example: Random walk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="StochasticProcesses/sec-05-special-case-gaussian-process.html">18.4. Special case: Gaussian process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarkovChains.html">18.5. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MetropolisHastings.html">18.6. The Metropolis-Hastings algorithm</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="Advanced_MCMC.html">19. MCMC in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="ImplementationsMCMC.html">19.1. State-of-the-art MCMC implementations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html">19.2. Diagnostics for MCMC sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-diagnostics.html">19.3. Overview: MCMC Diagnostics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BUQ/intuition_sampling.html">19.4. Intuition on sampling and best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../BayesianStatistics/ComputationalBayes/AdvancedMCMC.html">19.2. Overview of diagnostics for MCMC sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ/MCMC-diagnostics.html">19.3. Demonstation: MCMC Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BestPracticesMCMC.html">19.4. Best practices for MCMC sampling</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="Other_samplers.html">20. Advanced sampling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -740,40 +740,41 @@ document.write(`
 <section id="general-problems-in-bayesian-inference">
 <h2>General problems in Bayesian inference<a class="headerlink" href="#general-problems-in-bayesian-inference" title="Link to this heading">#</a></h2>
 <p>We have been emphasizing that in the Bayesian approach, (almost) everything is a PDF.
-We might be interested in:</p>
+Given a PDF, we might be interested in:</p>
 <ol class="arabic">
 <li><p>The exploration of the PDF;</p>
 <ul class="simple">
-<li><p>Where is the probability mass concentrated?</p></li>
+<li><p>Where is the probability most concentrated and where is there low probability?</p></li>
 <li><p>Are there correlations between parameters?</p></li>
-<li><p>Are there multiple modes?</p></li>
-<li><p>How do the marginal PDFs look like? (I.e., we have a situation where we want to integrate (marginalize) over a subset of parameters <span class="math notranslate nohighlight">\(\thetavec_B\)</span> to find a posterior for the rest <span class="math notranslate nohighlight">\(\thetavec_A\)</span>. E.g., over parameters for the width of a signal and other parameters characterizing our model for the Higgs mass.)</p></li>
+<li><p>Are there multiple modes (local maxima in the PDF)?</p></li>
+<li><p>What do the <em>marginal</em> PDFs look like? (I.e., we have a situation where we want to integrate (marginalize) over a subset of parameters <span class="math notranslate nohighlight">\(\thetavec_B\)</span> to find a posterior for the rest <span class="math notranslate nohighlight">\(\thetavec_A\)</span>. That is, <span class="math notranslate nohighlight">\(\thetavec = \{\thetavec_A,\thetavec_B\}\)</span>. For example, marginalizing over parameters for the width of a signal and other parameters characterizing our model for the Higgs mass.)</p></li>
 </ul>
 </li>
 <li><p>The exploration of posterior predictions with a function <span class="math notranslate nohighlight">\(g(\pars)\)</span>;</p>
 <ul>
 <li><p>Finding the <strong>posterior predictive distribution</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-5d5b3ca1-9b37-4ba4-aa3a-30909ba08b14">
-<span class="eqno">(17.1)<a class="headerlink" href="#equation-5d5b3ca1-9b37-4ba4-aa3a-30909ba08b14" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-46b8fbc5-fb95-4473-93c4-47d01e2dc9e0">
+<span class="eqno">(17.1)<a class="headerlink" href="#equation-46b8fbc5-fb95-4473-93c4-47d01e2dc9e0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \{ g(\pars) \; : \; \pars \sim p(\pars) \}
 \end{equation}\]</div>
+<p>(Recall that this notation means “the distribution of <span class="math notranslate nohighlight">\(g(\pars)\)</span> given the distribution of <span class="math notranslate nohighlight">\(\pars\)</span>”.)</p>
 </li>
 <li><p>The evaluation of <strong>expectation values</strong> (as discussed in <a class="reference internal" href="../BayesianStatistics/BayesianBasics/Inferenceandpdfs/sec-04-summary.html#sec-inference-looking-ahead"><span class="std std-ref">Expectation values and moments</span></a>)</p></li>
 </ul>
 <div class="math notranslate nohighlight" id="equation-eq-mcmc-expectation-integral">
 <span class="eqno">(17.2)<a class="headerlink" href="#equation-eq-mcmc-expectation-integral" title="Link to this equation">#</a></span>\[
-        \expect{g(\pars)} = \int d\pars g(\pars) p(\pars)
+        \expect{g(\pars)} = \int d\pars\, g(\pars) p(\pars)
       \]</div>
 </li>
 </ol>
-<p>The first set of tasks can be addressed with a method to collect a set of samples <span class="math notranslate nohighlight">\(\{ \pars_i\}_{i=1}^N\)</span>, where the samples are distributed according to <span class="math notranslate nohighlight">\(p(\pars)\)</span>. The process of generating a random sample according to a probability distribution is commonly called a “draw””. Such samples can then be histogramed and plotted to provide an approximate representation of <span class="math notranslate nohighlight">\(p(\pars)\)</span>.</p>
+<p>The first set of tasks can be addressed with a method to collect a set of samples <span class="math notranslate nohighlight">\(\{ \pars_i\}_{i=1}^N\)</span>, where the samples are distributed according to <span class="math notranslate nohighlight">\(p(\pars)\)</span>. The process of generating a random sample according to a probability distribution is commonly called a “draw”. Such samples can then be histogrammed and plotted to provide an approximate representation of <span class="math notranslate nohighlight">\(p(\pars)\)</span>.</p>
 <p>In particular, it should be noted that marginal distributions can easily be obtained from these samples by ignoring the values of parameters that we are integrating over. For example, the marginal distribution <span class="math notranslate nohighlight">\(p(\para_1,\para_2)\)</span> of <span class="math notranslate nohighlight">\(p(\pars)\)</span> with <span class="math notranslate nohighlight">\(\pars\)</span> a <span class="math notranslate nohighlight">\(D\)</span>-dimensional vector is represented by the samples</p>
 <div class="math notranslate nohighlight">
 \[
 \{ (\para_1,\para_2)_i \}_{i=1}^N,
 \]</div>
 <p>where <span class="math notranslate nohighlight">\((\para_1,\para_2)_i\)</span> are the first two elements of the <span class="math notranslate nohighlight">\(\pars_i\)</span> sample. This procedure of ignoring the other parameter values can be understood since the process of marginalization is basically a projection of the multi-dimensional PDF onto the chosen axes.</p>
-<p>The computation of high-dimensional integrals such as in Eq. <a class="reference internal" href="#equation-eq-mcmc-expectation-integral">(17.2)</a> is very challenging in high dimensions. In fact, high-dimensional integrals appear frequently in science and applied mathematics. It is only anaytically solvable in some special cases and is therefore an important and general problem. It turns out that the ability to draw samples from <span class="math notranslate nohighlight">\(p(\pars)\)</span> will make it possible to compute very efficient, numerical approximations of this integral also in very high dimensions.</p>
+<p>The computation of multi-dimensional integrals such as in Eq. <a class="reference internal" href="#equation-eq-mcmc-expectation-integral">(17.2)</a> is very challenging in high dimensions, but high-dimensional integrals appear frequently in science and applied mathematics. They are only analytically solvable in some special cases and it is therefore an important and general problem to be able to solve. It turns out that the ability to draw samples from <span class="math notranslate nohighlight">\(p(\pars)\)</span> will make it possible to compute very efficient, numerical approximations of such integrals also in very high dimensions.</p>
 </section>
 <section id="numerical-integration">
 <h2>Numerical integration<a class="headerlink" href="#numerical-integration" title="Link to this heading">#</a></h2>
@@ -781,16 +782,17 @@ We might be interested in:</p>
 <section id="quadrature-methods">
 <h3>Quadrature methods<a class="headerlink" href="#quadrature-methods" title="Link to this heading">#</a></h3>
 <p>For small dimensions, classical numerical integration using quadrature is often the method of choice. For example, the one-dimensional integral</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c495d6d1-2106-4784-8636-ac2fdd401638">
-<span class="eqno">(17.3)<a class="headerlink" href="#equation-c495d6d1-2106-4784-8636-ac2fdd401638" title="Permalink to this equation">#</a></span>\[\begin{equation}
-I = \int d\para f(\para),
+<div class="amsmath math notranslate nohighlight" id="equation-7c53f86e-c8e7-4d95-aaea-0003d6a10e53">
+<span class="eqno">(17.3)<a class="headerlink" href="#equation-7c53f86e-c8e7-4d95-aaea-0003d6a10e53" title="Permalink to this equation">#</a></span>\[\begin{equation}
+I = \int d\para\, f(\para),
 \end{equation}\]</div>
 <p>is approximated by a weighted average of the function <span class="math notranslate nohighlight">\(f\)</span> evaluated at a number of quadrature points <span class="math notranslate nohighlight">\(\{ \para_i \}_{i=1}^N\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-702adf70-2124-480a-b266-5d32cd3e333f">
-<span class="eqno">(17.4)<a class="headerlink" href="#equation-702adf70-2124-480a-b266-5d32cd3e333f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a52745e5-8feb-4967-9749-6923e527af1d">
+<span class="eqno">(17.4)<a class="headerlink" href="#equation-a52745e5-8feb-4967-9749-6923e527af1d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 I \approx \sum_{i=1}^N w_i f(\para_i),
 \end{equation}\]</div>
-<p>where the different quadrature schemes are distinguished by using different sets of design points and weights. We note, however, that the number of design points that is required for a fixed precision grows exponentially with dimension. Assuming an integration scheme with <span class="math notranslate nohighlight">\(N\)</span> design points in one dimension, the same coverage in <span class="math notranslate nohighlight">\(D\)</span> dimensions requires <span class="math notranslate nohighlight">\(N^D\)</span> design points, which will be impractically large unless <span class="math notranslate nohighlight">\(D\)</span> is sufficiently small. This exponential increase in the number of required function evaluations with the dimensionality of the problem is often called the curse of dimensionality and is the main motivation for Monte Carlo integration.</p>
+<p>where the different quadrature schemes are distinguished by using different sets of design points and weights. Familiar examples of such schemes are the trapezoid rule, Simpson’s rule, and Gaussian quadrature (the former two rely on evenly space quadrature points while the latter exploits the freedom to choose the spacing).</p>
+<p>We note, however, that the number of design points that is required for a fixed precision grows exponentially with dimension. Assuming an integration scheme with <span class="math notranslate nohighlight">\(N\)</span> design points in one dimension, the same coverage in <span class="math notranslate nohighlight">\(D\)</span> dimensions requires <span class="math notranslate nohighlight">\(N^D\)</span> design points, which will be impractically large unless <span class="math notranslate nohighlight">\(D\)</span> is sufficiently small. This exponential increase in the number of required function evaluations with the dimensionality of the problem is often called the “curse of dimensionality” and is the main motivation for Monte Carlo integration.</p>
 </section>
 <section id="monte-carlo-integration">
 <h3>Monte Carlo integration<a class="headerlink" href="#monte-carlo-integration" title="Link to this heading">#</a></h3>
@@ -799,14 +801,14 @@ I \approx \sum_{i=1}^N w_i f(\para_i),
 <span class="eqno">(17.5)<a class="headerlink" href="#equation-eq-mcmc-mc-integration" title="Link to this equation">#</a></span>\[
 I = \int_{V_D} d\pars f(\pars) \approx I_N \equiv \frac{V_D}{N} \sum_{i=1}^N f(\pars_i),
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(\{ \pars_i \}_{i=1}^N\)</span> are <span class="math notranslate nohighlight">\(N\)</span> uniformly distributed points in the <span class="math notranslate nohighlight">\(D\)</span> dimensional volume <span class="math notranslate nohighlight">\(V_D\)</span> of the parameter space. The convergence of this expression will not be proven here, but is a consequence of the law of large numbers. Furthermore, one can show that the error in this approximation (usually) decreases as <span class="math notranslate nohighlight">\(1/\sqrt{N}\)</span> regardless of the dimensionality <span class="math notranslate nohighlight">\(D\)</span>, which is the main reason for its usefulness when facing complicated, high-dimensional integrals. To be specific, the variance of <span class="math notranslate nohighlight">\(I_N\)</span> can be estimated by the sample variance</p>
-<div class="amsmath math notranslate nohighlight" id="equation-eec330c1-4a0c-4835-8063-e50a2532dc44">
-<span class="eqno">(17.6)<a class="headerlink" href="#equation-eec330c1-4a0c-4835-8063-e50a2532dc44" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>where <span class="math notranslate nohighlight">\(\{ \pars_i \}_{i=1}^N\)</span> are <span class="math notranslate nohighlight">\(N\)</span> uniformly distributed points in the <span class="math notranslate nohighlight">\(D\)</span> dimensional volume <span class="math notranslate nohighlight">\(V_D\)</span> of the parameter space. (By “uniformly distributed” here we don’t mean equally spaced, but distributed randomly according to a uniform distribution.) The convergence of this expression will not be proven here, but is a consequence of the law of large numbers. Furthermore, one can show that the error in this approximation (usually) decreases as <span class="math notranslate nohighlight">\(1/\sqrt{N}\)</span> regardless of the dimensionality <span class="math notranslate nohighlight">\(D\)</span>, which is the main reason for its usefulness when facing complicated, high-dimensional integrals. To be specific, the variance of <span class="math notranslate nohighlight">\(I_N\)</span> can be estimated by the sample variance</p>
+<div class="amsmath math notranslate nohighlight" id="equation-cdf23946-81f8-4826-ad66-9c38263107f9">
+<span class="eqno">(17.6)<a class="headerlink" href="#equation-cdf23946-81f8-4826-ad66-9c38263107f9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \sigma_N^2 = \frac{1}{N-1} \sum_{i=1}^N \left( f(\pars_i) - \langle f \rangle \right)^2,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\langle f \rangle\)</span> is the sample mean, and becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c2daa4a3-b3ac-4dc1-85d5-1757dc48f2cb">
-<span class="eqno">(17.7)<a class="headerlink" href="#equation-c2daa4a3-b3ac-4dc1-85d5-1757dc48f2cb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2806517f-2b89-4a63-ab5d-977c35518347">
+<span class="eqno">(17.7)<a class="headerlink" href="#equation-2806517f-2b89-4a63-ab5d-977c35518347" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \text{Var}(I_N)) = V_D^2 \frac{\sigma_N^2}{N}.
 \end{equation}\]</div>
 <div class="admonition caution">
@@ -831,17 +833,15 @@ I = \int_{V_D} d\pars f(\pars) \approx I_N \equiv \frac{V_D}{N} \sum_{i=1}^N f(\
   \langle f(\theta) \rangle = \int_a^b g(\theta)\,d\theta
     \approx \frac{b-a}{n}\sum_{i=1}^{n} g(\theta_i)
 \]</div>
-<ul class="simple">
-<li><p>Here <span class="math notranslate nohighlight">\(b-a\)</span> is the “volume” <span class="math notranslate nohighlight">\(V\)</span> in one dimension.</p></li>
-</ul>
-<p>Does this always work? No! (Cf., the radioactive lighthouse problem.) But if the central limit theorem applies, it should work, but maybe not efficiently.</p>
+<p>Here <span class="math notranslate nohighlight">\(b-a\)</span> is the “volume” <span class="math notranslate nohighlight">\(V_D\)</span> in <span class="math notranslate nohighlight">\(D=1\)</span> dimension.</p>
+<p>Does this always work? No! (Cf., the radioactive lighthouse problem.) But if the central limit theorem applies, it should work, but usually not efficiently.</p>
 </div>
 <div class="proof example admonition" id="example-0">
 <p class="admonition-title"><span class="caption-number">Example 17.1 </span> (Monte Carlo estimation of <span class="math notranslate nohighlight">\(\pi\)</span>)</p>
 <section class="example-content" id="proof-content">
 <p>A standard example of Monte Carlo integration is the estimation of <span class="math notranslate nohighlight">\(\pi\)</span> using the (circular) step function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e651419a-ea0d-4d54-af14-ff39dcf3bff9">
-<span class="eqno">(17.8)<a class="headerlink" href="#equation-e651419a-ea0d-4d54-af14-ff39dcf3bff9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bcabbe8a-df8d-4014-a604-71f8656e4ec2">
+<span class="eqno">(17.8)<a class="headerlink" href="#equation-bcabbe8a-df8d-4014-a604-71f8656e4ec2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x,y) = \left\{ 
 \begin{array}{ll}
 1 &amp; \text{if $x^2+y^2 \leq 1$} \\
@@ -850,16 +850,16 @@ f(x,y) = \left\{
 \right.
 \end{equation}\]</div>
 <p>such that the integral</p>
-<div class="amsmath math notranslate nohighlight" id="equation-44d1ba5a-c30c-4ed4-bcd8-e2c22cf2c207">
-<span class="eqno">(17.9)<a class="headerlink" href="#equation-44d1ba5a-c30c-4ed4-bcd8-e2c22cf2c207" title="Permalink to this equation">#</a></span>\[\begin{equation}
-I = \int_{-1}^1 dx \int_{-1}^1 dy f(x,y) = \pi.
+<div class="amsmath math notranslate nohighlight" id="equation-e8109a10-5407-4b03-890a-1790979cef6e">
+<span class="eqno">(17.9)<a class="headerlink" href="#equation-e8109a10-5407-4b03-890a-1790979cef6e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+I = \int_{-1}^1 dx \int_{-1}^1 dy\, f(x,y) = \pi.
 \end{equation}\]</div>
 <p>One can estimate <span class="math notranslate nohighlight">\(I\)</span> using <span class="math notranslate nohighlight">\(N\)</span> samples <span class="math notranslate nohighlight">\(\{ (x_i,y_i) \}_{i=1}^N \)</span> from the bivariate, uniform distribution <span class="math notranslate nohighlight">\(\mathcal{U} \left( [-1,1]^2 \right)\)</span> such that</p>
 <div class="math notranslate nohighlight" id="equation-eq-mcmc-mc-integration-pi">
 <span class="eqno">(17.10)<a class="headerlink" href="#equation-eq-mcmc-mc-integration-pi" title="Link to this equation">#</a></span>\[
 I \approx I_N = \frac{4}{N} \sum_{i=1}^N f(x_i,y_i),
 \]</div>
-<p>according to Eq. <a class="reference internal" href="#equation-eq-mcmc-mc-integration">(17.5)</a>. In the code cell below we implement this Monte Carlo integration using python and show that the (relative) error of this numerical simulation of <span class="math notranslate nohighlight">\(\pi\)</span> indeed decreases as <span class="math notranslate nohighlight">\(1/\sqrt{N}\)</span>.</p>
+<p>according to Eq. <a class="reference internal" href="#equation-eq-mcmc-mc-integration">(17.5)</a>. In the code cell below we implement this Monte Carlo integration using Python and show that the (relative) error of this numerical simulation of <span class="math notranslate nohighlight">\(\pi\)</span> indeed decreases as <span class="math notranslate nohighlight">\(1/\sqrt{N}\)</span>.</p>
 </section>
 </div><div class="cell tag_hide-output docutils container">
 <div class="cell_input above-output-prompt docutils container">
@@ -909,34 +909,34 @@ I \approx I_N = \frac{4}{N} \sum_{i=1}^N f(x_i,y_i),
 <p class="expanded admonition-title">Hide code cell output</p>
 </summary>
 <div class="cell_output docutils container">
-<img alt="../../_images/ee90358993146d7079dd155c9c3698bf25ae39494ea0ed22d3670b7fd9724a63.png" src="../../_images/ee90358993146d7079dd155c9c3698bf25ae39494ea0ed22d3670b7fd9724a63.png" />
+<img alt="../../_images/a17b90d1260ce4ebfb5a61d135fc4b43a035d6c2ff7ebb54ab0ed6d321f4dac4.png" src="../../_images/a17b90d1260ce4ebfb5a61d135fc4b43a035d6c2ff7ebb54ab0ed6d321f4dac4.png" />
 </div>
 </details>
 </div>
 <figure class="align-default" id="fig-mc-integration">
-<img alt="../../_images/ee90358993146d7079dd155c9c3698bf25ae39494ea0ed22d3670b7fd9724a63.png" src="../../_images/ee90358993146d7079dd155c9c3698bf25ae39494ea0ed22d3670b7fd9724a63.png" />
+<img alt="../../_images/a17b90d1260ce4ebfb5a61d135fc4b43a035d6c2ff7ebb54ab0ed6d321f4dac4.png" src="../../_images/a17b90d1260ce4ebfb5a61d135fc4b43a035d6c2ff7ebb54ab0ed6d321f4dac4.png" />
 <figcaption>
 <p><span class="caption-number">Fig. 17.1 </span><span class="caption-text">Relative error of the Monte Carlo integration <a class="reference internal" href="#equation-eq-mcmc-mc-integration-pi">(17.10)</a> as a function of the number of samples, demonstrating the <span class="math notranslate nohighlight">\(1/\sqrt{N}\)</span> scaling.</span><a class="headerlink" href="#fig-mc-integration" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<p>Despite the favorable <span class="math notranslate nohighlight">\(1/\sqrt{N}\)</span>-scaling, the problem of straight-forward Monte Carlo integration is that you will often evaluate the integrand at locations where it is small. This affects the precision of the approximation due to the volume factor and since the sample variance is large. It would be more beneficial to focus the sampling to regions that contribute significantly to the integral.</p>
+<p>Despite the favorable <span class="math notranslate nohighlight">\(1/\sqrt{N}\)</span>-scaling, the problem of straight-forward Monte Carlo integration is that you will often evaluate the integrand at locations where it is small. This affects the precision of the approximation due to the volume factor and because the sample variance is large. It would be more beneficial to focus the sampling to regions that contribute significantly to the integral.</p>
 </section>
 <section id="monte-carlo-integration-in-statistics">
 <h3>Monte Carlo integration in statistics<a class="headerlink" href="#monte-carlo-integration-in-statistics" title="Link to this heading">#</a></h3>
 <p>Indeed, it turns out that significantly better precision can be achieved for integrals such as <a class="reference internal" href="#equation-eq-mcmc-expectation-integral">(17.2)</a>, that appear in statistical computations. Given that we have a method to collect samples <span class="math notranslate nohighlight">\(\{ \pars_i \}_{i=1}^N\)</span> from <span class="math notranslate nohighlight">\(p(\pars)\)</span>, we find that</p>
 <div class="math notranslate nohighlight" id="equation-eq-mcmc-mc-pdf-integration">
 <span class="eqno">(17.11)<a class="headerlink" href="#equation-eq-mcmc-mc-pdf-integration" title="Link to this equation">#</a></span>\[
-I = \int_{V_D} d\pars g(\pars) p(\pars) \approx I_N \equiv \frac{1}{N} \sum_{i=1}^N g(\pars_i),
+I = \int_{V_D} d\pars\, g(\pars) p(\pars) \approx I_N \equiv \frac{1}{N} \sum_{i=1}^N g(\pars_i),
 \]</div>
-<p>where you should note that the volume factor has disappeared and that you only evaluate <span class="math notranslate nohighlight">\(g(\pars)\)</span> at the sampled positions where the PDF is usually large.</p>
+<p>where you should note that the volume factor has disappeared and that you only evaluate <span class="math notranslate nohighlight">\(g(\pars)\)</span> at the sampled positions where the PDF <span class="math notranslate nohighlight">\(p(\pars)\)</span> is usually large.</p>
 </section>
 </section>
 <section id="sampling-from-a-pdf">
 <h2>Sampling from a PDF<a class="headerlink" href="#sampling-from-a-pdf" title="Link to this heading">#</a></h2>
 <p>We have seen that the ability to draw samples from a probability distribution is very useful. If <span class="math notranslate nohighlight">\(p(\pars)\)</span> is of a standard form then it is straightforward to sample from it using available algorithms, most of which are based on nonlinear transformations of uniformly distributed random numbers. For example, a set of samples <span class="math notranslate nohighlight">\(\{ u_i\}_{i=1}^N\)</span> from the one-dimensional standard uniform distribution <span class="math notranslate nohighlight">\(\mathcal{U}([0,1])\)</span>
 can be tuned to a a set of samples <span class="math notranslate nohighlight">\(\{ \para_i \}_{i=1}^N\)</span> from the standard Gaussian distribution <span class="math notranslate nohighlight">\(\mathcal{N}(0,1)\)</span> via the transformation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-364804e8-2d27-4433-82e7-e060457a079f">
-<span class="eqno">(17.12)<a class="headerlink" href="#equation-364804e8-2d27-4433-82e7-e060457a079f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5b84ddf1-ba85-4e1b-adce-3a524ce167b2">
+<span class="eqno">(17.12)<a class="headerlink" href="#equation-5b84ddf1-ba85-4e1b-adce-3a524ce167b2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_i = F^{-1}_{\mathcal{N}}(u_i),
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(F^{-1}_{\mathcal{N}}\)</span> is the <em>inverse</em> distribution function of the standard normal distribution. That is, we interpret <span class="math notranslate nohighlight">\(u_i\)</span> as a probability sample and use the above transformation to find the solution to <span class="math notranslate nohighlight">\(u_i = F(\para_i)\)</span>.</p>
@@ -949,7 +949,7 @@ If, for one parameter, the fraction of significant strength is <span class="math
 This necessitates <em>importance sampling</em>, which reweighs the integrand to more appropriately distribution points. This is accomplished by the adaptive Monte Carlo integration program <code class="docutils literal notranslate"><span class="pre">VEGAS</span></code>, but it is difficult to accomplish in general.</p>
 <p>The bottom line is that it is not feasible to draw a series of independent random samples from <span class="math notranslate nohighlight">\(p(\thetavec|D,I)\)</span> for larger sizes of <span class="math notranslate nohighlight">\(\thetavec\)</span>.
 Remember, independent means if <span class="math notranslate nohighlight">\(\thetavec_1, \thetavec_2, \ldots\)</span> is the series, knowing <span class="math notranslate nohighlight">\(\thetavec_i\)</span> doesn’t tell us anything about <span class="math notranslate nohighlight">\(\thetavec_{i+1}\)</span> (or any other <span class="math notranslate nohighlight">\(\thetavec\)</span>).
-<em>But the samples don’t need to be independent.</em> We just need to generate <span class="math notranslate nohighlight">\(p(\thetavec|D,I)\)</span> in the correct proportions; e.g., so it approximates <span class="math notranslate nohighlight">\(p(\thetavec|D,I)\)</span> when the samples are histogrammed.</p>
+<em>But consecutive samples don’t need to be independent.</em> We just need to generate <span class="math notranslate nohighlight">\(p(\thetavec|D,I)\)</span> in the correct proportions; e.g., so it approximates <span class="math notranslate nohighlight">\(p(\thetavec|D,I)\)</span> when the samples are histogrammed.</p>
 <p><strong>Solution:</strong> Do a <em>random walk</em> (diffusion) in the parameter space of <span class="math notranslate nohighlight">\(\thetavec\)</span>, so that the probability for being in a region is proportional to <span class="math notranslate nohighlight">\(p(\thetavec|D,I)\)</span> for that region.
 The basic plan is:</p>
 <ul class="simple">
@@ -957,13 +957,16 @@ The basic plan is:</p>
 <li><p>The transition probability is assumed to be “time independent”, so the same <span class="math notranslate nohighlight">\(p(\thetavec_{i+1}|\thetavec_i)\)</span> holds no matter when you do it  <span class="math notranslate nohighlight">\(\Lra\)</span> this is a <em>Markov chain</em> and the method is called Markov Chain Monte Carlo or MCMC.</p></li>
 <li><p>Once we have a representative set of <span class="math notranslate nohighlight">\(N\)</span> vectors <span class="math notranslate nohighlight">\(\{\thetavec_i\}\)</span>, then any expectation value of a function <span class="math notranslate nohighlight">\(f\)</span> of <span class="math notranslate nohighlight">\(\thetavec\)</span>, which is the integral of <span class="math notranslate nohighlight">\(f(\thetavec) p(\thetavec|D,I)\)</span> over <span class="math notranslate nohighlight">\(\thetavec\)</span>, is given simply by the average <span class="math notranslate nohighlight">\(\langle f\rangle = \frac{1}{N}\sum_i f(\thetavec_i)\)</span>.</p></li>
 </ul>
-<p>We can think of the sampled distribution as a set of delta functions, whose normalization is trivial:</p>
+<p>We can think of the sampled distribution as a sum of delta functions, whose normalization is trivial:</p>
 <div class="math notranslate nohighlight">
 \[ 
   p(\thetavec|D,I) \rightarrow \frac{1}{N}\sum_{i=1}^{N}\delta(\thetavec-\thetavec_i)
 \]</div>
-<div class="dropdown admonition">
-<p class="admonition-title">Check that with the delta functions we get the rule for <span class="math notranslate nohighlight">\(\langle f\rangle\)</span>.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint exercise</p>
+<p>Check that with the delta functions we reproduce normalization of <span class="math notranslate nohighlight">\(p\)</span> and the rule for <span class="math notranslate nohighlight">\(\langle f\rangle\)</span>.</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
 <div class="math notranslate nohighlight">
 \[ 
   \int\!d\thetavec\, p(\thetavec|D,I) \rightarrow 
@@ -976,6 +979,58 @@ The basic plan is:</p>
   \frac{1}{N}\sum_{i=1}^{N} \int\!d\thetavec\, f(\thetavec)\delta(\thetavec-\thetavec_i)
   =\frac{1}{N}\sum_{i=1}^{N} f(\thetavec_i) .
 \]</div>
+</div>
+</div>
+<div class="admonition-intuition-for-integration admonition">
+<p class="admonition-title">Intuition for integration</p>
+<p>Here we compare two classes of integration methods:
+1. Approximation by Riemann sum (or trapezoid rule).
+1. Approximation using MCMC samples.</p>
+<p>Suppose we want to calculate the expectation value of a function <span class="math notranslate nohighlight">\(f(x)\)</span> where the distribution of <span class="math notranslate nohighlight">\(x\)</span> is <span class="math notranslate nohighlight">\(p(x|D,I)\)</span> and we will restrict the domain of <span class="math notranslate nohighlight">\(x\)</span> to the positive real axis. So</p>
+<div class="math notranslate nohighlight" id="equation-f-expectation">
+<span class="eqno">(17.13)<a class="headerlink" href="#equation-f-expectation" title="Link to this equation">#</a></span>\[
+   \langle f\rangle = \int_{0}^\infty f(x) p(x|D,I) dx
+\]</div>
+<p>and we’ll imagine <span class="math notranslate nohighlight">\(p(x|D,I)\)</span> is like the red lines in the figures here.</p>
+<a class="bg-primary reference internal image-reference" href="../../_images/schematic_histogram.png"><img alt="schematic histogram" class="bg-primary" src="../../_images/schematic_histogram.png" style="width: 300px;" />
+</a>
+<a class="bg-primary reference internal image-reference" href="../../_images/pdf_histogram_sampled.png"><img alt="sampled histogram" class="bg-primary" src="../../_images/pdf_histogram_sampled.png" style="width: 300px;" />
+</a>
+<p>In method 1, we divide the <span class="math notranslate nohighlight">\(x\)</span> axis into bins of width <span class="math notranslate nohighlight">\(\delta x\)</span>, let <span class="math notranslate nohighlight">\(x_i = i\cdot\Delta x\)</span>, <span class="math notranslate nohighlight">\(i=0,\ldots,N-1\)</span>. Then</p>
+<div class="math notranslate nohighlight">
+\[
+  \langle f\rangle \approx \sum_{i=0}^{N-1} f(x_i)\, p(x_i|D,I) \,\Delta x .
+\]</div>
+<p>The histogram bar height tells us the strength of <span class="math notranslate nohighlight">\(p(x_i|D,I)\)</span> and we have a similar discretization for <span class="math notranslate nohighlight">\(f(x)\)</span>.</p>
+<p>In method 2, we <em>sample</em> <span class="math notranslate nohighlight">\(p(x|D,I)\)</span> to obtain a representative set of <span class="math notranslate nohighlight">\(x\)</span> values, which we’ll denote by <span class="math notranslate nohighlight">\(\{x_j\}\)</span>, <span class="math notranslate nohighlight">\(j=0,\ldots,N'-1\)</span>. If I histogram <span class="math notranslate nohighlight">\(\{x_j\}\)</span> it looks like the posterior, as seen in the figures. To approximate the expectation value, we simply use:</p>
+<div class="math notranslate nohighlight">
+\[
+  \langle f\rangle \approx \frac{1}{N'}\sum_{j=0}^{N'-1} f(x_j) .
+\]</div>
+<p>In method 1, the function <span class="math notranslate nohighlight">\(p(x | D,I)\)</span> weights <span class="math notranslate nohighlight">\(f(x)\)</span> at <span class="math notranslate nohighlight">\(x_i\)</span> by multiplying by the value of <span class="math notranslate nohighlight">\(p(x_i|D,I\)</span>), so strong weighting near the peak of <span class="math notranslate nohighlight">\(p\)</span> and weak weighting far away. The amount of the weighting is given (approximately) by the height of the corresponding histogram bar.
+In method 2, we have similar weighting of <span class="math notranslate nohighlight">\(f(x)\)</span> near to and far from the peak of <span class="math notranslate nohighlight">\(p\)</span>, but instead of this being accomplished by multiplying by <span class="math notranslate nohighlight">\(p(x_j|D,I)\)</span>, there are more <span class="math notranslate nohighlight">\(x_j\)</span> values near the peak than far away, in proportion to <span class="math notranslate nohighlight">\(p(x_j|D,I)\)</span>. In the end it is the same weight!</p>
+</div>
+<div class="admonition-intuition-for-marginalization-of-a-nuisance-parameter admonition">
+<p class="admonition-title">Intuition for marginalization of a nuisance parameter</p>
+<p>Return to the expectation value of <span class="math notranslate nohighlight">\(x\)</span> in Eq. <a class="reference internal" href="#equation-f-expectation">(17.13)</a>, but now suppose we introduce a nuisance parameter <span class="math notranslate nohighlight">\(y\)</span> into the distribution,</p>
+<div class="math notranslate nohighlight" id="equation-y-marg">
+<span class="eqno">(17.14)<a class="headerlink" href="#equation-y-marg" title="Link to this equation">#</a></span>\[
+  p(x|D,I) = \int_{0}^{\infty} dy\, p(x,y|D,I),
+\]</div>
+<p>and now we sample <span class="math notranslate nohighlight">\(p(x,y|D,I)\)</span> using MCMC to obtain samples <span class="math notranslate nohighlight">\(\{(x_j,y_j)\}\)</span>, <span class="math notranslate nohighlight">\(j=0,\ldots,N'-1\)</span>.</p>
+<p>If we had a function of <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>, say <span class="math notranslate nohighlight">\(g(x,y)\)</span>, that we wanted to take the expectation value of, we could use our samples as usual:</p>
+<div class="math notranslate nohighlight" id="equation-g-exp-samp">
+<span class="eqno">(17.15)<a class="headerlink" href="#equation-g-exp-samp" title="Link to this equation">#</a></span>\[
+  \langle g \rangle \approx \frac{1}{N'}\sum_{j=0}^{N'-1} g(x_j,y_j) .
+\]</div>
+<p>But suppose we just have <span class="math notranslate nohighlight">\(f(x)\)</span>, so we want to integrate out the <span class="math notranslate nohighlight">\(y\)</span> dependence; e.g., going backwards in <a class="reference internal" href="#equation-y-marg">(17.14)</a>? How do we do that with our samples <span class="math notranslate nohighlight">\(\{(x_j,y_j)\}\)</span>?</p>
+<div class="math notranslate nohighlight" id="equation-f-exp-samp">
+<span class="eqno">(17.16)<a class="headerlink" href="#equation-f-exp-samp" title="Link to this equation">#</a></span>\[\begin{split}\begin{align}
+  \langle f \rangle &amp;= \int_{0}^\infty dx f(x)\int_{0}^{\infty} dy\, p(x,y|D,I) \\
+  &amp;\approx \frac{1}{N'}\sum_{j=0}^{N'-1} f(x_j) .
+\end{align}\end{split}\]</div>
+<p>Equivalently we can note that <span class="math notranslate nohighlight">\(f(x)\)</span> is just a special case of <span class="math notranslate nohighlight">\(g(x,y)\)</span> with no <span class="math notranslate nohighlight">\(y\)</span> dependence. Then <a class="reference internal" href="#equation-g-exp-samp">(17.15)</a> gives the same formula for <span class="math notranslate nohighlight">\(\langle f\rangle\)</span> as <a class="reference internal" href="#equation-f-exp-samp">(17.16)</a>.</p>
+<p>So to marginalize, we just use the <span class="math notranslate nohighlight">\(x\)</span> values in each <span class="math notranslate nohighlight">\((x_j,y_j)\)</span> pair. <strong>I.e., we ignore the <span class="math notranslate nohighlight">\(y_j\)</span> column!</strong></p>
 </div>
 </section>
 </section>
