@@ -8,6 +8,9 @@ Here we provide formal and detailed discussions on:
 
 * {ref}`sec:DefStochasticProcess` gives a formal definition, with a code examples and several exercises.
 
+* {ref}`sec:ExampleRandomWalk` is a basic example.
+
+
 * {ref}`sec:StochasticGP` introduces the Gaussian process, which we will revisit in detail in {ref}`sec:RootGP`.
 
 * {ref}`sec:MarkovChains` has a detailed introduction to Markov chains, with examples.
