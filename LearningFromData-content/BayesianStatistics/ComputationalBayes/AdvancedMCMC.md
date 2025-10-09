@@ -34,11 +34,20 @@ MCMC sampling can go wrong in (at least) three ways:
 1. Pseudoconvergence---The chain seems stationary, but the limiting distribution is not actually reached.
 1. Highly correlated samples---Not really wrong, but inefficient.
 
-There is no unique solution to such problems, but they are typically adressed in three ways:
+There is no unique solution to such problems, but they are typically addressed in three ways:
 
 1. Design the simulation runs for monitoring of convergence. In particular, run multiple sequences of the Markov chains with starting points dispersed over the sampling space. This is difficult in high dimensions.
-1. Monitor the convergence of individual sampling dimensions, as well as predictied quantities of interest, by comparing variations within and between the different sequences (chains). Here you are looking for stationarity (the running means are stable) and mixing (different sequences are sampling the same distribution). The Gelman-Rubin test (see below) is devised for this purpose.
-1. Unacceptably inefficient sampling (too low acceptance rate) implies that the algorithm must be adjusted, or that an altogether different sampling algorithm should be used.
+2. Monitor the convergence of individual sampling dimensions, as well as predicted quantities of interest, by comparing variations within and between the different sequences (chains). Here you are looking for stationarity (the running means are stable) and mixing (different sequences are sampling the same distribution). The Gelman-Rubin test (see below) is devised for this purpose.
+In the following schematic version of Figure 11.3 in BDA-3, we see on the left two chains that stay in separate regions of $\theta_0$ (no mixing) while on the right there is mixing but neither chain shows a stationary distribution (the $\theta_0$ distribution keeps changing with MC steps).
+
+```{image} ./figs/schematic_BDA3_fig11p3.png
+:alt: schematic BDA3 Figure 11.3
+:class: bg-primary
+:width: 500px
+:align: center
+```
+
+3. Unacceptably inefficient sampling (too low acceptance rate) implies that the algorithm must be adjusted, or that an altogether different sampling algorithm should be used.
 
 The diagnostics that will be discussed below are all univariate. They work perfectly when there is only one parameter to estimate. In fact, most convergence tests are performed with univariate diagnostics applied to each sampling dimension one by one. 
 
