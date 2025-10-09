@@ -728,9 +728,9 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="demonstation-mcmc-diagnostics">
 <h1><span class="section-number">19.3. </span>Demonstation: MCMC Diagnostics<a class="headerlink" href="#demonstation-mcmc-diagnostics" title="Link to this heading">#</a></h1>
-<p>Adapted from the TALENT course on Learning from Data: Bayesian Methods and Machine Learning
-(York, UK, June 10-28, 2019).</p>
-<p>The original notebook was by Christian Forssen.  Revisions by Dick Furnstahl.</p>
+<p>This notebook demonstrates some of the basic MCMC diagnostic tools.
+It was adapted from the TALENT course on Learning from Data: Bayesian Methods and Machine Learning
+(York, UK, June 10-28, 2019). The original notebook was by Christian Forssen.  Revisions by Dick Furnstahl.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
@@ -806,7 +806,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/2562a074a30140666086689bd767b4d7af0d78c71a0613b3549c3c5a517d580f.png" src="../../../_images/2562a074a30140666086689bd767b4d7af0d78c71a0613b3549c3c5a517d580f.png" />
+<img alt="../../../_images/cfc6d11fea2e3b34b531967821189216676be645f67fe746a9c7f73072fe9e1b.png" src="../../../_images/cfc6d11fea2e3b34b531967821189216676be645f67fe746a9c7f73072fe9e1b.png" />
 </div>
 </div>
 </section>
@@ -878,7 +878,8 @@ p(D\mid\theta, I) = \prod_{i=1}^N p(y_i\mid x_i,\theta, I)
 </div>
 </div>
 </div>
-<p>We will use the emcee sampler, but in its Metropolis-Hastings mode. Here you can use your own sampler if you created one.</p>
+<p>We will use the emcee sampler, but in its Metropolis-Hastings mode. In particular, we invoke the sampler with <code class="docutils literal notranslate"><span class="pre">moves.GaussianMove(cov)</span></code>, which implements a Metropolis step using a Gaussian proposal with mean zero and covariance <code class="docutils literal notranslate"><span class="pre">cov</span></code>. The covariance <code class="docutils literal notranslate"><span class="pre">cov</span></code> could be a scalar, as it is here, or a vector or a matrix. See the relevant <a class="reference external" href="https://emcee.readthedocs.io/en/stable/user/moves/">emcee manual page</a> for further details and more general moves. The <code class="docutils literal notranslate"><span class="pre">stepsize</span></code> parameter is at our disposal to explore the consequences on convergence of it being too large or too small.</p>
+<p>Alternatively, you can use your own sampler here if you created one.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">emcee</span>
@@ -907,6 +908,7 @@ p(D\mid\theta, I) = \prod_{i=1}^N p(y_i\mid x_i,\theta, I)
 </div>
 </div>
 </div>
+<p>To get the chains below we use <code class="docutils literal notranslate"><span class="pre">sampler.chain</span></code>, which will give a list with the shape (# walkers, # steps, # dimensions). So 10 walkers taking 2000 steps each for a two-dimensional posterior (that is, <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> has two components) has the shape (10, 2000, 2). We can combine the results from all the walkers with <code class="docutils literal notranslate"><span class="pre">sampler.chain.reshape((-1,ndim))</span></code>, which flattens the first two axes of the list. (One reshape dimension can always be <span class="math notranslate nohighlight">\(-1\)</span>, which infers the value from the length of the array. So here the reshaped array will have two axes with the second one having dimension <code class="docutils literal notranslate"><span class="pre">ndim</span></code>.)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Sample the posterior distribution</span>
@@ -944,13 +946,13 @@ p(D\mid\theta, I) = \prod_{i=1}^N p(y_i\mid x_i,\theta, I)
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MH sampler performing 2000 samples.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 699 ms, sys: 526 μs, total: 700 ms
-Wall time: 699 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 699 ms, sys: 1.31 ms, total: 700 ms
+Wall time: 698 ms
 done
-Mean acceptance fraction: 0.103
+Mean acceptance fraction: 0.145
 </pre></div>
 </div>
-<img alt="../../../_images/c509ae84fea65f9bdaa02bc84e195396784c9a718495767545589b33f35f89f0.png" src="../../../_images/c509ae84fea65f9bdaa02bc84e195396784c9a718495767545589b33f35f89f0.png" />
+<img alt="../../../_images/4ce5e1dce3a9242b7bee749b3c69e29f1e0cba1f249cc9d52c829d134b224a18.png" src="../../../_images/4ce5e1dce3a9242b7bee749b3c69e29f1e0cba1f249cc9d52c829d134b224a18.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -989,7 +991,7 @@ Mean acceptance fraction: 0.103
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/20f70e6b668d6e8ac2a7b9f5e718a946c62b8cfa0962039d1901bc27e0c138b5.png" src="../../../_images/20f70e6b668d6e8ac2a7b9f5e718a946c62b8cfa0962039d1901bc27e0c138b5.png" />
+<img alt="../../../_images/6b46088e2a8a10ae8170b0d8e109c99c09390e40a3baa37513cca6dd37d3d80a.png" src="../../../_images/6b46088e2a8a10ae8170b0d8e109c99c09390e40a3baa37513cca6dd37d3d80a.png" />
 </div>
 </div>
 </section>
@@ -1015,8 +1017,8 @@ SE({\bar{\theta}}) = \frac{\text{Posterior Standard Deviation}}{\sqrt{N}}
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Standard Error of the Mean for theta_0: 7.0e-04
-Standard Error of the Mean for theta_1: 1.0e-04
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Standard Error of the Mean for theta_0: 5.8e-04
+Standard Error of the Mean for theta_1: 1.2e-04
 </pre></div>
 </div>
 </div>
@@ -1043,7 +1045,7 @@ Standard Error of the Mean for theta_1: 1.0e-04
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/581e9a7d6d0f9107170405049e5b8fc63bb99c72af5e86d416d61be4439ab6a3.png" src="../../../_images/581e9a7d6d0f9107170405049e5b8fc63bb99c72af5e86d416d61be4439ab6a3.png" />
+<img alt="../../../_images/1eefe0f36f49574f44de67eda9f262d3bfdc2c78fa608aa9f502e00e416e04e8.png" src="../../../_images/1eefe0f36f49574f44de67eda9f262d3bfdc2c78fa608aa9f502e00e416e04e8.png" />
 </div>
 </div>
 <p>This is a good sign that our chain is stable, since both the individual samples of <span class="math notranslate nohighlight">\(\theta\)</span> in our chain and the mean of the samples dance around a stable value of <span class="math notranslate nohighlight">\(\theta\)</span>.  The calculation above makes this more concrete.  There are time series versions of this calculation that accounts for the fact that the chain is not iid.</p>
@@ -1086,7 +1088,7 @@ Standard Error of the Mean for theta_1: 1.0e-04
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/f265fdc40b6062ba3af7fb40adc010ed48cbdade4c3df0f5cb1a1032c9d5bdc8.png" src="../../../_images/f265fdc40b6062ba3af7fb40adc010ed48cbdade4c3df0f5cb1a1032c9d5bdc8.png" />
+<img alt="../../../_images/569659bcacafd164c33f4c1131b1b58e254b6647fafc6d734b39ef2376f53142.png" src="../../../_images/569659bcacafd164c33f4c1131b1b58e254b6647fafc6d734b39ef2376f53142.png" />
 </div>
 </div>
 </section>
@@ -1101,7 +1103,7 @@ Standard Error of the Mean for theta_1: 1.0e-04
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Acceptance Rate is: 0.103
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Acceptance Rate is: 0.145
 </pre></div>
 </div>
 </div>
@@ -1201,7 +1203,7 @@ Gelman and Rubin show that when <span class="math notranslate nohighlight">\(\ha
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>done
-Mean acceptance fraction: 0.094
+Mean acceptance fraction: 0.137
 Chain 1 performing 1000 warmup iterations.
 </pre></div>
 </div>
@@ -1209,7 +1211,7 @@ Chain 1 performing 1000 warmup iterations.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>done
-Mean acceptance fraction: 0.105
+Mean acceptance fraction: 0.135
 </pre></div>
 </div>
 </div>
@@ -1237,7 +1239,7 @@ Mean acceptance fraction: 0.105
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/31af68713fab934f9f0957439d5aba77ab146b0803b12d35045dafed8df14459.png" src="../../../_images/31af68713fab934f9f0957439d5aba77ab146b0803b12d35045dafed8df14459.png" />
+<img alt="../../../_images/52448598e41be1bd384f5916b69df2c06f8f74f0889e5b49193e384905e89e84.png" src="../../../_images/52448598e41be1bd384f5916b69df2c06f8f74f0889e5b49193e384905e89e84.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1283,12 +1285,12 @@ Mean acceptance fraction: 0.105
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Gelman-Rubin Diagnostic for different chain lengths: 
-Nchain =   50  Rhat = 1.309
-Nchain =  100  Rhat = 1.231
-Nchain =  200  Rhat = 1.131
-Nchain =  500  Rhat = 1.071
-Nchain = 1000  Rhat = 1.135
-Nchain = 2000  Rhat = 1.063
+Nchain =   50  Rhat = 1.193
+Nchain =  100  Rhat = 1.264
+Nchain =  200  Rhat = 1.339
+Nchain =  500  Rhat = 1.236
+Nchain = 1000  Rhat = 1.108
+Nchain = 2000  Rhat = 1.144
 </pre></div>
 </div>
 </div>
