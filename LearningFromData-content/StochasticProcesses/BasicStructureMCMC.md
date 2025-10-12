@@ -17,12 +17,10 @@ kernelspec:
 
 Let's elaborate on the structure of the MCMC algorithm.
 
-1. Given $\thetavec_i$, *propose* a value for $\thetavec_{i+1}$, call it the "candidate" $\phivec$, sampled from $q(\phivec|\thetavec_i)$. This $q$ could take many forms, so for concreteness imagine it as a multivariate normal distribution with mean given by $\thetavec_i$ and variance $\sigmavec^2$ (to be specified).
-    * Decreased probability as you get further away from the current sample.
-    * $\sigmavec$ determines the step size.
+1. Given $\thetavec_i$, *propose* a value for $\thetavec_{i+1}$, call it the "candidate" $\phivec$, sampled from $q(\phivec|\thetavec_i)$. This $q$ could take many forms, so for concreteness imagine it as a multivariate normal distribution with mean given by $\thetavec_i$ and variance $\sigmavec^2$ (to be specified). 
+This entails a decreased probability to step further away from the current sample and $\sigmavec$ sets scale of the step size.
 1. Decide whether or not to accept candidate $\phivec$ for $\thetavec_{i+1}$. Here we'll use the *Metropolis* condition (later we'll see other ways that may be better).
-    * This dates from the 1950's in physics but didn't become widespread in statistics until almost 1980.
-    * Enabled Bayesian methods to be much more widely applied.
+This approach dates from the 1950's in physics but didn't become widespread in statistics until almost 1980. With its adoption, it finally enabled Bayesian methods to be much more widely applied.
   
 :::{admonition} Metropolis condition
 Calculate Metropolis ratio $r$ given current $\thetavec_i$ and proposed candidate $\phivec$:
@@ -40,7 +38,7 @@ Decision:
 * In practice we carry out the $r<1$ case by getting a sample $U \sim \text{Uniform}(0,1)$. If $U \leq r$, then $\thetavec_{i+1} = \phivec$, else $\thetavec_{i+1} = \thetavec_i$. 
 :::
 
-Note that the last case means you *do* have a $\theta_{i+1}$, but it is the same as $\theta_i$ (so you have multiple copies and the chain continues to grow).
+Note that the last case means you *do* have a $\theta_{i+1}$, but it is the same as $\theta_i$, so you have multiple copies and the chain always continues to grow.
 We further note that the acceptance probability is the minimum of $1$ and $r$, which makes the (pseudo-)code particularly simple:
 
 :::{admonition} Algorithm pseudo-code:
@@ -177,7 +175,7 @@ Detailed balance requires that the forward and reverse rates of each particular 
 :::
 ::::
 
-:::{admonition} Recall Metropolis algorithm for $p(\thetavec | D, I)$ (or any other posterior).
+:::{admonition} Summary: Metropolis algorithm for $p(\thetavec | D, I)$ (or any other posterior).
 * start with inital point $\thetavec_0$ (for each walker)
 * **begin repeat:** given $\thetavec_i$, propose $\phivec$ from $q(\phivec|\thetavec_i)$
 * calculate $r$:
@@ -201,7 +199,7 @@ Key questions: When are you converged? How many "warm-up" or "burn-in " steps to
 
 ## Repeating configurations 
 
-What if the $\thetavec_{i+1}=\thetavec_i$ step is not implemented as it should be? I.e., what if the chain is only incremented if the step is accepted? You might find that this is  more intuitive to you. But consider an empirical demonstration: see the figures below from the Poisson distribution example with 100,000 steps. The first one follows the Metropolis algorithm and adds the same step if the candidate is rejected; the second one does not. Not keeping the repeated steps invalidates the Markov chain conditions $\Lra$ the wrong stationary distribution is reached (it is not wrong by a lot but is is noticeable and is seen every time the sampling is run).  
+What if the $\thetavec_{i+1}=\thetavec_i$ step is not implemented as it should be? I.e., what if the chain is only incremented if the step is accepted? You might find that this is  more intuitive to you. But consider an empirical demonstration: see the figures below from the [Poisson distribution example](https://nucleartalent.github.io/LFD_for_Physicists/LearningFromData-content/StochasticProcesses/demo-MCMC-improved.html) with 100,000 steps. The first one follows the Metropolis algorithm and adds the same step if the candidate is rejected; the second one does not. Not keeping the repeated steps invalidates the Markov chain conditions $\Lra$ the wrong stationary distribution is reached (it is not wrong by a lot but is is noticeable and is seen every time the sampling is run).  
 <br/>
 <img src="./figs/MCMC_poisson_100000_with_repeats.png" alt="MCMC poisson results with repeats" class="bg-primary mb-1" width="550px">
 

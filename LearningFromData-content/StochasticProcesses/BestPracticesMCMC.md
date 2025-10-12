@@ -13,13 +13,13 @@ kernelspec:
 (sec:BestPracticesMCMC)=
 # Best practices for MCMC sampling
 
-## Summary points from [arXiv:1710.06068](https://arxiv.org/abs/1710.06068)
+## Summary points from Hogg and Foreman-Mackey
 
-* Observations from  ["Data Analysis Recipes: Using Markov Chain Monte Carlo"](https://arxiv.org/abs/1710.06068) by David Hogg and Daniel Foreman-Mackey.
-    * Both are computational astrophysicists (or cosmologists or astronomers)
-    * DFM wrote `emcee`.
-    * Highly experienced in physics scenarios, highly opinionated, but not statisticians (although they interact with statisticians).
+We extract here some relevant observations from "Data Analysis Recipes: Using Markov Chain Monte Carlo"](https://arxiv.org/abs/1710.06068) by David Hogg and Daniel Foreman-Mackey.
+The authors are both computational astrophysicists and Foreman-Mackey is the author of the widely used `emcee` sampler.
+They are highly experienced in physics scenarios; they are highly opinionated about sampling, but are not statisticians themselves (although they interact with statisticians).
 
+Their wisdom includes:
 * MCMC is good for *sampling*, but not optimizing. If you want to find the modes of distributions, use an optimizer instead.
 * For MCMC, you only have to calculate *ratios* of pdfs (as seen from the algorithm).
      * $\Lra$ don't need analytic normalized pdfs
@@ -51,7 +51,7 @@ $\qquad$ where $f(\thetavec) = Z\, p(\thetavec)$ is unnormalized.
 * Autocorrelation is important to monitor and one can tune (e.g., Metropolis step size) to minimize it. More on this later.
 
 * How do you know when to stop? Heuristics and diagnostics to come!
-* See the paper for practical advice on initialization and burn-in is given by Hogg and Foreman-Mackey.
+* See the Hogg/Foreman-Mackey paper for practical advice on initialization and burn-in.
 
 **Figures to make every time you run MCMC (following Hogg and Foreman-Mackey sect. 9)**
 
