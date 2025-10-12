@@ -735,18 +735,10 @@ document.write(`
 <h2>Basic structure of Metropolis-Hastings algorithm<a class="headerlink" href="#basic-structure-of-metropolis-hastings-algorithm" title="Link to this heading">#</a></h2>
 <p>Let’s elaborate on the structure of the MCMC algorithm.</p>
 <ol class="arabic simple">
-<li><p>Given <span class="math notranslate nohighlight">\(\thetavec_i\)</span>, <em>propose</em> a value for <span class="math notranslate nohighlight">\(\thetavec_{i+1}\)</span>, call it the “candidate” <span class="math notranslate nohighlight">\(\phivec\)</span>, sampled from <span class="math notranslate nohighlight">\(q(\phivec|\thetavec_i)\)</span>. This <span class="math notranslate nohighlight">\(q\)</span> could take many forms, so for concreteness imagine it as a multivariate normal distribution with mean given by <span class="math notranslate nohighlight">\(\thetavec_i\)</span> and variance <span class="math notranslate nohighlight">\(\sigmavec^2\)</span> (to be specified).</p>
-<ul class="simple">
-<li><p>Decreased probability as you get further away from the current sample.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\sigmavec\)</span> determines the step size.</p></li>
-</ul>
-</li>
-<li><p>Decide whether or not to accept candidate <span class="math notranslate nohighlight">\(\phivec\)</span> for <span class="math notranslate nohighlight">\(\thetavec_{i+1}\)</span>. Here we’ll use the <em>Metropolis</em> condition (later we’ll see other ways that may be better).</p>
-<ul class="simple">
-<li><p>This dates from the 1950’s in physics but didn’t become widespread in statistics until almost 1980.</p></li>
-<li><p>Enabled Bayesian methods to be much more widely applied.</p></li>
-</ul>
-</li>
+<li><p>Given <span class="math notranslate nohighlight">\(\thetavec_i\)</span>, <em>propose</em> a value for <span class="math notranslate nohighlight">\(\thetavec_{i+1}\)</span>, call it the “candidate” <span class="math notranslate nohighlight">\(\phivec\)</span>, sampled from <span class="math notranslate nohighlight">\(q(\phivec|\thetavec_i)\)</span>. This <span class="math notranslate nohighlight">\(q\)</span> could take many forms, so for concreteness imagine it as a multivariate normal distribution with mean given by <span class="math notranslate nohighlight">\(\thetavec_i\)</span> and variance <span class="math notranslate nohighlight">\(\sigmavec^2\)</span> (to be specified).
+This entails a decreased probability to step further away from the current sample and <span class="math notranslate nohighlight">\(\sigmavec\)</span> sets scale of the step size.</p></li>
+<li><p>Decide whether or not to accept candidate <span class="math notranslate nohighlight">\(\phivec\)</span> for <span class="math notranslate nohighlight">\(\thetavec_{i+1}\)</span>. Here we’ll use the <em>Metropolis</em> condition (later we’ll see other ways that may be better).
+This approach dates from the 1950’s in physics but didn’t become widespread in statistics until almost 1980. With its adoption, it finally enabled Bayesian methods to be much more widely applied.</p></li>
 </ol>
 <div class="admonition-metropolis-condition admonition">
 <p class="admonition-title">Metropolis condition</p>
@@ -764,7 +756,7 @@ document.write(`
 <li><p>In practice we carry out the <span class="math notranslate nohighlight">\(r&lt;1\)</span> case by getting a sample <span class="math notranslate nohighlight">\(U \sim \text{Uniform}(0,1)\)</span>. If <span class="math notranslate nohighlight">\(U \leq r\)</span>, then <span class="math notranslate nohighlight">\(\thetavec_{i+1} = \phivec\)</span>, else <span class="math notranslate nohighlight">\(\thetavec_{i+1} = \thetavec_i\)</span>.</p></li>
 </ul>
 </div>
-<p>Note that the last case means you <em>do</em> have a <span class="math notranslate nohighlight">\(\theta_{i+1}\)</span>, but it is the same as <span class="math notranslate nohighlight">\(\theta_i\)</span> (so you have multiple copies and the chain continues to grow).
+<p>Note that the last case means you <em>do</em> have a <span class="math notranslate nohighlight">\(\theta_{i+1}\)</span>, but it is the same as <span class="math notranslate nohighlight">\(\theta_i\)</span>, so you have multiple copies and the chain always continues to grow.
 We further note that the acceptance probability is the minimum of <span class="math notranslate nohighlight">\(1\)</span> and <span class="math notranslate nohighlight">\(r\)</span>, which makes the (pseudo-)code particularly simple:</p>
 <div class="admonition-algorithm-pseudo-code admonition">
 <p class="admonition-title">Algorithm pseudo-code:</p>
@@ -907,8 +899,8 @@ The Metropolis algorithm says</p>
 Detailed balance requires that the forward and reverse rates of each particular microscopic transition are equal.</p>
 </div>
 </div>
-<div class="admonition-recall-metropolis-algorithm-for-p-thetavec-d-i-or-any-other-posterior admonition">
-<p class="admonition-title">Recall Metropolis algorithm for <span class="math notranslate nohighlight">\(p(\thetavec | D, I)\)</span> (or any other posterior).</p>
+<div class="admonition-summary-metropolis-algorithm-for-p-thetavec-d-i-or-any-other-posterior admonition">
+<p class="admonition-title">Summary: Metropolis algorithm for <span class="math notranslate nohighlight">\(p(\thetavec | D, I)\)</span> (or any other posterior).</p>
 <ul class="simple">
 <li><p>start with inital point <span class="math notranslate nohighlight">\(\thetavec_0\)</span> (for each walker)</p></li>
 <li><p><strong>begin repeat:</strong> given <span class="math notranslate nohighlight">\(\thetavec_i\)</span>, propose <span class="math notranslate nohighlight">\(\phivec\)</span> from <span class="math notranslate nohighlight">\(q(\phivec|\thetavec_i)\)</span></p></li>
@@ -939,7 +931,7 @@ Detailed balance requires that the forward and reverse rates of each particular 
 </section>
 <section id="repeating-configurations">
 <h2>Repeating configurations<a class="headerlink" href="#repeating-configurations" title="Link to this heading">#</a></h2>
-<p>What if the <span class="math notranslate nohighlight">\(\thetavec_{i+1}=\thetavec_i\)</span> step is not implemented as it should be? I.e., what if the chain is only incremented if the step is accepted? You might find that this is  more intuitive to you. But consider an empirical demonstration: see the figures below from the Poisson distribution example with 100,000 steps. The first one follows the Metropolis algorithm and adds the same step if the candidate is rejected; the second one does not. Not keeping the repeated steps invalidates the Markov chain conditions <span class="math notranslate nohighlight">\(\Lra\)</span> the wrong stationary distribution is reached (it is not wrong by a lot but is is noticeable and is seen every time the sampling is run).<br />
+<p>What if the <span class="math notranslate nohighlight">\(\thetavec_{i+1}=\thetavec_i\)</span> step is not implemented as it should be? I.e., what if the chain is only incremented if the step is accepted? You might find that this is  more intuitive to you. But consider an empirical demonstration: see the figures below from the <a class="reference external" href="https://nucleartalent.github.io/LFD_for_Physicists/LearningFromData-content/StochasticProcesses/demo-MCMC-improved.html">Poisson distribution example</a> with 100,000 steps. The first one follows the Metropolis algorithm and adds the same step if the candidate is rejected; the second one does not. Not keeping the repeated steps invalidates the Markov chain conditions <span class="math notranslate nohighlight">\(\Lra\)</span> the wrong stationary distribution is reached (it is not wrong by a lot but is is noticeable and is seen every time the sampling is run).<br />
 <br/>
 <a class="bg-primary mb-1 reference internal" href="../../_images/MCMC_poisson_100000_with_repeats.png"><img alt="MCMC poisson results with repeats" class="bg-primary mb-1" src="../../_images/MCMC_poisson_100000_with_repeats.png" style="width: 550px;" /></a></p>
 <a class="bg-primary mb-1 reference internal image-reference" href="../../_images/MCMC_poisson_100000_no_repeats.png"><img alt="MCMC poisson results with no repeats" class="bg-primary mb-1" src="../../_images/MCMC_poisson_100000_no_repeats.png" style="width: 550px;" />

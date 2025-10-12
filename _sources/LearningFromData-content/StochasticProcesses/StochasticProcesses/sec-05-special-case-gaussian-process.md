@@ -29,7 +29,7 @@ $$
 X(t_1), X(t_2), \ldots, X(t_k)
 $$ 
 
-has a multivariate distribution for $0 \leq t_1 < \ldots < t_k$.
+has a multivariate normal distribution for $0 \leq t_1 < \ldots < t_k$.
 
 A Gaussian process is completely determined by its *mean function* $\mu(X(t))$ and *covariance function* $C(X(s), X(t))$ for $s, t \geq 0$.
 

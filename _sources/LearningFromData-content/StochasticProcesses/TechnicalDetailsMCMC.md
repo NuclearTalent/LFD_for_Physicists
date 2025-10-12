@@ -1,7 +1,7 @@
 (sec:TechnicalDetailsMCMC)=
 # Details of MCMC
 
-Here we provide formal and detailed discussions on:
+Here we provide formal and detailed discussions on stochastic processes in general, including random walk and Gaussian process examples, and then on Markov Chain Monte Carlo and the Metropolis Hasting algorithm.
 
 
 * {ref}`sec:StochasticProcesses` introduces the concept of a stochastic process, with an example. 
