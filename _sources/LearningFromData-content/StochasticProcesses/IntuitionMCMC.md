@@ -7,6 +7,6 @@ Intuition for Markov Chain Monte Carlo (MCMC) includes:
 * {ref}`sec:BasicStructureMCMC`, lays out the Metropolis-Hastings algorithm; provides intuition for detailed balance and why the MH algorithm satisfies the conditions; and provides a visual demonstration that a possibly non-intuitive feature of MH, namely repeating configurations in the MC chain when a proposal is rejected, is actually essential.
 * {ref}`sec:VisualizingMCMC` points to online javascript simulations that are invaluable for building intuition about how MCMC works (here for MH but later for Hamiltonian MC) and highlights some of the features from the simulations.
 * [Demonstration: Metropolis-Hasting MCMC sampling of a Poisson distribution](./demo-MCMC-improved.ipynb) provides a full MH MCMC example to play with, prompted by a series of question.
-* [Demonstration: Random walk and sampling](./BUQ/MCMC-random-walk-and-sampling.ipynb) is another example.
+* [Demonstration: Random walk and sampling](./BUQ/MCMC-random-walk-and-sampling.ipynb) is another example to build intuition about MH sampling; autocorrelation is introduced.
 
 There will be lead-ins in various places in this chapter to more details presented in the subsequent chapters.

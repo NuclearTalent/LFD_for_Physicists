@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>20.2. Introduction to Hamilton Monte Carlo &#8212; Combined Learning from Data materials</title>
+    <title>20.1. Introduction to Hamilton Monte Carlo &#8212; Combined Learning from Data materials</title>
   
   
   
@@ -68,8 +68,8 @@
     <script src="../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="20.3. Sampling / Importance Resampling" href="SamplingImportanceResampling.html" />
-    <link rel="prev" title="Solving orbital equations with different algorithms" href="BUQ2/Orbital_eqs_with_different_algorithms.html" />
+    <link rel="next" title="Liouville Theorem Visualization" href="BUQ2/Liouville_theorem_visualization.html" />
+    <link rel="prev" title="20. Advanced sampling" href="Other_samplers.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -325,19 +325,18 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="Other_samplers.html">20. Advanced sampling</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 has-children"><a class="reference internal" href="BUQ2/HMC_intro_BUQ.html">20.1. Hamiltonian Monte Carlo (HMC) overview and visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">20.1. Introduction to Hamilton Monte Carlo</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="BUQ2/Liouville_theorem_visualization.html">Liouville Theorem Visualization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="BUQ2/Orbital_eqs_with_different_algorithms.html">Solving orbital equations with different algorithms</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">20.2. Introduction to Hamilton Monte Carlo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="SamplingImportanceResampling.html">20.3. Sampling / Importance resampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zeus.html">20.4. The Zeus Ensemble Slice Sampler</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="BUQ2/PyMC_intro_updated.html">20.5. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="SamplingImportanceResampling.html">20.2. Sampling / Importance resampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zeus.html">20.3. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="BUQ2/PyMC_intro_updated.html">20.4. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="OverviewIntroPyMC.html">Overview of Intro to PyMC notebook</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2"><a class="reference internal" href="BUQ2/parameter_estimation_Gaussian_noise_compare_samplers.html">20.6. Comparing samplers for a simple problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BUQ2/parameter_estimation_Gaussian_noise_compare_samplers.html">20.5. Comparing samplers for a simple problem</a></li>
 </ul>
 </details></li>
 </ul>
@@ -692,7 +691,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -708,6 +709,15 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-and-intuition-from-simulations">Overview and intuition from simulations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-details">Implementation details</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -722,20 +732,63 @@ document.write(`
 \newcommand\mom{\boldsymbol{p}}
 \newcommand\mass{\mathcal{M}}\]</div>
 <section class="tex2jax_ignore mathjax_ignore" id="introduction-to-hamilton-monte-carlo">
-<span id="sec-advancedmcmc-hmc"></span><h1><span class="section-number">20.2. </span>Introduction to Hamilton Monte Carlo<a class="headerlink" href="#introduction-to-hamilton-monte-carlo" title="Link to this heading">#</a></h1>
+<span id="sec-advancedmcmc-hmc"></span><h1><span class="section-number">20.1. </span>Introduction to Hamilton Monte Carlo<a class="headerlink" href="#introduction-to-hamilton-monte-carlo" title="Link to this heading">#</a></h1>
 <blockquote class="epigraph">
 <div><blockquote>
 <div><p>“Why walk when you can flow.”</p>
 </div></blockquote>
 <p class="attribution">—Richard McElreath</p>
 </div></blockquote>
-<p>The Hamiltonian Monte Carlo Method (HMC) is a Metropolis method that uses gradient information to reduce the random-walk behavior and to collect effectively independent samples. It was introduced in lattice QCD by Duane et al. <span id="id1">[<a class="reference internal" href="../Backmatter/bibliography.html#id51" title="S. Duane, A. D. Kennedy, B. J. Pendleton, and D. Roweth. Hybrid Monte Carlo. Phys. Lett. B, 195:216–222, 1987. doi:10.1016/0370-2693(87)91197-X.">DKPR87</a>]</span>and was originally named Hybrid Monte Carlo as they were combining molecular dynamics with the Metropolis MCMC algorithm. A very good and detailed review of HMC is written by Radford Neal and is contained in the Handbook of Markov Chain Monte Carlo <span id="id2">[<a class="reference internal" href="../Backmatter/bibliography.html#id52" title="S. Brooks, A. Gelman, G. Jones, and X.L. Meng. Handbook of Markov Chain Monte Carlo. Chapman &amp; Hall/CRC Handbooks of Modern Statistical Methods. CRC Press, 2011. ISBN 9781420079425. URL: https://books.google.se/books?id=qfRsAIKZ4rIC.">BGJM11</a>]</span>.</p>
-<p>In HMC, the state space <span class="math notranslate nohighlight">\(\pos\)</span> is augmented by a conjugate momentum <span class="math notranslate nohighlight">\(\mom\)</span>. Note that <span class="math notranslate nohighlight">\(\pos\)</span> will be the model parameters <span class="math notranslate nohighlight">\(\pars\)</span> in our applications but here we will stick to <span class="math notranslate nohighlight">\(\pos,\mom\)</span> to make the connection with Hamiltonian dynamics explicit. Let us define a <em>Hamiltonian</em></p>
+<section id="overview-and-intuition-from-simulations">
+<h2>Overview and intuition from simulations<a class="headerlink" href="#overview-and-intuition-from-simulations" title="Link to this heading">#</a></h2>
+<p>One of the most widespread techniques in contemporary samplers is Hamiltonian Monte Carlo, or HMC,
+which is a Metropolis method that uses gradient information to reduce the random-walk behavior and to collect effectively independent samples.
+It was introduced in lattice QCD by Duane et al. <span id="id1">[<a class="reference internal" href="../Backmatter/bibliography.html#id51" title="S. Duane, A. D. Kennedy, B. J. Pendleton, and D. Roweth. Hybrid Monte Carlo. Phys. Lett. B, 195:216–222, 1987. doi:10.1016/0370-2693(87)91197-X.">DKPR87</a>]</span> and was originally named Hybrid Monte Carlo as they were combining molecular dynamics with the Metropolis MCMC algorithm. A very good and detailed review of HMC is written by Radford Neal and is contained in the Handbook of Markov Chain Monte Carlo <span id="id2">[<a class="reference internal" href="../Backmatter/bibliography.html#id52" title="S. Brooks, A. Gelman, G. Jones, and X.L. Meng. Handbook of Markov Chain Monte Carlo. Chapman &amp; Hall/CRC Handbooks of Modern Statistical Methods. CRC Press, 2011. ISBN 9781420079425. URL: https://books.google.se/books?id=qfRsAIKZ4rIC.">BGJM11</a>]</span>.</p>
+<p>To establish some intuition about HMC, we return to the excellent set of interactive demos by Chi Feng at <a class="reference external" href="https://chi-feng.github.io/mcmc-demo/">https://chi-feng.github.io/mcmc-demo/</a> and their adaptation by Richard McElreath at <a class="reference external" href="http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/">http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/</a>.</p>
+<p>The McElreath blog piece forcefully advocates abandoning Metropolis-Hasting (MH) sampling in favor of HMC. Let’s summarize the argument.
+First recall the random walk MH:</p>
+<ol class="arabic simple">
+<li><p>Make a random proposal for new parameter values (a step in parameter space, indicated in the visualization by an arrow).</p></li>
+<li><p>Aceept (green arrow) or reject (red arrow) based on a Metropolis criterion (which is not deterministic but has a random element).
+This is <em>diffusion</em> (i.e., a random walk), so it is not efficient in exploring the parameter space and needs special tuning to avoid too high a rejection rate.
+The donut shape in the simulation is common in higher dimensions and it is difficult to explore. (I.e., consider a multidimensional uncorrelated Gaussian distribution. In spherical coordinates the distribution is <span class="math notranslate nohighlight">\(\propto r^n e^{-r^2/2\sigma^2}\)</span>, so the marginalized distribution will be peaked away from <span class="math notranslate nohighlight">\(r=0\)</span>.)</p></li>
+</ol>
+<p>Now consider the “Better living through Physics” part, which highlights an HMC simulation.
+The idea is that we map our parameter vector <span class="math notranslate nohighlight">\(\thetavec\)</span> of length <span class="math notranslate nohighlight">\(n\)</span> to a particle in an <span class="math notranslate nohighlight">\(n\)</span>-dimensional space. The surface is an <span class="math notranslate nohighlight">\(n\)</span>-dimensional (inverted) bowl with the shape given by minus-log(target distribution), where the target distribution is the posterior.
+Now treat the system as frictionless and “flick” the particle in a random direction, so it travels across the bowl.</p>
+<p>See the snapshots from the simulation in the figures below.
+The little gray arrow is the flick. After the particle travels some distance, there is a decision whether to accept; this is done as in MH.
+Most endpoints are within a high probability region, so a high percentage is accepted.
+Chains can get far from the starting point easily <span class="math notranslate nohighlight">\(\Lra\)</span> efficient exploration of the full shape.
+While more calculation along the path is needed, fewer samples are needed; this is typically a winning trade-off.
+Check the donut example: HMC works very well!</p>
+<a class="bg-primary reference internal image-reference" href="../../_images/HMC_demo_screenshot_1.png"><img alt="Screenshot from HMC demo" class="bg-primary align-center" src="../../_images/HMC_demo_screenshot_1.png" style="width: 450px;" />
+</a>
+<a class="bg-primary reference internal image-reference" href="../../_images/HMC_demo_screenshot_2.png"><img alt="Screenshot from HMC demo" class="bg-primary align-center" src="../../_images/HMC_demo_screenshot_2.png" style="width: 450px;" />
+</a>
+<a class="bg-primary reference internal image-reference" href="../../_images/HMC_demo_screenshot_3.png"><img alt="Screenshot from HMC demo" class="bg-primary align-center" src="../../_images/HMC_demo_screenshot_3.png" style="width: 400px;" />
+</a>
+<a class="bg-primary reference internal image-reference" href="../../_images/HMC_demo_screenshot_4.png"><img alt="Screenshot from HMC demo" class="bg-primary align-center" src="../../_images/HMC_demo_screenshot_4.png" style="width: 400px;" />
+</a>
+<p>There is a further improvement called NUTS, which stands for “no-U-turn sampler”.
+The idea is to address the problem that HMC needs to be told how many steps to take before another random flick.
+Too few steps and the samples are too similar;
+too many steps are also too similar.
+NUTS <em>adaptively</em> finds a good number of steps.
+In particular, it simulates in <em>both</em> directions to figure out when the path turns around (i.e., U-turns) and stops there.
+There are other adaptive features; see the <a class="reference external" href="https://mc-stan.org/docs/2_18/reference-manual/hmc-algorithm-parameters.html">Stan documentation</a> or the <a class="reference external" href="https://arxiv.org/abs/1701.02434">arXiv article by Michael Betancourt</a> for details.
+Note that NUTS still has trouble with multimodal targets <span class="math notranslate nohighlight">\(\Lra\)</span> can explore each high probability area, but has trouble going between them.</p>
+</section>
+<section id="implementation-details">
+<h2>Implementation details<a class="headerlink" href="#implementation-details" title="Link to this heading">#</a></h2>
+<p>The basic idea behind HMC is to translate a PDF for the desired distribution into a potential energy function and to add a (fictitious!) momentum variable. In the Markov chain at each iteration, one resamples the momentum (the flick!), creates a proposal using classical Hamiltonian dynamics, and then does a Metropolis update.
+Thus, the state space vector <span class="math notranslate nohighlight">\(\pos\)</span> is augmented by a conjugate momentum <span class="math notranslate nohighlight">\(\mom\)</span>. Note that <span class="math notranslate nohighlight">\(\pos\)</span> will be the model parameters <span class="math notranslate nohighlight">\(\pars\)</span> (with <span class="math notranslate nohighlight">\(d\)</span> components) in our applications but here we will stick to <span class="math notranslate nohighlight">\(\pos,\mom\)</span> to make the connection with Hamiltonian dynamics explicit.</p>
+<p>The <span class="math notranslate nohighlight">\(2 \times d\)</span> dimensional phase space is for a <em>Hamiltonian</em> defined as</p>
 <div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-hamiltonian">
 <span class="eqno">(20.1)<a class="headerlink" href="#equation-eq-advancedmcmc-hamiltonian" title="Link to this equation">#</a></span>\[
 H(\pos,\mom) = K(\mom) + U(\pos),
 \]</div>
-<p>where the kinetic energy function <span class="math notranslate nohighlight">\(K(\mom)\)</span> is a design choice while the potential energy function <span class="math notranslate nohighlight">\(U(\pos)\)</span> will be defined as minus the log probability of the density that we wish to sample</p>
+<p>where the kinetic energy function <span class="math notranslate nohighlight">\(K(\mom)\)</span> is a design choice (see below) while the potential energy function <span class="math notranslate nohighlight">\(U(\pos)\)</span> will be defined as minus the log probability of the density (PDF) that we wish to sample</p>
 <div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-kinetic-potential">
 <span class="eqno">(20.2)<a class="headerlink" href="#equation-eq-advancedmcmc-kinetic-potential" title="Link to this equation">#</a></span>\[\begin{split}
 \begin{aligned}
@@ -743,10 +796,10 @@ H(\pos,\mom) = K(\mom) + U(\pos),
   U(\pos) &amp;= -\ln\left( \p{\pos} \right),
 \end{aligned}
 \end{split}\]</div>
-<p>where <span class="math notranslate nohighlight">\(\mass\)</span> is a user-defined mass matrix (positive definite and symmetric) and where we use <span class="math notranslate nohighlight">\(\p{\pos}\)</span> to denote the PDF that we want to sample. It could for example be a posterior distribution for some model parameters.</p>
+<p>where <span class="math notranslate nohighlight">\(\mass\)</span> is a user-defined mass matrix (positive definite and symmetric; typically diagonal as often proportional to the <span class="math notranslate nohighlight">\(d\)</span>-dimensional identity matrix) and where we use <span class="math notranslate nohighlight">\(\p{\pos}\)</span> to denote the PDF that we want to sample. It could for example be a posterior distribution for some model parameters.</p>
 <p>We can link <span class="math notranslate nohighlight">\(H(\pos,\mom)\)</span> to a probability distribution for <span class="math notranslate nohighlight">\((\pos,\mom)\)</span> using the canonical Boltzmann distribution</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5630e590-7135-4aa8-8b83-d544197604ba">
-<span class="eqno">(20.3)<a class="headerlink" href="#equation-5630e590-7135-4aa8-8b83-d544197604ba" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-089f0d4e-6b4c-4915-bbc7-4e784ee72173">
+<span class="eqno">(20.3)<a class="headerlink" href="#equation-089f0d4e-6b4c-4915-bbc7-4e784ee72173" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \p{\pos,\mom} = \frac{1}{Z} \exp\left( \frac{-H(\pos,\mom)}{T}\right),
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(Z\)</span> is the normalization and <span class="math notranslate nohighlight">\(T\)</span> is a temperature (here serving to render the exponents dimensionless). Let us set <span class="math notranslate nohighlight">\(T=1\)</span> and use the expressions <a class="reference internal" href="#equation-eq-advancedmcmc-kinetic-potential">(20.2)</a> to obtain the separable joint distribution</p>
@@ -756,7 +809,7 @@ H(\pos,\mom) = K(\mom) + U(\pos),
 \]</div>
 <p>Since we will use the Metropolis ratio during sampling, the normalization factor becomes irrelevant. The joint distribution is a produce of two (independent) distributions, the one for <span class="math notranslate nohighlight">\(\mom\)</span> becomes a Gaussian with our design choices and the one for <span class="math notranslate nohighlight">\(\pos\)</span> is the one that we are seeking. If we manage to efficiently sample from <span class="math notranslate nohighlight">\(\p{\pos,\mom}\)</span> then we can just ignore the <span class="math notranslate nohighlight">\(\mom\)</span> samples and  we will be left with samples from <span class="math notranslate nohighlight">\(\p{\pos}\)</span>.</p>
 <p>How do we sample from <span class="math notranslate nohighlight">\(\p{\pos,\mom}\)</span>? Well, naturally we simulate Hamiltonian dynamics for a finite period of time. For Metropolis updates, using a proposal found by Hamiltonian dynamics, the acceptance probability will be one since <span class="math notranslate nohighlight">\(H\)</span> is kept invariant. Unfortunately, we will only be able to solve Hamilton’s equations approximately and in practice we might not end up with perfect energy conservation.</p>
-<p>Apart from energy conservation, two additional key properties of Hamiltonian dynamics—in the context of using it for MCMC sampling—are that it is time reversibile and that it preserves the volume in <span class="math notranslate nohighlight">\((\pos,\mom)\)</span>-space (a result known as Liouville’s theorem).</p>
+<p>Apart from energy conservation, two additional key properties of Hamiltonian dynamics—in the context of using it for MCMC sampling—are that it is time reversibile and that it preserves the volume in <span class="math notranslate nohighlight">\((\pos,\mom)\)</span>-space, a result known as Liouville’s theorem. (If we take a cluster of points and follow their time evolution, the volume they occupy is unchanged; see <a class="reference external" href="https://nucleartalent.github.io/LFD_for_Physicists/LearningFromData-content/StochasticProcesses/BUQ2/Liouville_theorem_visualization.html">Liouville theorem visualization</a>.) This is critical because a change in volume would mean we would have to make a nontrivial adjustment to the proposal because the normalization <span class="math notranslate nohighlight">\(Z\)</span> would change.</p>
 <p>Hamilton’s equations are</p>
 <div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-hamiltons-equations">
 <span class="eqno">(20.5)<a class="headerlink" href="#equation-eq-advancedmcmc-hamiltons-equations" title="Link to this equation">#</a></span>\[\begin{split}
@@ -767,12 +820,29 @@ H(\pos,\mom) = K(\mom) + U(\pos),
 \end{split}\]</div>
 <p>Every HMC iteration begins with a sample of the momentum <span class="math notranslate nohighlight">\(\mom\)</span> and continues with the integration of Hamilton’s equations for some total time <span class="math notranslate nohighlight">\(t\)</span> before the final Metropolis update and the (likely) acceptance of the new position.</p>
 <p>In order to maintain energy conservation it is important to simulate the Hamiltonian dynamics using a short time step and to perform the integration such that the accumulation of numerical errors is avoided. The standard method in HMC is known as leapfrog integration and is a symplectic integrator where the discretization error for each time step is equally likely to be positive and negative, thus helping to preserve the total energy throughout the simulation. Leapfrog integration works as an update of the momentum with half a time step, followed by a full step for the position (using the new values for the momentum variables), and finally another half time step for the momentum using the newly updated position variables.</p>
+<div class="admonition-leapfrog-algorithm admonition">
+<p class="admonition-title">Leapfrog algorithm</p>
+<p>The requirements for HMC are satisfied by the exact Hamilton’s equations, but we are <em>approximating</em> the solution to these differential equations. This necessitates a <em>symplectic</em> (symmetry conserving) integration.</p>
+<p>Ordinary Runge-Kutta-type ODE solvers won’t work because they are not time-reversal invariant. E.g., consider the Euler method. Forward and backward integrations are different because the derivatives are calculated from different points.
+We need something like the Leapfrog algorithm (here is the 2nd order version):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+  \mom_i(t+\epsilon/2) &amp;= \mom_i(t) - \frac{\epsilon}{2}\frac{\partial U}{\partial \pos_i}\bigl(\pos(t)\bigr) \quad \longleftarrow\text{half step} \\
+  \pos_i(t+\epsilon) &amp;= \pos_i(t) + \epsilon \mom_i(t + \epsilon/2)/\mass_i
+  \quad\longleftarrow\text{use intermediate $\mom$} \\
+  \mom_i(t+\epsilon) &amp;= \mom_i(t+\epsilon/2) - \frac{\epsilon}{2}\frac{\partial U}{\partial \pos_i}\bigl(\pos(t+\epsilon)\bigr) \quad \longleftarrow\text{other half step} \\
+\end{align}\end{split}\]</div>
+<p>See <a class="reference external" href="https://nucleartalent.github.io/LFD_for_Physicists/LearningFromData-content/StochasticProcesses/BUQ2/Orbital_eqs_with_different_algorithms.html">Solving orbital equations with different algorithms</a> for a comparison of Leapfrog to other algorithms.
+Also see Figures 1, and 3-6 in <a class="reference external" href="https://arxiv.org/abs/1206.1901">“MCMC using Hamiltonian dynamics”</a> by Radford Neal for further illustrations.</p>
+</div>
 <div class="proof algorithm admonition" id="algorithm:AdvancedMCMC:HMC">
 <p class="admonition-title"><span class="caption-number">Algorithm 20.1 </span> (The Hamiltonian Monte Carlo method)</p>
 <section class="algorithm-content" id="proof-content">
 <p>HMC can be used to sample from continuous distributions pn <span class="math notranslate nohighlight">\(\mathbb{R}^d\)</span> for which both the density and the partial derivatives of the log of the density can be evaluated.</p>
 <ol class="arabic">
-<li><p>In the first step, new values for the momentum variables <span class="math notranslate nohighlight">\(\mom\)</span> are randomly drawn from their Gaussian distribution (independently of the current values of the position variables). The result is a state <span class="math notranslate nohighlight">\((\pos_i,\mom_i)\)</span>.</p></li>
+<li><p>In the first step, new values for the momentum variables <span class="math notranslate nohighlight">\(\mom\)</span> are randomly drawn from their Gaussian distribution (independently of the current values of the position variables). The result is a state <span class="math notranslate nohighlight">\((\pos_i,\mom_i)\)</span>.
+If <span class="math notranslate nohighlight">\(M\)</span> is diagonal, <span class="math notranslate nohighlight">\(\mom_i\)</span> will have mean zero and variance <span class="math notranslate nohighlight">\(\mass_{ii}\)</span>.
+<span class="math notranslate nohighlight">\(\pos_i\)</span> is changed and <span class="math notranslate nohighlight">\(\mom_i\)</span> is from the correct conditional distribution given <span class="math notranslate nohighlight">\(\pos\)</span>, so the canonical joint distribution is invariant.</p></li>
 <li><p>In the second step, a Metropolis update is performed, simulating Hamiltonian dynamics to propose a new state.</p>
 <ul>
 <li><p>Starting at the current state <span class="math notranslate nohighlight">\((\pos_i,\mom_i)\)</span>, Hamilton’s equations are integrated for <span class="math notranslate nohighlight">\(L\)</span> timesteps of length <span class="math notranslate nohighlight">\(\varepsilon\)</span> using the leapfrog method (or some other reversible method that preserves volume).</p></li>
@@ -782,13 +852,14 @@ H(\pos,\mom) = K(\mom) + U(\pos),
 \[
      \min\left( 1, -\exp(-H(\pos^*_i,\mom^*_i)) +H\exp(-H(\pos_i,\mom_i)) \right).
      \]</div>
-<p>Otherwise, the new state is a copy of the current state.</p>
+<p>Otherwise, the new state is a copy of the current state.
+Note that the probability distribution for <span class="math notranslate nohighlight">\((\pos,\mom)\)</span> <em>jointly</em> is (almost) unchanged because energy is conserved, but in terms of <span class="math notranslate nohighlight">\(\pos\)</span> we get a very different probability density.</p>
 </li>
 </ul>
 </li>
 </ol>
 </section>
-</div><p>For succesful application of HMC there are three hyperparameters that need to be tuned by the user:</p>
+</div><p>For successful application of HMC there are three hyperparameters that need to be tuned by the user:</p>
 <ol class="arabic simple">
 <li><p>The mass matrix <span class="math notranslate nohighlight">\(\mass\)</span>;</p></li>
 <li><p>The integration timestep <span class="math notranslate nohighlight">\(\varepsilon\)</span>;</p></li>
@@ -796,6 +867,9 @@ H(\pos,\mom) = K(\mom) + U(\pos),
 </ol>
 <p>The MontePython implementation of HMC, by Isak Svensson, was published in Ref. <span id="id3">[<a class="reference internal" href="../Backmatter/bibliography.html#id53" title="Isak Svensson, Andreas Ekström, and Christian Forssén. Bayesian parameter estimation in chiral effective field theory using the Hamiltonian Monte Carlo method. Phys. Rev. C, 105(1):014004, 2022. arXiv:2110.04011, doi:10.1103/PhysRevC.105.014004.">SEkstromForssen22</a>]</span> and is publicly available at: <a class="github reference external" href="https://github.com/svisak/montepython.git">svisak/montepython.git</a></p>
 <p>More advanced versions, such as the No-U-Turn Samplers (NUTS) <span id="id4">[<a class="reference internal" href="../Backmatter/bibliography.html#id54" title="Matthew D Hoffman, Andrew Gelman, and others. The no-u-turn sampler: adaptively setting path lengths in hamiltonian monte carlo. J. Mach. Learn. Res., 15(1):1593–1623, 2014.">HG+14</a>]</span>, are also available and aims to simplify the process of tuning the hyperparameters.</p>
+</section>
+<div class="toctree-wrapper compound">
+</div>
 </section>
 
     <script type="text/x-thebe-config">
@@ -829,20 +903,20 @@ H(\pos,\mom) = K(\mom) + U(\pos),
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="BUQ2/Orbital_eqs_with_different_algorithms.html"
+       href="Other_samplers.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Solving orbital equations with different algorithms</p>
+        <p class="prev-next-title"><span class="section-number">20. </span>Advanced sampling</p>
       </div>
     </a>
     <a class="right-next"
-       href="SamplingImportanceResampling.html"
+       href="BUQ2/Liouville_theorem_visualization.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">20.3. </span>Sampling / Importance Resampling</p>
+        <p class="prev-next-title">Liouville Theorem Visualization</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -852,6 +926,22 @@ H(\pos,\mom) = K(\mom) + U(\pos),
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-and-intuition-from-simulations">Overview and intuition from simulations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-details">Implementation details</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
