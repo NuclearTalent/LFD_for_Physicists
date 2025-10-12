@@ -88,8 +88,7 @@ then we don't need to take $\Sigma \propto \sigma^2 \mathbb{1}_N$!
 One improvement is to do a linear transformation of $\thetavec \longrightarrow \thetavec' = A\thetavec + B$ such that $\thetavec'$ is uncorrelated with similar $\sigma_i$'s in each direction. Thus effectively to rotate the slanted ellipse.
 
 Or one could use an "affine invariant" sampler such as `emcee`.
-    * An affine transformation is an invertible mapping from $\mathbb{R}^N \rightarrow \mathbb{R}^N$, namely $\yvec = A\xvec + B$, which is a combination of stretching, rotation, and translation.
-    * Affine invariant means that the sampler performs equally well on all affine tranformations of a distribution.
-    * So `emcee` figures out how to make the appropriate steps.
-    * It does this by using the many walkers at time $t$, which have sampled the space, to construct an appropriate affine compatible update step for $t+1$. This is one reason to make sure there are plenty of walkers.
+An affine transformation is an invertible mapping from $\mathbb{R}^N \rightarrow \mathbb{R}^N$, namely $\yvec = A\xvec + B$, which is a combination of stretching, rotation, and translation. 
+"Affine invariant" means that the sampler performs equally well on all affine tranformations of a distribution. So `emcee` figures out how to make optimal steps.
+It does this by using the many walkers at time $t$, which have sampled the space, to construct an appropriate affine compatible update step for $t+1$. This is one reason to make sure there are plenty of walkers.
     
