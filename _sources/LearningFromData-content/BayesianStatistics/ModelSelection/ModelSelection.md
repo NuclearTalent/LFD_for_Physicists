@@ -107,8 +107,8 @@ because the term $p(D|I)$ cancels out, top and bottom. As usual, probability the
 To circumvent this difficulty, we can use the sum and product rule to relate the probability we require to other pdfs which might be easier to assign. In particular, marginalization and the product rule allow us to express $p(D | B , I )$ as
 
 $$
-p(D|B,I) = \int d\lambda p(D,\lambda|B,I) = 
-\int d\lambda p(D|\lambda,B,I) p(\lambda|B,I). 
+p(D|B,I) = \int d\lambda\, p(D,\lambda|B,I) = 
+\int d\lambda\, p(D|\lambda,B,I) p(\lambda|B,I). 
 $$ (eq:sivia_43)
 
 The first term in the integral $p(D | \lambda, B , I )$, where the value of $\lambda$ is given, is now just an ordinary likelihood function; as such, it is on a par with $p(D|A,I)$. The second term is B’s prior pdf for $\lambda$; the onus is, therefore, on the theorist to articulate his or her state of knowledge, or ignorance, before getting access to the data.
@@ -132,7 +132,7 @@ The assignments of the prior {eq}`eq:sivia_44` and the likelihood {eq}`eq:sivia_
 In the evaluation of $p(D | B , I )$, we can make use of the fact that the prior does not depend explicitly on $\lambda$; this enables us to take $p(\lambda|B,I)$ outside the integral in Eq. {eq}`eq:sivia_43`.
 
 $$
-p(D|B,I) = \frac{1}{\lambda_\mathrm{max} - \lambda_\mathrm{min}} \int_{\lambda_\mathrm{min}}^{\lambda_\mathrm{max}} d\lambda
+p(D|B,I) = \frac{1}{\lambda_\mathrm{max} - \lambda_\mathrm{min}} \int_{\lambda_\mathrm{min}}^{\lambda_\mathrm{max}} d\lambda\,
 p(D|\lambda,B,I),
 $$ (eq:sivia_46)
 
@@ -287,7 +287,7 @@ The product of the eigenvalues $\lambda_i$ is the determinant of $\Sigma^{-1}$.
 ### Correlations
 In the "fitting a straight-line" example you should find that the joint pdf for the slope and the intercept $[m, b]$ corresponds to a slanted ellipse. That result implies that the model parameters are (anti) **correlated**.
 
-* Try to understand the correlation that you find in this example.
+* *Try to understand the correlation that you find in this example.*
 
 Let us explore correlations by studying the behavior of a bivariate pdf near the maximum where we employ the Laplace approximation (neglecting terms beyond the quadratic one in a Taylor expansion). We start by considering two independent parameters $x$ and $y$, before studying the dependent case.
 
@@ -379,10 +379,12 @@ L(x',y') &= L(0,0) - \frac{1}{2} \begin{pmatrix} x' & y' \end{pmatrix}
 \end{gathered}
 \end{equation}
 
-```{admonition} Discuss
+::::{admonition} Checkpoint question
+:class: my-checkpoint
 What has been achieved by this change of variables?
-```
+:::{admonition} Answer
+:class: dropdown, my-answer 
+The joint pdf now factorizes, which implies that the transformed variables are independent.
+:::
+::::
 
-```{toggle}
-The joint pdf now factorizes which implies that the transformed variables are independent.
-```
