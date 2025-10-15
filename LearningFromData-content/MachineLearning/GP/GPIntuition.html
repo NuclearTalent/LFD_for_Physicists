@@ -62,6 +62,8 @@
     <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\rm th}", "yexp": "y_{\\rm exp}", "ym": "y_{\\rm m}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "vvec": "\\boldsymbol{v}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}", "ytrue": "y_{\\rm true}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'LearningFromData-content/MachineLearning/GP/GPIntuition';</script>
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -719,26 +721,31 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="intuition-from-gaussian-process-websites">
 <span id="sec-gpintuition"></span><h1><span class="section-number">22.1. </span>Intuition from Gaussian process websites<a class="headerlink" href="#intuition-from-gaussian-process-websites" title="Link to this heading">#</a></h1>
-<p>Here are four websites with Gaussian process visualizations and some things to try with each to help build intuition about GPs.</p>
+<p>Here are four websites with Gaussian process (GP) visualizations and some things to try with each to help build intuition about GPs.
+A GP defines a distribution over <em>functions</em>, so in each simulation we will see draws of random functions, in analogy to drawing random variables from a normal distribution (recall that “normal” and “Gaussian” are synonymous here).
+Our principal goal is to experience how GPs look in practice.</p>
+<p>The defining feature of an ensemble of GP function draws is that at <em>any</em> fixed point, the histogram of the function values at that point would approximate a Gaussian distribution; while for any two points the function values would be draws from a bivariate Gaussian distribution with a proscribed covariance matrix; and so on with more points being draws from a multivariate Gaussian distribution. The covariance in each case between any two points is specified by a <em>kernel</em> evaluated at those points.</p>
 <ol class="arabic simple">
 <li><p>The  <a class="reference external" href="https://harario.shinyapps.io/Sample_Size_Shiny/"><em>Sample Size Calculations for Computer Experiments</em></a> app provides a sandbox for playing with Gaussian processes. Read the “About” tab first; it includes definitions of parameters used in the GP “correlation family” (which define the covariance). The “Sample Path Plots” tab has an app that lets you draw samples of functions that depend on user selected parameters (actually “hyperparameters”) that specify the details of the correlation family.</p>
 <ul class="simple">
-<li><p>Start with <em>Sample Path Plots</em>.</p></li>
-<li><p>Try changing <em>Correlation length</em> (switch “No. of realizations” to get new draws).</p></li>
-<li><p>Change “Select correlation family”.</p>
+<li><p>Start with <em>Sample Path Plots</em>. These are draws from a GP, with each draw a function plotted from <span class="math notranslate nohighlight">\(x=0\)</span> to <span class="math notranslate nohighlight">\(x=1\)</span>. Change the number (No.) of realizations to 1, 5, 10, 100, 1000. Look at any fixed <span class="math notranslate nohighlight">\(x\)</span> value, draw a vertical line, and visualize the histogram; does it look like a Gaussian distribution?</p></li>
+<li><p>Try changing <em>Correlation length</em> (switch “No. of realizations” to get new draws). What does this (hyper)parameter control?</p></li>
+<li><p>Change “Select correlation family” (kernel).</p>
 <ul>
+<li><p>What changes about the GP function draws?</p></li>
 <li><p>Note the extra parameter with Matern.</p></li>
 </ul>
 </li>
-<li><p>See the “About” tab for formulas.</p></li>
+<li><p>See the “About” tab for the formulas of the kernels (scroll down).</p></li>
 </ul>
 </li>
 <li><p>The <a class="reference external" href="http://rpradeep.me/gpr/"><em>Gaussian process regression: a function space perspective</em></a> app by Pradeep Ranganathan “demonstrates how a GP prior is a distribution over functions, and how observing data conditions the prior to obtain the GP posterior.”</p>
 <ul class="simple">
-<li><p>You should see successive draws from a GP.</p></li>
-<li><p>Try changing the covariance and length scale; does it change as predicted?</p></li>
-<li><p>Now try adding points. What happens?</p></li>
+<li><p>You should see (animated) successive draws from a GP.</p></li>
+<li><p>Predict how changing the covariance and length scale will affect the draws and then try out various combinations. Do the draws change as predicted?</p></li>
+<li><p>Now try adding points. What happens? (Note: the darkest black line is the <em>mean function</em> of the GP.)</p></li>
 <li><p>Try adjusting the noise. What happens?</p></li>
+<li><p>Takeaway: when points are added, the class of possible functions is reduced to those that pass near the points; the closeness is random scaling with the noise amplitude.</p></li>
 </ul>
 </li>
 <li><p>The <a class="reference external" href="http://www.tmpl.fi/gp/"><em>Gaussian process regression demo</em></a> app “demonstrates Gaussian process regression with one covariate and a set of different covariance kernels.”</p>
