@@ -22,21 +22,16 @@ Recall that in frequentist statistics, probability statements are restricted to 
 <!-- !split -->
 ### Basic idea
 
-The standard sampling theory approach to hypothesis testing is to construct a statistical test. The basic idea is the following:
+The standard sampling theory approach to hypothesis testing is to construct a statistical test. The basic idea is described in the following.
 
-*Frequentist hypothesis testing.* 
+**Frequentist hypothesis testing.** 
 The sampling theory hypothesis test is designed to compare a selected statistic from the measured data with expected results from a very large number of hypothetical repeated measurements under the assumption that a chosen null hypothesis ($\mathcal{H}_0$) is true.
+The null hypothesis is accepted or rejected purely on the basis of how unexpected the data were to $\mathcal{H}_0$, not on how much better the alternative hypothesis ($\mathcal{H}_A$) predicted the data. 
 
-
-
-<!-- !split -->
-* The null hypothesis is accepted or rejected purely on the basis of how unexpected the data were to $\mathcal{H}_0$, not on how much better the alternative hypothesis ($\mathcal{H}_A$) predicted the data. 
-
-<!-- !bpop -->
-* The degree of ''unexpectedness'' is based on a statistic, such as the sample mean or the $\chi^2$ statistic. 
-* The statistic is a random variable and it is chosen so that its distribution can be easily computed given the truth of the null hypothesis. In other words, this is the distribution of the chosen statistic for a very large number of hypothetical repeated measurements under the assumption that the null hypothesis is true. 
-* This statistic is then computed for the observed data set and its value is compared with the distribution that is associated with the truth of the null hypothesis.
-* If the statistic from the observed data falls in a very unlikely spot on this distribution (the threshold is to be defined beforehand) we choose to reject the null hypothesis at some confidence level on the basis of the measured data set. 
+The degree of ''unexpectedness'' is based on a statistic, such as the sample mean or the $\chi^2$ statistic. 
+The statistic is a random variable and it is chosen so that its distribution can be easily computed given the truth of the null hypothesis. In other words, this is the distribution of the chosen statistic for a very large number of hypothetical repeated measurements under the assumption that the null hypothesis is true. 
+This statistic is then computed for the observed data set and its value is compared with the distribution that is associated with the truth of the null hypothesis.
+If the statistic from the observed data falls in a very unlikely spot on this distribution (the threshold is to be defined beforehand) we choose to reject the null hypothesis at some confidence level on the basis of the measured data set. 
 
 <!-- !epop -->
 
