@@ -144,7 +144,7 @@ Now try for $\Sigmavec$:
 
 $$\begin{align}
  \Sigmavec &\overset{?}{=}
-   E[(\xvec - \muvec)(\xvec^\intercal - \mu^\intercal)]
+   E[(\xvec - \muvec)(\xvec^\intercal - \muvec^\intercal)]
    = E[(L\uvec)(L\uvec)^T] \\
    &= E[L\uvec\uvec^\intercal L^\intercal]
    = L E[\uvec\uvec^\intercal]

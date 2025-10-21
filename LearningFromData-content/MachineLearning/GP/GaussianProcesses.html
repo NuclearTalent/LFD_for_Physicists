@@ -344,7 +344,10 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../RootML.html">21. Overview of Part IV</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="RootGP.html">22. Overview of Gaussian processes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="GPIntuition.html">22.1. Intuition from Gaussian process websites</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="GPIntuition.html">22.1. Intuition from Gaussian process websites</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="GP_intuition_widget.html">Widget for GP intuition</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="GPBackgroundInfo.html">22.2. Background info on GPs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="GPPracticalUse.html">22.3. Practical use GPs (from Melendez et al.)</a></li>
 <li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">22.4. More on Gaussian processes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -750,13 +753,13 @@ document.write(`
 <section id="inference-using-gaussian-processes">
 <h2>Inference using Gaussian processes<a class="headerlink" href="#inference-using-gaussian-processes" title="Link to this heading">#</a></h2>
 <p>Assume that there is a set of input vectors with independent, predictor, variables</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e4527dae-2620-401d-96f8-c8c95ae6fb38">
-<span class="eqno">(22.1)<a class="headerlink" href="#equation-e4527dae-2620-401d-96f8-c8c95ae6fb38" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-716489fe-c9e8-48e7-9961-b0aa9cc3602a">
+<span class="eqno">(22.1)<a class="headerlink" href="#equation-716489fe-c9e8-48e7-9961-b0aa9cc3602a" title="Permalink to this equation">#</a></span>\[\begin{equation}
  \boldsymbol{X}_N \equiv \{ \boldsymbol{x}^{(i)}\}_{i=1}^N 
 \end{equation}\]</div>
 <p>and a set of target values</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3f2604ce-0d36-47ac-bdf3-fee4e248c3cc">
-<span class="eqno">(22.2)<a class="headerlink" href="#equation-3f2604ce-0d36-47ac-bdf3-fee4e248c3cc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a9a98652-fe60-411d-a16b-c219b0423b14">
+<span class="eqno">(22.2)<a class="headerlink" href="#equation-a9a98652-fe60-411d-a16b-c219b0423b14" title="Permalink to this equation">#</a></span>\[\begin{equation}
  \boldsymbol{t}_N \equiv \{ t^{(i)}\}_{i=1}^N. 
 \end{equation}\]</div>
 <ul class="simple">
@@ -779,15 +782,15 @@ document.write(`
 </ol>
 <!-- !split -->
 <p>The former can be expressed with the pdf</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e86ce878-15bd-41f3-8fe8-5f4270485538">
-<span class="eqno">(22.3)<a class="headerlink" href="#equation-e86ce878-15bd-41f3-8fe8-5f4270485538" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a2fef1a7-9ff9-4437-b5f0-42b71129c762">
+<span class="eqno">(22.3)<a class="headerlink" href="#equation-a2fef1a7-9ff9-4437-b5f0-42b71129c762" title="Permalink to this equation">#</a></span>\[\begin{equation}
  
 p\left( t^{(N+1)} | \mathcal{D}_N, \boldsymbol{x}^{(N+1)} \right)
 
 \end{equation}\]</div>
 <p>while the latter can be written using Bayes’ formula (in these notes we will not be including information <span class="math notranslate nohighlight">\(I\)</span> explicitly in the conditional probabilities)</p>
-<div class="amsmath math notranslate nohighlight" id="equation-05ace983-151e-47f0-9833-45896ceb4fbc">
-<span class="eqno">(22.4)<a class="headerlink" href="#equation-05ace983-151e-47f0-9833-45896ceb4fbc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6c5fdadb-58ba-457d-870f-1d2766b07192">
+<span class="eqno">(22.4)<a class="headerlink" href="#equation-6c5fdadb-58ba-457d-870f-1d2766b07192" title="Permalink to this equation">#</a></span>\[\begin{equation}
  p\left( y(\boldsymbol{x}) | \mathcal{D}_N \right)
 = \frac{p\left( \mathcal{D}_N | y(\boldsymbol{x}) \right) p \left( y(\boldsymbol{x}) \right) }
 {p\left( \mathcal{D}_N \right) } 
@@ -817,8 +820,8 @@ A Gaussian process is a stochastic process (a collection of random variables ind
 <h3>Parametric approach<a class="headerlink" href="#parametric-approach" title="Link to this heading">#</a></h3>
 <p>Let us express <span class="math notranslate nohighlight">\(y(\boldsymbol{x})\)</span> in terms of a model function <span class="math notranslate nohighlight">\(y(\boldsymbol{x}; \boldsymbol{\theta})\)</span> that depends on a vector of model parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>.</p>
 <p>For example, using a set of basis functions <span class="math notranslate nohighlight">\(\left\{ \phi_{h} (\boldsymbol{x}) \right\}_{h=1}^H\)</span> with linear weights <span class="math notranslate nohighlight">\(\boldsymbol{\theta} \in \mathbb{R}^H\)</span> we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-10e7d5e7-33b9-41c1-b9df-0d670440ffef">
-<span class="eqno">(22.5)<a class="headerlink" href="#equation-10e7d5e7-33b9-41c1-b9df-0d670440ffef" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6667bbf9-cb04-4b7b-8995-154fc934cc6e">
+<span class="eqno">(22.5)<a class="headerlink" href="#equation-6667bbf9-cb04-4b7b-8995-154fc934cc6e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 y (\boldsymbol{x}, \boldsymbol{\theta}) = \sum_{h=1}^H \theta_{h} \phi_{h} (\boldsymbol{x})
 
@@ -827,16 +830,16 @@ y (\boldsymbol{x}, \boldsymbol{\theta}) = \sum_{h=1}^H \theta_{h} \phi_{h} (\bol
 The basis functions can be non-linear in <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> such as Gaussians (aka <em>radial basis functions</em>).
 Still, this constitutes a linear model since <span class="math notranslate nohighlight">\(y (\boldsymbol{x}, \boldsymbol{\theta})\)</span> depends linearly on the parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>.</p>
 <p>The inference of model parameters should be a well-known problem by now. We state it in terms of Bayes theorem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-96bae419-f885-449d-b8d4-63671951ac2c">
-<span class="eqno">(22.6)<a class="headerlink" href="#equation-96bae419-f885-449d-b8d4-63671951ac2c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-98f8e166-48b1-4ae7-bf44-d3bc26cf9b18">
+<span class="eqno">(22.6)<a class="headerlink" href="#equation-98f8e166-48b1-4ae7-bf44-d3bc26cf9b18" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p \left( \boldsymbol{\theta} | \mathcal{D}_N \right)
 = \frac{ p \left( \mathcal{D}_N | \boldsymbol{\theta} \right) p \left( \boldsymbol{\theta} \right)}{p \left( \mathcal{D}_N \right)}
 
 \end{equation}\]</div>
 <p>Having solved this inference problem (note that the likelihood is Gaussian, cf linear regression) a prediction can be made through marginalization</p>
-<div class="amsmath math notranslate nohighlight" id="equation-472e6f59-163a-4063-a2e7-2beda6259fdd">
-<span class="eqno">(22.7)<a class="headerlink" href="#equation-472e6f59-163a-4063-a2e7-2beda6259fdd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-613382e0-bcbe-4ab3-9add-322e28f4536b">
+<span class="eqno">(22.7)<a class="headerlink" href="#equation-613382e0-bcbe-4ab3-9add-322e28f4536b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p\left( t^{(N+1)} | \mathcal{D}_N, \boldsymbol{x}^{(N+1)} \right) 
 = \int d^H \boldsymbol{\theta} 
@@ -855,37 +858,37 @@ p \left( \boldsymbol{\theta} | \mathcal{D}_N \right).
 <p>If <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> are independent random variables that are normally distributed (and therefore also jointly so), then their sum is also normally distributed. i.e., <span class="math notranslate nohighlight">\(Z=X+Y\)</span> is normally distributed with its mean being the sum of the two means, and its variance being the sum of the two variances.</p>
 </div>
 <p>Consider the linear model and define the <span class="math notranslate nohighlight">\(N \times H\)</span> design matrix <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> with elements</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ce7f706f-21b3-44eb-90f3-6f638811cb6c">
-<span class="eqno">(22.8)<a class="headerlink" href="#equation-ce7f706f-21b3-44eb-90f3-6f638811cb6c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3cc16286-5d97-41ae-b05d-9366df7cd07e">
+<span class="eqno">(22.8)<a class="headerlink" href="#equation-3cc16286-5d97-41ae-b05d-9366df7cd07e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 R_{nh} \equiv \phi_{h} \left( \boldsymbol{x}^{(n)} \right).
 
 \end{equation}\]</div>
 <p>Then <span class="math notranslate nohighlight">\(\boldsymbol{y}_N = \boldsymbol{R} \boldsymbol{\theta}\)</span> is the vector of model predictions, i.e.</p>
-<div class="amsmath math notranslate nohighlight" id="equation-79a7854c-e2cb-4aed-b858-7dd283bbad1a">
-<span class="eqno">(22.9)<a class="headerlink" href="#equation-79a7854c-e2cb-4aed-b858-7dd283bbad1a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d86da1da-2eb6-41fc-a74e-2c6db8e880f2">
+<span class="eqno">(22.9)<a class="headerlink" href="#equation-d86da1da-2eb6-41fc-a74e-2c6db8e880f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 y^{(n)} = \sum_{h=1}^H R_{nh} \theta_{h}.
 
 \end{equation}\]</div>
 <p>Assume that we have a Gaussian prior for the linear model weights <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> with zero mean and a diagonal covariance matrix</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b9fcdbed-55b8-4e41-b7ed-b479b9a28fa1">
-<span class="eqno">(22.10)<a class="headerlink" href="#equation-b9fcdbed-55b8-4e41-b7ed-b479b9a28fa1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-56714580-058b-4dd2-90b6-5473648480fc">
+<span class="eqno">(22.10)<a class="headerlink" href="#equation-56714580-058b-4dd2-90b6-5473648480fc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(\boldsymbol{\theta}) = \mathcal{N} \left( \boldsymbol{\theta}; 0, \sigma_\theta^2 \boldsymbol{I} \right).
 
 \end{equation}\]</div>
 <p>Now, since <span class="math notranslate nohighlight">\(y\)</span> is a linear function of <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>, it is also Gaussian distributed with mean zero. Its covariance matrix becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-90437cad-52ac-419b-943b-5dd3b0447e43">
-<span class="eqno">(22.11)<a class="headerlink" href="#equation-90437cad-52ac-419b-943b-5dd3b0447e43" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d7aa346d-74e1-493c-b9c7-2937f1759558">
+<span class="eqno">(22.11)<a class="headerlink" href="#equation-d7aa346d-74e1-493c-b9c7-2937f1759558" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \boldsymbol{Q} = \langle \boldsymbol{y}_N \boldsymbol{y}_N^T \rangle = \langle \boldsymbol{R} \boldsymbol{\theta} \boldsymbol{\theta}^T \boldsymbol{R}^T \rangle
 = \sigma_\theta^2 \boldsymbol{R} \boldsymbol{R}^T,
 
 \end{equation}\]</div>
 <p>which implies that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f5c2a9c8-b00d-4eb4-b004-37a73017008b">
-<span class="eqno">(22.12)<a class="headerlink" href="#equation-f5c2a9c8-b00d-4eb4-b004-37a73017008b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-713edcd1-0123-4ce7-8e0a-2376fc9b4fc4">
+<span class="eqno">(22.12)<a class="headerlink" href="#equation-713edcd1-0123-4ce7-8e0a-2376fc9b4fc4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(\boldsymbol{y}_N) = \mathcal{N} \left( \boldsymbol{y}_N; 0, \sigma_\theta^2 \boldsymbol{R} \boldsymbol{R}^T \right).
 
@@ -895,22 +898,22 @@ p(\boldsymbol{y}_N) = \mathcal{N} \left( \boldsymbol{y}_N; 0, \sigma_\theta^2 \b
 <li><p>What about the target values <span class="math notranslate nohighlight">\(\boldsymbol{t}_N\)</span>?</p></li>
 </ul>
 <p>Well, if <span class="math notranslate nohighlight">\(t^{(n)}\)</span> is assumed to differ by additive Gaussian noise, i.e.,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-460dffdf-a2e0-4836-87ae-e29e2ac0a80a">
-<span class="eqno">(22.13)<a class="headerlink" href="#equation-460dffdf-a2e0-4836-87ae-e29e2ac0a80a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cc91e9da-323f-406e-9f04-4498bd6fdbde">
+<span class="eqno">(22.13)<a class="headerlink" href="#equation-cc91e9da-323f-406e-9f04-4498bd6fdbde" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 t^{(n)} = y^{(n)} + \varepsilon^{(n)}, 
 
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\varepsilon^{(n)} \sim \mathcal{N} \left( 0, \sigma_\nu^2 \right)\)</span>; then <span class="math notranslate nohighlight">\(\boldsymbol{t}_N\)</span> also has a Gaussian distribution</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5452defa-1dba-46dc-b54b-33e216cf1be5">
-<span class="eqno">(22.14)<a class="headerlink" href="#equation-5452defa-1dba-46dc-b54b-33e216cf1be5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1a9dccbc-881a-443b-a1a9-c2812e2ef1e2">
+<span class="eqno">(22.14)<a class="headerlink" href="#equation-1a9dccbc-881a-443b-a1a9-c2812e2ef1e2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(\boldsymbol{t}_N) = \mathcal{N} \left( \boldsymbol{t}_N; 0, \boldsymbol{C} \right),
 
 \end{equation}\]</div>
 <p>where the covariance matrix of this target distribution is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3e904bb5-5385-4763-9f5b-4d604e9743a0">
-<span class="eqno">(22.15)<a class="headerlink" href="#equation-3e904bb5-5385-4763-9f5b-4d604e9743a0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e799a5b6-539d-4fe9-bd38-2348bf6e73d9">
+<span class="eqno">(22.15)<a class="headerlink" href="#equation-e799a5b6-539d-4fe9-bd38-2348bf6e73d9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \boldsymbol{C} = \boldsymbol{Q} + \sigma_\nu^2 \boldsymbol{I} = \sigma_\theta^2 \boldsymbol{R} \boldsymbol{R}^T + \sigma_\nu^2 \boldsymbol{I}.
 
@@ -919,15 +922,15 @@ p(\boldsymbol{t}_N) = \mathcal{N} \left( \boldsymbol{t}_N; 0, \boldsymbol{C} \ri
 <section id="the-covariance-matrix-as-the-central-object">
 <h4>The covariance matrix as the central object<a class="headerlink" href="#the-covariance-matrix-as-the-central-object" title="Link to this heading">#</a></h4>
 <p>The covariance matrices are given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-92a8fe5f-8c1a-426c-b91f-e76c9425c61a">
-<span class="eqno">(22.16)<a class="headerlink" href="#equation-92a8fe5f-8c1a-426c-b91f-e76c9425c61a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-51cff735-b691-40bc-9be0-3f22d5766b46">
+<span class="eqno">(22.16)<a class="headerlink" href="#equation-51cff735-b691-40bc-9be0-3f22d5766b46" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 Q_{nn'} = \sigma_\theta^2 \sum_h \phi_{h} \left( \boldsymbol{x}^{(n)} \right) \phi_{h} \left( \boldsymbol{x}^{(n')} \right),
 
 \end{equation}\]</div>
 <p>and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4a983a1f-07f5-41cd-aa5e-3a57a8374209">
-<span class="eqno">(22.17)<a class="headerlink" href="#equation-4a983a1f-07f5-41cd-aa5e-3a57a8374209" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cd163a55-fae2-4d30-9596-56d0141128f0">
+<span class="eqno">(22.17)<a class="headerlink" href="#equation-cd163a55-fae2-4d30-9596-56d0141128f0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 C_{nn'} = Q_{nn'} + \delta_{nn'} \sigma_\nu^2.
 
@@ -939,8 +942,8 @@ C_{nn'} = Q_{nn'} + \delta_{nn'} \sigma_\nu^2.
 <section id="non-parametric-approach-mean-and-covariance-functions">
 <h3>Non-parametric approach: Mean and covariance functions<a class="headerlink" href="#non-parametric-approach-mean-and-covariance-functions" title="Link to this heading">#</a></h3>
 <p>In fact, we don’t really need the basis functions and their parameters anymore. The influence of these appear only in the covariance matrix that describes the distribution of the targets, which is our key object. We can replace the parametric model altogether with a <strong>covariance function</strong> <span class="math notranslate nohighlight">\(C( \boldsymbol{x}, \boldsymbol{x}' )\)</span> which generates the  elements of the covariance matrix</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8e8c9ffd-6259-4b9b-9e63-f45c15c959a1">
-<span class="eqno">(22.18)<a class="headerlink" href="#equation-8e8c9ffd-6259-4b9b-9e63-f45c15c959a1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d1d27c03-9b08-40c7-9d6b-de81fc657a82">
+<span class="eqno">(22.18)<a class="headerlink" href="#equation-d1d27c03-9b08-40c7-9d6b-de81fc657a82" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 Q_{nn'} = C \left( \boldsymbol{x}^{(n)}, \boldsymbol{x}^{(n')} \right),
 
@@ -948,15 +951,15 @@ Q_{nn'} = C \left( \boldsymbol{x}^{(n)}, \boldsymbol{x}^{(n')} \right),
 <p>for any set of points <span class="math notranslate nohighlight">\(\left\{ \boldsymbol{x}^{(n)} \right\}_{n=1}^N\)</span>.</p>
 <p>Note, however, that <span class="math notranslate nohighlight">\(\boldsymbol{Q}\)</span> must be positive-definite. This constrains the set of valid covariance functions.</p>
 <p>Once we have defined a covariance function, the covariance matrix for the target values will be given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9017590f-b828-4312-9911-72872dc879a4">
-<span class="eqno">(22.19)<a class="headerlink" href="#equation-9017590f-b828-4312-9911-72872dc879a4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c1c5e7b7-2803-451d-b37b-11ef2b212410">
+<span class="eqno">(22.19)<a class="headerlink" href="#equation-c1c5e7b7-2803-451d-b37b-11ef2b212410" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 C_{nn'} = C \left( \boldsymbol{x}^{(n)}, \boldsymbol{x}^{(n')} \right) + \sigma_\nu^2 \delta_{nn'}.
 
 \end{equation}\]</div>
 <p>A wide range of different covariance contributions can be <a class="reference external" href="https://en.wikipedia.org/wiki/Gaussian_process#Covariance_functions">constructed</a>. These standard covariance functions are typically parametrized with hyperparameters <span class="math notranslate nohighlight">\(\boldsymbol{\alpha}\)</span> so that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4249b7d8-552d-4a20-b00c-01c3ef721fbf">
-<span class="eqno">(22.20)<a class="headerlink" href="#equation-4249b7d8-552d-4a20-b00c-01c3ef721fbf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-67a8fa25-c16f-4cee-9e88-6de2c339d829">
+<span class="eqno">(22.20)<a class="headerlink" href="#equation-67a8fa25-c16f-4cee-9e88-6de2c339d829" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 C_{nn'} = C \left( \boldsymbol{x}^{(n)}, \boldsymbol{x}^{(n')}, \boldsymbol{\alpha} \right) + \delta_{nn'} \Delta \left( \boldsymbol{x}^{(n)};  \boldsymbol{\alpha} \right),
 
@@ -966,24 +969,24 @@ C_{nn'} = C \left( \boldsymbol{x}^{(n)}, \boldsymbol{x}^{(n')}, \boldsymbol{\alp
 <section id="stationary-kernels">
 <h4>Stationary kernels<a class="headerlink" href="#stationary-kernels" title="Link to this heading">#</a></h4>
 <p>The most common types of covariance functions are stationary, or translationally invariant, which implies that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6b912b8b-c6ed-42d4-825f-6c4967786e5a">
-<span class="eqno">(22.21)<a class="headerlink" href="#equation-6b912b8b-c6ed-42d4-825f-6c4967786e5a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ad46c2ae-4dbb-45a2-bed2-ee7531acd461">
+<span class="eqno">(22.21)<a class="headerlink" href="#equation-ad46c2ae-4dbb-45a2-bed2-ee7531acd461" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 C \left( \boldsymbol{x}, \boldsymbol{x}', \boldsymbol{\alpha} \right) = D \left(  \boldsymbol{x} - \boldsymbol{x}' ; \boldsymbol{\alpha} \right),
 
 \end{equation}\]</div>
 <p>where the function <span class="math notranslate nohighlight">\(D\)</span> is often referred to as a <em>kernel</em>. Note that the <span class="math notranslate nohighlight">\((\boldsymbol{x} - \boldsymbol{x}')\)</span>-dependence must be such that the kernel is symmetric.</p>
 <p>A very standard kernel is the RBF (radial basis function, but also known as Exponentiated Quadratic or Gaussian kernel) which is differentiable infinitely many times (hence, very smooth),</p>
-<div class="amsmath math notranslate nohighlight" id="equation-45469d98-6e5e-481a-aeb7-bdee26ffba5f">
-<span class="eqno">(22.22)<a class="headerlink" href="#equation-45469d98-6e5e-481a-aeb7-bdee26ffba5f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a8f70866-c69e-4d70-8081-c6d68d09e82d">
+<span class="eqno">(22.22)<a class="headerlink" href="#equation-a8f70866-c69e-4d70-8081-c6d68d09e82d" title="Permalink to this equation">#</a></span>\[\begin{equation}
  
 C_\mathrm{RBF}(\mathbf{x},\mathbf{x}'; \boldsymbol{\alpha}) = \exp \left[ -\frac{1}{2} \sum_{i=1}^p \frac{(x_{i} - x_{i}')^2}{l_i^2} \right] 
 
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(p\)</span> denotes the dimensionality of the input space (i.e., <span class="math notranslate nohighlight">\(\mathbf{x} \in \mathbb{R}^p\)</span>). The hyperparameters of the RBF kernel, <span class="math notranslate nohighlight">\(\boldsymbol{\alpha} = \vec{l}\)</span>, are known as the correlation length(s). Sometimes, a single correlation length <span class="math notranslate nohighlight">\(l_i=l\)</span> is used for all dimensions.</p>
 <p>Different kernels can be combined to build the most relevant covariance function. For example, the RBF kernel is often multiplied by a constant kernel (which then becomes known as signal noise) followed by the addition of a diagonal white noise kernel. This would result in</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b7c1c0a0-573b-47c2-adbc-5b79c57f4b9a">
-<span class="eqno">(22.23)<a class="headerlink" href="#equation-b7c1c0a0-573b-47c2-adbc-5b79c57f4b9a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ba459f41-6dc9-46b7-a0cd-f85dd243d40f">
+<span class="eqno">(22.23)<a class="headerlink" href="#equation-ba459f41-6dc9-46b7-a0cd-f85dd243d40f" title="Permalink to this equation">#</a></span>\[\begin{equation}
  
 C_(\mathbf{x},\mathbf{x}'; \boldsymbol{\alpha}) = \sigma_f^2 \exp \left[ -\frac{1}{2} \sum_{i=1}^p \frac{(x_{i} - x_{i}')^2}{l_i^2} \right] + \sigma_\nu^2 \delta_{\mathbf{x},\mathbf{x}'},
 
@@ -997,8 +1000,8 @@ C_(\mathbf{x},\mathbf{x}'; \boldsymbol{\alpha}) = \sigma_f^2 \exp \left[ -\frac{
 <h2>GP models for regression<a class="headerlink" href="#gp-models-for-regression" title="Link to this heading">#</a></h2>
 <p>Let us return to the problem of predicting <span class="math notranslate nohighlight">\(t^{(N+1)}\)</span> given <span class="math notranslate nohighlight">\(\boldsymbol{t}_N\)</span>. The independent variables <span class="math notranslate nohighlight">\(\boldsymbol{X}_{N+1}\)</span> are also given, but will be omitted from the conditional pdfs below.</p>
 <p>The joint density is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-254946ac-f7f5-4d09-b610-48db4349486a">
-<span class="eqno">(22.24)<a class="headerlink" href="#equation-254946ac-f7f5-4d09-b610-48db4349486a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-265be2ca-0147-4a1a-81da-9062894ef4ba">
+<span class="eqno">(22.24)<a class="headerlink" href="#equation-265be2ca-0147-4a1a-81da-9062894ef4ba" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p \left( t^{(N+1)}, \boldsymbol{t}_N \right) = p \left( t^{(N+1)} | \boldsymbol{t}_N \right) p \left( \boldsymbol{t}_N \right) 
 \quad \Rightarrow \quad
@@ -1007,8 +1010,8 @@ p \left( t^{(N+1)} | \boldsymbol{t}_N \right) = \frac{p \left( t^{(N+1)}, \bolds
 \end{equation}\]</div>
 <p>First, let us note that <span class="math notranslate nohighlight">\(\boldsymbol{t}_{N+1} = \left\{ \boldsymbol{t}_N, t^{(N+1)} \right\}\)</span> such that <span class="math notranslate nohighlight">\(p \left( t^{(N+1)}, \boldsymbol{t}_N \right) = p \left(  \boldsymbol{t}_{N+1} \right)\)</span>.</p>
 <p>Since both <span class="math notranslate nohighlight">\(p \left( \boldsymbol{t}_{N+1} \right)\)</span> and <span class="math notranslate nohighlight">\(p \left( \boldsymbol{t}_N \right)\)</span> are Gaussian distributions, then the conditional distribution, obtained by the ratio, must also be a Gaussian. Let us use the notation <span class="math notranslate nohighlight">\(\boldsymbol{C}_{N+1}\)</span> for the <span class="math notranslate nohighlight">\((N+1) \times (N+1)\)</span> covariance matrix for <span class="math notranslate nohighlight">\(\boldsymbol{t}_{N+1}\)</span>. This implies that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e416c140-d566-48ae-a074-0092d0c261e4">
-<span class="eqno">(22.25)<a class="headerlink" href="#equation-e416c140-d566-48ae-a074-0092d0c261e4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b627ec30-8b9a-4444-b018-90d1f80e1eb1">
+<span class="eqno">(22.25)<a class="headerlink" href="#equation-b627ec30-8b9a-4444-b018-90d1f80e1eb1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p \left( \boldsymbol{t}_{N+1} \right) \propto \exp \left[ -\frac{1}{2} \left( \boldsymbol{t}_N, t^{(N+1)} \right) \boldsymbol{C}_{N+1}^{-1} 
 \begin{pmatrix}
@@ -1025,8 +1028,8 @@ t^{(N+1)}
 <section id="elegant-linear-algebra-tricks-to-obtain-boldsymbol-c-n-1-1">
 <h3>Elegant linear algebra tricks to obtain <span class="math notranslate nohighlight">\(\boldsymbol{C}_{N+1}^{-1}\)</span><a class="headerlink" href="#elegant-linear-algebra-tricks-to-obtain-boldsymbol-c-n-1-1" title="Link to this heading">#</a></h3>
 <p>Let us split the <span class="math notranslate nohighlight">\(\boldsymbol{C}_{N+1}\)</span> covariance matrix into four different blocks</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5cdb9656-3d53-464c-8367-30a14de02fbc">
-<span class="eqno">(22.26)<a class="headerlink" href="#equation-5cdb9656-3d53-464c-8367-30a14de02fbc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8b8eb614-49b1-4c1c-9a08-9c399d3882fe">
+<span class="eqno">(22.26)<a class="headerlink" href="#equation-8b8eb614-49b1-4c1c-9a08-9c399d3882fe" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \boldsymbol{C}_{N+1} =
 \begin{pmatrix}
@@ -1037,8 +1040,8 @@ t^{(N+1)}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\boldsymbol{C}_N\)</span> is the <span class="math notranslate nohighlight">\(N \times N\)</span> covariance matrix (which depends on the positions <span class="math notranslate nohighlight">\(\boldsymbol{X}_N\)</span>), <span class="math notranslate nohighlight">\(\boldsymbol{k}\)</span> is an <span class="math notranslate nohighlight">\(N \times 1\)</span> vector (that describes the covariance of <span class="math notranslate nohighlight">\(\boldsymbol{X}_N\)</span> with <span class="math notranslate nohighlight">\(\boldsymbol{x}^{(N+1)}\)</span>), while <span class="math notranslate nohighlight">\(\kappa\)</span> is the single diagonal element obtained from <span class="math notranslate nohighlight">\(\boldsymbol{x}^{(N+1)}\)</span>.</p>
 <p>We can use the partitioned inverse equations (Barnett, 1979) to rewrite <span class="math notranslate nohighlight">\(\boldsymbol{C}_{N+1}^{-1}\)</span> in terms of <span class="math notranslate nohighlight">\(\boldsymbol{C}_{N}^{-1}\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{C}_{N+1}\)</span> as follows</p>
-<div class="amsmath math notranslate nohighlight" id="equation-909d7db4-4360-4185-9c68-b3e4ca9a40f2">
-<span class="eqno">(22.27)<a class="headerlink" href="#equation-909d7db4-4360-4185-9c68-b3e4ca9a40f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6cbac41f-168c-4c3b-b4bc-54134b579312">
+<span class="eqno">(22.27)<a class="headerlink" href="#equation-6cbac41f-168c-4c3b-b4bc-54134b579312" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \boldsymbol{C}_{N+1}^{-1} =
 \begin{pmatrix}
@@ -1048,8 +1051,8 @@ t^{(N+1)}
 
 \end{equation}\]</div>
 <p>where</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4e583dca-e12b-4e28-974c-0eda42db9234">
-<span class="eqno">(22.28)<a class="headerlink" href="#equation-4e583dca-e12b-4e28-974c-0eda42db9234" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-35430ae5-265b-49be-b584-158296ce52e2">
+<span class="eqno">(22.28)<a class="headerlink" href="#equation-35430ae5-265b-49be-b584-158296ce52e2" title="Permalink to this equation">#</a></span>\[\begin{align}
 \mu &amp;= \left( \kappa - \boldsymbol{k}^T \boldsymbol{C}_N^{-1} \boldsymbol{k} \right)^{-1} \\
 \boldsymbol{m} &amp;= -\mu \boldsymbol{C}_N^{-1} \boldsymbol{k} \\
 \boldsymbol{M}_N &amp;= \boldsymbol{C}_N^{-1} + \frac{1}{\mu} \boldsymbol{m} \boldsymbol{m}^T.
@@ -1084,16 +1087,16 @@ p \left( t^{(N+1)} | \boldsymbol{t}_N \right)
 \right].
 \]</div>
 <p>The mean and variance are obtained from <a class="reference internal" href="#equation-eq-ptn1ratio">(22.29)</a> after some algebra</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5c58382d-560e-42a0-9ebd-efe7669baa2a">
-<span class="eqno">(22.31)<a class="headerlink" href="#equation-5c58382d-560e-42a0-9ebd-efe7669baa2a" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-28679ac9-ec30-4fec-a97e-c36390871b71">
+<span class="eqno">(22.31)<a class="headerlink" href="#equation-28679ac9-ec30-4fec-a97e-c36390871b71" title="Permalink to this equation">#</a></span>\[\begin{align}
 \mathrm{mean:} &amp; \quad \hat{t}^{(N+1)} = \boldsymbol{k}^T \boldsymbol{C}_N^{-1} \boldsymbol{t}_N \\
 \mathrm{variance:} &amp; \quad \sigma_{\hat{t}_{N+1}}^2 = \kappa - \boldsymbol{k}^T \boldsymbol{C}_N^{-1} \boldsymbol{k}.
 \end{align}\]</div>
 </div>
 <p>This implies that we can make a prediction for the Gaussian pdf of <span class="math notranslate nohighlight">\(t^{(N+1)}\)</span> (meaning that we predict its value with an associated uncertainty) for an <span class="math notranslate nohighlight">\(N^3\)</span> computational cost (the inversion of an <span class="math notranslate nohighlight">\(N \times N\)</span> matrix).</p>
 <p>In fact, since the prediction only depends on the <span class="math notranslate nohighlight">\(N\)</span> available data we might as well predict several new target values at once. Consider <span class="math notranslate nohighlight">\(\boldsymbol{t}_M = \{ t^{(N+i)} \}_{i=1}^M\)</span> so that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b80875bc-f09f-462a-bea3-39f44d2e21ce">
-<span class="eqno">(22.32)<a class="headerlink" href="#equation-b80875bc-f09f-462a-bea3-39f44d2e21ce" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-331ba605-e67c-46c9-a654-8489df20b150">
+<span class="eqno">(22.32)<a class="headerlink" href="#equation-331ba605-e67c-46c9-a654-8489df20b150" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \boldsymbol{C}_{N+M} =
 \begin{pmatrix}
@@ -1114,8 +1117,8 @@ p \left( \boldsymbol{t}_{M} | \boldsymbol{t}_N \right) = \frac{1}{Z} \exp
 \right],
 \]</div>
 <p>where the <span class="math notranslate nohighlight">\(M \times 1\)</span> mean vector and <span class="math notranslate nohighlight">\(M \times M\)</span> covariance matrix are</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7b7d4e4e-9b44-4b85-8e71-764c4f3c8489">
-<span class="eqno">(22.34)<a class="headerlink" href="#equation-7b7d4e4e-9b44-4b85-8e71-764c4f3c8489" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-8dd1a913-7135-4c58-98a5-975cf0c261c8">
+<span class="eqno">(22.34)<a class="headerlink" href="#equation-8dd1a913-7135-4c58-98a5-975cf0c261c8" title="Permalink to this equation">#</a></span>\[\begin{align}
 \hat{\boldsymbol{t}}_M &amp;= \boldsymbol{k}^T \boldsymbol{C}_N^{-1} \boldsymbol{t}_N \\
 \boldsymbol{\Sigma}_M &amp;= \boldsymbol{\kappa} - \boldsymbol{k}^T \boldsymbol{C}_N^{-1} \boldsymbol{k}.
 \end{align}\]</div>
@@ -1130,8 +1133,8 @@ p \left( \boldsymbol{t}_{M} | \boldsymbol{t}_N \right) = \frac{1}{Z} \exp
 <li><p>Evaluated the relevant blocks in the covariance function and inverted <span class="math notranslate nohighlight">\(\boldsymbol{C}_N\)</span>.</p></li>
 </ol>
 <p>How do we determine the hyperparameters <span class="math notranslate nohighlight">\(\boldsymbol{\alpha}\)</span>? Well, recall that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b13cf298-d335-47d9-81d6-70f458da69de">
-<span class="eqno">(22.35)<a class="headerlink" href="#equation-b13cf298-d335-47d9-81d6-70f458da69de" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1ea7f7ad-bc4c-4c1b-95ff-f2aba8d06d76">
+<span class="eqno">(22.35)<a class="headerlink" href="#equation-1ea7f7ad-bc4c-4c1b-95ff-f2aba8d06d76" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p \left( \boldsymbol{t}_N \right) = \frac{1}{Z_N} \exp \left[ -\frac{1}{2} \boldsymbol{t}_N^T \boldsymbol{C}_{N}^{-1} \boldsymbol{t}_N 
 \right].
