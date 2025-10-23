@@ -272,7 +272,7 @@ $\Lra$ estimate from emcee samples by computing the average of $p(D|\thetavec,I)
 
 ### Example of parallel tempering       
 
-An example of parallel tempering is given in MCMC-parallel-tempering_ptemcee.ipynb.
+An example of parallel tempering is given in [Demo: Multimodal distributions with two samplers](https://nucleartalent.github.io/LFD_for_Physicists/LearningFromData-content/BayesianStatistics/ModelSelection/BUQ/MCMC-parallel-tempering_ptemcee_vs_zeus.html).
 
 Comments:
 * First we set up a bi-modal distribution (it was originally intended to be a surprise, so the code was hidden). Just two Gaussians with different amplitudes.
