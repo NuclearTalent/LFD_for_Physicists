@@ -733,7 +733,8 @@ interval.</p>
 regularization on the assumed training points’ covariance matrix.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Author: Vincent Dubourg &lt;vincent.dubourg@gmail.com&gt;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Original notebook from scikit learn documentation.</span>
+<span class="c1"># Author: Vincent Dubourg &lt;vincent.dubourg@gmail.com&gt;</span>
 <span class="c1">#         Jake Vanderplas &lt;vanderplas@astro.washington.edu&gt;</span>
 <span class="c1">#         Jan Hendrik Metzen &lt;jhm@informatik.uni-bremen.de&gt;</span>
 <span class="c1">#         Guillaume Lemaitre &lt;g.lemaitre58@gmail.com&gt;</span>
@@ -745,13 +746,13 @@ regularization on the assumed training points’ covariance matrix.</p>
 <section id="dataset-generation">
 <h2>Dataset generation<a class="headerlink" href="#dataset-generation" title="Link to this heading">#</a></h2>
 <p>We will start by generating a synthetic dataset. The true generative process
-is defined as <span class="math notranslate nohighlight">\(f(x) = x \sin(x)\)</span>.</p>
+is defined as <span class="math notranslate nohighlight">\(f(x) = x \sin(x)\)</span> (but you can change the function as desired).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">1_000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">X</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">X</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>  <span class="c1"># squeeze converts the num x 1 matrix to a length num vector.</span>
 </pre></div>
 </div>
 </div>
@@ -782,7 +783,7 @@ adding any noise. For training the Gaussian Process regression, we will only
 select few samples.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># change the number (or leave empty) for a different set of training points </span>
 <span class="n">training_indices</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">training_indices</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">training_indices</span><span class="p">]</span>
 </pre></div>
@@ -835,7 +836,7 @@ of the full dataset and plot the 95% confidence interval.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../../_images/441d0e883e332d30aa5010212b9fd2304016b5e1d7a8c52673a6fcb641a626ab.png" src="../../../../_images/441d0e883e332d30aa5010212b9fd2304016b5e1d7a8c52673a6fcb641a626ab.png" />
+<img alt="../../../../_images/ff3913e9d7b7a41a632ace18345639ab5edf2de90cf5da723a1970c11bfb2b39.png" src="../../../../_images/ff3913e9d7b7a41a632ace18345639ab5edf2de90cf5da723a1970c11bfb2b39.png" />
 </div>
 </div>
 <p>We see that for a prediction made on a data point close to the one from the
@@ -902,7 +903,7 @@ variance of a Gaussian noise.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../../_images/1056f9be94fd7f48f489e90749953d8c23ae76569e6907de827d52fb93510fb2.png" src="../../../../_images/1056f9be94fd7f48f489e90749953d8c23ae76569e6907de827d52fb93510fb2.png" />
+<img alt="../../../../_images/6d0a037aea224ca6fdbbc23e4a47f20fdc15bff7895555f880a6d7fa93089cfb.png" src="../../../../_images/6d0a037aea224ca6fdbbc23e4a47f20fdc15bff7895555f880a6d7fa93089cfb.png" />
 </div>
 </div>
 <p>The noise affects the predictions close to the training samples: the
@@ -921,16 +922,16 @@ variable.</p>
         },
         codeMirrorConfig: {
             theme: "abcdef",
-            mode: "python"
+            mode: "2025-book-env"
         },
         kernelOptions: {
-            name: "python3",
+            name: "2025-book-env",
             path: "./LearningFromData-content/MachineLearning/GP/BUQ"
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'python3'</script>
+    <script>kernelName = '2025-book-env'</script>
 
                 </article>
               
