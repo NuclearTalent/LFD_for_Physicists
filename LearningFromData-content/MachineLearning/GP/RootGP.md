@@ -21,8 +21,7 @@ and Melendez et al., [Phys. Rev. C **100**, 044001 (2019)](https://journals.aps.
 
 The sections here are:
 * {ref}`sec:GPIntuition`, which points to several websites with Gaussian process visualizations and tasks to build intuition;
-* {ref}`sec:BackgroundInfoGPs`, which places GPs in the context of stochastic processes and provides a first exposure to the mathematical form of GPs;
-* {ref}`sec:GPPracticalUse`, which considers interpolation and regression;
+* {ref}`sec:BasicInfoGPs`, which places GPs in the context of stochastic processes and provides a first exposure to the mathematical form of GPs and its use for interpolation and regression;
 * {ref}`sec:GaussianProcesses`, which distinguishes parametric and non-parametric inference
 * {ref}`sec:SklearnDemos` uses demonstrations with a popular library; 
 * {ref}`sec:GPyDemos` has demonstrations from an alternative (not fully maintained) library.
