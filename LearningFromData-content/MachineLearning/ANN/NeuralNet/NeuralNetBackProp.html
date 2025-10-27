@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>24.10. *Neural networks: Backpropagation &#8212; Combined Learning from Data materials</title>
+    <title>24.8. *Neural networks: Backpropagation &#8212; Combined Learning from Data materials</title>
   
   
   
@@ -69,7 +69,7 @@
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="25. ANNs in the large-width limit" href="../../../OtherTopics/ANNFT.html" />
-    <link rel="prev" title="24.9. Data bias and fairness in machine learning" href="../DataBiasFairness.html" />
+    <link rel="prev" title="24.7. Data bias and fairness in machine learning" href="../DataBiasFairness.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -372,13 +372,15 @@
 <li class="toctree-l2"><a class="reference internal" href="exercises_LogReg_NeuralNet.html">23.6. Exercise: Logistic Regression and neural networks</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../MachineLearning.html">24. Machine learning: Overview and notation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../NeuralNet.html">24.5. Artifical neural networks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-NeuralNet.html">24.6. Demonstration: Neural network classifier</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../Neural_Network_for_simple_function_in_PyTorch.html">24.7. 📥 ANN from ChatGPT using PyTorch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ModelValidation.html">24.8. Model validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../DataBiasFairness.html">24.9. Data bias and fairness in machine learning</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">24.10. *Neural networks: Backpropagation</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../MachineLearning.html">24. Machine learning: Overview</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/sec-03-types-of-machine-learning.html">24.1. Types of Machine Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MachineLearning/sec-04-data-handling-machine-learning-and-ethical-aspects.html">24.2. Data handling, machine learning  and ethical aspects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../NeuralNet.html">24.3. Artifical neural networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-NeuralNet.html">24.4. Demonstration: Neural network classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Neural_Network_for_simple_function_in_PyTorch.html">24.5. 📥 ANN from ChatGPT using PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ModelValidation.html">24.6. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DataBiasFairness.html">24.7. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">24.8. *Neural networks: Backpropagation</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../OtherTopics/ANNFT.html">25. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -694,7 +696,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="neural-networks-backpropagation">
-<span id="sec-neuralnetbackprop"></span><h1><span class="section-number">24.10. </span>*Neural networks: Backpropagation<a class="headerlink" href="#neural-networks-backpropagation" title="Link to this heading">#</a></h1>
+<span id="sec-neuralnetbackprop"></span><h1><span class="section-number">24.8. </span>*Neural networks: Backpropagation<a class="headerlink" href="#neural-networks-backpropagation" title="Link to this heading">#</a></h1>
 <div class="highlight-section">
 <p>As we have seen the final output of a feed-forward network can be expressed in terms of basic matrix-vector multiplications.
 The unknowwn quantities are our weights <span class="math notranslate nohighlight">\(w_{ij}\)</span> and we need to find an algorithm for changing them so that our errors are as small as possible.
@@ -706,8 +708,8 @@ weights in our network change the cost function and how can we use the
 final output to modify the weights?</p>
 <p>To derive these equations let us start with a plain regression problem
 and define our cost function as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-442259ab-093c-411d-98dc-eeca82f90044">
-<span class="eqno">(24.36)<a class="headerlink" href="#equation-442259ab-093c-411d-98dc-eeca82f90044" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1aec6336-0b7a-4901-94eb-ed66ae7567b4">
+<span class="eqno">(24.36)<a class="headerlink" href="#equation-1aec6336-0b7a-4901-94eb-ed66ae7567b4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 {\cal C}(\boldsymbol{W})  =  \frac{1}{2}\sum_{i=1}^n\left(y_i - t_i\right)^2, 
 
@@ -723,8 +725,8 @@ define now the activation <span class="math notranslate nohighlight">\(z_j^l\)</
 <span class="math notranslate nohighlight">\(l\)</span>-th layer as a function of the bias, the weights which add up from
 the previous layer <span class="math notranslate nohighlight">\(l-1\)</span> and the forward passes/outputs
 <span class="math notranslate nohighlight">\(\boldsymbol{a}^{l-1}\)</span> from the previous layer as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2bb13fab-8b5a-44ba-817f-ee47b88f414c">
-<span class="eqno">(24.37)<a class="headerlink" href="#equation-2bb13fab-8b5a-44ba-817f-ee47b88f414c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1f430c72-61f6-4f1d-b599-57661833dd39">
+<span class="eqno">(24.37)<a class="headerlink" href="#equation-1f430c72-61f6-4f1d-b599-57661833dd39" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 z_j^l = \sum_{i=1}^{M_{l-1}}w_{ij}^la_i^{l-1}+b_j^l,
 
@@ -741,8 +743,8 @@ represents the total number of nodes/neurons/units of layer <span class="math no
 </div>
 <p>We can rewrite this <em>(figure to be inserted)</em> in a more
 compact form as the matrix-vector products we discussed earlier,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-12c8e430-6a65-4700-84a1-d75ce805906d">
-<span class="eqno">(24.38)<a class="headerlink" href="#equation-12c8e430-6a65-4700-84a1-d75ce805906d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-39ef0d83-f477-411d-963f-9b5ae3531f76">
+<span class="eqno">(24.38)<a class="headerlink" href="#equation-39ef0d83-f477-411d-963f-9b5ae3531f76" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \boldsymbol{z}^l = \left(\boldsymbol{W}^l\right)^T\boldsymbol{a}^{l-1}+\boldsymbol{b}^l.
 
@@ -752,8 +754,8 @@ output of layer <span class="math notranslate nohighlight">\(l\)</span> as <span
 activation function. In the examples here we will use the sigmoid
 function discussed in the logistic regression lecture. We will also use the same activation function <span class="math notranslate nohighlight">\(f\)</span> for all layers
 and their nodes.  It means we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9c33d012-7cc8-42d5-8f72-c66edaff186f">
-<span class="eqno">(24.39)<a class="headerlink" href="#equation-9c33d012-7cc8-42d5-8f72-c66edaff186f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8842132c-c3bc-4b36-8f0e-f0097483d751">
+<span class="eqno">(24.39)<a class="headerlink" href="#equation-8842132c-c3bc-4b36-8f0e-f0097483d751" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 a_j^l = f(z_j^l) = \frac{1}{1+\exp{-(z_j^l)}}.
 
@@ -762,22 +764,22 @@ a_j^l = f(z_j^l) = \frac{1}{1+\exp{-(z_j^l)}}.
 <section id="derivatives-and-the-chain-rule">
 <h3>Derivatives and the chain rule<a class="headerlink" href="#derivatives-and-the-chain-rule" title="Link to this heading">#</a></h3>
 <p>From the definition of the activation <span class="math notranslate nohighlight">\(z_j^l\)</span> we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-21278e15-af8a-4ec1-8d20-34debf0e6e9d">
-<span class="eqno">(24.40)<a class="headerlink" href="#equation-21278e15-af8a-4ec1-8d20-34debf0e6e9d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-01801131-a1d9-4570-b76a-eb3c5160dd58">
+<span class="eqno">(24.40)<a class="headerlink" href="#equation-01801131-a1d9-4570-b76a-eb3c5160dd58" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \frac{\partial z_j^l}{\partial w_{ij}^l} = a_i^{l-1},
 
 \end{equation}\]</div>
 <p>and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-14556fd2-2d3a-4634-8c60-34833c129497">
-<span class="eqno">(24.41)<a class="headerlink" href="#equation-14556fd2-2d3a-4634-8c60-34833c129497" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f4a2eaff-38ea-44b9-a1fd-f11399c153c0">
+<span class="eqno">(24.41)<a class="headerlink" href="#equation-f4a2eaff-38ea-44b9-a1fd-f11399c153c0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \frac{\partial z_j^l}{\partial a_i^{l-1}} = w_{ji}^l. 
 
 \end{equation}\]</div>
 <p>With our definition of the activation function we have (note that this function depends only on <span class="math notranslate nohighlight">\(z_j^l\)</span>)</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4e177f56-cf86-43a0-8a53-b2744f691508">
-<span class="eqno">(24.42)<a class="headerlink" href="#equation-4e177f56-cf86-43a0-8a53-b2744f691508" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8f5b2880-9c65-41a9-8f2d-3a07e48a437c">
+<span class="eqno">(24.42)<a class="headerlink" href="#equation-8f5b2880-9c65-41a9-8f2d-3a07e48a437c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \frac{\partial a_j^l}{\partial z_j^{l}} = a_j^l(1-a_j^l)=f(z_j^l) \left[ 1-f(z_j^l) \right]. 
 
@@ -787,22 +789,22 @@ a_j^l = f(z_j^l) = \frac{1}{1+\exp{-(z_j^l)}}.
 <h3>Derivative of the cost function<a class="headerlink" href="#derivative-of-the-cost-function" title="Link to this heading">#</a></h3>
 <p>With these definitions we can now compute the derivative of the cost function in terms of the weights.</p>
 <p>Let us specialize to the output layer <span class="math notranslate nohighlight">\(l=L\)</span>. Our cost function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4eda1ced-16dd-4152-a428-f0a507aa531a">
-<span class="eqno">(24.43)<a class="headerlink" href="#equation-4eda1ced-16dd-4152-a428-f0a507aa531a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b48d2c93-d0d3-4e3d-9d01-a3f3310ea9c7">
+<span class="eqno">(24.43)<a class="headerlink" href="#equation-b48d2c93-d0d3-4e3d-9d01-a3f3310ea9c7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 {\cal C}(\boldsymbol{W^L})  =  \frac{1}{2}\sum_{i=1}^n\left(y_i - t_i\right)^2=\frac{1}{2}\sum_{i=1}^n\left(a_i^L - t_i\right)^2, 
 
 \end{equation}\]</div>
 <p>The derivative of this function with respect to the weights is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-14ce42d7-9a21-405c-bc9d-a49b3ec32d58">
-<span class="eqno">(24.44)<a class="headerlink" href="#equation-14ce42d7-9a21-405c-bc9d-a49b3ec32d58" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7e9dee22-cefc-41a2-9658-6966933f28ca">
+<span class="eqno">(24.44)<a class="headerlink" href="#equation-7e9dee22-cefc-41a2-9658-6966933f28ca" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \left(a_j^L - t_j\right)\frac{\partial a_j^L}{\partial w_{jk}^{L}}, 
 
 \end{equation}\]</div>
 <p>The last partial derivative can easily be computed and reads (by applying the chain rule)</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c28194df-f21e-4f01-9662-4e3946e2df3c">
-<span class="eqno">(24.45)<a class="headerlink" href="#equation-c28194df-f21e-4f01-9662-4e3946e2df3c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b62c3f82-db08-47b9-b29d-c6a98cb65a0d">
+<span class="eqno">(24.45)<a class="headerlink" href="#equation-b62c3f82-db08-47b9-b29d-c6a98cb65a0d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \frac{\partial a_j^L}{\partial w_{jk}^{L}} = \frac{\partial a_j^L}{\partial z_{j}^{L}}\frac{\partial z_j^L}{\partial w_{jk}^{L}}=a_j^L(1-a_j^L)a_k^{L-1},  
 
@@ -811,22 +813,22 @@ a_j^l = f(z_j^l) = \frac{1}{1+\exp{-(z_j^l)}}.
 <section id="bringing-it-together-first-back-propagation-equation">
 <h3>Bringing it together, first back propagation equation<a class="headerlink" href="#bringing-it-together-first-back-propagation-equation" title="Link to this heading">#</a></h3>
 <p>We have thus</p>
-<div class="amsmath math notranslate nohighlight" id="equation-be7e6af3-d610-4918-8409-8358a3dddccb">
-<span class="eqno">(24.46)<a class="headerlink" href="#equation-be7e6af3-d610-4918-8409-8358a3dddccb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8a6778b5-9b69-4b2f-8ad3-0c8c18c3e397">
+<span class="eqno">(24.46)<a class="headerlink" href="#equation-8a6778b5-9b69-4b2f-8ad3-0c8c18c3e397" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \left(a_j^L - t_j\right)a_j^L(1-a_j^L)a_k^{L-1}, 
 
 \end{equation}\]</div>
 <p>Defining</p>
-<div class="amsmath math notranslate nohighlight" id="equation-016d1e3d-0e0d-4cd7-8c51-13b0da187323">
-<span class="eqno">(24.47)<a class="headerlink" href="#equation-016d1e3d-0e0d-4cd7-8c51-13b0da187323" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7bbd4222-f8cc-4ba9-a3c2-42a25a2267dc">
+<span class="eqno">(24.47)<a class="headerlink" href="#equation-7bbd4222-f8cc-4ba9-a3c2-42a25a2267dc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \delta_j^L = a_j^L(1-a_j^L)\left(a_j^L - t_j\right) = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)},
 
 \end{equation}\]</div>
 <p>and using the Hadamard product of two vectors we can write this as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-07f84629-8e50-4c70-b665-01fd8bb6aa5a">
-<span class="eqno">(24.48)<a class="headerlink" href="#equation-07f84629-8e50-4c70-b665-01fd8bb6aa5a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4b16f1bb-62a0-477b-a9cd-5f0b1b12e208">
+<span class="eqno">(24.48)<a class="headerlink" href="#equation-4b16f1bb-62a0-477b-a9cd-5f0b1b12e208" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \boldsymbol{\delta}^L = f'(\boldsymbol{z}^L)\circ\frac{\partial {\cal C}}{\partial (\boldsymbol{a}^L)}.
 
@@ -845,15 +847,15 @@ network, and it is only a small additional overhead to compute
 output depends on the form of the cost function.
 However, provided the cost function is known there should be little
 trouble in calculating</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8d3ae96f-37d7-4049-92d5-1ba0e4cff184">
-<span class="eqno">(24.49)<a class="headerlink" href="#equation-8d3ae96f-37d7-4049-92d5-1ba0e4cff184" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-78276408-3ad9-413d-939e-a8e25e65ff8b">
+<span class="eqno">(24.49)<a class="headerlink" href="#equation-78276408-3ad9-413d-939e-a8e25e65ff8b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \frac{\partial {\cal C}}{\partial (a_j^L)}
 
 \end{equation}\]</div>
 <p>With the definition of <span class="math notranslate nohighlight">\(\delta_j^L\)</span> we have a more compact definition of the derivative of the cost function in terms of the weights, namely</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0dea100d-ca44-4683-8f4b-e538c302d5e7">
-<span class="eqno">(24.50)<a class="headerlink" href="#equation-0dea100d-ca44-4683-8f4b-e538c302d5e7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-56d6bfd6-804a-4375-a23a-49a324853686">
+<span class="eqno">(24.50)<a class="headerlink" href="#equation-56d6bfd6-804a-4375-a23a-49a324853686" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \delta_j^La_k^{L-1}.
 
@@ -862,15 +864,15 @@ trouble in calculating</p>
 <section id="derivatives-in-terms-of-z-j-l">
 <h3>Derivatives in terms of <span class="math notranslate nohighlight">\(z_j^L\)</span><a class="headerlink" href="#derivatives-in-terms-of-z-j-l" title="Link to this heading">#</a></h3>
 <p>It is also easy to see that our previous equation can be written as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-146478a0-c98a-4306-a8de-4ab4fcd8c673">
-<span class="eqno">(24.51)<a class="headerlink" href="#equation-146478a0-c98a-4306-a8de-4ab4fcd8c673" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dbd18694-e27c-45dd-a208-336cfe5ef67f">
+<span class="eqno">(24.51)<a class="headerlink" href="#equation-dbd18694-e27c-45dd-a208-336cfe5ef67f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \delta_j^L =\frac{\partial {\cal C}}{\partial z_j^L}= \frac{\partial {\cal C}}{\partial a_j^L}\frac{\partial a_j^L}{\partial z_j^L},
 
 \end{equation}\]</div>
 <p>which can also be interpreted as the partial derivative of the cost function with respect to the biases <span class="math notranslate nohighlight">\(b_j^L\)</span>, namely</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8a7e4c88-8929-4ca0-b740-af6aa7c38682">
-<span class="eqno">(24.52)<a class="headerlink" href="#equation-8a7e4c88-8929-4ca0-b740-af6aa7c38682" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9be21c72-22c1-4b38-b182-43aa30f6f843">
+<span class="eqno">(24.52)<a class="headerlink" href="#equation-9be21c72-22c1-4b38-b182-43aa30f6f843" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \delta_j^L = \frac{\partial {\cal C}}{\partial b_j^L}\frac{\partial b_j^L}{\partial z_j^L}=\frac{\partial {\cal C}}{\partial b_j^L},
 
@@ -879,18 +881,18 @@ trouble in calculating</p>
 <!-- !split -->
 <p>We have now three equations that are essential for the computations of the derivatives of the cost function at the output layer. These equations are needed to start the algorithm and they are</p>
 <p><em>The starting equations.</em></p>
-<div class="amsmath math notranslate nohighlight" id="equation-a487156d-4612-4d46-9c78-29ff8425f5c6">
-<span class="eqno">(24.53)<a class="headerlink" href="#equation-a487156d-4612-4d46-9c78-29ff8425f5c6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d2b5b65f-741b-4458-92b6-fbc3bee705a4">
+<span class="eqno">(24.53)<a class="headerlink" href="#equation-d2b5b65f-741b-4458-92b6-fbc3bee705a4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \delta_j^La_k^{L-1},
 \end{equation}\]</div>
 <p>and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d1cc542a-5153-4886-a29c-812cd549b3e9">
-<span class="eqno">(24.54)<a class="headerlink" href="#equation-d1cc542a-5153-4886-a29c-812cd549b3e9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c98d5a74-713f-4e0c-bfd8-b901c05d4aaf">
+<span class="eqno">(24.54)<a class="headerlink" href="#equation-c98d5a74-713f-4e0c-bfd8-b901c05d4aaf" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \delta_j^L = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)},
 \end{equation}\]</div>
 <p>and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bd4b74e8-3153-42e3-b5cb-b169a3cbf470">
-<span class="eqno">(24.55)<a class="headerlink" href="#equation-bd4b74e8-3153-42e3-b5cb-b169a3cbf470" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-657e6e39-8985-41ec-a549-502eede58e7c">
+<span class="eqno">(24.55)<a class="headerlink" href="#equation-657e6e39-8985-41ec-a549-502eede58e7c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \delta_j^L = \frac{\partial {\cal C}}{\partial b_j^L},
 \end{equation}\]</div>
 <p>An interesting consequence of the above equations is that when the
@@ -913,29 +915,29 @@ one <span class="math notranslate nohighlight">\(L-1\)</span> in terms of the er
 <section id="final-back-propagating-equation">
 <h3>Final back-propagating equation<a class="headerlink" href="#final-back-propagating-equation" title="Link to this heading">#</a></h3>
 <p>We have that (replacing <span class="math notranslate nohighlight">\(L\)</span> with a general layer <span class="math notranslate nohighlight">\(l\)</span>)</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4a3f0e90-dea1-41dd-bf36-2c11059ab3c8">
-<span class="eqno">(24.56)<a class="headerlink" href="#equation-4a3f0e90-dea1-41dd-bf36-2c11059ab3c8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-418d02da-052d-4d05-9d88-d1d21df4a464">
+<span class="eqno">(24.56)<a class="headerlink" href="#equation-418d02da-052d-4d05-9d88-d1d21df4a464" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \delta_j^l =\frac{\partial {\cal C}}{\partial z_j^l}.
 
 \end{equation}\]</div>
 <p>We want to express this in terms of the equations for layer <span class="math notranslate nohighlight">\(l+1\)</span>. Using the chain rule and summing over all <span class="math notranslate nohighlight">\(k\)</span> entries we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-62e6e304-a0cd-4446-b919-ee7cf7a11853">
-<span class="eqno">(24.57)<a class="headerlink" href="#equation-62e6e304-a0cd-4446-b919-ee7cf7a11853" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b230ae9d-c7bd-4d46-93d2-2d44a863bdfd">
+<span class="eqno">(24.57)<a class="headerlink" href="#equation-b230ae9d-c7bd-4d46-93d2-2d44a863bdfd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \delta_j^l =\sum_k \frac{\partial {\cal C}}{\partial z_k^{l+1}}\frac{\partial z_k^{l+1}}{\partial z_j^{l}}=\sum_k \delta_k^{l+1}\frac{\partial z_k^{l+1}}{\partial z_j^{l}},
 
 \end{equation}\]</div>
 <p>and recalling that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f94d5713-2d17-4e08-a23c-a5d32fc1aef2">
-<span class="eqno">(24.58)<a class="headerlink" href="#equation-f94d5713-2d17-4e08-a23c-a5d32fc1aef2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5ed4d570-5431-43e8-948d-07e524376c1b">
+<span class="eqno">(24.58)<a class="headerlink" href="#equation-5ed4d570-5431-43e8-948d-07e524376c1b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 z_j^{l+1} = \sum_{i=1}^{M_{l}}w_{ij}^{l+1}a_i^{l}+b_j^{l+1},
 
 \end{equation}\]</div>
 <p>with <span class="math notranslate nohighlight">\(M_l\)</span> being the number of nodes in layer <span class="math notranslate nohighlight">\(l\)</span>, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-77a950a8-58f0-479e-b916-725d96137515">
-<span class="eqno">(24.59)<a class="headerlink" href="#equation-77a950a8-58f0-479e-b916-725d96137515" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-160f43de-99c9-41d9-9899-58f626a9cd5d">
+<span class="eqno">(24.59)<a class="headerlink" href="#equation-160f43de-99c9-41d9-9899-58f626a9cd5d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \delta_j^l =\sum_k \delta_k^{l+1}w_{kj}^{l+1}f'(z_j^l),
 
@@ -953,8 +955,8 @@ z_j^{l+1} = \sum_{i=1}^{M_{l}}w_{ij}^{l+1}a_i^{l}+b_j^{l+1},
 <li><p>Secondly, perform the feed-forward until we reach the output layer. I.e., compute all activation functions and the pertinent outputs <span class="math notranslate nohighlight">\(\boldsymbol{a}^l\)</span> for <span class="math notranslate nohighlight">\(l=2,3,\dots,L\)</span>.</p></li>
 <li><p>Compute the ouput error <span class="math notranslate nohighlight">\(\boldsymbol{\delta}^L\)</span> by</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-1286344b-9046-4c0b-9400-6f03fa6c2ccb">
-<span class="eqno">(24.60)<a class="headerlink" href="#equation-1286344b-9046-4c0b-9400-6f03fa6c2ccb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0998a453-adf4-41ca-8170-9212108cdb26">
+<span class="eqno">(24.60)<a class="headerlink" href="#equation-0998a453-adf4-41ca-8170-9212108cdb26" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \delta_j^L = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)}.
 
@@ -962,8 +964,8 @@ z_j^{l+1} = \sum_{i=1}^{M_{l}}w_{ij}^{l+1}a_i^{l}+b_j^{l+1},
 <ul class="simple">
 <li><p>Back-propagate the error for each <span class="math notranslate nohighlight">\(l=L-1,L-2,\dots,2\)</span> as</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-55e9ec11-db1a-421f-9eaa-a4976475e692">
-<span class="eqno">(24.61)<a class="headerlink" href="#equation-55e9ec11-db1a-421f-9eaa-a4976475e692" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b4438cf2-73d2-47eb-a2e0-36e88660aded">
+<span class="eqno">(24.61)<a class="headerlink" href="#equation-b4438cf2-73d2-47eb-a2e0-36e88660aded" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \delta_j^l = \sum_k \delta_k^{l+1}w_{kj}^{l+1}f'(z_j^l).
 
@@ -971,14 +973,14 @@ z_j^{l+1} = \sum_{i=1}^{M_{l}}w_{ij}^{l+1}a_i^{l}+b_j^{l+1},
 <ul class="simple">
 <li><p>Finally, update the weights and the biases using gradient descent for each <span class="math notranslate nohighlight">\(l=L-1,L-2,\dots,2\)</span> and update the weights and biases according to the rules</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-303c9e38-e7f9-4c8c-9531-a4003c16aead">
-<span class="eqno">(24.62)<a class="headerlink" href="#equation-303c9e38-e7f9-4c8c-9531-a4003c16aead" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-85f31bf7-afcb-4702-82dd-2deb4ae45475">
+<span class="eqno">(24.62)<a class="headerlink" href="#equation-85f31bf7-afcb-4702-82dd-2deb4ae45475" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 w_{jk}^l\leftarrow  w_{jk}^l- \eta \delta_j^la_k^{l-1},
 
 \end{equation}\]</div>
-<div class="amsmath math notranslate nohighlight" id="equation-56a5ae53-37dd-43a3-8c48-a6554f11c0db">
-<span class="eqno">(24.63)<a class="headerlink" href="#equation-56a5ae53-37dd-43a3-8c48-a6554f11c0db" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7e890388-306a-4f01-89d8-717c417aecc2">
+<span class="eqno">(24.63)<a class="headerlink" href="#equation-7e890388-306a-4f01-89d8-717c417aecc2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 b_j^l \leftarrow b_j^l-\eta \frac{\partial {\cal C}}{\partial b_j^l}=b_j^l-\eta \delta_j^l,
 
@@ -1039,7 +1041,7 @@ weights and the learning algorithm diverges. This is the <strong>exploding gradi
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">24.9. </span>Data bias and fairness in machine learning</p>
+        <p class="prev-next-title"><span class="section-number">24.7. </span>Data bias and fairness in machine learning</p>
       </div>
     </a>
     <a class="right-next"
