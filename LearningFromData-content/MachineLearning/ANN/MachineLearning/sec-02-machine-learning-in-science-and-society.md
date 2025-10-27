@@ -1,16 +1,4 @@
----
-jupytext:
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-kernelspec:
-  display_name: Python 3
-  language: python
-  name: python3
----
-(sec:MachineLearning)=
-# Machine learning: Overview 
+# Machine learning in science and society
 
 Machine learning is about learning from data using computer programs. The algorithms in these programs are constructed to process data to find patterns or to make predictions or recommend actions. The automatic aspect of this process opens a wide range of application areas for machine learning techniques and algorithms. In particular, machine learning is used in computer technology but there has also been a swift and amazing development in the last decades that impact domains in the natural sciences, humanities, social sciences, medicine, law, etc. Indeed, almost all possible disciplines are affected. The applications are incredibly many, from self-driving cars to solving high-dimensional differential equations or complicated quantum mechanical many-body problems. Machine learning is perceived by many as a *disruptive technology*, i.e., implying that it will change our society.  
 
@@ -54,5 +42,4 @@ Still, it should be noted that Python is notoriously slow. Therefore, analysis c
 ```  
 
 Not all machine learning algorithms and methods can be given a rigorous mathematical justification, thereby opening up opportunities for experimenting, trial and error, and exciting new developments.  However, a solid command of linear algebra, multivariate analysis, probability theory, statistical data analysis, Bayesian inference, understanding errors and Monte Carlo methods are central elements in a proper understanding of machine learning applications.
-
 
