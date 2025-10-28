@@ -24,7 +24,6 @@ The sections here are:
 * {ref}`sec:BasicInfoGPs`, which places GPs in the context of stochastic processes and provides a first exposure to the mathematical form of GPs and its use for interpolation and regression;
 * {ref}`sec:GaussianProcesses`, which distinguishes parametric and non-parametric inference
 * {ref}`sec:SklearnDemos` uses demonstrations with a popular library; 
-* {ref}`sec:GPyDemos` has demonstrations from an alternative (not fully maintained) library.
 
 
 
