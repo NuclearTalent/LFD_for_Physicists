@@ -1,5 +1,5 @@
 (sec:NeuralNet)=
-# Artifical neural networks
+# Artificial neural networks
 
 Artificial neural networks are computational systems that can be trained to
 perform tasks by learning from examples, generally without having to be
