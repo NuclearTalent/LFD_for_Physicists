@@ -11,7 +11,9 @@ kernelspec:
 ---
 
 (sec:GPIntuition)=
-# Intuition from Gaussian process websites
+# Intuition for Gaussian process from simulations
+
+## Websites with visualizations 
 
 Here are four websites with Gaussian process (GP) visualizations and some things to try with each to help build intuition about GPs.
 A GP defines a distribution over *functions*, so in each simulation we will see draws of random functions, in analogy to drawing random variables from a normal distribution (recall that "normal" and "Gaussian" are synonymous here). 
@@ -48,5 +50,6 @@ The defining feature of an ensemble of GP function draws is that at *any* fixed 
     * Try the different kernels under *Gaussian Processes / Kernels*.
     * Under *Gaussian Processes*, try *Prior distribution* and *Posterior distribution*.
     * Try *Gaussian Processes / Combining different kernels*.
+
 
 
