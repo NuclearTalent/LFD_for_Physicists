@@ -257,3 +257,5 @@ $$
 So if we gather the $\Sigma_{ee}$ parts, we find to complete the square we need the combination $(f_e - \Sigma_{et}\Sigma_{tt}^{-1}f_t)$, which identifies the mean, and then the variance part comes out as advertised. 
 
 ## Determining the GP hyperparameters 
+
+So far we have assumed that the GP hyperparameters $\thetavec$ are known. If we want to do a full Bayesian determination of $\thetavec$, 

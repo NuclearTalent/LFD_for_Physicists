@@ -1,10 +1,3 @@
-# Intuition and best practices
-
-
-
-
-
-## MCMC Sampling Interlude: Assessing Convergence
 
 
 * Strategies to monitor convergence:
@@ -12,16 +5,7 @@
     1. Compute variation between and within chains $\Lra$ look for mixing and stationarity.
     1. Make sure the acceptance rate for MC steps is not too low or too high.
 
-* In this schematic version of Figure 11.3 in BDA-3, we see on the left two chains that stay in separate regions of $\theta_0$ (no mixing) while on the right there is mixing but neither chain shows a stationary distribution (the $\theta_0$ distribution keeps changing with MC steps).
-
-```{image} ./figs/schematic_BDA3_fig11p3.png
-:alt: schematic BDA3 Figure 11.3
-:class: bg-primary
-:width: 500px
-:align: center
-```
-* Step through the [MCMC-diagnostics.ipynb](/notebooks/MCMC_sampling_I/MCMC-diagnostics.ipynb) notebook, which goes through a laundry list of diagnostics. We'll return to these later in the context of `pymc`.
-
+* 
 * Some notes:
     * In BDA-3 Figure 11.1, a) is not converged; b) has 1000 iterations and is possibly converged; c) shows (correlated) draws from the target distribution.
     * We're doing straight-line fitting again using the `emcee` sampling, but now with the Metropolis-Hasting algorithm (more below on the default algorithm). 
@@ -44,23 +28,9 @@
 
     * How do we know a chain has converged to a representation of the posterior? **Standard error of the mean $SE(\overline\thetavec)$.**
         * This asks how the *mean* of $\thetavec$ deviates in the chain     from the true distribution mean. Thus it is the simulation (or     sampling) error of the mean, not the underlying uncertainty (or spread) of $\thetavec$.
-        * Calculate it for $N$ samples as
-    
-        $$
-           SE(\overline\thetavec) = \frac{\text{posterior standard deviation}}{\sqrt{N}}
-        $$
-    
-        * Visualize this with a moving average $\Lra$ check for     stability.
-    * Autocorrelation: do you recognize the formula in the code?
+
+
     * Acceptance rate. Usually autotuned in packaged MCMC software.
 
-    * Assess the mixing with the *Gelman-Rubin diagnostic*.
-        * We'll come back to this later, so this is just a quick pass.
-        * Basic idea: multiple chains from different walkers (after warm-up) are split up and one looks at the variance within a chain and between chain.
-        * There is some internal documentation in the notebook; see BDA-3 pages 284-5 for more details.
-
-* Try changing the `step_size` in the notebook to see what happens to each of the diagnostics.    
-
-* Point of emphasis: "The key purpose of MCMC is *not* to explore the posterior but to estimate expectation values."
-
+ 
 
