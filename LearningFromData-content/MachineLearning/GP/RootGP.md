@@ -15,7 +15,7 @@ kernelspec:
 
 In this chapter we introduce and demonstrate Gaussian processes (GPs).
 
-Good references are [*Gaussian processes for machine learning*](http://www.gaussianprocess.org/gpml/chapters/) by Rasmussen and William; [*The Kernel Cookbook*](https://www.cs.toronto.edu/~duvenaud/cookbook/) by Duvenaud; Chapter 21 of [*Bayesian Data Analysis, 3rd Edition*](http://www.stat.columbia.edu/~gelman/book/BDA3.pdf) by Gelman et al.; 
+Good references for GPs are [*Gaussian processes for machine learning*](http://www.gaussianprocess.org/gpml/chapters/) by Rasmussen and William; [*The Kernel Cookbook*](https://www.cs.toronto.edu/~duvenaud/cookbook/) by Duvenaud; Chapter 21 of [*Bayesian Data Analysis, 3rd Edition*](http://www.stat.columbia.edu/~gelman/book/BDA3.pdf) by Gelman et al.; 
 and Melendez et al., [Phys. Rev. C **100**, 044001 (2019)](https://journals.aps.org/prc/abstract/10.1103/PhysRevC.100.044001), [arXiv:1904.10581](https://arxiv.org/abs/1904.10581).
 
 
