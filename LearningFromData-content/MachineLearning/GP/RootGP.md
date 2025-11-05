@@ -23,7 +23,7 @@ The sections here are:
 * {ref}`sec:GPIntuition`, which points to several websites with Gaussian process visualizations and tasks to build intuition;
 * {ref}`sec:BasicInfoGPs`, which places GPs in the context of stochastic processes and provides a first exposure to the mathematical form of GPs and its use for interpolation and regression;
 * {ref}`sec:GaussianProcesses`, which distinguishes parametric and non-parametric inference
-* {ref}`sec:SklearnDemos` uses demonstrations with a popular library; 
+* {ref}`sec:SklearnDemos` uses demonstrations with a popular library (scikit-learn); 
 
 
 
