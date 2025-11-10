@@ -378,6 +378,8 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../MachineLearning/ANN/NeuralNet/demo-NeuralNet-pytorch.html">24.5.  MNIST classifier demo in PyTorch</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../MachineLearning/ANN/pytorch_NMIST_classifier_demo-Binder.html">Binder version of another MNIST classifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/ANN/NeuralNet/demo-NeuralNet-pytorch-binder.html">Binder version of original MNIST classifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MachineLearning/ANN/NeuralNet/demo-NeuralNet-pytorch-cnn-binder.html">Binder version of original MNIST classifier, but now with cnn</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../MachineLearning/ANN/ModelValidation.html">24.6. Model validation</a></li>
@@ -761,8 +763,8 @@ Given a PDF, we might be interested in:</p>
 <li><p>The exploration of posterior predictions with a function <span class="math notranslate nohighlight">\(g(\pars)\)</span>;</p>
 <ul>
 <li><p>Finding the <strong>posterior predictive distribution</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-3aa0a661-9b71-476d-b9aa-806ba44c239b">
-<span class="eqno">(17.1)<a class="headerlink" href="#equation-3aa0a661-9b71-476d-b9aa-806ba44c239b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e1d00a08-78d6-42c1-9ccf-4ce8e576231f">
+<span class="eqno">(17.1)<a class="headerlink" href="#equation-e1d00a08-78d6-42c1-9ccf-4ce8e576231f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \{ g(\pars) \; : \; \pars \sim p(\pars) \}
 \end{equation}\]</div>
 <p>(Recall that this notation means “the distribution of <span class="math notranslate nohighlight">\(g(\pars)\)</span> given the distribution of <span class="math notranslate nohighlight">\(\pars\)</span>”.)</p>
@@ -790,13 +792,13 @@ Given a PDF, we might be interested in:</p>
 <section id="quadrature-methods">
 <h3>Quadrature methods<a class="headerlink" href="#quadrature-methods" title="Link to this heading">#</a></h3>
 <p>For small dimensions, classical numerical integration using quadrature is often the method of choice. For example, the one-dimensional integral</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ec264f5d-4aa9-4ca2-a30e-1ecf9f70aaeb">
-<span class="eqno">(17.3)<a class="headerlink" href="#equation-ec264f5d-4aa9-4ca2-a30e-1ecf9f70aaeb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-27b534c3-fcc9-42f5-a0b8-d4f108d5260c">
+<span class="eqno">(17.3)<a class="headerlink" href="#equation-27b534c3-fcc9-42f5-a0b8-d4f108d5260c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 I = \int d\para\, f(\para),
 \end{equation}\]</div>
 <p>is approximated by a weighted average of the function <span class="math notranslate nohighlight">\(f\)</span> evaluated at a number of quadrature points <span class="math notranslate nohighlight">\(\{ \para_i \}_{i=1}^N\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-e15d5ca2-ae30-4ec3-a209-d6fd25a50de6">
-<span class="eqno">(17.4)<a class="headerlink" href="#equation-e15d5ca2-ae30-4ec3-a209-d6fd25a50de6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9c02b904-dce1-4d04-96c5-a63d77d5a929">
+<span class="eqno">(17.4)<a class="headerlink" href="#equation-9c02b904-dce1-4d04-96c5-a63d77d5a929" title="Permalink to this equation">#</a></span>\[\begin{equation}
 I \approx \sum_{i=1}^N w_i f(\para_i),
 \end{equation}\]</div>
 <p>where the different quadrature schemes are distinguished by using different sets of design points and weights. Familiar examples of such schemes are the trapezoid rule, Simpson’s rule, and Gaussian quadrature (the former two rely on evenly space quadrature points while the latter exploits the freedom to choose the spacing).</p>
@@ -810,13 +812,13 @@ I \approx \sum_{i=1}^N w_i f(\para_i),
 I = \int_{V_D} d\pars f(\pars) \approx I_N \equiv \frac{V_D}{N} \sum_{i=1}^N f(\pars_i),
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(\{ \pars_i \}_{i=1}^N\)</span> are <span class="math notranslate nohighlight">\(N\)</span> uniformly distributed points in the <span class="math notranslate nohighlight">\(D\)</span> dimensional volume <span class="math notranslate nohighlight">\(V_D\)</span> of the parameter space. (By “uniformly distributed” here we don’t mean equally spaced, but distributed randomly according to a uniform distribution.) The convergence of this expression will not be proven here, but is a consequence of the law of large numbers. Furthermore, one can show that the error in this approximation (usually) decreases as <span class="math notranslate nohighlight">\(1/\sqrt{N}\)</span> regardless of the dimensionality <span class="math notranslate nohighlight">\(D\)</span>, which is the main reason for its usefulness when facing complicated, high-dimensional integrals. To be specific, the variance of <span class="math notranslate nohighlight">\(I_N\)</span> can be estimated by the sample variance</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7b4d2ea1-f849-4f7b-8666-4e5126efd011">
-<span class="eqno">(17.6)<a class="headerlink" href="#equation-7b4d2ea1-f849-4f7b-8666-4e5126efd011" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-00133d54-d417-4196-a67e-b70ede0c5247">
+<span class="eqno">(17.6)<a class="headerlink" href="#equation-00133d54-d417-4196-a67e-b70ede0c5247" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \sigma_N^2 = \frac{1}{N-1} \sum_{i=1}^N \left( f(\pars_i) - \langle f \rangle \right)^2,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\langle f \rangle\)</span> is the sample mean, and becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7180897d-ddb2-4949-b2f8-5cf99bdde232">
-<span class="eqno">(17.7)<a class="headerlink" href="#equation-7180897d-ddb2-4949-b2f8-5cf99bdde232" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2fc27a2d-4e52-46db-96ae-6668ee2293ca">
+<span class="eqno">(17.7)<a class="headerlink" href="#equation-2fc27a2d-4e52-46db-96ae-6668ee2293ca" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \text{Var}(I_N)) = V_D^2 \frac{\sigma_N^2}{N}.
 \end{equation}\]</div>
 <div class="admonition caution">
@@ -848,8 +850,8 @@ I = \int_{V_D} d\pars f(\pars) \approx I_N \equiv \frac{V_D}{N} \sum_{i=1}^N f(\
 <p class="admonition-title"><span class="caption-number">Example 17.1 </span> (Monte Carlo estimation of <span class="math notranslate nohighlight">\(\pi\)</span>)</p>
 <section class="example-content" id="proof-content">
 <p>A standard example of Monte Carlo integration is the estimation of <span class="math notranslate nohighlight">\(\pi\)</span> using the (circular) step function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-903bfc4c-1cc2-46ae-983d-f84ea1303fc4">
-<span class="eqno">(17.8)<a class="headerlink" href="#equation-903bfc4c-1cc2-46ae-983d-f84ea1303fc4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-362cfc4b-2556-4863-9444-4fb8759d432b">
+<span class="eqno">(17.8)<a class="headerlink" href="#equation-362cfc4b-2556-4863-9444-4fb8759d432b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x,y) = \left\{ 
 \begin{array}{ll}
 1 &amp; \text{if $x^2+y^2 \leq 1$} \\
@@ -858,8 +860,8 @@ f(x,y) = \left\{
 \right.
 \end{equation}\]</div>
 <p>such that the integral</p>
-<div class="amsmath math notranslate nohighlight" id="equation-617517d7-9a94-4ce9-9b5d-2b0900472099">
-<span class="eqno">(17.9)<a class="headerlink" href="#equation-617517d7-9a94-4ce9-9b5d-2b0900472099" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-262e26fa-ef27-4373-96b2-0c2a1290e11f">
+<span class="eqno">(17.9)<a class="headerlink" href="#equation-262e26fa-ef27-4373-96b2-0c2a1290e11f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 I = \int_{-1}^1 dx \int_{-1}^1 dy\, f(x,y) = \pi.
 \end{equation}\]</div>
 <p>One can estimate <span class="math notranslate nohighlight">\(I\)</span> using <span class="math notranslate nohighlight">\(N\)</span> samples <span class="math notranslate nohighlight">\(\{ (x_i,y_i) \}_{i=1}^N \)</span> from the bivariate, uniform distribution <span class="math notranslate nohighlight">\(\mathcal{U} \left( [-1,1]^2 \right)\)</span> such that</p>
@@ -917,12 +919,12 @@ I \approx I_N = \frac{4}{N} \sum_{i=1}^N f(x_i,y_i),
 <p class="expanded admonition-title">Hide code cell output</p>
 </summary>
 <div class="cell_output docutils container">
-<img alt="../../_images/8758c2607827d92055d2b672032fc2777ddb580af72015c49e4e764e4f99247b.png" src="../../_images/8758c2607827d92055d2b672032fc2777ddb580af72015c49e4e764e4f99247b.png" />
+<img alt="../../_images/4f7ce55d44eb8d61c267a8a5cc0ba8988c3122e058c52fccf4da84a45020ec82.png" src="../../_images/4f7ce55d44eb8d61c267a8a5cc0ba8988c3122e058c52fccf4da84a45020ec82.png" />
 </div>
 </details>
 </div>
 <figure class="align-default" id="fig-mc-integration">
-<img alt="../../_images/8758c2607827d92055d2b672032fc2777ddb580af72015c49e4e764e4f99247b.png" src="../../_images/8758c2607827d92055d2b672032fc2777ddb580af72015c49e4e764e4f99247b.png" />
+<img alt="../../_images/4f7ce55d44eb8d61c267a8a5cc0ba8988c3122e058c52fccf4da84a45020ec82.png" src="../../_images/4f7ce55d44eb8d61c267a8a5cc0ba8988c3122e058c52fccf4da84a45020ec82.png" />
 <figcaption>
 <p><span class="caption-number">Fig. 17.1 </span><span class="caption-text">Relative error of the Monte Carlo integration <a class="reference internal" href="#equation-eq-mcmc-mc-integration-pi">(17.10)</a> as a function of the number of samples, demonstrating the <span class="math notranslate nohighlight">\(1/\sqrt{N}\)</span> scaling.</span><a class="headerlink" href="#fig-mc-integration" title="Link to this image">#</a></p>
 </figcaption>
@@ -943,8 +945,8 @@ I = \int_{V_D} d\pars\, g(\pars) p(\pars) \approx I_N \equiv \frac{1}{N} \sum_{i
 <h2>Sampling from a PDF<a class="headerlink" href="#sampling-from-a-pdf" title="Link to this heading">#</a></h2>
 <p>We have seen that the ability to draw samples from a probability distribution is very useful. If <span class="math notranslate nohighlight">\(p(\pars)\)</span> is of a standard form then it is straightforward to sample from it using available algorithms, most of which are based on nonlinear transformations of uniformly distributed random numbers. For example, a set of samples <span class="math notranslate nohighlight">\(\{ u_i\}_{i=1}^N\)</span> from the one-dimensional standard uniform distribution <span class="math notranslate nohighlight">\(\mathcal{U}([0,1])\)</span>
 can be tuned to a a set of samples <span class="math notranslate nohighlight">\(\{ \para_i \}_{i=1}^N\)</span> from the standard Gaussian distribution <span class="math notranslate nohighlight">\(\mathcal{N}(0,1)\)</span> via the transformation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-01feb812-e131-4f4b-a368-b741eae11988">
-<span class="eqno">(17.12)<a class="headerlink" href="#equation-01feb812-e131-4f4b-a368-b741eae11988" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9c44617d-9051-4eb2-9b50-7df4a04e85cd">
+<span class="eqno">(17.12)<a class="headerlink" href="#equation-9c44617d-9051-4eb2-9b50-7df4a04e85cd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_i = F^{-1}_{\mathcal{N}}(u_i),
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(F^{-1}_{\mathcal{N}}\)</span> is the <em>inverse</em> distribution function of the standard normal distribution. That is, we interpret <span class="math notranslate nohighlight">\(u_i\)</span> as a probability sample and use the above transformation to find the solution to <span class="math notranslate nohighlight">\(u_i = F(\para_i)\)</span>.</p>
