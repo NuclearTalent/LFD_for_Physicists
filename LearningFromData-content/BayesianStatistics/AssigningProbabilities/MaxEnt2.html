@@ -398,6 +398,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../MachineLearning/CNN/cnn.html">27. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/CNN/demo-cnn.html">27.6. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MachineLearning/CNN/demo-cnn-pytorch.html">27.7. Pytorch version of the CNN demo notebook</a></li>
 </ul>
 </details></li>
 </ul>
@@ -756,8 +757,8 @@ document.write(`
 <p>Consider a die with the usual six faces that was rolled a very large number of times. Suppose that we were only told that the average number of dots was 2.5. What (discrete) pdf would we assign? I.e. what are the probabilities <span class="math notranslate nohighlight">\(\{ p_i \}\)</span> that the face on top had <span class="math notranslate nohighlight">\(i\)</span> dots after a single throw?</p>
 <!-- !split -->
 <p>The available information can be summarized as follows</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4e5a9959-5995-4946-b117-37c5f9309bd1">
-<span class="eqno">(12.10)<a class="headerlink" href="#equation-4e5a9959-5995-4946-b117-37c5f9309bd1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a8c58601-761d-4f31-80f7-13e58dddd8d5">
+<span class="eqno">(12.10)<a class="headerlink" href="#equation-a8c58601-761d-4f31-80f7-13e58dddd8d5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \sum_{i=1}^6 p_i = 1, \qquad \sum_{i=1}^6 i p_i = 2.5
 
@@ -767,8 +768,8 @@ document.write(`
 <p>It turns out that there are several different arguments that all point in a direction that is very familiar to people with a physics background. Namely that we should prefer the probability distribution that maximizes an entropy measure, while fulfilling the given constraints.</p>
 <!-- !split -->
 <p>It will be shown below that the preferred pdf <span class="math notranslate nohighlight">\(\{ p_i \}\)</span> is the one that maximizes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4c41f4c8-986e-4d8d-acea-bf412bd484f4">
-<span class="eqno">(12.11)<a class="headerlink" href="#equation-4c41f4c8-986e-4d8d-acea-bf412bd484f4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2befa64b-689f-4a40-8091-c3b5ac53dd01">
+<span class="eqno">(12.11)<a class="headerlink" href="#equation-2befa64b-689f-4a40-8091-c3b5ac53dd01" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 Q\left( \{ p_i \} ; \lambda_0, \lambda_1 \right)
 = -\sum_{i=1}^6 p_i \log(p_i) 
@@ -871,8 +872,8 @@ On the basis of this information alone, what proportion of Scandinavians are bot
 <li><p>There are <span class="math notranslate nohighlight">\(M^N\)</span> different ways to distribute the balls.</p></li>
 <li><p>The micro-states corresponding to a particular distribution <span class="math notranslate nohighlight">\(\{ n_i\}\)</span> are all connected to the same pdf <span class="math notranslate nohighlight">\(\{ p_i \}\)</span>. Therefore, the frequency of a given pdf is given by</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-bd656681-9598-491f-afd8-541471710aa0">
-<span class="eqno">(12.12)<a class="headerlink" href="#equation-bd656681-9598-491f-afd8-541471710aa0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c6a6ebea-8253-4d46-b345-0ca2a5dd3272">
+<span class="eqno">(12.12)<a class="headerlink" href="#equation-c6a6ebea-8253-4d46-b345-0ca2a5dd3272" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 F(\{p_i\}) = \frac{\text{number of ways of obtaining } \{n_i\}}{M^N}
 
@@ -881,8 +882,8 @@ F(\{p_i\}) = \frac{\text{number of ways of obtaining } \{n_i\}}{M^N}
 <li><p>The number of micro-states, <span class="math notranslate nohighlight">\(W(\{n_i\}))\)</span>, in the nominator is equal to <span class="math notranslate nohighlight">\(N! / \prod_{i=1}^M n_i!\)</span>.</p></li>
 <li><p>We express the logarithm of this number using the Stirling approximation for factorials of large numbers, <span class="math notranslate nohighlight">\(\log(n!) \approx n\log(n) - n\)</span>, and finding a cancellation of <span class="math notranslate nohighlight">\(N-\sum_i n_i\)</span>.</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-75a2cea1-4da1-4d38-b9c5-a3aa2268bb74">
-<span class="eqno">(12.13)<a class="headerlink" href="#equation-75a2cea1-4da1-4d38-b9c5-a3aa2268bb74" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bdfd47cb-4a76-40ba-b3ab-8d400f9048d8">
+<span class="eqno">(12.13)<a class="headerlink" href="#equation-bdfd47cb-4a76-40ba-b3ab-8d400f9048d8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \log(W(\{n_i\})) = \log(N!) − \sum_{i=1}^M \log(n_i!) 
 \approx N\log(N) - \sum_{i=1}^M n_i\log(n_i),
@@ -892,15 +893,15 @@ F(\{p_i\}) = \frac{\text{number of ways of obtaining } \{n_i\}}{M^N}
 <ul class="simple">
 <li><p>Therefore, the logarithm of the frequency of a given pdf is</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-69d96760-b3dc-4352-9fd3-91e1ef0970a8">
-<span class="eqno">(12.14)<a class="headerlink" href="#equation-69d96760-b3dc-4352-9fd3-91e1ef0970a8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cef88315-e67c-4883-b9a8-322c3e2231a9">
+<span class="eqno">(12.14)<a class="headerlink" href="#equation-cef88315-e67c-4883-b9a8-322c3e2231a9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \log(F(\{p_i\})) \approx -N \log(M) + N\log(N) - \sum_{i=1}^M n_i\log(n_i)
 
 \end{equation}\]</div>
 <p>Substituting <span class="math notranslate nohighlight">\(p_i = n_i/N\)</span>, and using the normalization condition finally gives</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a49d371b-bfab-4975-9354-3219d1e1d9b2">
-<span class="eqno">(12.15)<a class="headerlink" href="#equation-a49d371b-bfab-4975-9354-3219d1e1d9b2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7db526bb-21c0-4797-b65b-b625f93e9bcb">
+<span class="eqno">(12.15)<a class="headerlink" href="#equation-7db526bb-21c0-4797-b65b-b625f93e9bcb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \log(F(\{p_i\})) \approx -N \log(M) - N \sum_{i=1}^M p_i\log(p_i)
 
@@ -908,8 +909,8 @@ F(\{p_i\}) = \frac{\text{number of ways of obtaining } \{n_i\}}{M^N}
 <!-- !split -->
 <p>Recall that the preferred pdf is the one that appears most frequently, i.e., that maximizes the above expression.
 We further note that <span class="math notranslate nohighlight">\(N\)</span> and <span class="math notranslate nohighlight">\(M\)</span> are constants such that the preferred pdf is given by the <span class="math notranslate nohighlight">\(\{ p_i \}\)</span> that maximizes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-35672b04-42e4-40f6-abd2-d5bd712609f0">
-<span class="eqno">(12.16)<a class="headerlink" href="#equation-35672b04-42e4-40f6-abd2-d5bd712609f0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-73732df9-003b-40d6-a5cb-56c448227d57">
+<span class="eqno">(12.16)<a class="headerlink" href="#equation-73732df9-003b-40d6-a5cb-56c448227d57" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 S = - \sum_{i=1}^M p_i\log(p_i).
 
@@ -976,16 +977,16 @@ S = - \sum_{i=1}^M p_i\log(p_i).
 <section id="continuous-case">
 <h3>Continuous case<a class="headerlink" href="#continuous-case" title="Link to this heading">#</a></h3>
 <p>Let us return to the monkeys, but now with different probabilities for each bin. Then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-49fb0522-600c-416d-a85b-25274952778e">
-<span class="eqno">(12.17)<a class="headerlink" href="#equation-49fb0522-600c-416d-a85b-25274952778e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7fc7446b-1e3b-434a-979b-58295e7024ee">
+<span class="eqno">(12.17)<a class="headerlink" href="#equation-7fc7446b-1e3b-434a-979b-58295e7024ee" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 S= −\sum_{i=1}^M p_i \log \left( \frac{p_i}{m_i} \right),
 
 \end{equation}\]</div>
 <p>which is often known as the <em>Shannon-Jaynes entropy</em>, or the <em>Kullback number</em>, or the <em>cross entropy</em> (with opposite sign).</p>
 <p>Jaynes (1963) has pointed out that this generalization of the entropy, including a <em>Lebesgue measure</em> <span class="math notranslate nohighlight">\(m_i\)</span>, is necessary when we consider the limit of continuous parameters.</p>
-<div class="amsmath math notranslate nohighlight" id="equation-247357b3-6376-4962-8d80-b4aa30cba1b2">
-<span class="eqno">(12.18)<a class="headerlink" href="#equation-247357b3-6376-4962-8d80-b4aa30cba1b2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a8a98177-ce7f-4ec6-a4a0-85c57bd39f2d">
+<span class="eqno">(12.18)<a class="headerlink" href="#equation-a8a98177-ce7f-4ec6-a4a0-85c57bd39f2d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 S[p]= −\int p(x) \log \left( \frac{p(x)}{m(x)} \right).
 
@@ -1007,8 +1008,8 @@ S[p]= −\int p(x) \log \left( \frac{p(x)}{m(x)} \right).
 <section id="mean-and-the-exponential-pdf">
 <h3>Mean and the Exponential pdf<a class="headerlink" href="#mean-and-the-exponential-pdf" title="Link to this heading">#</a></h3>
 <p>Suppose that we have a pdf <span class="math notranslate nohighlight">\(p(x|I)\)</span> that is normalized over some interval <span class="math notranslate nohighlight">\([ x_\mathrm{min}, x_\mathrm{max}]\)</span>. Assume that we have information about its mean value, i.e.,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f0752b87-09c4-4e6d-ac5a-72496679df47">
-<span class="eqno">(12.19)<a class="headerlink" href="#equation-f0752b87-09c4-4e6d-ac5a-72496679df47" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d3dd5e07-385b-4b20-8425-2ecdbdc60203">
+<span class="eqno">(12.19)<a class="headerlink" href="#equation-d3dd5e07-385b-4b20-8425-2ecdbdc60203" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \langle x \rangle = \int x p(x|I) dx = \mu.
 
@@ -1016,23 +1017,23 @@ S[p]= −\int p(x) \log \left( \frac{p(x)}{m(x)} \right).
 <p>Based only on this information, what functional form should we assign for the pdf that we will now denote <span class="math notranslate nohighlight">\(p(x|\mu)\)</span>?</p>
 <!-- !split -->
 <p>Let us use the principle of MaxEnt and maximize the entropy under the normalization and mean constraints. We will use Lagrange multipliers, and we will perform the optimization as a limiting case of a discrete problem; explicitly, we will maximize</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f177da33-477d-44c7-8045-281240b5d496">
-<span class="eqno">(12.20)<a class="headerlink" href="#equation-f177da33-477d-44c7-8045-281240b5d496" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f2ed1162-c66c-4d03-9db9-eaca55703647">
+<span class="eqno">(12.20)<a class="headerlink" href="#equation-f2ed1162-c66c-4d03-9db9-eaca55703647" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 Q = -\sum_i p_i \log \left( \frac{p_i}{m_i} \right) + \lambda_0 \left( 1 - \sum_i p_i \right) + \lambda_1 \left( \mu - \sum_i x_i p_i \right).
 
 \end{equation}\]</div>
 <!-- !split -->
 <p>Setting <span class="math notranslate nohighlight">\(\partial Q / \partial p_j = 0\)</span> we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-40345fdc-deae-4133-ab66-a8cba9834226">
-<span class="eqno">(12.21)<a class="headerlink" href="#equation-40345fdc-deae-4133-ab66-a8cba9834226" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b2fa4ef8-fdd9-4bb3-881c-cfb11de130cb">
+<span class="eqno">(12.21)<a class="headerlink" href="#equation-b2fa4ef8-fdd9-4bb3-881c-cfb11de130cb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p_j = m_j \exp \left[ -(1+\lambda_0) \right] \exp \left[ -\lambda_1 x_j \right].
 
 \end{equation}\]</div>
 <p>With a uniform measure <span class="math notranslate nohighlight">\(m_j = \mathrm{constant}\)</span> we find (in the continuous limit) that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b591b09a-ad3c-4df7-8ad1-585f530aeb25">
-<span class="eqno">(12.22)<a class="headerlink" href="#equation-b591b09a-ad3c-4df7-8ad1-585f530aeb25" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a472447f-9b0e-4b34-95fd-a410918808be">
+<span class="eqno">(12.22)<a class="headerlink" href="#equation-a472447f-9b0e-4b34-95fd-a410918808be" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(x|\mu) = \mathcal{N} \exp \left[ -\lambda_1 x \right].
 
@@ -1040,15 +1041,15 @@ p(x|\mu) = \mathcal{N} \exp \left[ -\lambda_1 x \right].
 <!-- !split -->
 <p>The normalization constant (related to <span class="math notranslate nohighlight">\(\lambda_0\)</span>) and the remaining Lagrange multiplier, <span class="math notranslate nohighlight">\(\lambda_1\)</span>, can easily determined by fulfilling the two constraints.</p>
 <p>Assuming, e.g., that the normalization interval is <span class="math notranslate nohighlight">\(x \in [0, \infty[\)</span> we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c72bd131-cfaa-479e-8dd0-62c876318054">
-<span class="eqno">(12.23)<a class="headerlink" href="#equation-c72bd131-cfaa-479e-8dd0-62c876318054" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-402a9a38-319a-42f5-aa33-b1211f0e87dd">
+<span class="eqno">(12.23)<a class="headerlink" href="#equation-402a9a38-319a-42f5-aa33-b1211f0e87dd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \int_0^\infty p(x|\mu) dx = 1 = \left[ -\frac{\mathcal{N}}{\lambda_1} e^{-\lambda_1 x} \right]_0^\infty = \frac{\mathcal{N}}{\lambda_1} \quad \Rightarrow \quad \mathcal{N} = \lambda_1.
 
 \end{equation}\]</div>
 <p>The constraint for the mean then gives</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1fcc303e-3cbb-4476-acae-c87f906ab032">
-<span class="eqno">(12.24)<a class="headerlink" href="#equation-1fcc303e-3cbb-4476-acae-c87f906ab032" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-260cf246-cfd2-4621-b587-f0ec40b0a93e">
+<span class="eqno">(12.24)<a class="headerlink" href="#equation-260cf246-cfd2-4621-b587-f0ec40b0a93e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \mu = \lambda_1 \int_0^\infty x  e^{-\lambda_1 x} dx = \lambda_1 \frac{1!}{\lambda_1^2}
 = \frac{1}{\lambda_1}
@@ -1056,8 +1057,8 @@ p(x|\mu) = \mathcal{N} \exp \left[ -\lambda_1 x \right].
 
 \end{equation}\]</div>
 <p>So that the properly normalized pdf from MaxEnt principles becomes the exponential distribution</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b14cb521-e11e-41ea-b98e-13b4e0ce4be3">
-<span class="eqno">(12.25)<a class="headerlink" href="#equation-b14cb521-e11e-41ea-b98e-13b4e0ce4be3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-21854969-b35e-4602-8ba5-b80e8a111154">
+<span class="eqno">(12.25)<a class="headerlink" href="#equation-21854969-b35e-4602-8ba5-b80e8a111154" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(x|\mu) = \frac{1}{\mu} \exp \left[ -\frac{x}{\mu} \right].
 
@@ -1067,23 +1068,23 @@ p(x|\mu) = \frac{1}{\mu} \exp \left[ -\frac{x}{\mu} \right].
 <section id="variance-and-the-gaussian-pdf">
 <h3>Variance and the Gaussian pdf<a class="headerlink" href="#variance-and-the-gaussian-pdf" title="Link to this heading">#</a></h3>
 <p>Suppose that we have information not only on the mean <span class="math notranslate nohighlight">\(\mu\)</span> but also on the variance</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c75362ee-b1a6-4c49-8e0f-392509e68009">
-<span class="eqno">(12.26)<a class="headerlink" href="#equation-c75362ee-b1a6-4c49-8e0f-392509e68009" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-91c5c6da-1651-4950-8444-e68db1141950">
+<span class="eqno">(12.26)<a class="headerlink" href="#equation-91c5c6da-1651-4950-8444-e68db1141950" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \left\langle (x-\mu)^2 \right\rangle = \int (x-\mu)^2 p(x|I) dx = \sigma^2.
 
 \end{equation}\]</div>
 <p>The principle of MaxEnt will then result in the continuum assignment</p>
-<div class="amsmath math notranslate nohighlight" id="equation-602caa00-3e2b-4f92-910b-e7f6c46b3491">
-<span class="eqno">(12.27)<a class="headerlink" href="#equation-602caa00-3e2b-4f92-910b-e7f6c46b3491" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8aad0de9-5715-47cc-960a-140e9028a329">
+<span class="eqno">(12.27)<a class="headerlink" href="#equation-8aad0de9-5715-47cc-960a-140e9028a329" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(x|\mu,\sigma) \propto \exp \left[ - \lambda_1 ( x - \mu )^2 \right].
 
 \end{equation}\]</div>
 <!-- !split -->
 <p>Assuming that the limits of integration are <span class="math notranslate nohighlight">\(\pm \infty\)</span> we can determine both the normalization coefficient and the Lagrange multiplier. After some integration this results in the standard Gaussian pdf</p>
-<div class="amsmath math notranslate nohighlight" id="equation-be296ff4-0267-423a-a9b0-61cfc98b1620">
-<span class="eqno">(12.28)<a class="headerlink" href="#equation-be296ff4-0267-423a-a9b0-61cfc98b1620" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0de8bd9a-db75-43fa-9400-a49856f4f6d5">
+<span class="eqno">(12.28)<a class="headerlink" href="#equation-0de8bd9a-db75-43fa-9400-a49856f4f6d5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(x|\mu,\sigma) = \frac{1}{\sigma \sqrt{2\pi}} \exp \left[ - \frac{( x - \mu )^2}{2\sigma^2} \right].
 
@@ -1095,8 +1096,8 @@ p(x|\mu,\sigma) = \frac{1}{\sigma \sqrt{2\pi}} \exp \left[ - \frac{( x - \mu )^2
 <!-- !split -->
 <p><em>Notice.</em>
 These arguments extend easily to the case of several parameters. For example, considering <span class="math notranslate nohighlight">\(\{x_k\}\)</span> as the data <span class="math notranslate nohighlight">\(\{ D_k\}\)</span> with error bars <span class="math notranslate nohighlight">\(\{\sigma_k\}\)</span> and <span class="math notranslate nohighlight">\(\{\mu_k\}\)</span> as the model predictions, this allows us to identify the least-squares likelihood as the pdf which best represents our state of knowledge given only the value of the expected squared-deviation between our predictions and the data</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9d56bdc7-7caa-42d4-be3e-ef78fb6c9dc8">
-<span class="eqno">(12.29)<a class="headerlink" href="#equation-9d56bdc7-7caa-42d4-be3e-ef78fb6c9dc8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7a541f7b-cafe-4268-b3c7-2d548c27ca63">
+<span class="eqno">(12.29)<a class="headerlink" href="#equation-7a541f7b-cafe-4268-b3c7-2d548c27ca63" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p\left( \{x_k\} | \{\mu_k, \sigma_k\} \right) = \prod_{k=1}^N \frac{1}{\sigma_k \sqrt{2\pi}} \exp \left[ - \frac{( x_k - \mu_k )^2}{2\sigma_k^2} \right].
 
