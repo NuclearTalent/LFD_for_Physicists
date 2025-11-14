@@ -68,7 +68,7 @@
     <script src="../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="26.3. 📥 Distributions of Randomly-Initialized ANNs" href="random_initialized_ANN_vs_width.html" />
+    <link rel="next" title="26.11. 📥 Distributions of Randomly-Initialized ANNs" href="random_initialized_ANN_vs_width.html" />
     <link rel="prev" title="25.8. *Neural networks: Backpropagation" href="../MachineLearning/ANN/NeuralNet/NeuralNetBackProp.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -389,7 +389,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">26. ANNs in the large-width limit (ANNFT)</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="random_initialized_ANN_vs_width.html">26.3. 📥 Distributions of Randomly-Initialized ANNs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random_initialized_ANN_vs_width.html">26.11. 📥 Distributions of Randomly-Initialized ANNs</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../MachineLearning/BNN/bnn.html">27. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -681,7 +681,33 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sparsity">26.1. Sparsity</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#large-width-limit">26.2. Large-width limit</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#neural-networks-in-the-large-width-limit">26.2. Neural networks in the large-width limit</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-what-is-the-prior-distribution-p-f-x-i">Summary: What is the prior distribution <span class="math notranslate nohighlight">\(p(f(x;θ)|I)\)</span>?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#annft-key-ideas">26.3. ANNFT: key ideas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#criticality-analysis">26.4. Criticality analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variance">Variance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#excess-kurtosis">Excess kurtosis</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-story-so-far">26.5. The story so far</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validating-annft-training-behaviors">26.6. Validating ANNFT training behaviors</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#anatomy-of-a-feed-forward-network">Anatomy of a feed-forward network</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#training-and-the-theory-of-deep-learning">Training and the Theory of Deep Learning</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#neural-tangent-kernel-recursion">Neural Tangent Kernel Recursion</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mean-rms-deviation-between-initial-and-final-weights-biases">Mean RMS deviation between initial and final weights/biases</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expansion-parameter">26.7. Expansion parameter</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#critical-tuning-of-hyperparameters">26.8. Critical tuning of hyperparameters</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mean-absolute-error-loss-vs-epochs">Mean absolute error loss vs. epochs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-results">26.9. Summary of results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-field-theory-formalism">26.10. Appendix: field theory formalism</a></li>
 </ul>
             </nav>
         </div>
@@ -697,20 +723,29 @@ document.write(`
 <span id="sec-annft"></span><h1><span class="section-number">26. </span>ANNs in the large-width limit<a class="headerlink" href="#anns-in-the-large-width-limit" title="Link to this heading">#</a></h1>
 <p>Machine learning methods such as artificial neural networks (ANNs) are offering physicists new ways to explore and understand a wide range of physics systems, as well as improving existing solution methods <span id="id1">[<a class="reference internal" href="../Backmatter/bibliography.html#id16" title="Pankaj Mehta, Marin Bukov, Ching-Hao Wang, Alexandre G.R. Day, Clint Richardson, Charles K. Fisher, and David J. Schwab. A high-bias, low-variance introduction to machine learning for physicists. Phys. Rep., 810:1–124, may 2019. doi:10.1016/j.physrep.2019.03.001.">MBW+19</a>]</span>.
 ANNs are commonly treated as black boxes that are empirically optimized. Given their growing prominence as a tool for physics research, it is desirable to have a framework that allows for a more structured analysis based on an understanding of how they work.
-Several authors have proposed a field theory approach to analyze and optimize neural networks using a combination of methods from quantum field theory and Bayesian statistics <span id="id2">[<a class="reference internal" href="../Backmatter/bibliography.html#id19" title="James Halverson. Building Quantum Field Theories Out of Neurons. 12 2021. arXiv:2112.04527.">Hal21</a>, <a class="reference internal" href="../Backmatter/bibliography.html#id18" title="James Halverson, Anindita Maiti, and Keegan Stoner. Neural Networks and Quantum Field Theory. Mach. Learn. Sci. Tech., 2(3):035002, 2021. arXiv:2008.08601, doi:10.1088/2632-2153/abeca3.">HMS21</a>, <a class="reference internal" href="../Backmatter/bibliography.html#id20" title="Daniel A. Roberts. Why is AI hard and Physics simple? 3 2021. arXiv:2104.00008.">Rob21</a>, <a class="reference internal" href="../Backmatter/bibliography.html#id17" title="Daniel A. Roberts, Sho Yaida, and Boris Hanin. The Principles of Deep Learning Theory. Cambridge University Press, 5 2022. ISBN 978-1-00-902340-5. arXiv:2106.10165, doi:10.1017/9781009023405.">RYH22</a>]</span>. It is based on expanding about the large-width limit of ANNs and is known as ANNFT.</p>
-<p>Dan Roberts, in an essay entitled “Why is AI hard and Physics simple?” <span id="id3">[<a class="reference internal" href="../Backmatter/bibliography.html#id20" title="Daniel A. Roberts. Why is AI hard and Physics simple? 3 2021. arXiv:2104.00008.">Rob21</a>]</span>, claims that the principle of <em>sparsity</em> means that methods of theoretical physics and associated physical intuition can be powerful in understanding machine learning…
-Roberts interprets Wigner’s observations
-about “The Unreasonable Effectiveness of Mathematics in the Natural Sciences” as “the laws
+Several authors have proposed a field theory approach to analyze and optimize neural networks using a combination of methods from quantum field theory (QFT) and Bayesian statistics <span id="id2">[<a class="reference internal" href="../Backmatter/bibliography.html#id19" title="James Halverson. Building Quantum Field Theories Out of Neurons. 12 2021. arXiv:2112.04527.">Hal21</a>, <a class="reference internal" href="../Backmatter/bibliography.html#id18" title="James Halverson, Anindita Maiti, and Keegan Stoner. Neural Networks and Quantum Field Theory. Mach. Learn. Sci. Tech., 2(3):035002, 2021. arXiv:2008.08601, doi:10.1088/2632-2153/abeca3.">HMS21</a>, <a class="reference internal" href="../Backmatter/bibliography.html#id20" title="Daniel A. Roberts. Why is AI hard and Physics simple? 3 2021. arXiv:2104.00008.">Rob21</a>, <a class="reference internal" href="../Backmatter/bibliography.html#id17" title="Daniel A. Roberts, Sho Yaida, and Boris Hanin. The Principles of Deep Learning Theory. Cambridge University Press, 5 2022. ISBN 978-1-00-902340-5. arXiv:2106.10165, doi:10.1017/9781009023405.">RYH22</a>]</span>. It is based on expanding about the large-width limit of ANNs and is known as ANNFT.</p>
+<p>Dan Roberts, in an essay entitled “Why is AI hard and Physics simple?” <span id="id3">[<a class="reference internal" href="../Backmatter/bibliography.html#id20" title="Daniel A. Roberts. Why is AI hard and Physics simple? 3 2021. arXiv:2104.00008.">Rob21</a>]</span>, claims that the principle of <em>sparsity</em> means that methods of theoretical physics and associated physical intuition can be powerful in understanding machine learning.
+Roberts interprets Wigner’s observations about “The Unreasonable Effectiveness of Mathematics in the Natural Sciences” as “the laws
 of physics have an (unreasonable?) lack of algorithmic complexity”.
-The key idea is that many neural network architectures (including the common ones) have a well-defined limit when the network width (which is the number of neurons in each layer) is taken to infinity. In particular, they reduce to Gaussian processes (GPs), and with gradient-based training they evolve as linear models according to the neural tangent kernel (or NTK). This infinite width limit by itself is not an accurate model for actual deep-learning networks, but there is a way to describe finite-width effects systematically using the correspondence with field theories (statistical or quantum). In this correspondence, the infinite-width limit is associated with free (non-interacting) theories that can be corrected perturbatively for finite width as weakly interacting theories. The concepts of effective (field) theories carry over as well, as the information propagation through the layers of a deep neural network can be understood in terms of a renormalization group (RG) flow. A fixed point analysis motivates strategies for tuning the network to criticality, which deals with gradient problems (blowing up and going to zero).</p>
+The key idea is that many neural network architectures (including the common ones) have a well-defined limit when the network width (which is the number of neurons in each layer) is taken to infinity. In particular, they reduce to Gaussian processes (GPs), and with gradient-based training they evolve in a clear way as linear models according to the so-called neural tangent kernel (or NTK).</p>
+<p>This infinite width limit by itself is not an accurate model for actual deep-learning networks, because it is too limited in what it can learn from the data.
+But there is a way to describe <em>finite-width</em> effects systematically using the correspondence with field theories (statistical or quantum). In this correspondence, the infinite-width limit is associated with free (non-interacting) theories that can be corrected <em>perturbatively</em> for finite width as weakly interacting theories. The concepts of effective (field) theories carry over as well, as the information propagation through the layers of a deep neural network can be understood in terms of a renormalization group (RG) flow. A fixed point analysis motivates strategies for tuning the network to criticality, which deals with gradient problems (blowing up and going to zero).</p>
 <section id="sparsity">
 <h2><span class="section-number">26.1. </span>Sparsity<a class="headerlink" href="#sparsity" title="Link to this heading">#</a></h2>
 <p>Roberts argues how the most generic theory in a quantum field theory framework without guiding principles would start with all combinations of interactions between the particles in the theory but that applying several guiding principles of sparsity will drastically reduce the algorithmic complexity.
 He first discusses why AI is hard by considering all possible <span class="math notranslate nohighlight">\(n\)</span>-pixel images that take on two values (e.g., black or white), so that there are <span class="math notranslate nohighlight">\(2^n\)</span> different images.
 If each of these images has one of two possible labels (e.g., cat/not-cat or spin-up/spin-down), then the images can be labeled <span class="math notranslate nohighlight">\(2^{2^n}\)</span> ways. This is a really big number. If the labels don’t correlate with image <em>features</em>, then you can’t do better than memorizing images with their labels.</p>
 <p>Roberts follows by discussing why physics is simple; these are the arguments that lead him to paraphrase Wigner.
-In particular, he analyzes the degrees of freedom (dofs) within a QFT-like framework. When thinking about the associated counting, it is convenient to have the Ising model in mind as a concrete and familiar example.
-The starting point is a generic theory with all interactions between all spins; two at a time, three at a time, and so on. Generically the strength of the couplings for these interactions would all be different.</p>
+In particular, he analyzes the degrees of freedom (dofs) within a QFT-like framework. When thinking about the associated counting of possible terms in the Hamiltonian, it is convenient to have the Ising model in mind as a concrete and familiar example (i.e., imagine a lattice of spins).
+The starting point is a generic theory with all interactions between all spins; two at a time, three at a time, and so on. Generically the strength of the couplings for these interactions would all be different.
+So is there are <span class="math notranslate nohighlight">\(N\)</span> spins in the Ising model lattice, with no restriction on interactions, there will be <span class="math notranslate nohighlight">\(2^N\)</span> possible independent interaction terms in the Hamiltonian. (I.e., a given spin is there or not in any term.) This Hamiltonian would have no predictive power because you would have to do every experiment to determine the interaction strengths, with no correlation between experiments to enable predictions.</p>
+<p>The highest level of sparsity is to limit the number of degrees of freedom that contribute to any interaction; this is what we observe in nature. If the limit is <span class="math notranslate nohighlight">\(k\)</span> degrees of freedom, with <span class="math notranslate nohighlight">\(k \ll N\)</span>, then the dominant term when summing interactions with <span class="math notranslate nohighlight">\(N\gg 1\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[
+   \binom{N}{k} \sim N^k/k! ,
+\]</div>
+<p>i.e., now the number of parameters is just polynomial in <span class="math notranslate nohighlight">\(N\)</span>. This is called <em><span class="math notranslate nohighlight">\(k\)</span>-locality</em>. But this is too general still, because we also observe <em>spatial locality</em>: <span class="math notranslate nohighlight">\(N\)</span> dofs interact only with neighbors (e.g., nearest or next-to-nearest). This mean in <span class="math notranslate nohighlight">\(d\)</span> dimensions the number of parameters scales like the number of neighbors, meaning of order <span class="math notranslate nohighlight">\(Nd\)</span>.
+Finally, we also observe <em>translational invariance</em>. This implies that the strength of any local interaction is the same everywhere (electric charge or the Ising model coupling). Now the number of parameters is order unity.</p>
 <p>A summary of the sparsity counting of dofs is:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -719,27 +754,40 @@ The starting point is a generic theory with all interactions between all spins; 
  \mathcal{O}(N) \xrightarrow[\text{invariance}]{\text{translational}}
 \mathcal{O}(1) .
 \]</div>
+<p>This is a spectacular reduction in the dofs!
+A consequence is that we have structure to possible physics theories.
+Sparsity enables us to learn physics and accounts for why physics can provide simple explanations for apparently complicated phenomena.</p>
+<p>What does this imply about AI? Because machine learning <em>does</em> work, this implies that deep learning and the like will lead to sparse descriptions. We can try to use our a physics framework to organize that description.</p>
+</section>
+<section id="neural-networks-in-the-large-width-limit">
+<h2><span class="section-number">26.2. </span>Neural networks in the large-width limit<a class="headerlink" href="#neural-networks-in-the-large-width-limit" title="Link to this heading">#</a></h2>
 <p>The big picture is that the neural network acts like a parameterized function</p>
 <div class="math notranslate nohighlight">
 \[
     f(x; \pars) ,
 \]</div>
-<p>where the input vector is <span class="math notranslate nohighlight">\(x\)</span> (we don’t use boldface or arrows for this vector) and <span class="math notranslate nohighlight">\(\pars\)</span> is the collective vector of all the parameters (weights and biases).</p>
-</section>
-<section id="large-width-limit">
-<h2><span class="section-number">26.2. </span>Large-width limit<a class="headerlink" href="#large-width-limit" title="Link to this heading">#</a></h2>
+<p>where the input vector is <span class="math notranslate nohighlight">\(x\)</span> (we don’t use boldface or arrows for this vector) and <span class="math notranslate nohighlight">\(\pars\)</span> is the collective vector of all the parameters (weights and biases).
+In order to understand this we need a framework and an approximation scheme.
+Effective (field) theory and large-width limit of the network is a compelling path.</p>
 <figure class="align-default" id="fig-annft-network-schematic">
-<a class="reference internal image-reference" href="../../_images/network_schematic_2.png"><img alt="../../_images/network_schematic_2.png" src="../../_images/network_schematic_2.png" style="height: 400px;" />
+<a class="reference internal image-reference" href="../../_images/network_schematic_2.png"><img alt="../../_images/network_schematic_2.png" src="../../_images/network_schematic_2.png" style="height: 500px;" />
 </a>
 <figcaption>
-<p><span class="caption-number">Fig. 26.1 </span><span class="caption-text">Schematic of a feed-forward neural network with two inputs <span class="math notranslate nohighlight">\(x_{\alpha}\)</span> and one output <span class="math notranslate nohighlight">\(z_{\alpha}^{(L+1)}\)</span>, where <span class="math notranslate nohighlight">\(\alpha\)</span> is an index running over the dataset <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>. The width is <span class="math notranslate nohighlight">\(n\)</span> and the depth is <span class="math notranslate nohighlight">\(L+1\)</span>, with <span class="math notranslate nohighlight">\(L\)</span> being the number of hidden layers. The neurons are totally connected (some lines are omitted here for clarity).</span><a class="headerlink" href="#fig-annft-network-schematic" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 26.1 </span><span class="caption-text">Schematic of a feed-forward neural network with two inputs <span class="math notranslate nohighlight">\(x_{\alpha}\)</span> and one output <span class="math notranslate nohighlight">\(z_{\alpha}^{(L+1)}\)</span>, where <span class="math notranslate nohighlight">\(\alpha\)</span> is an index running over the dataset <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>. The width is <span class="math notranslate nohighlight">\(n\)</span> and the depth is <span class="math notranslate nohighlight">\(L+1\)</span>, with <span class="math notranslate nohighlight">\(L\)</span> being the number of hidden layers. The neurons are totally connected (some lines are omitted here for clarity). For the examples shown in this chapter, the inputs are the number of protons <span class="math notranslate nohighlight">\(Z\)</span> and neutrons <span class="math notranslate nohighlight">\(N\)</span> and the output is the mass (or, equivalently, the binding energy) of the corresponding nuclide (see <a class="reference internal" href="#fig-annft-table-of-nuclides"><span class="std std-numref">Fig. 26.2</span></a>).</span><a class="headerlink" href="#fig-annft-network-schematic" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-annft-table-of-nuclides">
+<a class="reference internal image-reference" href="../../_images/ANNFT_table_of_nuclides_nscl-09-2.jpg"><img alt="../../_images/ANNFT_table_of_nuclides_nscl-09-2.jpg" src="../../_images/ANNFT_table_of_nuclides_nscl-09-2.jpg" style="height: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.2 </span><span class="caption-text">Chart of the nuclides.</span><a class="headerlink" href="#fig-annft-table-of-nuclides" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <figure class="align-default" id="fig-annft-neuron-schematic">
 <a class="reference internal image-reference" href="../../_images/neuron_schematic_4.png"><img alt="../../_images/neuron_schematic_4.png" src="../../_images/neuron_schematic_4.png" style="height: 150px;" />
 </a>
 <figcaption>
-<p><span class="caption-number">Fig. 26.2 </span><span class="caption-text">Schematic of a neuron within a neural network. In the layer <span class="math notranslate nohighlight">\(\ell\)</span>, the product between the weight matrix <span class="math notranslate nohighlight">\(W^{(\ell)}\)</span> and the previous layers’ output <span class="math notranslate nohighlight">\(\sigma^{(\ell-1)}\)</span> is summed over the width of the prior layer <span class="math notranslate nohighlight">\(n_{\ell-1}\)</span>, and a bias vector <span class="math notranslate nohighlight">\(b^{(\ell)}\)</span> is added, forming the preactivation <span class="math notranslate nohighlight">\(z^{(\ell)}\)</span>. The activation function <span class="math notranslate nohighlight">\(\sigma\)</span> acts on the preactivation to yield the output <span class="math notranslate nohighlight">\(\sigma \bigl(z^{(\ell)}\bigr)\)</span> (also notated <span class="math notranslate nohighlight">\(\sigma^{(\ell)}\)</span>) to be passed to the next layer.</span><a class="headerlink" href="#fig-annft-neuron-schematic" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 26.3 </span><span class="caption-text">Schematic of a neuron within a neural network. In the layer <span class="math notranslate nohighlight">\(\ell\)</span>, the product between the weight matrix <span class="math notranslate nohighlight">\(W^{(\ell)}\)</span> and the previous layers’ output <span class="math notranslate nohighlight">\(\sigma^{(\ell-1)}\)</span> is summed over the width of the prior layer <span class="math notranslate nohighlight">\(n_{\ell-1}\)</span>, and a bias vector <span class="math notranslate nohighlight">\(b^{(\ell)}\)</span> is added, forming the preactivation <span class="math notranslate nohighlight">\(z^{(\ell)}\)</span>. The activation function <span class="math notranslate nohighlight">\(\sigma\)</span> acts on the preactivation to yield the output <span class="math notranslate nohighlight">\(\sigma \bigl(z^{(\ell)}\bigr)\)</span> (also notated <span class="math notranslate nohighlight">\(\sigma^{(\ell)}\)</span>) to be passed to the next layer.</span><a class="headerlink" href="#fig-annft-neuron-schematic" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <p>For a given initialization of the network parameters <span class="math notranslate nohighlight">\(\pars\)</span>, the preactivations and the output function <span class="math notranslate nohighlight">\(f\)</span> are uniquely determined.
@@ -755,51 +803,289 @@ It is known empirically that poor choices of architecture and/or initialization 
 But, as already stressed, with repeated initializations of the ANN with <span class="math notranslate nohighlight">\(\pars\)</span> drawn from random distributions, the network acquires a probability distribution over functions <span class="math notranslate nohighlight">\(p\left(f(x)|\mathcal{D}\right)\)</span>.
 Again, <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> is used to represent the data set of inputs and outputs that the network is finding a relationship between.
 In the pre-training case, this quantity simply refers to the inputs <span class="math notranslate nohighlight">\(x_\alpha\)</span> for the network.</p>
+<figure class="align-default" id="fig-annft-review-clt">
+<a class="reference internal image-reference" href="../../_images/ANNFT_review_CLT.png"><img alt="../../_images/ANNFT_review_CLT.png" src="../../_images/ANNFT_review_CLT.png" style="height: 500px;" />
+</a>
+</figure>
 <figure class="align-default" id="fig-annft-clt-plots">
 <a class="reference internal image-reference" href="../../_images/ANNFT_CLT_plots.png"><img alt="../../_images/ANNFT_CLT_plots.png" src="../../_images/ANNFT_CLT_plots.png" style="height: 600px;" />
 </a>
 <figcaption>
-<p><span class="caption-number">Fig. 26.3 </span><span class="caption-text">Output distributions from repeated sampling at the same input point, each plot being a different width. ReLU activation is on the left; Softplus activaiton is on the right.</span><a class="headerlink" href="#fig-annft-clt-plots" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 26.4 </span><span class="caption-text">Final layer ANN output distributions from repeated sampling at the same input point, each plot being a different width. There are two hidden layers. ReLU activation is on the left; Softplus activaiton is on the right. The widths vary from 1 up to 1000 neurons per layer.</span><a class="headerlink" href="#fig-annft-clt-plots" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <figure class="align-default" id="fig-annft-corner-plots">
 <a class="reference internal image-reference" href="../../_images/ANNFT_corner_plots.png"><img alt="../../_images/ANNFT_corner_plots.png" src="../../_images/ANNFT_corner_plots.png" style="height: 750px;" />
 </a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.5 </span><span class="caption-text">Corner plots for ReLU activation function outputs. The corner plots all feature ReLU networks of a fixed width of 120 neurons, and depths of (a) 1, (b) 2, © 4, and (d) 8. The addition of hidden layers introduces correlations to the network output distributions.</span><a class="headerlink" href="#fig-annft-corner-plots" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-annft-clt-intuition">
+<a class="reference internal image-reference" href="../../_images/ANNFT_intuition_for_CLT.png"><img alt="../../_images/ANNFT_intuition_for_CLT.png" src="../../_images/ANNFT_intuition_for_CLT.png" style="height: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.6 </span><span class="caption-text">Intuition for the central limit theorem (CLT).</span><a class="headerlink" href="#fig-annft-clt-intuition" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="summary-what-is-the-prior-distribution-p-f-x-i">
+<h3>Summary: What is the prior distribution <span class="math notranslate nohighlight">\(p(f(x;θ)|I)\)</span>?<a class="headerlink" href="#summary-what-is-the-prior-distribution-p-f-x-i" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The network’s weights and biases <span class="math notranslate nohighlight">\(\thetavec\)</span> are initialized as independent and identically distributed random variables (zero mean, we can take as Gaussian).</p></li>
+<li><p>Neural network of given architecture induces a probability distribution of preactivations <span class="math notranslate nohighlight">\(z\)</span> at a given layer <span class="math notranslate nohighlight">\(\ell\)</span>.</p></li>
+<li><p>The preactivation of final (output) layer is <span class="math notranslate nohighlight">\(f(x)\)</span>.</p></li>
+<li><p>The Central Limit Theorem kicks in as the width <span class="math notranslate nohighlight">\(n\)</span> goes to infinity, so these distributions should become (correlated) Gaussians, i.e., Gaussian processes.</p></li>
+<li><p>Claim: if we back off from this limit, neural networks can be studied using perturbation theory, with an expansion parameter: depth/width.</p></li>
+</ul>
+<figure class="align-default" id="fig-initialization-distributions">
+<a class="reference internal image-reference" href="../../_images/ANNFT_initialization_distributions.png"><img alt="../../_images/ANNFT_initialization_distributions.png" src="../../_images/ANNFT_initialization_distributions.png" style="height: 300px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.7 </span><span class="caption-text">Initialization distributions</span><a class="headerlink" href="#fig-initialization-distributions" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="annft-key-ideas">
+<h2><span class="section-number">26.3. </span>ANNFT: key ideas<a class="headerlink" href="#annft-key-ideas" title="Link to this heading">#</a></h2>
+<figure class="align-default" id="fig-annft-overview-of-key-ideas">
+<a class="reference internal image-reference" href="../../_images/ANNFT_overview_of_key_ideas.png"><img alt="../../_images/ANNFT_overview_of_key_ideas.png" src="../../_images/ANNFT_overview_of_key_ideas.png" style="height: 500px;" />
+</a>
+</figure>
+<figure class="align-default" id="fig-annft-theory-of-deep-learning-ii">
+<a class="reference internal image-reference" href="../../_images/ANNFT_theory_of_deep_learning_II.png"><img alt="../../_images/ANNFT_theory_of_deep_learning_II.png" src="../../_images/ANNFT_theory_of_deep_learning_II.png" style="height: 500px;" />
+</a>
+</figure>
+<figure class="align-default" id="fig-annft-theory-of-deep-learning-iii">
+<a class="reference internal image-reference" href="../../_images/ANNFT_theory_of_deep_learning_III.png"><img alt="../../_images/ANNFT_theory_of_deep_learning_III.png" src="../../_images/ANNFT_theory_of_deep_learning_III.png" style="height: 500px;" />
+</a>
+</figure>
+</section>
+<section id="criticality-analysis">
+<h2><span class="section-number">26.4. </span>Criticality analysis<a class="headerlink" href="#criticality-analysis" title="Link to this heading">#</a></h2>
+<section id="variance">
+<h3>Variance<a class="headerlink" href="#variance" title="Link to this heading">#</a></h3>
+<figure class="align-default" id="fig-annft-variance-relu-notes">
+<a class="reference internal image-reference" href="../../_images/ANNFT_variance_ReLU_notes.png"><img alt="../../_images/ANNFT_variance_ReLU_notes.png" src="../../_images/ANNFT_variance_ReLU_notes.png" style="height: 150px;" />
+</a>
+</figure>
+<figure class="align-default" id="fig-annft-variance-softplus-notes">
+<a class="reference internal image-reference" href="../../_images/ANNFT_variance_Softplus_notes.png"><img alt="../../_images/ANNFT_variance_Softplus_notes.png" src="../../_images/ANNFT_variance_Softplus_notes.png" style="height: 180px;" />
+</a>
 </figure>
 <figure class="align-default" id="fig-annft-variance-plots">
-<a class="reference internal image-reference" href="../../_images/ANNFT_variance_plots.png"><img alt="../../_images/ANNFT_variance_plots.png" src="../../_images/ANNFT_variance_plots.png" style="height: 750px;" />
+<a class="reference internal image-reference" href="../../_images/ANNFT_variance_plots2.png"><img alt="../../_images/ANNFT_variance_plots2.png" src="../../_images/ANNFT_variance_plots2.png" style="height: 750px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.8 </span><span class="caption-text">The final layer pre-training output variance as a function of neural network depth with a fixed width of 240.
+Results are given for a ReLU activation function tuned  (a) below (<span class="math notranslate nohighlight">\(C_W = 1.0\)</span>, <span class="math notranslate nohighlight">\(C_b = 0.0\)</span>), (c) at the critical point (<span class="math notranslate nohighlight">\(C_W = 2.0\)</span>, <span class="math notranslate nohighlight">\(C_b = 0.0\)</span>), and (e) above (<span class="math notranslate nohighlight">\(C_W = 3.0\)</span>, <span class="math notranslate nohighlight">\(C_b = 0.0\)</span>) and for a Softplus activation function with  (b) lowest, (d) intermediate, and (f) highest initialization widths for the weights by using the same initialization hyperparameters as the ReLU.
+The measured variance is plotted in blue, a recursive calculation using empirical values of the variance is plotted as a dashed red line, and a recursive calculation using only theoretically calculated variances is plotted as a dashed pink line.
+When above/below the critical values of the initialization width, the variance explodes/vanishes with depth. When the ReLU network is tuned to critical initialization, the variance is fixed with depth. The Softplus activations do not have a critical point for initialization. As such, the Softplus variance either grows or asymptotes towards a constant value with depth, and does not have initialization hyperparameters that give a fixed variance with depth.</span><a class="headerlink" href="#fig-annft-variance-plots" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="excess-kurtosis">
+<h3>Excess kurtosis<a class="headerlink" href="#excess-kurtosis" title="Link to this heading">#</a></h3>
+<figure class="align-default" id="fig-annft-excess-kurtosis-i">
+<a class="reference internal image-reference" href="../../_images/ANNFT_excess_kurtosis_I.png"><img alt="../../_images/ANNFT_excess_kurtosis_I.png" src="../../_images/ANNFT_excess_kurtosis_I.png" style="height: 400px;" />
+</a>
+</figure>
+<figure class="align-default" id="fig-annft-excess-kurtosis-ii">
+<a class="reference internal image-reference" href="../../_images/ANNFT_excess_kurtosis_II.png"><img alt="../../_images/ANNFT_excess_kurtosis_II.png" src="../../_images/ANNFT_excess_kurtosis_II.png" style="height: 400px;" />
+</a>
+</figure>
+<figure class="align-default" id="fig-annft-excess-kurtosis-relu-notes">
+<a class="reference internal image-reference" href="../../_images/ANNFT_excess_kurtosis_ReLU_notes.png"><img alt="../../_images/ANNFT_excess_kurtosis_ReLU_notes.png" src="../../_images/ANNFT_excess_kurtosis_ReLU_notes.png" style="height: 180px;" />
+</a>
+</figure>
+<figure class="align-default" id="fig-annft-excess-kurtosis-softplus-notes">
+<a class="reference internal image-reference" href="../../_images/ANNFT_excess_kurtosis_Softplus_notes.png"><img alt="../../_images/ANNFT_excess_kurtosis_Softplus_notes.png" src="../../_images/ANNFT_excess_kurtosis_Softplus_notes.png" style="height: 180px;" />
 </a>
 </figure>
 <figure class="align-default" id="fig-annft-kurtosis-plots">
-<a class="reference internal image-reference" href="../../_images/ANNFT_kurtosis_plots.png"><img alt="../../_images/ANNFT_kurtosis_plots.png" src="../../_images/ANNFT_kurtosis_plots.png" style="height: 750px;" />
+<a class="reference internal image-reference" href="../../_images/ANNFT_kurtosis_plots2.png"><img alt="../../_images/ANNFT_kurtosis_plots2.png" src="../../_images/ANNFT_kurtosis_plots2.png" style="height: 750px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.9 </span><span class="caption-text">The final-layer pre-training-output (unstandardized) excess kurtosis (abbreviated here as EK, and also known as the non-Gaussian 4-point correlations) as a function of neural network depth with a fixed width of 240.
+Results are given for a ReLU activation function tuned  (a) below (<span class="math notranslate nohighlight">\(C_W=1.0\)</span>, <span class="math notranslate nohighlight">\(C_b=0.0\)</span>), (c) at the critical point (<span class="math notranslate nohighlight">\(C_W=2.0\)</span>, <span class="math notranslate nohighlight">\(C_b=0.0\)</span>) and (e) above (<span class="math notranslate nohighlight">\(C_W=3.0\)</span>, <span class="math notranslate nohighlight">\(C_b=0.0\)</span>), and for a Softplus activation function with (b) lowest, (d) intermediate, and (f) highest initialization widths for the weights by using the same initialization hyperparameters as ReLU.
+The measured EK is plotted as a green line, a recursive calculation of EK using empirical values of the variance and initial EK is plotted as a dashed red line, and a recursive calculation using only theoretical values is plotted as a dashed pink line.
+An additional blue line is present in (e), representing an exact calculation of the critical EK without treating <span class="math notranslate nohighlight">\(1/n\)</span> terms as subleading.
+When critically tuned, ReLU networks’ EK behaves linearly with depth as predicted by ANNFT, demonstrating that the higher-order moments of the distribution are controlled by an expansion in <span class="math notranslate nohighlight">\(r\)</span>.
+Non-critical distributions are seen to grow non-linearly with depth, reflecting that criticality allows for a perturbative ANNFT that lets deeper network network behavior to be analyzed.</span><a class="headerlink" href="#fig-annft-kurtosis-plots" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="the-story-so-far">
+<h2><span class="section-number">26.5. </span>The story so far<a class="headerlink" href="#the-story-so-far" title="Link to this heading">#</a></h2>
+<figure class="align-default" id="fig-annft-story-so-far">
+<a class="reference internal image-reference" href="../../_images/ANNFT_story_so_far.png"><img alt="../../_images/ANNFT_story_so_far.png" src="../../_images/ANNFT_story_so_far.png" style="height: 350px;" />
 </a>
 </figure>
+</section>
+<section id="validating-annft-training-behaviors">
+<h2><span class="section-number">26.6. </span>Validating ANNFT training behaviors<a class="headerlink" href="#validating-annft-training-behaviors" title="Link to this heading">#</a></h2>
+<section id="anatomy-of-a-feed-forward-network">
+<h3>Anatomy of a feed-forward network<a class="headerlink" href="#anatomy-of-a-feed-forward-network" title="Link to this heading">#</a></h3>
+<figure class="align-default" id="fig-annft-anatomy-feed-forward">
+<a class="reference internal image-reference" href="../../_images/ANNFT_anatomy_feed_forward.png"><img alt="../../_images/ANNFT_anatomy_feed_forward.png" src="../../_images/ANNFT_anatomy_feed_forward.png" style="height: 350px;" />
+</a>
+</figure>
+<section id="training-and-the-theory-of-deep-learning">
+<h4>Training and the Theory of Deep Learning<a class="headerlink" href="#training-and-the-theory-of-deep-learning" title="Link to this heading">#</a></h4>
+<figure class="align-default" id="fig-annft-training">
+<a class="reference internal image-reference" href="../../_images/ANNFT_training.png"><img alt="../../_images/ANNFT_training.png" src="../../_images/ANNFT_training.png" style="height: 400px;" />
+</a>
+</figure>
+</section>
+<section id="neural-tangent-kernel-recursion">
+<h4>Neural Tangent Kernel Recursion<a class="headerlink" href="#neural-tangent-kernel-recursion" title="Link to this heading">#</a></h4>
+<figure class="align-default" id="fig-annft-ntk-recursion">
+<a class="reference internal image-reference" href="../../_images/ANNFT_NTK_recursion.png"><img alt="../../_images/ANNFT_NTK_recursion.png" src="../../_images/ANNFT_NTK_recursion.png" style="height: 350px;" />
+</a>
+</figure>
+</section>
+</section>
+<section id="mean-rms-deviation-between-initial-and-final-weights-biases">
+<h3>Mean RMS deviation between initial and final weights/biases<a class="headerlink" href="#mean-rms-deviation-between-initial-and-final-weights-biases" title="Link to this heading">#</a></h3>
+<p>ANNFT assumes that the initial network weights and biases are close so that a Taylor series for the trained solution is valid.</p>
+<div class="math notranslate nohighlight">
+\[
+  f(x; \pars^\star) = f(x; \pars) 
+  + (\pars^\star - \pars) \frac{df}{d\pars} 
+  + \frac{1}{2} (\pars^\star - \pars)^2 \frac{d^2 f}{d\pars^2} 
+  + \cdots 
+\]</div>
+<p>The average Frobenius norm of weights and biases was used to judge this.</p>
+<figure class="align-default" id="fig-annft-mean-rmsd-vs-width">
+<a class="reference internal image-reference" href="../../_images/ANNFT_mean_RMSD_vs_width.png"><img alt="../../_images/ANNFT_mean_RMSD_vs_width.png" src="../../_images/ANNFT_mean_RMSD_vs_width.png" style="height: 200px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.10 </span><span class="caption-text">Plots of the mean RMSD between final and initial parameters for the average network hidden layer plotted versus multiple widths (4, 10, 120, 240, 500, 1000). (a) depicts the relative RMSD for the weights (compared to the initial weights), while (b) depicts the absolute RMSD with  the weight matrices rescaled by a factor of <span class="math notranslate nohighlight">\(n\)</span> to remove width dependence, and © has the unscaled RMSD for the biases (which are initially zero). Within the regimes useful for training, it can be seen that the changes in parameters are small, a condition required for Taylor expanding around a solution.</span><a class="headerlink" href="#fig-annft-mean-rmsd-vs-width" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-annft-mean-frobenius-norm-vs-width">
+<a class="reference internal image-reference" href="../../_images/ANNFT_mean_Frobenius_norm_vs_width.png"><img alt="../../_images/ANNFT_mean_Frobenius_norm_vs_width.png" src="../../_images/ANNFT_mean_Frobenius_norm_vs_width.png" style="height: 250px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.11 </span><span class="caption-text">(a) The mean hidden layer Frobenius norms of the pre-training weight matrices, (b) the difference between pre and post training matrices, and (c) the relative difference matrices versus the width of the network containing the matrices. Each norm per width is computed by averaging the mean norm for 100 network trainings of 20000 epochs, with outliers outside of the interquartile range of the distribution of each norm being excluded. The depth of each network configuration was held fixed at 4 layers (<span class="math notranslate nohighlight">\(L=3\)</span>,<span class="math notranslate nohighlight">\(\ell_{out}=4\)</span>). The norms give an estimate of the size of the initial parameters, and their absolute and relative difference after training, and their dependence on the width of the network.</span><a class="headerlink" href="#fig-annft-mean-frobenius-norm-vs-width" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-annft-mean-frobenius-norm-vs-depth">
+<a class="reference internal image-reference" href="../../_images/ANNFT_mean_Frobenius_norm_vs_depth.png"><img alt="../../_images/ANNFT_mean_Frobenius_norm_vs_depth.png" src="../../_images/ANNFT_mean_Frobenius_norm_vs_depth.png" style="height: 250px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.12 </span><span class="caption-text">Same as <a class="reference internal" href="#fig-annft-mean-frobenius-norm-vs-width"><span class="std std-numref">Fig. 26.11</span></a> but now with fixed width instead of depth. (a) The mean hidden layer Frobenius norms of the pre-training weight matrices, (b) the difference between pre and post training matrices, and (c) the relative difference matrices versus the depth of the network containing the matrices. Each norm per depth is computed by averaging the mean norm for 100 network trainings of 20000 epochs, with outliers outside of the interquartile range of the distribution of each norm being excluded. The width was held fixed at 120 neurons per hidden layer. The norms give an estimate of the size of the initial parameters, and their absolute and relative difference after training, and their dependence on the depth of the network.</span><a class="headerlink" href="#fig-annft-mean-frobenius-norm-vs-depth" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="expansion-parameter">
+<h2><span class="section-number">26.7. </span>Expansion parameter<a class="headerlink" href="#expansion-parameter" title="Link to this heading">#</a></h2>
+<p>At a large but finite width, the distribution over output functions acquires non-Gaussian components, but the near-CLT averaging enables these correlations to be treated in a controlled manner.
+At the same time, increasing depth <span class="math notranslate nohighlight">\(\ell_{out}\)</span>
+introduces increasing correlations.
+These opposing tendencies lead to the identification of the ratio <span class="math notranslate nohighlight">\(r \equiv \ell_{out}/n\)</span> being significant as both <span class="math notranslate nohighlight">\(n\)</span> and <span class="math notranslate nohighlight">\(\ell_{out}\)</span> become large.
+<span class="math notranslate nohighlight">\(r\)</span> acts as an expansion parameter that suppresses higher-order, non-Gaussian correlations in the limit of small <span class="math notranslate nohighlight">\(r\)</span>.</p>
+<figure class="align-default" id="fig-annft-mean-rms-vs-r">
+<a class="reference internal image-reference" href="../../_images/ANNFT_mean_rms_vs_r.png"><img alt="../../_images/ANNFT_mean_rms_vs_r.png" src="../../_images/ANNFT_mean_rms_vs_r.png" style="height: 200px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.13 </span><span class="caption-text">The mean root-mean-square (rms) deviation of the binding energy data and the two-input-network outputs  for <span class="math notranslate nohighlight">\(100\)</span> trainings vs. ratio of depth-to-width <span class="math notranslate nohighlight">\(r\)</span>, with the depth <span class="math notranslate nohighlight">\(\ell_{out} = 4\)</span>. Trainings with binding-energy RMSD<span class="math notranslate nohighlight">\(\geq30\)</span> MeV were omitted from calculation of the mean value of the binding-energy RMSD. The red horizontal line is the <span class="math notranslate nohighlight">\(r^*\)</span> value for this network, calculated to be <span class="math notranslate nohighlight">\(r^*=0.034\)</span>. This labels the cutoff where the effectively deep regime begins to transition into the chaotic regime with increasing <span class="math notranslate nohighlight">\(r\)</span>.</span><a class="headerlink" href="#fig-annft-mean-rms-vs-r" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>As an expansion parameter, <span class="math notranslate nohighlight">\(r\)</span> quantifies the degree of correlation between neurons in a network. This results in three regimes describing the initialized output distribution:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(r\rightarrow0\)</span>, all terms in the action dependent on <span class="math notranslate nohighlight">\(r\)</span> vanish, and the output distribution becomes Gaussian (effectively infinite width, CLT kicks in). These networks have turned off their correlations.</p></li>
+<li><p><span class="math notranslate nohighlight">\(0&lt;r \ll 1\)</span>, the moments are controllable, truncated, and nontrivial, as is desired in our effective theory approach. These networks are in what is known as the “effectively deep” regime.</p></li>
+<li><p><span class="math notranslate nohighlight">\(r\geq1\)</span>, the moments are strongly coupled, and every term in the <span class="math notranslate nohighlight">\(r\)</span> expansion contributes to the action. In this regime, the theory becomes highly non-perturbative, and an effective description becomes impossible.</p></li>
+</ul>
+<figure class="align-default" id="fig-annft-residual-heatmap">
+<a class="reference internal image-reference" href="../../_images/ANNFT_residual_heatmap.png"><img alt="../../_images/ANNFT_residual_heatmap.png" src="../../_images/ANNFT_residual_heatmap.png" style="height: 400px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.14 </span><span class="caption-text">Residual plots for a trained 2 input binding energy network with a fixed depth of 4, and widths of (a) 4, (b) 10, (c) 120, and (d) 1000 to demonstrate the different learning regimes in ANNFT.</span><a class="headerlink" href="#fig-annft-residual-heatmap" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>The four plots correspond to different regimes:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(r=0.004\)</span>: Still able to learn, but will only learn more trivially as <span class="math notranslate nohighlight">\(r\rightarrow 0\)</span>. Mean BE RMSD of 3.6 MeV.</p></li>
+<li><p><span class="math notranslate nohighlight">\(r = 0.033\)</span>: The most learning-capable critical network. Mean BE RMSD of 2.52 MeV.</p></li>
+<li><p><span class="math notranslate nohighlight">\(r = 0.4\)</span>: Loses feature learning to more strongly correlated neurons as <span class="math notranslate nohighlight">\(r\rightarrow 1\)</span>. Mean BE RMSD of 56 MeV (bimodal between 72 and <span class="math notranslate nohighlight">\(\sim\)</span>3 MeV).</p></li>
+<li><p><span class="math notranslate nohighlight">\(r = 1.0\)</span>: Neuron correlations prevent any learning beyond the simplest loss local minima. Mean BE RMSD of 72 MeV.</p></li>
+</ul>
+</section>
+<section id="critical-tuning-of-hyperparameters">
+<h2><span class="section-number">26.8. </span>Critical tuning of hyperparameters<a class="headerlink" href="#critical-tuning-of-hyperparameters" title="Link to this heading">#</a></h2>
+<figure class="align-default" id="fig-annft-critically-tuning-hyperparameters">
+<a class="reference internal image-reference" href="../../_images/ANNFT_critically_tuning_hyperparameters.png"><img alt="../../_images/ANNFT_critically_tuning_hyperparameters.png" src="../../_images/ANNFT_critically_tuning_hyperparameters.png" style="height: 400px;" />
+</a>
+</figure>
+<figure class="align-default" id="fig-annft-criticality-nuclear">
+<a class="reference internal image-reference" href="../../_images/ANNFT_criticality_nuclear.png"><img alt="../../_images/ANNFT_criticality_nuclear.png" src="../../_images/ANNFT_criticality_nuclear.png" style="height: 400px;" />
+</a>
+</figure>
+<section id="mean-absolute-error-loss-vs-epochs">
+<h3>Mean absolute error loss vs. epochs<a class="headerlink" href="#mean-absolute-error-loss-vs-epochs" title="Link to this heading">#</a></h3>
 <figure class="align-default" id="fig-annft-relu-mae-loss">
 <a class="reference internal image-reference" href="../../_images/ANNFT_ReLU_MAE_loss.png"><img alt="../../_images/ANNFT_ReLU_MAE_loss.png" src="../../_images/ANNFT_ReLU_MAE_loss.png" style="height: 350px;" />
 </a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.15 </span><span class="caption-text">The mean absolute error loss vs. epochs for ReLU activation functions. Hidden layer widths are at 100 neurons, and depths are 1,2,4, and 8 hidden layers. The CICT and CINT architectures outperform the NINT, and their performance improves with depth, whereas the NINT networks stagnate in performance after 2 hidden layers.</span><a class="headerlink" href="#fig-annft-relu-mae-loss" title="Link to this image">#</a></p>
+</figcaption>
 </figure>
 <figure class="align-default" id="fig-annft-tanh-mae-loss">
 <a class="reference internal image-reference" href="../../_images/ANNFT_Tanh_MAE_loss.png"><img alt="../../_images/ANNFT_Tanh_MAE_loss.png" src="../../_images/ANNFT_Tanh_MAE_loss.png" style="height: 350px;" />
 </a>
+<figcaption>
+<p><span class="caption-number">Fig. 26.16 </span><span class="caption-text">Same as <a class="reference internal" href="#fig-annft-relu-mae-loss"><span class="std std-numref">Fig. 26.15</span></a> but for Tanh activation functions.</span><a class="headerlink" href="#fig-annft-tanh-mae-loss" title="Link to this image">#</a></p>
+</figcaption>
 </figure>
-<figure class="align-default" id="fig-annft-mean-rmsd-vs-width">
-<a class="reference internal image-reference" href="../../_images/ANNFT_mean_RMSD_vs_width.png"><img alt="../../_images/ANNFT_mean_RMSD_vs_width.png" src="../../_images/ANNFT_mean_RMSD_vs_width.png" style="height: 150px;" />
+</section>
+</section>
+<section id="summary-of-results">
+<h2><span class="section-number">26.9. </span>Summary of results<a class="headerlink" href="#summary-of-results" title="Link to this heading">#</a></h2>
+<p>Neural network criticality offers a means to understand neural network behavior, as well as providing prescriptions for architecture and training hyperparameters.
+Here we have explored the non-empirical approach to understanding ANNs using a field-theory-based criticality analysis (ANNFT).
+We used a protoypical nuclear physics ANN as a testbed, namely a two-input/one-output feed-forward network trained from the AME2020 dataset to fit nuclear binding energies.</p>
+<p>In pre-training, we found the expected approach to Gaussian distributions for the final layer output distributions with fixed depth but increasing width.
+Within small fluctuations, normal distributions were seen by a width of 120 neurons for both ReLU and Softplus activations and for every other activation function we have tried.
+The correlations between pairs of input values with a width of 120 and increasing depths showed Gaussian process (GP) correlations with the predicted kernel at depth 1 and increasing correlations with additional hidden layers.</p>
+<p>A comparison of measured variance and excess kurtosis (difference of the fourth moment from Gaussian expectations) from many initializations for a fixed width of 240 and increasing depths validates the theoretical predictions of criticality.
+In particular, for the ReLU activation function the variance grows or shrinks with depth if the initialization hyperparameters are tuned above or below the predicted critical value.
+At criticality the variance is flat.
+In contrast, the Softplus activation function does not have a critical fixed point for initialization.
+In accordance with theory, the variance either grows or asymptotes to a constant value with depth.
+Non-zero excess kurtosis (EK) indicates non-Gaussian four-point correlations.
+For both activation functions, the observed behavior of the EK with depth is in good accord with theoretical expectations.</p>
+<p>Next we considered training of the ANN.
+We followed the mean absolute error (MAE) loss for a large number of epochs with several different depths, using combinations of critical and non-critical initialization and training.
+The networks with critical initialization and critical training (CICT) reached the lowest loss in all cases both for ReLU and Tanh activation functions, with particular contrast to when non-critical hyperparameters were used for both initialization and training.</p>
+<p>Most practitioners do not encounter these issues even though they rarely pay attention to details of initialization and training.
+This is because the critically tuned networks are still outperformed by adaptive optimizers.
+Nevertheless, the results are comparable, and differ by a much smaller factor than when untuned.</p>
+<p>Of particular interest is the prediction by ANNFT of different training regimes, characterized by the ratio of depth to width <span class="math notranslate nohighlight">\(r\)</span>.
+The predictive analyses of ANNFT are based on the validity of a Taylor series expansion about the initialization.
+By considering the mean hidden-layer rms deviation and Frobenius norms of the weight matrices
+before and after training, we can see that the conditions of small deviations from initialization are achieved with sufficiently small <span class="math notranslate nohighlight">\(r\)</span>.
+The different learning regimes are manifested by looking at the rms deviation of the binding energy data and ANN outputs as a function of <span class="math notranslate nohighlight">\(r\)</span>, achieved by varying the width at fixed depth, and through heatmaps of global residuals across all <span class="math notranslate nohighlight">\(N\)</span> and <span class="math notranslate nohighlight">\(Z\)</span> for four different <span class="math notranslate nohighlight">\(r\)</span> values.</p>
+<p>The results validated that ANNFT offers insight into</p>
+<ul class="simple">
+<li><p>why networks that are wider than they are deep are preferred, as they will have correlations in their output distribution attenuated by the larger width;</p></li>
+<li><p>the success of activation functions such as ReLU or Tanh compared to Softplus or sigmoid;</p></li>
+<li><p>the success of certain initialization schemes (He initialization is reproduced by ReLU’s critical initialization).</p></li>
+</ul>
+<p>We restricted the training protocol in this work to facilitate a clean analysis of criticality,
+but the door is open to explore heuristically successful approaches to network training in the context of ANNFT.</p>
+<figure class="align-default" id="fig-annft-benign-overfitting">
+<a class="reference internal image-reference" href="../../_images/ANNFT_benign_overfitting.png"><img alt="../../_images/ANNFT_benign_overfitting.png" src="../../_images/ANNFT_benign_overfitting.png" style="height: 400px;" />
 </a>
 </figure>
-<figure class="align-default" id="fig-annft-mean-frobenius-norm-vs-width">
-<a class="reference internal image-reference" href="../../_images/ANNFT_mean_Frobenius_norm_vs_width.png"><img alt="../../_images/ANNFT_mean_Frobenius_norm_vs_width.png" src="../../_images/ANNFT_mean_Frobenius_norm_vs_width.png" style="height: 150px;" />
-</a>
-</figure>
-<figure class="align-default" id="fig-annft-mean-frobenius-norm-vs-depth">
-<a class="reference internal image-reference" href="../../_images/ANNFT_mean_Frobenius_norm_vs_depth.png"><img alt="../../_images/ANNFT_mean_Frobenius_norm_vs_depth.png" src="../../_images/ANNFT_mean_Frobenius_norm_vs_depth.png" style="height: 150px;" />
-</a>
-</figure>
-<figure class="align-default" id="fig-annft-mean-rms-vs-r">
-<a class="reference internal image-reference" href="../../_images/ANNFT_mean_rms_vs_r.png"><img alt="../../_images/ANNFT_mean_rms_vs_r.png" src="../../_images/ANNFT_mean_rms_vs_r.png" style="height: 150px;" />
-</a>
-</figure>
-<figure class="align-default" id="fig-annft-residual-heatmap">
-<a class="reference internal image-reference" href="../../_images/ANNFT_residual_heatmap.png"><img alt="../../_images/ANNFT_residual_heatmap.png" src="../../_images/ANNFT_residual_heatmap.png" style="height: 150px;" />
+</section>
+<section id="appendix-field-theory-formalism">
+<h2><span class="section-number">26.10. </span>Appendix: field theory formalism<a class="headerlink" href="#appendix-field-theory-formalism" title="Link to this heading">#</a></h2>
+<figure class="align-default" id="fig-annft-training-gp-as-path-integral">
+<a class="reference internal image-reference" href="../../_images/ANNFT_training_GP_as_path_integral.png"><img alt="../../_images/ANNFT_training_GP_as_path_integral.png" src="../../_images/ANNFT_training_GP_as_path_integral.png" style="height: 500px;" />
 </a>
 </figure>
 </section>
@@ -851,7 +1137,7 @@ In the pre-training case, this quantity simply refers to the inputs <span class=
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">26.3. </span>📥 Distributions of Randomly-Initialized ANNs</p>
+        <p class="prev-next-title"><span class="section-number">26.11. </span>📥 Distributions of Randomly-Initialized ANNs</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -872,7 +1158,33 @@ In the pre-training case, this quantity simply refers to the inputs <span class=
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sparsity">26.1. Sparsity</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#large-width-limit">26.2. Large-width limit</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#neural-networks-in-the-large-width-limit">26.2. Neural networks in the large-width limit</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-what-is-the-prior-distribution-p-f-x-i">Summary: What is the prior distribution <span class="math notranslate nohighlight">\(p(f(x;θ)|I)\)</span>?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#annft-key-ideas">26.3. ANNFT: key ideas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#criticality-analysis">26.4. Criticality analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variance">Variance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#excess-kurtosis">Excess kurtosis</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-story-so-far">26.5. The story so far</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validating-annft-training-behaviors">26.6. Validating ANNFT training behaviors</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#anatomy-of-a-feed-forward-network">Anatomy of a feed-forward network</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#training-and-the-theory-of-deep-learning">Training and the Theory of Deep Learning</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#neural-tangent-kernel-recursion">Neural Tangent Kernel Recursion</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mean-rms-deviation-between-initial-and-final-weights-biases">Mean RMS deviation between initial and final weights/biases</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expansion-parameter">26.7. Expansion parameter</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#critical-tuning-of-hyperparameters">26.8. Critical tuning of hyperparameters</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mean-absolute-error-loss-vs-epochs">Mean absolute error loss vs. epochs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-results">26.9. Summary of results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-field-theory-formalism">26.10. Appendix: field theory formalism</a></li>
 </ul>
   </nav></div>
 
