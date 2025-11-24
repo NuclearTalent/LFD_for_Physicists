@@ -820,8 +820,8 @@ That is, we need an expression to compute the likelihood <span class="math notra
 \[
    D = M + \delta M + \delta D .   
 \]</div>
-<p>The discrepancy term <span class="math notranslate nohighlight">\(\delta M\)</span> is in general critical, but we will neglect it here.</p>
-<p>To establish <span class="math notranslate nohighlight">\(\delta D\)</span>, we note that here we are given data with simple error bars, which imply that the probability for any <em>single</em> data point is a normal distribution about the true value. In this example, the errors are specified by a single parameter <span class="math notranslate nohighlight">\(\sigma_0\)</span> (and we neglect <span class="math notranslate nohighlight">\(\delta M\)</span>). That is, <span class="math notranslate nohighlight">\(y_i = D_i\)</span> is given by</p>
+<p>The model discrepancy term <span class="math notranslate nohighlight">\(\delta M\)</span> is in general important to consider, but we will neglect it here (e.g., assuming it is much smaller than <span class="math notranslate nohighlight">\(\delta D\)</span>).</p>
+<p>To establish <span class="math notranslate nohighlight">\(\delta D\)</span>, we note that here we are given data with simple error bars, which imply that the probability for any <em>single</em> data point is a normal distribution about the true value. In this example, the errors are specified by a single parameter <span class="math notranslate nohighlight">\(\sigma_0\)</span> (again, we neglect <span class="math notranslate nohighlight">\(\delta M\)</span>). That is, <span class="math notranslate nohighlight">\(y_i = D_i\)</span> is given by</p>
 <div class="math notranslate nohighlight">
 \[
 y_i \sim \mathcal{N}(y_M(x_i;\boldsymbol{\theta}), \sigma_0^2)
@@ -831,15 +831,15 @@ y_i \sim \mathcal{N}(y_M(x_i;\boldsymbol{\theta}), \sigma_0^2)
 \[
 p(y_i\mid x_i,\boldsymbol{\theta}) = \frac{1}{\sqrt{2\pi\sigma_0^2}} \exp\left(\frac{-\left[y_i - y_M(x_i;\boldsymbol{\theta})\right]^2}{2\sigma_0^2}\right)
 \]</div>
-<p>The (known) variance of the measurement errors, <span class="math notranslate nohighlight">\(\sigma_0\)</span>, is indicated by the error bars.</p>
+<p>The (known) variance of the measurement errors, <span class="math notranslate nohighlight">\(\sigma_0\)</span>, is indicated in the figure below by the error bars.</p>
 <p>Assuming all the points are independent, we can find the full likelihood by multiplying the individual likelihoods together:</p>
 <div class="math notranslate nohighlight">
 \[
 p(D\mid\boldsymbol{\theta}, I) = \prod_{i=1}^N p(y_i\mid x_i,\boldsymbol{\theta}, I) .
 \]</div>
 <p>For convenience (and also for numerical accuracy) this is often expressed in terms of the log-likelihood:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-54f93933-b45d-4fdd-af93-07cf9742a19e">
-<span class="eqno">(13.1)<a class="headerlink" href="#equation-54f93933-b45d-4fdd-af93-07cf9742a19e" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-806ac7ac-780f-4a2a-b394-c11af9df48ec">
+<span class="eqno">(13.1)<a class="headerlink" href="#equation-806ac7ac-780f-4a2a-b394-c11af9df48ec" title="Permalink to this equation">#</a></span>\[\begin{align}
 \log p(D\mid\boldsymbol{\theta}, I) &amp;= -\frac{1}{2}\sum_{i=1}^N\left(\log(2\pi\sigma_0^2) + \frac{\left[ y_i - y_M(x_i;\theta)\right]^2}{\sigma_0^2}\right) \\
 &amp;= \text{constant} - \sum_{i=1}^N \frac{\left[ y_i - y_M(x_i;\boldsymbol{\theta})\right]^2}{2 \sigma_0^2} .
 \end{align}\]</div>
@@ -977,7 +977,7 @@ R_i = \left[ y_i - y_M(x_i;\boldsymbol{\boldsymbol{\theta}}) \right]/\sigma_0,
 </section>
 <section id="bayesian-approaches-to-erratic-data">
 <h2><span class="section-number">13.3. </span>Bayesian approaches to erratic data<a class="headerlink" href="#bayesian-approaches-to-erratic-data" title="Link to this heading">#</a></h2>
-<p>We’ll consider four approaches:</p>
+<p>We’ll consider four Bayesian approaches to outliers:</p>
 <ol class="arabic simple">
 <li><p>A conservative model (treat all data points as equally possible outliers).</p></li>
 <li><p>Good-and-bad data model.</p></li>
@@ -1003,18 +1003,18 @@ Let’s see how that distortion works analytically.</p>
 \]</div>
 <p>Now hold <span class="math notranslate nohighlight">\(\boldsymbol{\widehat\theta}\)</span> fixed but add a new outlier point <span class="math notranslate nohighlight">\((x_j,y_j)\)</span>. What happens to the maximum likelihood condition? Only the new term in the sum will contribute because the derivatives of the other will sum to zero when <span class="math notranslate nohighlight">\(\boldsymbol{\theta} = \boldsymbol{\widehat\theta}\)</span>. So now</p>
 <div class="math notranslate nohighlight">
-\[
-  \left.\frac{\partial}{\partial\theta_n} \log p(D\mid\boldsymbol{\theta}, I)\right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}} = 
-     \left.\frac{\partial}{\partial\theta_n} \biggl[-\frac{1}{2}\frac{\bigl(y_j - y_M(x_j;\boldsymbol{\theta})\bigr)^2}{\sigma_0^2} \biggr] \right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}} 
-     = -\left. \frac{y_{j}-y_M(x_j;\boldsymbol{\widehat\theta})}{\sigma_0^2} \frac{\partial y_M(x_j;\boldsymbol{\theta})}{\partial\theta_n} \right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}} ,
-\]</div>
+\[\begin{split}\begin{align}
+  \left.\frac{\partial}{\partial\theta_n} \log p(D\mid\boldsymbol{\theta}, I)\right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}} &amp;= 
+     \left.\frac{\partial}{\partial\theta_n} \biggl[-\frac{1}{2}\frac{\bigl(y_j - y_M(x_j;\boldsymbol{\theta})\bigr)^2}{\sigma_0^2} \biggr] \right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}}  \\
+     &amp;= -\left. \frac{y_{j}-y_M(x_j;\boldsymbol{\widehat\theta})}{\sigma_0^2} \frac{\partial y_M(x_j;\boldsymbol{\theta})}{\partial\theta_n} \right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}} ,
+\end{align}\end{split}\]</div>
 <p>where only the first factor depends on <span class="math notranslate nohighlight">\(y_j\)</span>. Thus this factor will grow without bound:</p>
 <div class="math notranslate nohighlight">
 \[
   \frac{y_{j}-y_M(x_j;\boldsymbol{\widehat\theta})}{\sigma_0^2} \overset{y_{j}\rightarrow\infty}{\longrightarrow} \infty ,
 \]</div>
-<p>and therefore the parameters are pulled more and more by the single outlier point as the magnitude of the outlier grows. This influence will be the case for any model,
-but is intrinsic to the normal distribution. How to avoid it?</p>
+<p>and therefore the parameters in <span class="math notranslate nohighlight">\(\boldsymbol{\widehat\theta}\)</span> are pulled more and more by the single outlier point as the magnitude of the outlier grows. This influence will be the case for any theoretical model,
+but is intrinsic to the normal distribution for the likelihoo. How to avoid it?</p>
 <p>One possibility is to switch to a heavier-tailed distribution that doesn’t have this property of unbounded influence. For example, replace the normal distribution by Student’s t-distribution (here this is any <span class="math notranslate nohighlight">\(i\)</span>):</p>
 <div class="math notranslate nohighlight">
 \[
@@ -1026,14 +1026,14 @@ Then</p>
 \[
   \log p(y_i | \mu, \sigma^2) = \text{const.} - \frac{\nu+1}{2}\log\Bigl(1 + \frac{(y_i - \mu)^2}{\nu\sigma^2}  \Bigr) ,
 \]</div>
-<p>and</p>
+<p>and the contribution of <span class="math notranslate nohighlight">\(y_j\)</span> to the minimization of the likelihood is (substituting for <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>)</p>
 <div class="math notranslate nohighlight">
-\[
-\frac{\partial}{\partial\theta_n} \log p(y_i | \mu, \sigma^2)
-  = \frac{\nu+1}{2} \frac{1}{1 + (y_i - \mu)^2/\nu\sigma^2}\frac{2(z_i - \mu)}{\nu\sigma^2} 
-   = \frac{\nu+1}{\nu\sigma^2 + (y_i - \mu)^2} (y_i - \mu) .
-\]</div>
-<p>The t-distribution becomes a Gaussian distribution as <span class="math notranslate nohighlight">\(\nu \rightarrow \infty\)</span>, and we see that in that case the derivative will go to infinity like <span class="math notranslate nohighlight">\(y_j - \widehat\mu = y_j - y_M(x_i;\boldsymbol{\widehat\theta})\)</span>, as we saw earlier. But for any finite <span class="math notranslate nohighlight">\(\nu\)</span>, the <span class="math notranslate nohighlight">\(\bigl(y_i - y_M(x_i;\boldsymbol{\widehat\theta})\bigr)^2\)</span> factor in the denominator with dominate over the <span class="math notranslate nohighlight">\(\nu\sigma_0^2\)</span> factor, and the derivative will vanish as <span class="math notranslate nohighlight">\(y_i \rightarrow \infty\)</span>. In other words, the influence on the parameters from the outlier will go away.</p>
+\[\begin{split}\begin{align}
+\left.\frac{\partial}{\partial\theta_n} \log p(y_j | y_M(x_j;\boldsymbol{\theta}), \sigma_0^2)\right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}}
+  &amp;= \frac{\nu+1}{2} \frac{1}{1 + (y_j - y_M(x_j;\boldsymbol{\widehat\theta}))^2/\nu\sigma_0^2}\frac{2(y_j - y_M(x_i;\boldsymbol{\widehat\theta}))}{\nu\sigma_0^2} \\ 
+   &amp;= \frac{\nu+1}{\nu\sigma_0^2 + (y_j - y_M(x_j;\boldsymbol{\widehat\theta}))^2} (y_j - y_M(x_i;\boldsymbol{\widehat\theta})) .
+\end{align}\end{split}\]</div>
+<p>The t-distribution becomes a Gaussian distribution as <span class="math notranslate nohighlight">\(\nu \rightarrow \infty\)</span>, and we see that in that case the derivative will go to infinity like <span class="math notranslate nohighlight">\(y_j - y_M(x_j;\boldsymbol{\widehat\theta})\)</span>, as we saw earlier. But for any finite <span class="math notranslate nohighlight">\(\nu\)</span>, the <span class="math notranslate nohighlight">\(\bigl(y_j - y_M(x_j;\boldsymbol{\widehat\theta})\bigr)^2\)</span> factor in the denominator with dominate over the <span class="math notranslate nohighlight">\(\nu\sigma_0^2\)</span> factor, and the derivative will vanish as <span class="math notranslate nohighlight">\(y_j \rightarrow \infty\)</span>. In other words, the influence on the parameters from the outlier will go away.</p>
 <p>In the next section we will see how a heavy-tailed distribution, such as the Student t distribution, can naturally arise in a Bayesian formulation when the uncertainty is itself uncertain.</p>
 </section>
 </section>
@@ -1052,8 +1052,8 @@ p(\sigma|\sigma_0,I) = \frac{\sigma_0}{\sigma^2},
 \]</div>
 <p>for <span class="math notranslate nohighlight">\(\sigma \geq \sigma_0\)</span> and zero otherwise. (This enables us to do the integral up to infinity.) Conservative here means that we treat all data points with suspicion (i.e., we do not single out any points).</p>
 <p>The likelihood for a single data point <span class="math notranslate nohighlight">\(D_i\)</span>, given by <span class="math notranslate nohighlight">\((x_i,y_i,\sigma_i=\sigma_0)\)</span>, is then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c4581c53-6cfa-40d3-adae-9d42175eeb23">
-<span class="eqno">(13.2)<a class="headerlink" href="#equation-c4581c53-6cfa-40d3-adae-9d42175eeb23" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-77f98184-5224-49ff-a9e4-7ab8ec37385d">
+<span class="eqno">(13.2)<a class="headerlink" href="#equation-77f98184-5224-49ff-a9e4-7ab8ec37385d" title="Permalink to this equation">#</a></span>\[\begin{align}
 p(D_i | \boldsymbol{\theta}, \sigma_0, I) &amp;= 
   \int_{\sigma_0}^{\infty} \frac{1}{\sqrt{2\pi}\sigma}
     e^{-\sigma_0^2 R_i^2/2\sigma^2}\, \frac{\sigma_0}{\sigma^2}\, d\sigma
@@ -1261,12 +1261,12 @@ Log posterior: Std Gaussian
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>... EMCEE sampler performing 10000 samples.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3.56 s, sys: 984 μs, total: 3.56 s
-Wall time: 3.56 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.21 s, sys: 740 μs, total: 4.21 s
+Wall time: 4.21 s
 done
 </pre></div>
 </div>
-<img alt="../../../_images/76345bf26506ecbb0b25ebad8f2a1bd905856fa50f4ade84edcc8e441bfed04c.png" src="../../../_images/76345bf26506ecbb0b25ebad8f2a1bd905856fa50f4ade84edcc8e441bfed04c.png" />
+<img alt="../../../_images/bd147d77e1030a4f79a18df56db1e58cea9afe4bf9083e6d3e1c7d73fe9494f9.png" src="../../../_images/bd147d77e1030a4f79a18df56db1e58cea9afe4bf9083e6d3e1c7d73fe9494f9.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Log posterior: Conservative
 ... EMCEE sampler performing 1000 warnup iterations.
 </pre></div>
@@ -1274,12 +1274,12 @@ done
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>... EMCEE sampler performing 10000 samples.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.05 s, sys: 1.96 ms, total: 4.05 s
-Wall time: 4.05 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.82 s, sys: 2.07 ms, total: 4.82 s
+Wall time: 4.82 s
 done
 </pre></div>
 </div>
-<img alt="../../../_images/89a988b17f4cdfbd8f2f00f011f52e919c7eb8c3cc9385a6fcfdcb51c5eb4ac5.png" src="../../../_images/89a988b17f4cdfbd8f2f00f011f52e919c7eb8c3cc9385a6fcfdcb51c5eb4ac5.png" />
+<img alt="../../../_images/8c320b54321bf5dd04388e8a4f568251fd13461b3174e16774e2df47a4b7fd14.png" src="../../../_images/8c320b54321bf5dd04388e8a4f568251fd13461b3174e16774e2df47a4b7fd14.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Log posterior: Cauchy
 ... EMCEE sampler performing 1000 warnup iterations.
 </pre></div>
@@ -1287,12 +1287,12 @@ done
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>... EMCEE sampler performing 10000 samples.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3.92 s, sys: 1.89 ms, total: 3.92 s
-Wall time: 3.92 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.57 s, sys: 16 μs, total: 4.57 s
+Wall time: 4.57 s
 done
 </pre></div>
 </div>
-<img alt="../../../_images/3e975cf042bf839456937cc2ba309064cc99dd6f6abe9f6d2f65be6a562454e9.png" src="../../../_images/3e975cf042bf839456937cc2ba309064cc99dd6f6abe9f6d2f65be6a562454e9.png" />
+<img alt="../../../_images/eb8c5ca9362f59ee57202779d18251095c89b672bbbe9fc1ad2ea4742b067e64.png" src="../../../_images/eb8c5ca9362f59ee57202779d18251095c89b672bbbe9fc1ad2ea4742b067e64.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1318,12 +1318,12 @@ done
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Summary:             Mean offset  68% CR     Mean slope     68% CR
-        Std Gaussian    41.12   -1.21,+1.23     0.254    -0.027,+0.028
-        Conservative    31.81   -2.28,+2.21     0.447    -0.050,+0.049
-              Cauchy    31.48   -1.99,+2.07     0.452    -0.042,+0.042
+        Std Gaussian    41.17   -1.23,+1.21     0.253    -0.028,+0.027
+        Conservative    31.68   -2.17,+2.27     0.449    -0.049,+0.050
+              Cauchy    31.59   -2.01,+2.04     0.451    -0.042,+0.042
 </pre></div>
 </div>
-<img alt="../../../_images/caa87b13772c86df74b803dfa3b384d128909ffae3435cee25259e591107d1c0.png" src="../../../_images/caa87b13772c86df74b803dfa3b384d128909ffae3435cee25259e591107d1c0.png" />
+<img alt="../../../_images/e97d61f0a1f800421ee36569ad72205af491cf04fc7eaa96f52c2e24a86a69fc.png" src="../../../_images/e97d61f0a1f800421ee36569ad72205af491cf04fc7eaa96f52c2e24a86a69fc.png" />
 </div>
 </div>
 </section>
