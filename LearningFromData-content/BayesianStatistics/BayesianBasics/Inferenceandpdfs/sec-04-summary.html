@@ -534,6 +534,37 @@
 
 
 
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/NuclearTalent/LFD_for_Physicists/main?urlpath=tree/./LearningFromData-content/BayesianStatistics/BayesianBasics/Inferenceandpdfs/sec-04-summary.md" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Binder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Binder logo" src="../../../../_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
 <div class="dropdown dropdown-source-buttons">
   <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
     <i class="fab fa-github"></i>
@@ -586,6 +617,23 @@
     <i class="fas fa-download"></i>
   </button>
   <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../../_sources/LearningFromData-content/BayesianStatistics/BayesianBasics/Inferenceandpdfs/sec-04-summary.ipynb" target="_blank"
+   class="btn btn-sm btn-download-notebook-button dropdown-item"
+   title="Download notebook file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
       
       
       
@@ -811,6 +859,111 @@ so that the Cauchy-Schwarz inequality implies that</p>
 \]</div>
 <p>Dividing through by <span class="math notranslate nohighlight">\(\sigma_X \sigma_Y\)</span> yields <span class="math notranslate nohighlight">\(-1 \leq \rho \leq 1\)</span>.</p>
 <p>A consequence is that the matrix <span class="math notranslate nohighlight">\(\Sigma\)</span> would not be a valid covariance matrix because the determinant would be negative.</p>
+</div>
+</div>
+<div class="admonition-correlations-and-the-effective-number-of-samples admonition">
+<p class="admonition-title">Correlations and the effective number of samples</p>
+<p>Consider <span class="math notranslate nohighlight">\(n\)</span> quantities <span class="math notranslate nohighlight">\(y_1\)</span>, <span class="math notranslate nohighlight">\(y_2\)</span>, <span class="math notranslate nohighlight">\(\ldots\)</span>, <span class="math notranslate nohighlight">\(y_n\)</span>, which individually are identically distributed with  mean <span class="math notranslate nohighlight">\(\mu_0\)</span> and variance <span class="math notranslate nohighlight">\(\sigma_0^2\)</span>, but with unspecified covariances between the <span class="math notranslate nohighlight">\(y_i\)</span>. For concreteness we’ll say that the distribution of <span class="math notranslate nohighlight">\(\yvec = (y_1, y_2, \ldots, y_n)\)</span> is a multivariate Gaussian:</p>
+<div class="math notranslate nohighlight">
+\[
+  \yvec \sim \mathcal{N}(\mu_0 \boldsymbol{1_n}, \Sigma) ,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Sigma\)</span> is an <span class="math notranslate nohighlight">\(n\times n\)</span> covariance matrix and <span class="math notranslate nohighlight">\(\boldsymbol{1_n}\)</span> is a <span class="math notranslate nohighlight">\(n\)</span>-dimensional vector of ones.
+Let us consider first the limits of uncorrelated and fully correlated Gaussians.</p>
+<p>If we repeatedly draw <span class="math notranslate nohighlight">\(y_1\)</span> and <span class="math notranslate nohighlight">\(y_2\)</span> from the uncorrelated distribution, the joint distribution on a corner plot is 2-dimensional (in particular, the contours are circular). With <span class="math notranslate nohighlight">\(n\)</span> draws, the joint distribution is <span class="math notranslate nohighlight">\(n\)</span> dimensional.
+But the same analysis with the fully correlated distribution would yield a straight line for the <span class="math notranslate nohighlight">\(n=2\)</span> case; that is to say, 1-dimensional. Further, it is 1-dimensional for any <span class="math notranslate nohighlight">\(n\)</span>.
+We can interpret this as meaning the effective number of draws or samples is <span class="math notranslate nohighlight">\(n\)</span> in the uncorrelated case and 1 in the correlated case.</p>
+<p>Consider the average value of <span class="math notranslate nohighlight">\(y_1, y_2, \ldots, y_n\)</span> and the variance of that average. For convenience, define <span class="math notranslate nohighlight">\(z\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[
+  z = \frac{1}{n}(y_1 + y_2 + \ldots + y_n) .
+\]</div>
+<p>Then if we make many draws of <span class="math notranslate nohighlight">\(y_1\)</span> through <span class="math notranslate nohighlight">\(y_n\)</span>, the expectation values of each <span class="math notranslate nohighlight">\(y_i\)</span> is the same, namely <span class="math notranslate nohighlight">\(\mu_0\)</span>, so the expectation value of <span class="math notranslate nohighlight">\(z\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[ 
+  \langle z \rangle = \frac{1}{n}(\langle y_1 \rangle + \ldots + \langle y_n \rangle)
+   = \frac{1}{n} n \langle y_1 \rangle = \mu_0 .
+\]</div>
+<p>Now define <span class="math notranslate nohighlight">\(\widetilde y_i = y_i - \mu_0\)</span> and <span class="math notranslate nohighlight">\(\widetilde z = z - \mu_0\)</span>, so that these new random variables are all mean zero (this is for clarity, not necessity).
+The variance of <span class="math notranslate nohighlight">\(\widetilde z\)</span> is then the expectation value of <span class="math notranslate nohighlight">\(\widetilde z^2\)</span>, while <span class="math notranslate nohighlight">\(\langle y_i^2 \rangle = \sigma_0^2\)</span>. All of the covariances with <span class="math notranslate nohighlight">\(i\neq j\)</span> are the same, which we will specify as <span class="math notranslate nohighlight">\(\langle y_i y_j \rangle = \sigma_0^2 \rho\)</span>, with <span class="math notranslate nohighlight">\(0 \leq \rho &lt; 1\)</span>.
+Consider</p>
+<div class="math notranslate nohighlight" id="equation-eq-variance-n-effective">
+<span class="eqno">(4.7)<a class="headerlink" href="#equation-eq-variance-n-effective" title="Link to this equation">#</a></span>\[
+ \langle \widetilde z^2 \rangle = \frac{1}{n^2} (
+  \widetilde y_1^2 + \widetilde y_2^2 + \ldots + \widetilde y_1 \widetilde y_2 + \widetilde y_1 \widetilde y_3 + \ldots
+ ) 
+\]</div>
+<p>for the two extremes of correlation. Since <span class="math notranslate nohighlight">\(\langle\widetilde y_i \widetilde y_j\rangle\)</span> either is zero or equals <span class="math notranslate nohighlight">\(\sigma_0^2\)</span>, we find</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+   &amp;\text{uncorrelated}\  &amp; \langle \widetilde z^2 \rangle &amp;= \frac{1}{n^2}\cdot n\langle y_i^2 \rangle = \frac{\sigma_0^2}{n} , \\
+   &amp;\text{fully correlated}\ &amp; \langle \widetilde z^2 \rangle &amp;= \frac{1}{n^2} \cdot n^2 \langle \widetilde y_i \widetilde y_j \rangle = \frac{\sigma_0^2}{1} ,
+\end{align}\end{split}\]</div>
+<p>where we have <span class="math notranslate nohighlight">\(n\)</span> nonzero terms in the uncorrelated case but <span class="math notranslate nohighlight">\(n^2\)</span> nonzero terms in the fully correlated case.
+Thus the standard deviation in the uncorrelated case decreases with the familiar <span class="math notranslate nohighlight">\(1/\sqrt{n}\)</span> factor, so the effective number of samples is <span class="math notranslate nohighlight">\(n\)</span>. But in the fully correlated case the width is independent of <span class="math notranslate nohighlight">\(n\)</span>: increasing <span class="math notranslate nohighlight">\(n\)</span> adds no new information.</p>
+<p>We can do the more general case by considering
+<span class="math notranslate nohighlight">\(\yvec\)</span> distributed as above with <span class="math notranslate nohighlight">\(\Sigma = \sigma_0^2 M\)</span>, where <span class="math notranslate nohighlight">\(M\)</span> is the <span class="math notranslate nohighlight">\(n\times n\)</span> matrix:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+  M = \begin{pmatrix}
+1      &amp; \rho  &amp; \rho  &amp; \cdots &amp; \rho \\
+\rho   &amp; 1     &amp; \rho  &amp; \cdots &amp; \rho \\
+\rho   &amp; \rho  &amp; 1     &amp; \cdots &amp; \rho \\
+\vdots &amp; \vdots&amp; \vdots&amp; \ddots &amp; \vdots \\
+\rho   &amp; \rho  &amp; \rho  &amp; \cdots &amp; 1
+\end{pmatrix} ,
+\end{split}\]</div>
+<p>with <span class="math notranslate nohighlight">\(0 \leq \rho &lt; 1\)</span> (we assume only positive correlation here). So the two extremes just considered correspond to <span class="math notranslate nohighlight">\(\rho =0\)</span> and <span class="math notranslate nohighlight">\(\rho = 1 - \epsilon\)</span> (we introduce <span class="math notranslate nohighlight">\(\epsilon\)</span> as a small positive number to be taken to zero at the end, needed because otherwise the matrix <span class="math notranslate nohighlight">\(M\)</span> cannot be inverted).
+Then the variance of <span class="math notranslate nohighlight">\(\widetilde z\)</span> given <span class="math notranslate nohighlight">\(\yvec\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[
+  \text{Var}(\widetilde z | \yvec, \sigma_0^2, M) = \bigl[\boldsymbol{1_n}^{\top} (\sigma_0^2 M) \boldsymbol{1_n} \bigr]^{-1}
+  = \frac{\sigma_0^2 [1 + (n-1)\rho]}{n} .
+\]</div>
+<p>We can get this result directly from <a class="reference internal" href="#equation-eq-variance-n-effective">(4.7)</a> by noting there are <span class="math notranslate nohighlight">\(n\)</span> terms with <span class="math notranslate nohighlight">\(i = j\)</span> and <span class="math notranslate nohighlight">\(n(n-1)\)</span> terms with <span class="math notranslate nohighlight">\(i \neq j\)</span>. So the variance is</p>
+<div class="math notranslate nohighlight">
+\[
+  \langle \widetilde z^2 \rangle = \frac{\sigma_0^2}{n^2} \bigl(n\cdot 1 + n(n-1)\cdot\rho \bigr)
+    = \frac{\sigma_0^2 [1 + (n-1)\rho]}{n} = \frac{\sigma_0^2}{n_{\text{eff}}}
+\]</div>
+<p>Thus the effective number of degrees of freedom is</p>
+<div class="math notranslate nohighlight">
+\[
+   n_{\text{eff}}
+   = \frac{n}{[1 + (n-1)\rho]} .
+\]</div>
+<p>This also follows from the Fisher information matrix.</p>
+<p>For <span class="math notranslate nohighlight">\(n=20\)</span>, this looks like:</p>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">rho_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="n">n_eff</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">rho_values</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho_values</span><span class="p">,</span> <span class="n">n_eff</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\rho$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$n_\mathrm</span><span class="si">{eff}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Effective sample size vs correlation for n=</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../../../_images/2f3dfe5b846d7fa1e99345ce39d30be2f4ce18f172fbf17e47dd6510ef0206a5.png" src="../../../../_images/2f3dfe5b846d7fa1e99345ce39d30be2f4ce18f172fbf17e47dd6510ef0206a5.png" />
 </div>
 </div>
 </section>
