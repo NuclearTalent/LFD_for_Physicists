@@ -18,7 +18,8 @@ Before looking further at concrete applications of Bayesian inference, we provid
 In Appendix A there is a summary and further details on {ref}`sec:Statistics`. Particularly important are {ref}`sec:ExpectationValuesAndMoments` and {ref}`sec:CentralMoments`; we summarize the key discrete and continuous definitions here.
 Note: there are multiple notations out there for these quantities!
 
-:::{admonition} Brief summary of expectation values and moments
+## Brief summary of expectation values and moments
+
 The *expectation value* of a function $h$ of the random variable $X$ with respect to its distribution $p(x_i)$ (a PMF) or $p(x)$ (a PDF) is
 
 $$
@@ -59,8 +60,6 @@ $$
                     \rho_{XY}\sigma_X\sigma_Y & \sigma_Y^2}
         \quad\mbox{with}\ 0 < \rho_{XY}^2 < 1  .          
 $$
-
-:::
 
 
 ::::{admonition} Checkpoint question
@@ -164,7 +163,7 @@ A consequence is that the matrix $\Sigma$ would not be a valid covariance matrix
 ::::
 
 
-:::{admonition} Correlations and the effective number of samples
+## Correlations and the effective number of samples
 
 Consider $n$ quantities $y_1$, $y_2$, $\ldots$, $y_n$, which individually are identically distributed with  mean $\mu_0$ and variance $\sigma_0^2$, but with unspecified covariances between the $y_i$. For concreteness we'll say that the distribution of $\yvec = (y_1, y_2, \ldots, y_n)$ is a multivariate Gaussian:
 
@@ -175,7 +174,7 @@ $$
 where $\Sigma$ is an $n\times n$ covariance matrix and $\boldsymbol{1_n}$ is a $n$-dimensional vector of ones.
 Let us consider first the limits of uncorrelated and fully correlated Gaussians. 
 
-If we repeatedly draw $y_1$ and $y_2$ from the uncorrelated distribution, the joint distribution on a corner plot is 2-dimensional (in particular, the contours are circular). With $n$ draws, the joint distribution is $n$ dimensional. 
+If we repeatedly draw $y_1$ and $y_2$ from the uncorrelated distribution, the joint distribution on a corner plot is 2-dimensional (in particular, the contours are circular). With $n$ draws, the joint distribution is $n$ dimensional (and the contours for the marginalized 2-dimensional plots are all circular). 
 But the same analysis with the fully correlated distribution would yield a straight line for the $n=2$ case; that is to say, 1-dimensional. Further, it is 1-dimensional for any $n$.
 We can interpret this as meaning the effective number of draws or samples is $n$ in the uncorrelated case and 1 in the correlated case.
 
@@ -198,7 +197,7 @@ Consider
 
 $$
  \langle \widetilde z^2 \rangle = \frac{1}{n^2} (
-  \widetilde y_1^2 + \widetilde y_2^2 + \ldots + \widetilde y_1 \widetilde y_2 + \widetilde y_1 \widetilde y_3 + \ldots
+  \widetilde y_1^2 + \widetilde y_2^2 + \ldots + \widetilde y_1 \widetilde y_2 + \widetilde y_1 \widetilde y_3 + \widetilde y_2 \widetilde y_3 + \ldots
  ) 
 $$ (eq:variance_n_effective)
 
@@ -210,7 +209,7 @@ $$\begin{align}
 \end{align}$$
 
 where we have $n$ nonzero terms in the uncorrelated case but $n^2$ nonzero terms in the fully correlated case.
-Thus the standard deviation in the uncorrelated case decreases with the familiar $1/\sqrt{n}$ factor, so the effective number of samples is $n$. But in the fully correlated case the width is independent of $n$: increasing $n$ adds no new information.
+Thus the standard deviation in the uncorrelated case decreases with the familiar $1/\sqrt{n}$ factor, so the effective number of samples is $n$. But in the fully correlated case the width is independent of $n$: increasing $n$ adds no new information, so the effective number of samples is one.
 
 We can do the more general case by considering
 $\yvec$ distributed as above with $\Sigma = \sigma_0^2 M$, where $M$ is the $n\times n$ matrix:
@@ -250,10 +249,7 @@ $$
 This also follows from the Fisher information matrix.
 
 
-For $n=20$, this looks like:
-
-:::
-
+For $n=20$, $n_{\text{eff}}$ looks like:
 
  ```{code-cell} python3
 :tags: [hide-input]
