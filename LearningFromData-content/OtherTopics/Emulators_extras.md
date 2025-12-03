@@ -13,7 +13,7 @@ kernelspec:
 (sec:Emulators_extras)=
 # Extra info on emulators
 
-
+## Building the emulator basis
 
 :::{figure} ./figs/emulator_basic_construction.png
 :height: 480px
@@ -26,6 +26,20 @@ kernelspec:
 :name: fig-Proper_Orthogonal_Decomposition
 :::
 
+:::{figure} ./figs/Greedy_algorithm_in_action.png
+:height: 480px
+:name: fig-Greedy_algorithm_in_action
+:::
+
+
+:::{figure} ./figs/POD_vs_greedy_algorithm.png
+:height: 480px
+:name: fig-POD_vs_greedy_algorithm
+:::
+
+
+
+## Parametric matrix models
 
 :::{figure} ./figs/Parametric_Matrix_Models.png
 :height: 480px
