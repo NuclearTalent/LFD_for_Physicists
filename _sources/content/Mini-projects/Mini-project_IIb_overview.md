@@ -1,7 +1,5 @@
 # Overview of Mini-project IIb: How many lines?
 
-The notebook for Mini-project IIb is [here](https://nucleartalent.github.io/LFD_for_Physicists/content/Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html).
-
 The exercies is adapted from Sivia, section 4.2.
 Here is the basic problem: we are given a noisy spectrum (maybe it is intensity as a function of frequency of electromagnetic signals) with some number of signal lines along with background signals.
 We want to use parameter estimation and model selection (via parallel tempering) to determine what we can about the peaks.

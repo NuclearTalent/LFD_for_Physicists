@@ -19,7 +19,7 @@ kernelspec:
 -- Honore de Balzac
 ```
 
-## Reduced-order methods
+## Reduced-basis methods
 
 Computational Bayesian methods, and many other applications, have a need for models that can be solved at different fidelities. High fidelity implies high precision, but also high computational cost. Low fidelity versions of the model are much faster to evaluate, but associated with a smaller precision. They are still very useful for model calibration and statistical studies. 
 

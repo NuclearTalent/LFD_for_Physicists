@@ -37,7 +37,7 @@ p_{X_n \vert X_0, X_1, \ldots, X_{n-1}} \left( x_n | x_0, x_1, \ldots, x_{n-1} \
 ```{prf:example} Conditional probabilities of a stochastic process
 :label: example:conditional-stochastic-process
 
-Below is an example of a stochastic process (implemented using an abstract python class [`StochasticProcess`](https://gitlab.com/cforssen/tif385-book/-/blob/tif385/content/Utils/StochasticProcess/StochasticProcess.py)).
+Below is an example of a stochastic process (implemented using an abstract python class [`StochasticProcess`](https://github.com/NuclearTalent/LFD_for_Physicists/blob/main/content/MCMC-sampling/assets/StochasticProcess/StochasticProcess.py)).
 
 Note that the process indeed is defined by: 
 1. the distribution of the first random variable $X_0$, which is included in the definition of class method `start`, and 
