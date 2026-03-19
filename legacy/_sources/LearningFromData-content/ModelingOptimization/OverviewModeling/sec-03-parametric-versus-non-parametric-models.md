@@ -1,0 +1,8 @@
+# Parametric versus non-parametric models
+
+Most scientific models contain parameters and are therefore known as *parametric models*. In physics these parameters might be constrained by theoretical hypotheses and by previous observations of related systems. Moreover, the parameters values might be interesting by themselves which broadens the scope of modeling from just describing a relationship to actually extracting physics knowledge. 
+
+We should not underestimate the power of physics insights when creating a model. Such insights help in making informed decisions on relevant modeling approximations, which in turn helps in quantifying the size of model discrepancies. In fact, one could claim that true predictive power rests in the ability to make reliable statements on the precision (uncertainty) of a prediction.
+
+It is also possible to learn a relationship without having detailed modeling insights. For this purpose one can consider very general models characterized by large flexibility (allowing to model different relationships) and set up a learning algorithm that adjusts the model to fit a specific purpose. This approach could in general be labeled as machine learning and has proven to be very powerful in many different contexts. Very often, the learning process is performed with a large amount of labeled training data but it might also be possible to achieve without such "supervision". The machine-learning models and learning algorithms usually involve various kinds of parameters, but since these are not meaningful in themselves we can refer to the models as *non-parametric*. We will encounter this approach in the **Machine learning** part of these lecture notes.
+
