@@ -129,7 +129,7 @@ Three polynomial models $M_1$, $M_2$, $M_3$ and their "best fits" to noisy data 
 :width: 450px
 :align: center
 
-Mixed model equation of state (scaled pressure vs. scaled density) for symmetric nuclear matter. Models with theory errors at low density (red) and very high density (blue) are mixed to bridge the gap between them (purple). One sigma error bands are shown. The figure is from Semposki et al., [arxiv:2404.06323](https://arxiv.org/pdf/2404.06323).
+Mixed model equation of state (scaled pressure vs. scaled density) for symmetric nuclear matter. Models with theory errors at low density (red) and very high density (blue) are mixed to bridge the gap between them (purple). One sigma error bands are shown. The figure is from Semposki et al. {cite}`Semposki:2024vnp`.
 ```
 ````
 
@@ -147,7 +147,7 @@ Mixed model equation of state (scaled pressure vs. scaled density) for symmetric
 :width: 550px
 :align: center
 
-Schematic signal with background from [Amplitude of a Signal in the Presence of Background](https://nucleartalent.github.io/LFD_for_Physicists/content/BayesianStatistics/BayesianParameterEstimation/amplitude_in_presence_of_background.html). The experimental design problem is how to best extract the signal properties from optimizing a function that gives the cost of experimental choices, such as the resolution of the detector and the number of counts recorded.
+Schematic signal with background from {ref}`exercise:amplitude-of-a-signal-in-the-presence-of-background`. The experimental design problem is how to best extract the signal properties from optimizing a function that gives the cost of experimental choices, such as the resolution of the detector and the number of counts recorded.
 ```
 ````
   

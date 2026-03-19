@@ -117,7 +117,7 @@ In the following we will only consider stationary Markov chains and we stress th
 ````{prf:example} A simple Markov process
 :label: example:simple-markov-process
 
-Let us construct a simpe Markov process using again the abstract python class [`StochasticProcess`](https://gitlab.com/cforssen/tif385-book/-/blob/tif385/content/Utils/StochasticProcess/StochasticProcess.py)).
+Let us construct a simpe Markov process using again the abstract python class [`StochasticProcess`](https://github.com/NuclearTalent/LFD_for_Physicists/blob/main/content/MCMC-sampling/assets/StochasticProcess/StochasticProcess.py)).
 
 We initialize the chain with a uniform random variable $p_{X_0}(x_0) = \mathcal{U}\left( [0,1] \right)$ and update it using the conditional probability density function
 
@@ -222,7 +222,7 @@ Hint: The conditional distribution is actually not shown in {numref}`fig-example
 ```
 
 The remnant memory in the process from {prf:ref}`example:simple-markov-process` 
-is considered in {numref}`exercise:MarkovChains:memory`. Conditional distributions $\pdf{x_m}{x_n}$ (for $m>n$) can be produced with the method `plot_conditional_distributions()` in the [`StochasticProcess`](https://gitlab.com/cforssen/tif385-book/-/blob/tif385/content/Utils/StochasticProcess/StochasticProcess.py) class.
+is considered in {numref}`exercise:MarkovChains:memory`. Conditional distributions $\pdf{x_m}{x_n}$ (for $m>n$) can be produced with the method `plot_conditional_distributions()` in the [`StochasticProcess`](https://github.com/NuclearTalent/LFD_for_Physicists/blob/main/content/MCMC-sampling/assets/StochasticProcess/StochasticProcess.py) class.
 
 ```{code-cell} python3
 :tags: [hide-output]

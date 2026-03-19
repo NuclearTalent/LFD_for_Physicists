@@ -8,8 +8,8 @@ An alternative to expensive calculations is to replace the high-fidelity model w
 
 
 
-* An overview called  ["Bayes goes fast: Emulators"](https://nucleartalent.github.io/LFD_for_Physicists/content/BayesianStatistics/ComputationalBayes/BayesFast.html)
-* A review of ["RBM emulators"](https://nucleartalent.github.io/LFD_for_Physicists/content/BayesianStatistics/ComputationalBayes/extra_RBM_emulators.html)
+* Reduced-basis methods are introduced in {ref}`sec:BayesFast`.
+* A review of {ref}`sec:RBMEmulators`.
 * For examples of multidimensional GP emulation, see [surmise](https://surmise.readthedocs.io/en/latest/).
-* A new type of emulator is the [Parametric Matrix Model](https://arxiv.org/abs/2401.11694), aka PMMs.
+* A new type of emulator is the Parametric Matrix Model {cite}`Cook:2024toj`.
 

@@ -88,7 +88,7 @@ Too few steps and the samples are too similar;
 too many steps are also too similar.
 NUTS *adaptively* finds a good number of steps.
 In particular, it simulates in *both* directions to figure out when the path turns around (i.e., U-turns) and stops there.
-There are other adaptive features; see the [Stan documentation](https://mc-stan.org/docs/2_18/reference-manual/hmc-algorithm-parameters.html) or the [arXiv article by Michael Betancourt](https://arxiv.org/abs/1701.02434) for details.
+There are other adaptive features; see the [Stan documentation](https://mc-stan.org/docs/2_18/reference-manual/hmc-algorithm-parameters.html) or the conceptual introduction by Michael Betancourt {cite}`betancourt2018` for details.
 Note that NUTS still has trouble with multimodal targets $\Lra$ can explore each high probability area, but has trouble going between them.
 
 
@@ -130,7 +130,7 @@ Since we will use the Metropolis ratio during sampling, the normalization factor
 
 How do we sample from $\p{\pos,\mom}$? Well, naturally we simulate Hamiltonian dynamics for a finite period of time. For Metropolis updates, using a proposal found by Hamiltonian dynamics, the acceptance probability will be one since $H$ is kept invariant. Unfortunately, we will only be able to solve Hamilton's equations approximately and in practice we might not end up with perfect energy conservation.
 
-Apart from energy conservation, two additional key properties of Hamiltonian dynamics---in the context of using it for MCMC sampling---are that it is time reversibile and that it preserves the volume in $(\pos,\mom)$-space, a result known as Liouville's theorem. (If we take a cluster of points and follow their time evolution, the volume they occupy is unchanged; see [Liouville theorem visualization](https://nucleartalent.github.io/LFD_for_Physicists/content/StochasticProcesses/BUQ2/Liouville_theorem_visualization.html).) This is critical because a change in volume would mean we would have to make a nontrivial adjustment to the proposal because the normalization $Z$ would change.
+Apart from energy conservation, two additional key properties of Hamiltonian dynamics---in the context of using it for MCMC sampling---are that it is time reversibile and that it preserves the volume in $(\pos,\mom)$-space, a result known as Liouville's theorem. (If we take a cluster of points and follow their time evolution, the volume they occupy is unchanged; see {ref}`demo:liouville-theorem-visualization`.) This is critical because a change in volume would mean we would have to make a nontrivial adjustment to the proposal because the normalization $Z$ would change.
 
 Hamilton's equations are
 
@@ -159,7 +159,7 @@ $$\begin{align}
   \mom_i(t+\epsilon) &= \mom_i(t+\epsilon/2) - \frac{\epsilon}{2}\frac{\partial U}{\partial \pos_i}\bigl(\pos(t+\epsilon)\bigr) \quad \longleftarrow\text{other half step} \\
 \end{align}$$
 
-See [Solving orbital equations with different algorithms](https://nucleartalent.github.io/LFD_for_Physicists/content/StochasticProcesses/BUQ2/Orbital_eqs_with_different_algorithms.html) for a comparison of Leapfrog to other algorithms.
+See {ref}`demo:orbital-equations-with-different-algorithms` for a comparison of Leapfrog to other algorithms.
 Also see Figures 1, and 3-6 in ["MCMC using Hamiltonian dynamics"](https://arxiv.org/abs/1206.1901) by Radford Neal for further illustrations.    
 
 ```

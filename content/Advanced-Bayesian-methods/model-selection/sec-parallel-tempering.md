@@ -81,7 +81,7 @@ Things to specify for the sampler:
 
 ## Calculating the evidence
 
-To calculate the *evidence* from parallel tempering, we can use *thermodynamic integration* see [Goggans and Chi, AIP Conf. Proc. **707**, 59 (2004)](https://aip.scitation.org/doi/abs/10.1063/1.1751356).
+To calculate the *evidence* from parallel tempering, we can use *thermodynamic integration* see Ref. {cite}`Goggans2004`.
 
 Define the temperature dependent evidence:
 
@@ -114,7 +114,7 @@ $\Lra$ estimate from emcee samples by computing the average of $p(D|\thetavec,I)
 
 ## Example of parallel tempering       
 
-An example of parallel tempering is given in [Demo: Multimodal distributions with two samplers](https://nucleartalent.github.io/LFD_for_Physicists/content/BayesianStatistics/ModelSelection/BUQ/MCMC-parallel-tempering_ptemcee_vs_zeus.html).
+An example of parallel tempering is given in {ref}`demo:multimodal-distributions-with-two-samplers`.
 
 Comments:
 * First we set up a bi-modal distribution (it was originally intended to be a surprise, so the code was hidden). Just two Gaussians with different amplitudes.
