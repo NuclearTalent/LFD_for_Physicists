@@ -1,0 +1,1832 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>32.5. 📥 Demonstration: Linear algebra games including SVD for PCA &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=6bd7df4c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\rm th}", "yexp": "y_{\\rm exp}", "ym": "y_{\\rm m}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "vvec": "\\boldsymbol{v}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}", "ytrue": "y_{\\rm true}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/Other-Topics/pca-svd-and-all-that/demo-svd';</script>
+    <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="33. Quantum Bayesianism (QBism)" href="../qbism-bayesian-quantum-mechanics/index.html" />
+    <link rel="prev" title="32. PCA, SVD, and all that" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../About.html">
+                    Learning from data for physicists
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Overview/invitation-to-inductive-inference/invitation.html">1. Invitation to inductive inference</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Overview/introduction/index.html">2. Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-physicist-s-perspective.html">2.1. Physicist’s perspective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-bayesian-workflow.html">2.2. Bayesian workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-machine-learning.html">2.3. Machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-virtues.html">2.4. Virtues</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/index.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/index.html">4. Inference and PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-statements.html">4.1. Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-manipulating-probabilities-bayesian-rules-of-probability-as.html">4.2. Manipulating probabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-probability-density-functions.html">4.3. Probability density functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-review-of-bayes-theorem.html">4.4. Review of Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-expectation-values-and-moments.html">4.5. Expectation values and moments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-data-models-predictions.html">4.6. Data, models, and predictions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-bayesian-epistemology.html">4.7. *Aside: Bayesian epistemology</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/index.html">5. Bayesian posteriors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/demo-exploring-PDFs.html">5.1. Demo: Exploring PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-followup-exploring-PDFs.html">Follow-ups to Exploring PDFs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/demo-visualizing-correlated-gaussians.html">📥 Visualizing correlated Gaussian distributions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-gaussians-a-couple-of-frequentist-connections.html">5.2. Gaussians: A couple of frequentist connections</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/demo-visualization-of-the-central-limit-theorem.html">📥 Visualization of the Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-interpreting-2D-posteriors.html">5.3. Interpreting 2D posteriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/demo-sum-of-normal-variables-squared.html">5.4. Demo: Sum of normal variables squared</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/index.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-coin-tossing-frequentists-and-bayesians.html">6.1. Coin tossing: Frequentists and Bayesians</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-when-do-priors-matter-when-don-t-they-matter.html">6.2. When do priors matter? When don’t they matter?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-computing-the-posterior-analytically.html">6.3. Computing the posterior analytically</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-degree-of-belief-credibility-intervals-vs-frequentist-one-sigma.html">6.4. Degree of belief/credibility intervals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-take-aways-and-follow-up-questions-from-coin-flipping.html">6.5. Take-aways and follow-up questions from coin flipping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/demo-bayesian-coin-tossing.html">6.6. Demo: Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/demo-bayesian-coin-tossing-interactive.html">6.7. Demo: Coin tossing (with widget)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/index.html">7. Error propagation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-nuisance-parameters-and-marginalization.html">7.1. Nuisance parameters and marginalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-changing-variables.html">7.2. Changing variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-a-useful-approximation.html">7.3. A useful approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-solutions.html">7.4. Solutions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/index.html">8. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-advantages-of-the-bayesian-approach.html">8.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-bayesian-research-workflow.html">8.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-bayesian-linear-regression.html">8.3. Bayesian Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/demo-linear-regression-and-model-validation.html">8.4. Demo: Linear Regression and Model Validation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/index.html">9. Exercises for Part I</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-checking-the-sum-and-product-rules.html">9.1. Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-standard-medical-example-using-bayes.html">9.2. Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-gaussian-mean-and-variance.html">9.3. Gaussian noise and averages I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-radioactive-lighthouse-problem.html">9.4. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-amplitude-of-a-signal-in-the-presence-of-background.html">9.5. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-fitting-a-straight-line-i.html">9.6. Fitting a straight line I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-fitting-a-straight-line-ii.html">9.7. Fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-gaussian-noise-and-averages-ii.html">9.8. Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-2d-radioactive-lighthouse-location-using-mcmc.html">9.9. 2D radioactive lighthouse location using MCMC</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Advanced-Bayesian-methods/index.html">10. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/index.html">11. Discrepancy Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-introduction-to-discrepancy-models.html">11.1. Introduction to discrepancy models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-koh-framework.html">11.2. The Kennedy and O’Hagan framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-the-ball-drop-model.html">11.3. The ball-drop model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-real-world-application-of-discrepancy-model.html">11.4. Real-world application of discrepancy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/demo-ball-drop-experiment.html">11.5. Ball-drop experiment</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/index.html">12. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/sec-assigning-probabilities-i-indifferences-and-translation-groups.html">12.1. Indifferences and translation groups</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/demo-straight_lines.html">Alternative notebook with MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/sec-assigning-probabilities-ii-the-principle-of-maximum-entropy.html">12.2. The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/demo-maximum-entropy-for-reconstructing-a-function-from-its-moments.html">12.3. Maximum Entropy for reconstructing a function</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/demo-dealing-with-outliers.html">13. Dealing with outliers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/demo-student-t-distribution-from-gaussians.html">13.10. Student t distribution from Gaussians</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/bayes-goes-linear-history-matching/index.html">14. Bayes goes linear — History matching</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/bayes-goes-linear-history-matching/sec-bayes-linear-methods.html">14.1. Bayes linear methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/bayes-goes-linear-history-matching/sec-iterative-history-matching.html">14.2. Iterative history matching</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/index.html">15. Model selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-frequentist-hypothesis-testing.html">15.1. Frequentist hypothesis testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-bayesian-model-selection.html">15.2. Bayesian model selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-evidence-calculations.html">15.3. Evidence calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/demo-evidence-calculation-for-eft-expansions.html">15.4. Demo: Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-follow-up-to-eft-evidence.html">15.5. Follow-up to EFT evidence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-computing-the-bayesian-evidence.html">15.6. Computing the Bayesian evidence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-information-criteria.html">15.7. Information criteria</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/example-information-criteria-and-bayes-factors.html">15.8. Example: Information Criteria and Bayes factors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-parallel-tempering.html">15.9. Parallel tempering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/demo-multimodal-distributions-with-two-samplers.html">15.10. Demo: Multimodal distributions with two samplers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/index.html">16. Model averaging and mixing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-bayesian-inference-in-the-multi-model-setting.html">16.1. Bayesian inference in the multi-model setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-bayesian-model-averaging.html">16.2. Bayesian model averaging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-bayesian-model-mixing.html">16.3. Bayesian model mixing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-a-tale-of-two-models.html">16.4. A tale of two models</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../MCMC-sampling/index.html">17. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/index.html">18. Intuition for MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-why-mcmc.html">18.1. Why MCMC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-basic-structure-and-intuition-for-mh.html">18.2. Basic structure and intuition for MH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-visualizations-of-mh.html">18.3. Visualizations of MH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/demo-mh-sampling-of-poisson.html">18.4. Demo: MH sampling of Poisson</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/demo-random-walk-and-sampling.html">18.5. Demo: Random walk and sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/index.html">19. Details of MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-stochastic-processes.html">19.1. Stochastic processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-definition-of-a-stochastic-process.html">19.2. Definition of a stochastic process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-example-random-walk.html">19.3. Example: Random walk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-special-case-gaussian-process.html">19.4. Special case: Gaussian process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-markov-chains.html">19.5. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-the-metropolis-hastings-algorithm.html">19.6. The Metropolis–Hastings algorithm</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/index.html">20. MCMC in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-state-of-the-art-mcmc-implementations.html">20.1. State-of-the-art MCMC implementations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-overview-of-diagnostics-for-mcmc-sampling.html">20.2. Overview of diagnostics for MCMC sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/demo-mcmc-diagnostics.html">20.3. Demonstration: MCMC diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-best-practices-for-mcmc-sampling.html">20.4. Best practices for MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/index.html">21. Advanced sampling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/sec-introduction-to-hamilton-monte-carlo.html">21.1. Introduction to Hamilton Monte Carlo</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/demo-liouville-theorem-visualization.html">Liouville theorem visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/demo-orbital-equations-with-different-algorithms.html">Orbital equations with different algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/sec-sampling-importance-resampling.html">21.2. Sampling / Importance resampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/sec-the-zeus-ensemble-slice-sampler.html">21.3. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/demo-pymc-introduction.html">21.4. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/sec-overview-intro-to-pymc.html">Overview: Intro to PyMC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/demo-comparing-samplers-for-a-simple-problem.html">21.5. Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning: A Bayesian perspective</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/index.html">22. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/index.html">23. Overview of Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/sec-intuition-for-gaussian-process-from-simulations.html">23.1. Intuition for Gaussian process from simulations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/demo-gp-intuition-widget.html">Widget for GP intuition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/sec-basic-info-on-gps.html">23.2. Basic info on GPs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/demo-gaussian-processes.html">demo-GaussianProcesses notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/sec-more-on-gaussian-processes.html">23.3. More on Gaussian processes</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/index.html">23.4. scikit-learn demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/demo-one-dimension-regression-example.html">One-dimension regression example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/demo-prior-and-posterior-with-different-kernels.html">Prior and posterior with different kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/demo-gaussian-process-regression.html">Gaussian Process Regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/exercise-gaussian-processes.html">Exercise: Gaussian Processes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/sec-gaussian-processes-exercises.html">Gaussian Processes Exercises</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/logistic-regression/index.html">24. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/logistic-regression/sec-machine-learning-first-examples.html">24.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/logistic-regression/exercise-logreg-and-neural-networks.html">24.6. Exercise: Logistic Regression and Neural Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/bayesian-optimization/sec-bayesian-optimization.html">25. Bayesian Optimization</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/index.html">26. Machine learning: Overview</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-types-of-machine-learning.html">26.1. Types of Machine Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-data-handling-machine-learning-and-ethical-aspects.html">26.2. Data handling, machine learning and ethical aspects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-artificial-neural-networks.html">26.3. Artificial neural networks</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-ann-simple-function-using-pytorch.html">26.4. ANN: simple function from ChatGPT using PyTorch</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-ann-simple-function-using-pytorch-binder.html">Binder version</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-mnist-classifier-in-pytorch.html">26.5. MNIST classifier demo in PyTorch</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-mnist-classifier-in-pytorch-binder-2.html">Binder version of another MNIST classifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-mnist-classifier-in-pytorch-binder.html">Binder version of original MNIST classifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-mnist-classifier-in-pytorch-cnn-binder.html">Binder version of original MNIST classifier with CNN</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-model-validation.html">26.6. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-data-bias-and-fairness.html">26.7. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-neural-networks-backpropagation.html">26.8. Neural networks: Backpropagation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/anns-in-the-large-width-limit/index.html">27. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/anns-in-the-large-width-limit/demo-distributions-of-randomly-initialized-anns.html">27.11. Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/bayesian-neural-nets/index.html">28. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/bayesian-neural-nets/demo-variational-inference-and-bnn.html">28.4. Demonstration: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/bayesian-neural-nets/exercise-bayesian-neural-networks.html">28.5. Exercise: Bayesian neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/convolutional-neural-nets/index.html">29. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/convolutional-neural-nets/sec-what-is-a-convolutional-neural-network.html">29.6. Alternative: What is a convolutional neural network?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/convolutional-neural-nets/demo-image-recognition-with-cnn.html">29.7. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/convolutional-neural-nets/demo-cnn-pytorch.html">29.8. Pytorch version of the CNN demo notebook</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Other topics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">30. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../emulators/index.html">31. Emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../emulators/sec-bayes-goes-fast.html">31.1. Bayes goes fast: Emulators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../emulators/sec-rbm-emulators.html">31.2. RBM emulators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../emulators/sec-extra-info-on-emulators.html">31.3. Extra info on emulators</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">32. PCA, SVD, and all that</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">32.5. Demonstration: SVD</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../qbism-bayesian-quantum-mechanics/index.html">33. QBism: Bayesian quantum mechanics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/bibliography.html">34. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/JB_tests.html">35. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Statistics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Statistics/index.html">36. Overview of Appendix A</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Scientific-modeling/index.html">37. Overview of scientific modeling material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/index.html">38. Overview of modeling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-notation.html">38.1. Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-models-in-science.html">38.2. Models in science</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-parametric-versus-non-parametric-models.html">38.3. Parametric versus non-parametric models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-linear-versus-non-linear-models.html">38.4. Linear versus non-linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-regression-analysis-optimization-versus-inference.html">38.5. Regression analysis: optimization versus inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-exercises.html">38.6. Exercises</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-solutions.html">38.7. Solutions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/index.html">39. Linear models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-definition-of-linear-models.html">39.1. Definition of linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-regression-analysis-with-linear-models.html">39.2. Regression analysis with linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-ordinary-linear-regression-warmup.html">39.3. Ordinary linear regression: warmup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-ordinary-linear-regression-in-practice.html">39.4. Ordinary linear regression in practice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-solutions.html">39.5. Solutions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/index.html">40. Mathematical optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-gradient-descent-optimization.html">40.1. Gradient-descent optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-batch-stochastic-and-mini-batch-gradient-descent.html">40.2. Batch, stochastic and mini-batch gradient descent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-adaptive-gradient-descent-algorithms.html">40.3. Adaptive gradient descent algorithms</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Getting-started/index.html">41. Overview of Getting started material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Getting-started/jupyter-notebooks-and-python/index.html">42. Jupyter notebooks and Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/jupyter-notebooks-and-python/exercise-jupyter-notebooks-and-python.html">42.1. Exercise: Jupyter notebooks and Python</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/index.html">43. More about Python and Jupyter notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/exercise-python-lists-and-iterations.html">43.4. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/exercise-linear-algebra-operations-with-numpy.html">43.5. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/demo-reading-data-and-fitting.html">43.6. Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/demo-making-a-simple-widget-based-ui.html">43.7. Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/index.html">44. Setting up for using this Jupyter Book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/sec-using-anaconda.html">44.1. Using Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/sec-using-github.html">44.2. Using GitHub</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/index.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_I_toy_model_of_EFT.html"> MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIa.html"> MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html"> MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Mini-projects/Mini-project_IIb_overview.html">Overview of Mini-project IIb: How many lines?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIa_bayesian_optimization.html"> MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html"> MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/cforssen/LFD_development_v2.0/main?urlpath=tree/./content/Other-Topics/pca-svd-and-all-that/demo-svd.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Binder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Binder logo" src="../../../_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/cforssen/LFD_development_v2.0" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cforssen/LFD_development_v2.0/issues/new?title=Issue%20on%20page%20%2Fcontent/Other-Topics/pca-svd-and-all-that/demo-svd.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/content/Other-Topics/pca-svd-and-all-that/demo-svd.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>📥 Demonstration: Linear algebra games including SVD for PCA</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preliminary-exercise-manipulations-using-the-index-form-of-matrices">Preliminary exercise: manipulations using the index form of matrices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#svd-basics">SVD basics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solving-matrix-equations-with-svd">Solving matrix equations with SVD</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-reduction">Data reduction</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-imports">Python imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#svd-applied-to-images-for-compression">SVD applied to images for compression</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aside-dissection-of-the-python-statement-to-find-the-index-for-accumulation">Aside: dissection of the Python statement to find the index for accumulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#things-to-do">Things to do:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance-pca-and-svd">Covariance, PCA and SVD</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eigendecomposition-of-the-covariance-matrix">Eigendecomposition of the covariance matrix</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pca-from-duke-course">PCA (from Duke course)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#principal-components">Principal components</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-svd-for-pca">Using SVD for PCA</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises-covariance-matrix-manipulations-in-python-taken-from-the-duke-course">Exercises: covariance matrix manipulations in Python (taken from the Duke course)</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="demonstration-linear-algebra-games-including-svd-for-pca">
+<span id="demo-svd"></span><h1><span class="section-number">32.5. </span>📥 Demonstration: Linear algebra games including SVD for PCA<a class="headerlink" href="#demonstration-linear-algebra-games-including-svd-for-pca" title="Link to this heading">#</a></h1>
+<p>Some parts adapted from <a class="reference external" href="https://github.com/cliburn/Computational-statistics-with-Python">Computational-statistics-with-Python.ipynb</a>, which is itself from a course taught at Duke University; other parts from Peter Mills’ <a class="reference external" href="https://blog.statsbot.co/singular-value-decomposition-tutorial-52c695315254">blog</a>.</p>
+<p>The goal here is to practice some linear algebra manipulations by hand and with Python, and to gain some experience and intuition with the Singular Value Decomposition (SVD).
+<span class="math notranslate nohighlight">\(\newcommand{\Amat}{\mathbf{A}} \newcommand{\AmatT}{\mathbf{A^\top}}
+\newcommand{\thetavec}{\boldsymbol{\theta}}
+\newcommand{\Sigmamat}{\mathbf{\Sigma}}
+\newcommand{\Yvec}{\mathbf{Y}}
+\)</span></p>
+<section id="preliminary-exercise-manipulations-using-the-index-form-of-matrices">
+<h2>Preliminary exercise: manipulations using the index form of matrices<a class="headerlink" href="#preliminary-exercise-manipulations-using-the-index-form-of-matrices" title="Link to this heading">#</a></h2>
+<p>Warm up (you may already have done this earlier in the course): prove that the Maximum Likelihood Estimate (MLE) for <span class="math notranslate nohighlight">\(\chi^2\)</span> given by</p>
+<div class="math notranslate nohighlight">
+\[
+\chi^2 = (\Yvec - \Amat\thetavec)^{\mathbf{\top}} \Sigmamat^{-1} (\Yvec - \Amat\thetavec)
+\]</div>
+<p>is</p>
+<div class="math notranslate nohighlight">
+\[
+\thetavec_{\mathrm{MLE}} = (\AmatT \Sigmamat^{-1} \Amat)^{-1} (\AmatT \Sigmamat^{-1} \Yvec)  \;.
+\]</div>
+<p>Here <span class="math notranslate nohighlight">\(\thetavec\)</span> is a <span class="math notranslate nohighlight">\(m\times 1\)</span> matrix of parameters (i.e., there are <span class="math notranslate nohighlight">\(m\)</span> parameters), <span class="math notranslate nohighlight">\(\Sigmamat\)</span> is the <span class="math notranslate nohighlight">\(m\times m\)</span> covariance matrix, <span class="math notranslate nohighlight">\(\Yvec\)</span> is a <span class="math notranslate nohighlight">\(N\times 1\)</span> matrix of observations (data), and <span class="math notranslate nohighlight">\(\Amat\)</span> is an <span class="math notranslate nohighlight">\(N\times m\)</span> matrix</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\Amat = 
+\left(
+\begin{array}{cccc}
+   1  &amp; x_1  &amp; x_1^2 &amp; \cdots \\
+   1  &amp; x_2  &amp; x_2^2 &amp; \cdots \\
+   \vdots &amp; \vdots &amp; \vdots &amp;\cdots \\
+   1  &amp; x_N  &amp; x_N^2 &amp; \cdots
+\end{array}
+\right)
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(N\)</span> is the number of observations.  The idea is to do this with explicit indices for vectors and matrices, using the Einstein summation convention.</p>
+<p>A suggested approach:</p>
+<ul class="simple">
+<li><p>Write <span class="math notranslate nohighlight">\(\chi^2\)</span> in indices: <span class="math notranslate nohighlight">\(\chi^2 = (Y_i - A_{ij}\theta_j)\Sigma^{-1}_{ii'}(Y_{i'}- A_{i'j'}\theta_{j'})\)</span>, where summations over repeated indices are implied (be careful of transposes and using enough independent indices).  <em>How do we see that <span class="math notranslate nohighlight">\(\chi^2\)</span> is a scalar?</em></p></li>
+<li><p>Find <span class="math notranslate nohighlight">\(\partial\chi^2/\partial \theta_k = 0\)</span> for all <span class="math notranslate nohighlight">\(k\)</span>, using <span class="math notranslate nohighlight">\(\partial\theta_j/\partial\theta_k = \delta_{jk}\)</span>. Isolate the terms with one component of <span class="math notranslate nohighlight">\(\thetavec\)</span> from those with none.</p></li>
+<li><p>You should get the matrix equation <span class="math notranslate nohighlight">\( (\AmatT \Sigmamat^{-1} \Yvec) = (\AmatT \Sigmamat^{-1} \Amat)\thetavec\)</span>. At this point you can directly solve for <span class="math notranslate nohighlight">\(\thetavec\)</span>. <em>Why can you do this now?</em></p></li>
+<li><p>If you get stuck, see the <a class="reference external" href="https://furnstahl.github.io/Physics-8820/content/Why_Bayes_is_better/lecture_13.html">Lecture 13 notes</a>.</p></li>
+</ul>
+</section>
+<section id="svd-basics">
+<h2>SVD basics<a class="headerlink" href="#svd-basics" title="Link to this heading">#</a></h2>
+<p>Note: we will used the “reduced SVD” here, for which the matrix of singular values is square. The formal discussion of the SVD usually works with the “full SVD”, the “reduced SVD” is more typically used in practice.</p>
+<p>A singular value decomposition (SVD) decomposes a matrix <span class="math notranslate nohighlight">\(A\)</span> into three other matrices (we’ll skip the boldface font here):</p>
+<div class="math notranslate nohighlight">
+\[
+A = U S V^\top
+\]</div>
+<p>where (take <span class="math notranslate nohighlight">\(m &gt; n\)</span> for now)</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(A\)</span> is an <span class="math notranslate nohighlight">\(m\times n\)</span> matrix;</p></li>
+<li><p><span class="math notranslate nohighlight">\(U\)</span> is an <span class="math notranslate nohighlight">\(m\times n\)</span> (semi)orthogonal matrix;</p></li>
+<li><p><span class="math notranslate nohighlight">\(S\)</span> is an <span class="math notranslate nohighlight">\(n\times n\)</span> diagonal matrix;</p></li>
+<li><p><span class="math notranslate nohighlight">\(V\)</span> is an <span class="math notranslate nohighlight">\(n\times n\)</span> orthogonal matrix.</p></li>
+</ul>
+<p>Comments and tasks:</p>
+<ul class="simple">
+<li><p><em>Verify that these dimensions are compatible with the decomposition of <span class="math notranslate nohighlight">\(A\)</span>.</em></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">scipy.linalg</span></code> function <code class="docutils literal notranslate"><span class="pre">svd</span></code> has a Boolean argument <code class="docutils literal notranslate"><span class="pre">full_matrices</span></code>.  If <code class="docutils literal notranslate"><span class="pre">False</span></code>, it returns the decomposition above with matrix dimensions as stated, which is the “reduced SVD”.  If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then <span class="math notranslate nohighlight">\(U\)</span> is <span class="math notranslate nohighlight">\(m\times m\)</span>, <span class="math notranslate nohighlight">\(S\)</span> is <span class="math notranslate nohighlight">\(m \times n\)</span>, and <span class="math notranslate nohighlight">\(V\)</span> is <span class="math notranslate nohighlight">\(n\times n\)</span>.  We will use the <code class="docutils literal notranslate"><span class="pre">full_matrices</span> <span class="pre">=</span> <span class="pre">False</span></code> form here.  <em>Can you see why this is ok?</em></p></li>
+<li><p>Note that semi-orthogonal means that <span class="math notranslate nohighlight">\(U^\top U = I_{n\times n}\)</span> and orthogonal means <span class="math notranslate nohighlight">\(V V^\top = V^\top V = I_{n\times n}\)</span>.</p></li>
+<li><p>In index form, the decomposition of <span class="math notranslate nohighlight">\(A\)</span> is <span class="math notranslate nohighlight">\(A_{ij} = U_{ik} S_k V_{jk}\)</span>, where the diagonal matrix elements of <span class="math notranslate nohighlight">\(S\)</span> are
+<span class="math notranslate nohighlight">\(S_k\)</span> (<em>make sure you agree</em>).</p></li>
+<li><p>These diagonal elements of <span class="math notranslate nohighlight">\(S\)</span>, namely the <span class="math notranslate nohighlight">\(S_k\)</span>, are known as <strong>singular values</strong>.  They are ordinarily arranged from largest to smallest.</p></li>
+<li><p><span class="math notranslate nohighlight">\(A A^\top = U S^2 U^\top\)</span>, which implies (a) <span class="math notranslate nohighlight">\(A A^\top U = U S^2\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(A^\top A = V S^2 V^\top\)</span>, which implies (b) <span class="math notranslate nohighlight">\(A^\top A V = V S^2\)</span>.</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(m &gt; n\)</span>, we can diagonalize <span class="math notranslate nohighlight">\(A^\top A\)</span> to find <span class="math notranslate nohighlight">\(S^2\)</span> and <span class="math notranslate nohighlight">\(V\)</span> and then find <span class="math notranslate nohighlight">\(U = A V S^{-1}\)</span>.  If <span class="math notranslate nohighlight">\(m &lt; n\)</span> we switch the roles of <span class="math notranslate nohighlight">\(U\)</span> and <span class="math notranslate nohighlight">\(V\)</span>.</p></li>
+</ul>
+<p>Quick demonstations for you to do or questions to answer:</p>
+<ul class="simple">
+<li><p><em>Show from equations (a) and (b) that <span class="math notranslate nohighlight">\(U\)</span> is semi-orthogonal and <span class="math notranslate nohighlight">\(V\)</span> is orthogonal and that the eigenvalues, <span class="math notranslate nohighlight">\(\{S_i^2\}\)</span>, are all positive.</em></p></li>
+<li><p><em>Show that if <span class="math notranslate nohighlight">\(m &lt; n\)</span> there will be at most <span class="math notranslate nohighlight">\(m\)</span> non-zero singular values.</em></p></li>
+<li><p><em>Show that the eigenvalues from equations (a) and (b) must be the same.</em></p></li>
+</ul>
+<p>A key feature of the SVD for us here is that the sum of the squares of the singular values equals the total variance in <span class="math notranslate nohighlight">\(A\)</span>, i.e., the sum of squares of all matrix elements (squared Frobenius norm). Thus the size of each says how much of the total variance is accounted for by each singular vector.  We can create a truncated SVD containing a percentage (e.g., 99%) of the variance:</p>
+<div class="math notranslate nohighlight">
+\[
+  A_{ij} \approx \sum_{k=1}^{p} U_{ik} S_k V_{jk}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(p &lt; n\)</span> is the number of singular values included. Typically this is not a large number.</p>
+<section id="solving-matrix-equations-with-svd">
+<h3>Solving matrix equations with SVD<a class="headerlink" href="#solving-matrix-equations-with-svd" title="Link to this heading">#</a></h3>
+<p>We can solve for <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+  A \mathbf{x} &amp;= b \\
+  \mathbf{x} &amp;= V S^{-1} U^\top b
+\end{align}\end{split}\]</div>
+<p>or <span class="math notranslate nohighlight">\(x_i = \sum_j \frac{V_{ij}}{S_j} \sum_k U_{kj} b_k\)</span>.  The value of this solution method is when we have an ill-conditioned matrix, meaning that the smallest eigenvalues are zero or close to zero.  We can throw away the corresponding components and all is well! See <a class="reference external" href="https://personalpages.manchester.ac.uk/staff/timothy.f.cootes/MathsMethodsNotes/L3_linear_algebra3.pdf">also</a>.</p>
+<p>Comments:</p>
+<ul class="simple">
+<li><p>If we have a non-square matrix, it still works. If <span class="math notranslate nohighlight">\(m\times n\)</span> with <span class="math notranslate nohighlight">\(m &gt; n\)</span>, then only <span class="math notranslate nohighlight">\(n\)</span> singular values.</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(m &lt; n\)</span>, then only <span class="math notranslate nohighlight">\(m\)</span> singular values.</p></li>
+<li><p>This is like solving</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[A^\top A \mathbf{x} = A^\top b\]</div>
+<p>which is called the <em>normal equation</em>.  It produces the solution to <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> that is closest to the origin, or</p>
+<div class="math notranslate nohighlight">
+\[
+  \min_{\mathbf{x}} |A\mathbf x - b| \;.
+\]</div>
+<p><strong>Task:</strong> <em>prove these results (work backwards from the last equation as a least-squares minimization)</em>.</p>
+</section>
+<section id="data-reduction">
+<h3>Data reduction<a class="headerlink" href="#data-reduction" title="Link to this heading">#</a></h3>
+<p>For machine learning (ML), there might be several hundred variables but the algorithms are made for a few dozen.  We can use SVD in ML for variable reduction.  This is also the connection to sloppy physics models.  In general, our matrix <span class="math notranslate nohighlight">\(A\)</span> can be closely approximated by only keeping the largest of the singular values.  We’ll see that visually below using images.</p>
+</section>
+</section>
+<section id="python-imports">
+<h2>Python imports<a class="headerlink" href="#python-imports" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">la</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.decomposition</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCA</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><em>Generate random matrices and verify the properties for SVD given above.  Check what happens when <span class="math notranslate nohighlight">\(m &gt; n\)</span>.</em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;A = &#39;</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+
+<span class="n">Ap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Ap = &#39;</span><span class="p">,</span> <span class="n">Ap</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A =  [[0.0774293  0.57239946 0.97607834 0.26545924]
+ [0.69997514 0.92278303 0.58941355 0.22073348]
+ [0.29898023 0.16964582 0.11039323 0.20649753]
+ [0.56254236 0.76025843 0.8763898  0.88986147]
+ [0.02210335 0.20620054 0.76838047 0.38919649]
+ [0.09725078 0.98992054 0.47995133 0.76616615]
+ [0.70612228 0.84457107 0.29366821 0.73230108]
+ [0.6670421  0.87744709 0.94098705 0.48461152]
+ [0.46812202 0.80412584 0.76919466 0.91160789]]
+Ap =  [[-0.0138757   0.76219864  0.41715295]
+ [ 1.20536816 -2.23725596 -1.93241657]
+ [-0.02920561  1.7692494   0.14600725]
+ [-1.15437478 -0.19598228  0.48350812]
+ [-1.83410004  1.0074772  -0.12857131]]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Check the definition of <code class="docutils literal notranslate"><span class="pre">scipy.linalg.svd</span></code> with shift-tab-tab.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># SVD from scipy.linalg</span>
+<span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">V_trans</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">Up</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">Vp_trans</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">Ap</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">U</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">V_trans</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(9, 4) (4,) (4, 4)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Transpose with T, matrix multiplication with @</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">U</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">U</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[ 1.00000000e+00  3.32257833e-16  5.91027141e-16 -2.09428467e-16]
+ [ 3.32257833e-16  1.00000000e+00  7.01788881e-16 -4.21713477e-16]
+ [ 5.91027141e-16  7.01788881e-16  1.00000000e+00 -2.50743585e-16]
+ [-2.09428467e-16 -4.21713477e-16 -2.50743585e-16  1.00000000e+00]]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Here&#39;s one way to suppress small numbers from round-off error</span>
+<span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">U</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">U</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 1.e+00,  0.e+00,  1.e-15, -0.e+00],
+       [ 0.e+00,  1.e+00,  1.e-15, -0.e+00],
+       [ 1.e-15,  1.e-15,  1.e+00, -0.e+00],
+       [-0.e+00, -0.e+00, -0.e+00,  1.e+00]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Predict this one before evaluating!</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">U</span> <span class="o">@</span> <span class="n">U</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[ 0.51920079  0.15060738 -0.13009585  0.00214922  0.26800862  0.14807362
+  -0.26796233  0.21080381 -0.00476674]
+ [ 0.15060738  0.62325565  0.03303775 -0.08862367 -0.19907154  0.00904917
+   0.15280311  0.35801542 -0.10929146]
+ [-0.13009585  0.03303775  0.11029586  0.13261254 -0.00847217 -0.16404008
+   0.15448941  0.07061665  0.08181414]
+ [ 0.00214922 -0.08862367  0.13261254  0.37984814  0.23296239 -0.05018193
+   0.18982     0.13367429  0.31532289]
+ [ 0.26800862 -0.19907154 -0.00847217  0.23296239  0.3946346  -0.08312906
+  -0.17495667  0.08398371  0.16888825]
+ [ 0.14807362  0.00904917 -0.16404008 -0.05018193 -0.08312906  0.8731394
+   0.11889064 -0.12251401  0.15256742]
+ [-0.26796233  0.15280311  0.15448941  0.18982    -0.17495667  0.11889064
+   0.4422823   0.07875918  0.20166712]
+ [ 0.21080381  0.35801542  0.07061665  0.13367429  0.08398371 -0.12251401
+   0.07875918  0.34789737  0.05594661]
+ [-0.00476674 -0.10929146  0.08181414  0.31532289  0.16888825  0.15256742
+   0.20166712  0.05594661  0.30944589]]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Go on and check the other claimed properties.</p>
+<p>For example, is <span class="math notranslate nohighlight">\(A = U S V^\top\)</span>? (Note: you’ll need to make <span class="math notranslate nohighlight">\(S\)</span> a matrix with <code class="docutils literal notranslate"><span class="pre">np.diag(S)</span></code>.)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check the other properties, changing the matrix size and shapes.</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For a square matrix, compare the singular values in <span class="math notranslate nohighlight">\(S\)</span> to the eigenvalues from <code class="docutils literal notranslate"><span class="pre">la.eig</span></code>.  What do you conclude?  Now try this for a symmetric matrix (note that a matrix plus its transpose is symmetric).</p>
+</section>
+<section id="svd-applied-to-images-for-compression">
+<h2>SVD applied to images for compression<a class="headerlink" href="#svd-applied-to-images-for-compression" title="Link to this heading">#</a></h2>
+<p>Read in <code class="docutils literal notranslate"><span class="pre">../../_images/elephant.jpg</span></code> as a gray-scale image. The image has <span class="math notranslate nohighlight">\(1066 \times 1600\)</span> values. Using SVD, recreate the image with a relative error of less than 0.5%. What is the relative size of the compressed image as a percentage?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">io</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/buqeye/LearningFromData/main/LectureNotes/_images/elephant.jpg&#39;</span><span class="p">,</span> <span class="n">as_gray</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">);</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;shape of img: &#39;</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>shape of img:  (1066, 1600)
+</pre></div>
+</div>
+<img alt="../../../_images/e285432b2e85f1957bc7256350553fb55a1a29cb420b87f9325f7a41ec7c7871.png" src="../../../_images/e285432b2e85f1957bc7256350553fb55a1a29cb420b87f9325f7a41ec7c7871.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># turn off axis</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/ad5d0418420f176ffe1039891cfc16d9f5e96f16bb5d57f41ba1ebf44de4d8ec.png" src="../../../_images/ad5d0418420f176ffe1039891cfc16d9f5e96f16bb5d57f41ba1ebf44de4d8ec.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Do the svg</span>
+<span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check the shapes</span>
+<span class="n">U</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Vt</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>((1066, 1066), (1066,), (1066, 1600))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check that we can recreate the image</span>
+<span class="n">img_orig</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">S</span><span class="p">)</span> <span class="o">@</span> <span class="n">Vt</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">img_orig</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_orig</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(1066, 1600)
+</pre></div>
+</div>
+<img alt="../../../_images/ad5d0418420f176ffe1039891cfc16d9f5e96f16bb5d57f41ba1ebf44de4d8ec.png" src="../../../_images/ad5d0418420f176ffe1039891cfc16d9f5e96f16bb5d57f41ba1ebf44de4d8ec.png" />
+</div>
+</div>
+<p>Here’s how we can efficiently reduce the size of the matrices.  Our SVD should be sorted, so we are keeping only the largest singular values up to a point.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Pythonic way to figure out when we&#39;ve accumulated 99.5% of the result</span>
+<span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">((</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="mf">0.995</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="aside-dissection-of-the-python-statement-to-find-the-index-for-accumulation">
+<h3>Aside: dissection of the Python statement to find the index for accumulation<a class="headerlink" href="#aside-dissection-of-the-python-statement-to-find-the-index-for-accumulation" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.995</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;initial matrix, in descending magnitude: &#39;</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;fraction of total sum of squares: &#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">test</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">test</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;cumulative fraction: &#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">((</span><span class="n">test</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">test</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;mark entries as true if less than or equal to threshold: &#39;</span><span class="p">,</span>
+       <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">((</span><span class="n">test</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">test</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">)</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;sum up the Trues: &#39;</span><span class="p">,</span>
+       <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">((</span><span class="n">test</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">test</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">)</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;The last result is the index we are looking for.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial matrix, in descending magnitude:  [5 4 3 2 1]
+fraction of total sum of squares:  [0.45454545 0.29090909 0.16363636 0.07272727 0.01818182]
+cumulative fraction:  [0.45454545 0.74545455 0.90909091 0.98181818 1.        ]
+mark entries as true if less than or equal to threshold:  [ True  True  True  True False]
+sum up the Trues:  4
+The last result is the index we are looking for.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s plot the eigenvalues and mark where k is</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;eigenvalues&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;99.5</span><span class="si">% o</span><span class="s1">f the variance&#39;</span><span class="p">);</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;eigenvalue number&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/f0c56dadeead862aa896a974835a17bff6325856c5f45a6022c9405f275da57e.png" src="../../../_images/f0c56dadeead862aa896a974835a17bff6325856c5f45a6022c9405f275da57e.png" />
+</div>
+</div>
+<p>Now keep only the most significant eigenvalues (those up to k).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">img2</span> <span class="o">=</span> <span class="n">U</span><span class="p">[:,:</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">S</span><span class="p">[:</span><span class="n">k</span><span class="p">])</span><span class="o">@</span> <span class="n">Vt</span><span class="p">[:</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span>
+<span class="n">img2</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(1066, 1600)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img2</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/03c06071e04d35b673bb81372c2b618fa91674d0a6cdf889d3d4496024fce5ba.png" src="../../../_images/03c06071e04d35b673bb81372c2b618fa91674d0a6cdf889d3d4496024fce5ba.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k99</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">((</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="mf">0.99</span><span class="p">)</span>
+<span class="n">img99</span> <span class="o">=</span> <span class="n">U</span><span class="p">[:,:</span><span class="n">k99</span><span class="p">]</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">S</span><span class="p">[:</span><span class="n">k99</span><span class="p">])</span><span class="o">@</span> <span class="n">Vt</span><span class="p">[:</span><span class="n">k99</span><span class="p">,</span> <span class="p">:]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img99</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/d8e17a1000d5fc62e7660892add98017ba1b708dd5cb2c16bffeb95d793d6112.png" src="../../../_images/d8e17a1000d5fc62e7660892add98017ba1b708dd5cb2c16bffeb95d793d6112.png" />
+</div>
+</div>
+<p>Let’s try another interesting picture …</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fraction_kept</span> <span class="o">=</span> <span class="mf">0.995</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">svd_shapes</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+    <span class="n">U_shape</span> <span class="o">=</span> <span class="n">U</span><span class="p">[:,:</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">S_shape</span> <span class="o">=</span> <span class="n">S</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">V_shape</span> <span class="o">=</span> <span class="n">V</span><span class="p">[:,:</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;U shape: </span><span class="si">{</span><span class="n">U_shape</span><span class="si">}</span><span class="s1">, S shape: </span><span class="si">{</span><span class="n">S_shape</span><span class="si">}</span><span class="s1">, V shape: </span><span class="si">{</span><span class="n">V_shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="n">img_orig</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/buqeye/LearningFromData/main/LectureNotes/_images/Dick_in_tailcoat.jpg&#39;</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/buqeye/LearningFromData/main/LectureNotes/_images/Dick_in_tailcoat.jpg&#39;</span><span class="p">,</span> <span class="n">as_gray</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">svd_shapes</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+
+<span class="n">k995</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">((</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="n">fraction_kept</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;k995 = </span><span class="si">{</span><span class="n">k995</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">img995</span> <span class="o">=</span> <span class="n">U</span><span class="p">[:,:</span><span class="n">k995</span><span class="p">]</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">S</span><span class="p">[:</span><span class="n">k995</span><span class="p">])</span><span class="o">@</span> <span class="n">V</span><span class="p">[:</span><span class="n">k995</span><span class="p">,</span> <span class="p">:]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;img995 shape = </span><span class="si">{</span><span class="n">img995</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">svd_shapes</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">k995</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_orig</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+
+<span class="n">ax3</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img995</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>U shape: (2320, 2320), S shape: (2320,), V shape: (3088, 2320)
+k995 = 24
+img995 shape = (2320, 3088)
+U shape: (2320, 24), S shape: (24,), V shape: (3088, 24)
+</pre></div>
+</div>
+<img alt="../../../_images/2a744e9d0d5e409e9b0ca216d3c588b39bdf2f2cc95fa4ab1f8c215a2006317a.png" src="../../../_images/2a744e9d0d5e409e9b0ca216d3c588b39bdf2f2cc95fa4ab1f8c215a2006317a.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s plot the eigenvalues and mark where k is</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;eigenvalues&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">k995</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;99.5</span><span class="si">% o</span><span class="s1">f the variance&#39;</span><span class="p">);</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;eigenvalue number&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/340328ba961358d4428543c06c6fcef597e9ed884b8a29221c44798a227b8e50.png" src="../../../_images/340328ba961358d4428543c06c6fcef597e9ed884b8a29221c44798a227b8e50.png" />
+</div>
+</div>
+</section>
+<section id="things-to-do">
+<h3>Things to do:<a class="headerlink" href="#things-to-do" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Get your own figure and duplicate these results.  Then play!</p></li>
+<li><p>As you reduce the percentage of the variance kept, what features of the image are retained and what are lost?</p></li>
+<li><p>See how small you can make the percentage and still recognize the picture.</p></li>
+<li><p>How is this related to doing a spatial Fourier transform, applying a low-pass filter, and transforming back.  (Experts: try this!)</p></li>
+</ul>
+</section>
+</section>
+<section id="covariance-pca-and-svd">
+<h2>Covariance, PCA and SVD<a class="headerlink" href="#covariance-pca-and-svd" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">la</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Recall the formula for covariance</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Cov}(X, Y) = \frac{\sum_{i=1}^n(X_i - \bar{X})(Y_i - \bar{Y})}{n-1}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\text{Cov}(X, X)\)</span> is the sample variance of <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">cov</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns covariance of vectors x and y).&quot;&quot;&quot;</span>
+    <span class="n">xbar</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">ybar</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">xbar</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">ybar</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cov</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X</span><span class="p">),</span> <span class="n">cov</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)],</span> <span class="p">[</span><span class="n">cov</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">),</span> <span class="n">cov</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">Y</span><span class="p">)]])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 0.101, -0.024],
+       [-0.024,  0.084]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>  <span class="c1"># check against numpy</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 0.101, -0.024],
+       [-0.024,  0.084]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extension to more variables is done in a pair-wise way</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 0.101, -0.024,  0.02 ],
+       [-0.024,  0.084,  0.023],
+       [ 0.02 ,  0.023,  0.107]])
+</pre></div>
+</div>
+</div>
+</div>
+<section id="eigendecomposition-of-the-covariance-matrix">
+<h3>Eigendecomposition of the covariance matrix<a class="headerlink" href="#eigendecomposition-of-the-covariance-matrix" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Zero mean but off-diagonal correlation matrix</span>
+<span class="n">mu</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.2</span><span class="p">],[</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.2</span><span class="p">]]</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/dad6e392e1e4964ca97e28d5c2f9b961cab17fdd430500f4dc8b26d165f79370.png" src="../../../_images/dad6e392e1e4964ca97e28d5c2f9b961cab17fdd430500f4dc8b26d165f79370.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find the covariance matrix of the matrix of points x</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># m = np.array([[1,2,3],[6,5,4]])</span>
+<span class="c1"># ms = m - m.mean(1).reshape(2,1)</span>
+<span class="c1"># np.dot(ms, ms.T)/2</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find the eigenvalues and eigenvectors</span>
+<span class="n">e</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">e_</span><span class="p">,</span> <span class="n">v_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">e_</span><span class="o">*</span><span class="n">v_</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">e_</span><span class="o">*</span><span class="n">v_</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Eigenvectors of covariance matrix scaled by eigenvalue.&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/d052920574f7ab4a5774295db403c3d430798726cd0f7a2b32b6c0b6bc86b60d.png" src="../../../_images/d052920574f7ab4a5774295db403c3d430798726cd0f7a2b32b6c0b6bc86b60d.png" />
+</div>
+</div>
+</section>
+<section id="pca-from-duke-course">
+<h3>PCA (from Duke course)<a class="headerlink" href="#pca-from-duke-course" title="Link to this heading">#</a></h3>
+<p>“Principal Components Analysis” (PCA) basically means to find and rank all the eigenvalues and eigenvectors of a covariance matrix. This is useful because high-dimensional data (with <span class="math notranslate nohighlight">\(p\)</span> features) may have nearly all their variation in a small number of dimensions <span class="math notranslate nohighlight">\(k&lt;p\)</span>, i.e. in the subspace spanned by the eigenvectors of the covariance matrix that have the <span class="math notranslate nohighlight">\(k\)</span> largest eigenvalues. If we project the original data into this subspace, we can have a dimension reduction (from <span class="math notranslate nohighlight">\(p\)</span> to <span class="math notranslate nohighlight">\(k\)</span>) with hopefully little loss of information.</p>
+<p>Numerically, PCA is typically done using SVD on the data matrix rather than eigendecomposition on the covariance matrix. Numerically, the condition number for working with the covariance matrix directly is the square of the condition number using SVD, so SVD minimizes errors.”</p>
+<p>For zero-centered vectors,</p>
+<div class="amsmath math notranslate nohighlight" id="equation-161685ad-c9dc-4144-8992-551aee42ad68">
+<span class="eqno">(32.1)<a class="headerlink" href="#equation-161685ad-c9dc-4144-8992-551aee42ad68" title="Permalink to this equation">#</a></span>\[\begin{align}
+\text{Cov}(X, Y) &amp;= \frac{\sum_{i=1}^n(X_i - \bar{X})(Y_i - \bar{Y})}{n-1} \\
+  &amp;= \frac{\sum_{i=1}^nX_iY_i}{n-1} \\
+  &amp;= \frac{XY^T}{n-1}
+\end{align}\]</div>
+<p>and so the covariance matrix for a data set <span class="math notranslate nohighlight">\(X\)</span> that has zero mean in each feature vector is just <span class="math notranslate nohighlight">\(XX^T/(n-1)\)</span>.</p>
+<p>In other words, we can also get the eigendecomposition of the covariance matrix from the positive semi-definite matrix <span class="math notranslate nohighlight">\(XX^T\)</span>.</p>
+<p>Note: Here <span class="math notranslate nohighlight">\(x\)</span> is a matrix of <strong>row</strong> vectors.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">X</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[0.274, 0.968, 0.377, 0.704],
+       [0.564, 0.627, 0.399, 0.79 ],
+       [0.971, 0.482, 0.359, 0.542],
+       [0.517, 0.56 , 0.116, 0.574],
+       [0.983, 0.334, 0.166, 0.764]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># eliminate the mean</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[ 0.000e+00  2.776e-17 -5.551e-17  0.000e+00  5.551e-17]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 0.,  0., -0.,  0.,  0.])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Y</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[-0.307,  0.387, -0.204,  0.123],
+       [-0.031,  0.032, -0.196,  0.195],
+       [ 0.382, -0.107, -0.229, -0.047],
+       [ 0.076,  0.118, -0.326,  0.132],
+       [ 0.422, -0.228, -0.395,  0.202]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Check that the covariance matrix is unaffected by removing the mean:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 0.1  ,  0.029, -0.039,  0.035, -0.037],
+       [ 0.029,  0.026,  0.007,  0.03 ,  0.032],
+       [-0.039,  0.007,  0.071,  0.028,  0.089],
+       [ 0.035,  0.03 ,  0.028,  0.048,  0.053],
+       [-0.037,  0.032,  0.089,  0.053,  0.142]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 0.1  ,  0.029, -0.039,  0.035, -0.037],
+       [ 0.029,  0.026,  0.007,  0.03 ,  0.032],
+       [-0.039,  0.007,  0.071,  0.028,  0.089],
+       [ 0.035,  0.03 ,  0.028,  0.048,  0.053],
+       [-0.037,  0.032,  0.089,  0.053,  0.142]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find the eigenvalue and eigenvectors</span>
+<span class="n">e1</span><span class="p">,</span> <span class="n">v1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="principal-components">
+<h4>Principal components<a class="headerlink" href="#principal-components" title="Link to this heading">#</a></h4>
+<p>Principal components are simply the eigenvectors of the covariance matrix used as basis vectors. Each of the original data points is expressed as a linear combination of the principal components, giving rise to a new set of coordinates.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check that we reproduce the previous result</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">e_</span><span class="p">,</span> <span class="n">v_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">v1</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">e_</span><span class="o">*</span><span class="n">v_</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">e_</span><span class="o">*</span><span class="n">v_</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]);</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/f781565f216cd61e3bec1b1b056a49e02b9e0cafd8f4a9f06c3802060939250e.png" src="../../../_images/f781565f216cd61e3bec1b1b056a49e02b9e0cafd8f4a9f06c3802060939250e.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="using-svd-for-pca">
+<h3>Using SVD for PCA<a class="headerlink" href="#using-svd-for-pca" title="Link to this heading">#</a></h3>
+<p>SVD is a decomposition of the data matrix <span class="math notranslate nohighlight">\(X = U S V^T\)</span> where <span class="math notranslate nohighlight">\(U\)</span> and <span class="math notranslate nohighlight">\(V\)</span> are orthogonal matrices and <span class="math notranslate nohighlight">\(S\)</span> is a diagonal matrix.</p>
+<p>Recall that the transpose of an orthogonal matrix is also its inverse, so if we multiply on the right by <span class="math notranslate nohighlight">\(X^T\)</span>, we get the following simplification</p>
+<div class="amsmath math notranslate nohighlight" id="equation-ba85d419-882f-4d35-861c-360d581c1e84">
+<span class="eqno">(32.2)<a class="headerlink" href="#equation-ba85d419-882f-4d35-861c-360d581c1e84" title="Permalink to this equation">#</a></span>\[\begin{align}
+X &amp;= U S V^T \\
+X X^T &amp;= U S V^T (U S V^T)^T \\
+ &amp;= U S V^T V S U^T \\
+ &amp;= U S^2 U^T
+\end{align}\]</div>
+<p>Compare with the eigendecomposition of a matrix <span class="math notranslate nohighlight">\(A = W \Lambda W^{-1}\)</span>, we see that SVD gives us the eigendecomposition of the matrix <span class="math notranslate nohighlight">\(XX^T\)</span>, which as we have just seen, is basically a scaled version of the covariance for a data matrix with zero mean, with the eigenvectors given by <span class="math notranslate nohighlight">\(U\)</span> and eigenvalues by <span class="math notranslate nohighlight">\(S^2\)</span> (scaled by <span class="math notranslate nohighlight">\(n-1\)</span>)…</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># reproduce previous results yet again!</span>
+<span class="n">e2</span> <span class="o">=</span> <span class="n">s</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">v2</span> <span class="o">=</span> <span class="n">u</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">e_</span><span class="p">,</span> <span class="n">v_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e2</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">e_</span><span class="o">*</span><span class="n">v_</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">e_</span><span class="o">*</span><span class="n">v_</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]);</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/a05b455e3a476c05eb227e4b1485e79c115983384b8340c45f5bacc523e1a395.png" src="../../../_images/a05b455e3a476c05eb227e4b1485e79c115983384b8340c45f5bacc523e1a395.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">v1</span> <span class="c1"># from eigenvectors of covariance matrix</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 0.922, -0.387],
+       [ 0.387,  0.922]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">v2</span> <span class="c1"># from SVD</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[-0.922, -0.387],
+       [-0.387,  0.922]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">e1</span> <span class="c1"># from eigenvalues of covariance matrix</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.703, 0.123])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">e2</span> <span class="c1"># from SVD</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.703, 0.123])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="exercises-covariance-matrix-manipulations-in-python-taken-from-the-duke-course">
+<h2>Exercises: covariance matrix manipulations in Python (taken from the Duke course)<a class="headerlink" href="#exercises-covariance-matrix-manipulations-in-python-taken-from-the-duke-course" title="Link to this heading">#</a></h2>
+<p>Given the following covariance matrix</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>use Python to do these basic tasks (that is, do not do them by hand but use <code class="docutils literal notranslate"><span class="pre">scipy.linalg</span></code> functions).</p>
+<ol class="arabic simple">
+<li><p>Show that the eigenvectors of <span class="math notranslate nohighlight">\(A\)</span> are orthogonal.</p></li>
+<li><p>What is the vector representing the first principal component direction?</p></li>
+<li><p>Find <span class="math notranslate nohighlight">\(A^{-1}\)</span> without performing a matrix inversion.</p></li>
+<li><p>What are the coordinates of the data points (0, 1) and (1, 1) in the standard basis expressed as coordinates of the principal components?</p></li>
+<li><p>What is the proportion of variance explained if we keep only the projection onto the first principal component?</p></li>
+</ol>
+<p>We’ll give you a headstart on the Python manipulations (you should take a look at the <code class="docutils literal notranslate"><span class="pre">scipy.linalg</span></code> documentation).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">eigval</span><span class="p">,</span> <span class="n">eigvec</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Find the matrix <span class="math notranslate nohighlight">\(A\)</span> that results in rotating the standard vectors in <span class="math notranslate nohighlight">\(\mathbb{R}^2\)</span> by 30 degrees counter-clockwise and stretches <span class="math notranslate nohighlight">\(e_1\)</span> by a factor of 3 and contracts <span class="math notranslate nohighlight">\(e_2\)</span> by a factor of <span class="math notranslate nohighlight">\(0.5\)</span>.</p></li>
+<li><p>What is the inverse of this matrix? How you find the inverse should reflect your understanding.</p></li>
+</ul>
+<p>The effects of the matrix <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(A^{-1}\)</span> are shown in the figure below:</p>
+<p><img alt="image" src="../../../_images/vecs.png" /></p>
+<p>We observe some data points <span class="math notranslate nohighlight">\((x_i, y_i)\)</span>, and believe that an appropriate model for the data is that</p>
+<div class="math notranslate nohighlight">
+\[
+f(x) = ax^2 + bx^3 + c\sin{x}
+\]</div>
+<p>with some added noise. Find optimal values of the parameters <span class="math notranslate nohighlight">\(\beta = (a, b, c)\)</span> that minimize <span class="math notranslate nohighlight">\(\Vert y - f(x) \Vert^2\)</span></p>
+<ol class="arabic simple">
+<li><p>using <code class="docutils literal notranslate"><span class="pre">scipy.linalg.lstsq</span></code></p></li>
+<li><p>solving the normal equations <span class="math notranslate nohighlight">\(X^TX \beta = X^Ty\)</span></p></li>
+<li><p>using <code class="docutils literal notranslate"><span class="pre">scipy.linalg.svd</span></code></p></li>
+</ol>
+<p>In each case, plot the data and fitted curve using <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>.</p>
+<p>Data</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span> <span class="mf">3.4027718</span> <span class="p">,</span>  <span class="mf">4.29209002</span><span class="p">,</span>  <span class="mf">5.88176277</span><span class="p">,</span>  <span class="mf">6.3465969</span> <span class="p">,</span>  <span class="mf">7.21397852</span><span class="p">,</span>
+        <span class="mf">8.26972154</span><span class="p">,</span> <span class="mf">10.27244608</span><span class="p">,</span> <span class="mf">10.44703778</span><span class="p">,</span> <span class="mf">10.79203455</span><span class="p">,</span> <span class="mf">14.71146298</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span> <span class="mf">25.54026428</span><span class="p">,</span>  <span class="mf">29.4558919</span> <span class="p">,</span>  <span class="mf">58.50315846</span><span class="p">,</span>  <span class="mf">70.24957254</span><span class="p">,</span>
+        <span class="mf">90.55155435</span><span class="p">,</span> <span class="mf">100.56372833</span><span class="p">,</span>  <span class="mf">91.83189927</span><span class="p">,</span>  <span class="mf">90.41536733</span><span class="p">,</span>
+        <span class="mf">90.43103028</span><span class="p">,</span>  <span class="mf">23.0719842</span> <span class="p">])</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">3.4027718</span> <span class="p">,</span>  <span class="mf">4.29209002</span><span class="p">,</span>  <span class="mf">5.88176277</span><span class="p">,</span>  <span class="mf">6.3465969</span> <span class="p">,</span>  <span class="mf">7.21397852</span><span class="p">,</span>
+        <span class="mf">8.26972154</span><span class="p">,</span> <span class="mf">10.27244608</span><span class="p">,</span> <span class="mf">10.44703778</span><span class="p">,</span> <span class="mf">10.79203455</span><span class="p">,</span> <span class="mf">14.71146298</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">25.54026428</span><span class="p">,</span>  <span class="mf">29.4558919</span> <span class="p">,</span>  <span class="mf">58.50315846</span><span class="p">,</span>  <span class="mf">70.24957254</span><span class="p">,</span>
+        <span class="mf">90.55155435</span><span class="p">,</span> <span class="mf">100.56372833</span><span class="p">,</span>  <span class="mf">91.83189927</span><span class="p">,</span>  <span class="mf">90.41536733</span><span class="p">,</span>
+        <span class="mf">90.43103028</span><span class="p">,</span>  <span class="mf">23.0719842</span> <span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "2025-book-env"
+        },
+        kernelOptions: {
+            name: "2025-book-env",
+            path: "./content/Other-Topics/pca-svd-and-all-that"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = '2025-book-env'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">32. </span>PCA, SVD, and all that</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../qbism-bayesian-quantum-mechanics/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">33. </span>Quantum Bayesianism (QBism)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preliminary-exercise-manipulations-using-the-index-form-of-matrices">Preliminary exercise: manipulations using the index form of matrices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#svd-basics">SVD basics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solving-matrix-equations-with-svd">Solving matrix equations with SVD</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-reduction">Data reduction</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-imports">Python imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#svd-applied-to-images-for-compression">SVD applied to images for compression</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aside-dissection-of-the-python-statement-to-find-the-index-for-accumulation">Aside: dissection of the Python statement to find the index for accumulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#things-to-do">Things to do:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance-pca-and-svd">Covariance, PCA and SVD</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eigendecomposition-of-the-covariance-matrix">Eigendecomposition of the covariance matrix</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pca-from-duke-course">PCA (from Duke course)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#principal-components">Principal components</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-svd-for-pca">Using SVD for PCA</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises-covariance-matrix-manipulations-in-python-taken-from-the-duke-course">Exercises: covariance matrix manipulations in Python (taken from the Duke course)</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

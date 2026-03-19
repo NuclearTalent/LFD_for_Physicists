@@ -1,0 +1,1703 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>11.5. 📥 Model discrepancy example: The ball-drop experiment &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=6bd7df4c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\rm th}", "yexp": "y_{\\rm exp}", "ym": "y_{\\rm m}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "vvec": "\\boldsymbol{v}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}", "ytrue": "y_{\\rm true}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/Advanced-Bayesian-methods/discrepancy-models/demo-ball-drop-experiment';</script>
+    <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="12. Assigning probabilities" href="../assigning-probabilities/index.html" />
+    <link rel="prev" title="11.4. Real-world application of discrepancy model" href="sec-real-world-application-of-discrepancy-model.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../About.html">
+                    Learning from data for physicists
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Overview/invitation-to-inductive-inference/invitation.html">1. Invitation to inductive inference</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Overview/introduction/index.html">2. Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-physicist-s-perspective.html">2.1. Physicist’s perspective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-bayesian-workflow.html">2.2. Bayesian workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-machine-learning.html">2.3. Machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-virtues.html">2.4. Virtues</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/index.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/index.html">4. Inference and PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-statements.html">4.1. Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-manipulating-probabilities-bayesian-rules-of-probability-as.html">4.2. Manipulating probabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-probability-density-functions.html">4.3. Probability density functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-review-of-bayes-theorem.html">4.4. Review of Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-expectation-values-and-moments.html">4.5. Expectation values and moments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-data-models-predictions.html">4.6. Data, models, and predictions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-bayesian-epistemology.html">4.7. *Aside: Bayesian epistemology</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/index.html">5. Bayesian posteriors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/demo-exploring-PDFs.html">5.1. Demo: Exploring PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-followup-exploring-PDFs.html">Follow-ups to Exploring PDFs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/demo-visualizing-correlated-gaussians.html">📥 Visualizing correlated Gaussian distributions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-gaussians-a-couple-of-frequentist-connections.html">5.2. Gaussians: A couple of frequentist connections</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/demo-visualization-of-the-central-limit-theorem.html">📥 Visualization of the Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-interpreting-2D-posteriors.html">5.3. Interpreting 2D posteriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/demo-sum-of-normal-variables-squared.html">5.4. Demo: Sum of normal variables squared</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/index.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-coin-tossing-frequentists-and-bayesians.html">6.1. Coin tossing: Frequentists and Bayesians</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-when-do-priors-matter-when-don-t-they-matter.html">6.2. When do priors matter? When don’t they matter?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-computing-the-posterior-analytically.html">6.3. Computing the posterior analytically</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-degree-of-belief-credibility-intervals-vs-frequentist-one-sigma.html">6.4. Degree of belief/credibility intervals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-take-aways-and-follow-up-questions-from-coin-flipping.html">6.5. Take-aways and follow-up questions from coin flipping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/demo-bayesian-coin-tossing.html">6.6. Demo: Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/demo-bayesian-coin-tossing-interactive.html">6.7. Demo: Coin tossing (with widget)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/index.html">7. Error propagation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-nuisance-parameters-and-marginalization.html">7.1. Nuisance parameters and marginalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-changing-variables.html">7.2. Changing variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-a-useful-approximation.html">7.3. A useful approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-solutions.html">7.4. Solutions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/index.html">8. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-advantages-of-the-bayesian-approach.html">8.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-bayesian-research-workflow.html">8.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-bayesian-linear-regression.html">8.3. Bayesian Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/demo-linear-regression-and-model-validation.html">8.4. Demo: Linear Regression and Model Validation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/index.html">9. Exercises for Part I</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-checking-the-sum-and-product-rules.html">9.1. Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-standard-medical-example-using-bayes.html">9.2. Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-gaussian-mean-and-variance.html">9.3. Gaussian noise and averages I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-radioactive-lighthouse-problem.html">9.4. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-amplitude-of-a-signal-in-the-presence-of-background.html">9.5. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-fitting-a-straight-line-i.html">9.6. Fitting a straight line I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-fitting-a-straight-line-ii.html">9.7. Fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-gaussian-noise-and-averages-ii.html">9.8. Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-2d-radioactive-lighthouse-location-using-mcmc.html">9.9. 2D radioactive lighthouse location using MCMC</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">10. Overview of Part II</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">11. Discrepancy Models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="sec-introduction-to-discrepancy-models.html">11.1. Introduction to discrepancy models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-koh-framework.html">11.2. The Kennedy and O’Hagan framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-the-ball-drop-model.html">11.3. The ball-drop model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-real-world-application-of-discrepancy-model.html">11.4. Real-world application of discrepancy model</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">11.5. Ball-drop experiment</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../assigning-probabilities/index.html">12. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../assigning-probabilities/sec-assigning-probabilities-i-indifferences-and-translation-groups.html">12.1. Indifferences and translation groups</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../assigning-probabilities/demo-straight_lines.html">Alternative notebook with MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../assigning-probabilities/sec-assigning-probabilities-ii-the-principle-of-maximum-entropy.html">12.2. The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../assigning-probabilities/demo-maximum-entropy-for-reconstructing-a-function-from-its-moments.html">12.3. Maximum Entropy for reconstructing a function</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dealing-with-outliers/demo-dealing-with-outliers.html">13. Dealing with outliers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dealing-with-outliers/demo-student-t-distribution-from-gaussians.html">13.10. Student t distribution from Gaussians</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../bayes-goes-linear-history-matching/index.html">14. Bayes goes linear — History matching</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../bayes-goes-linear-history-matching/sec-bayes-linear-methods.html">14.1. Bayes linear methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayes-goes-linear-history-matching/sec-iterative-history-matching.html">14.2. Iterative history matching</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../model-selection/index.html">15. Model selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../model-selection/sec-frequentist-hypothesis-testing.html">15.1. Frequentist hypothesis testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-selection/sec-bayesian-model-selection.html">15.2. Bayesian model selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-selection/sec-evidence-calculations.html">15.3. Evidence calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-selection/demo-evidence-calculation-for-eft-expansions.html">15.4. Demo: Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-selection/sec-follow-up-to-eft-evidence.html">15.5. Follow-up to EFT evidence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-selection/sec-computing-the-bayesian-evidence.html">15.6. Computing the Bayesian evidence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-selection/sec-information-criteria.html">15.7. Information criteria</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-selection/example-information-criteria-and-bayes-factors.html">15.8. Example: Information Criteria and Bayes factors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-selection/sec-parallel-tempering.html">15.9. Parallel tempering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-selection/demo-multimodal-distributions-with-two-samplers.html">15.10. Demo: Multimodal distributions with two samplers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../model-averaging-and-mixing/index.html">16. Model averaging and mixing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../model-averaging-and-mixing/sec-bayesian-inference-in-the-multi-model-setting.html">16.1. Bayesian inference in the multi-model setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-averaging-and-mixing/sec-bayesian-model-averaging.html">16.2. Bayesian model averaging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-averaging-and-mixing/sec-bayesian-model-mixing.html">16.3. Bayesian model mixing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-averaging-and-mixing/sec-a-tale-of-two-models.html">16.4. A tale of two models</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../MCMC-sampling/index.html">17. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/index.html">18. Intuition for MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-why-mcmc.html">18.1. Why MCMC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-basic-structure-and-intuition-for-mh.html">18.2. Basic structure and intuition for MH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-visualizations-of-mh.html">18.3. Visualizations of MH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/demo-mh-sampling-of-poisson.html">18.4. Demo: MH sampling of Poisson</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/demo-random-walk-and-sampling.html">18.5. Demo: Random walk and sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/index.html">19. Details of MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-stochastic-processes.html">19.1. Stochastic processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-definition-of-a-stochastic-process.html">19.2. Definition of a stochastic process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-example-random-walk.html">19.3. Example: Random walk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-special-case-gaussian-process.html">19.4. Special case: Gaussian process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-markov-chains.html">19.5. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-the-metropolis-hastings-algorithm.html">19.6. The Metropolis–Hastings algorithm</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/index.html">20. MCMC in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-state-of-the-art-mcmc-implementations.html">20.1. State-of-the-art MCMC implementations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-overview-of-diagnostics-for-mcmc-sampling.html">20.2. Overview of diagnostics for MCMC sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/demo-mcmc-diagnostics.html">20.3. Demonstration: MCMC diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-best-practices-for-mcmc-sampling.html">20.4. Best practices for MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/index.html">21. Advanced sampling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/sec-introduction-to-hamilton-monte-carlo.html">21.1. Introduction to Hamilton Monte Carlo</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/demo-liouville-theorem-visualization.html">Liouville theorem visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/demo-orbital-equations-with-different-algorithms.html">Orbital equations with different algorithms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/sec-sampling-importance-resampling.html">21.2. Sampling / Importance resampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/sec-the-zeus-ensemble-slice-sampler.html">21.3. The Zeus Ensemble Slice Sampler</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/demo-pymc-introduction.html">21.4. PyMC Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/sec-overview-intro-to-pymc.html">Overview: Intro to PyMC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling/demo-comparing-samplers-for-a-simple-problem.html">21.5. Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning: A Bayesian perspective</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/index.html">22. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/index.html">23. Overview of Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/sec-intuition-for-gaussian-process-from-simulations.html">23.1. Intuition for Gaussian process from simulations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/demo-gp-intuition-widget.html">Widget for GP intuition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/sec-basic-info-on-gps.html">23.2. Basic info on GPs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/demo-gaussian-processes.html">demo-GaussianProcesses notebook</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/sec-more-on-gaussian-processes.html">23.3. More on Gaussian processes</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/index.html">23.4. scikit-learn demo notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/demo-one-dimension-regression-example.html">One-dimension regression example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/demo-prior-and-posterior-with-different-kernels.html">Prior and posterior with different kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/demo-gaussian-process-regression.html">Gaussian Process Regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/exercise-gaussian-processes.html">Exercise: Gaussian Processes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/overview-of-gaussian-processes/scikit-learn-demo-notebooks/sec-gaussian-processes-exercises.html">Gaussian Processes Exercises</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/logistic-regression/index.html">24. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/logistic-regression/sec-machine-learning-first-examples.html">24.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/logistic-regression/exercise-logreg-and-neural-networks.html">24.6. Exercise: Logistic Regression and Neural Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/bayesian-optimization/sec-bayesian-optimization.html">25. Bayesian Optimization</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/index.html">26. Machine learning: Overview</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-types-of-machine-learning.html">26.1. Types of Machine Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-data-handling-machine-learning-and-ethical-aspects.html">26.2. Data handling, machine learning and ethical aspects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-artificial-neural-networks.html">26.3. Artificial neural networks</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-ann-simple-function-using-pytorch.html">26.4. ANN: simple function from ChatGPT using PyTorch</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-ann-simple-function-using-pytorch-binder.html">Binder version</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-mnist-classifier-in-pytorch.html">26.5. MNIST classifier demo in PyTorch</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-mnist-classifier-in-pytorch-binder-2.html">Binder version of another MNIST classifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-mnist-classifier-in-pytorch-binder.html">Binder version of original MNIST classifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/demo-mnist-classifier-in-pytorch-cnn-binder.html">Binder version of original MNIST classifier with CNN</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-model-validation.html">26.6. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-data-bias-and-fairness.html">26.7. Data bias and fairness in machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/machine-learning-overview/sec-neural-networks-backpropagation.html">26.8. Neural networks: Backpropagation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/anns-in-the-large-width-limit/index.html">27. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/anns-in-the-large-width-limit/demo-distributions-of-randomly-initialized-anns.html">27.11. Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/bayesian-neural-nets/index.html">28. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/bayesian-neural-nets/demo-variational-inference-and-bnn.html">28.4. Demonstration: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/bayesian-neural-nets/exercise-bayesian-neural-networks.html">28.5. Exercise: Bayesian neural networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/convolutional-neural-nets/index.html">29. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/convolutional-neural-nets/sec-what-is-a-convolutional-neural-network.html">29.6. Alternative: What is a convolutional neural network?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/convolutional-neural-nets/demo-image-recognition-with-cnn.html">29.7. Demonstration: Image recognition with Convolutional Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/convolutional-neural-nets/demo-cnn-pytorch.html">29.8. Pytorch version of the CNN demo notebook</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Other topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Other-Topics/index.html">30. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Other-Topics/emulators/index.html">31. Emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Other-Topics/emulators/sec-bayes-goes-fast.html">31.1. Bayes goes fast: Emulators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Other-Topics/emulators/sec-rbm-emulators.html">31.2. RBM emulators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Other-Topics/emulators/sec-extra-info-on-emulators.html">31.3. Extra info on emulators</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Other-Topics/pca-svd-and-all-that/index.html">32. PCA, SVD, and all that</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Other-Topics/pca-svd-and-all-that/demo-svd.html">32.5. Demonstration: SVD</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Other-Topics/qbism-bayesian-quantum-mechanics/index.html">33. QBism: Bayesian quantum mechanics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/bibliography.html">34. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/JB_tests.html">35. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Statistics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Statistics/index.html">36. Overview of Appendix A</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Scientific-modeling/index.html">37. Overview of scientific modeling material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/index.html">38. Overview of modeling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-notation.html">38.1. Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-models-in-science.html">38.2. Models in science</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-parametric-versus-non-parametric-models.html">38.3. Parametric versus non-parametric models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-linear-versus-non-linear-models.html">38.4. Linear versus non-linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-regression-analysis-optimization-versus-inference.html">38.5. Regression analysis: optimization versus inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-exercises.html">38.6. Exercises</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-solutions.html">38.7. Solutions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/index.html">39. Linear models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-definition-of-linear-models.html">39.1. Definition of linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-regression-analysis-with-linear-models.html">39.2. Regression analysis with linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-ordinary-linear-regression-warmup.html">39.3. Ordinary linear regression: warmup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-ordinary-linear-regression-in-practice.html">39.4. Ordinary linear regression in practice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-solutions.html">39.5. Solutions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/index.html">40. Mathematical optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-gradient-descent-optimization.html">40.1. Gradient-descent optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-batch-stochastic-and-mini-batch-gradient-descent.html">40.2. Batch, stochastic and mini-batch gradient descent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-adaptive-gradient-descent-algorithms.html">40.3. Adaptive gradient descent algorithms</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Getting-started/index.html">41. Overview of Getting started material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Getting-started/jupyter-notebooks-and-python/index.html">42. Jupyter notebooks and Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/jupyter-notebooks-and-python/exercise-jupyter-notebooks-and-python.html">42.1. Exercise: Jupyter notebooks and Python</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/index.html">43. More about Python and Jupyter notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/exercise-python-lists-and-iterations.html">43.4. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/exercise-linear-algebra-operations-with-numpy.html">43.5. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/demo-reading-data-and-fitting.html">43.6. Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/demo-making-a-simple-widget-based-ui.html">43.7. Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/index.html">44. Setting up for using this Jupyter Book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/sec-using-anaconda.html">44.1. Using Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/sec-using-github.html">44.2. Using GitHub</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/index.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_I_toy_model_of_EFT.html"> MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIa.html"> MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html"> MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Mini-projects/Mini-project_IIb_overview.html">Overview of Mini-project IIb: How many lines?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIa_bayesian_optimization.html"> MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html"> MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/cforssen/LFD_development_v2.0/main?urlpath=tree/./content/Advanced-Bayesian-methods/discrepancy-models/demo-ball-drop-experiment.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Binder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Binder logo" src="../../../_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/cforssen/LFD_development_v2.0" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cforssen/LFD_development_v2.0/issues/new?title=Issue%20on%20page%20%2Fcontent/Advanced-Bayesian-methods/discrepancy-models/demo-ball-drop-experiment.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/content/Advanced-Bayesian-methods/discrepancy-models/demo-ball-drop-experiment.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>📥 Model discrepancy example: The ball-drop experiment</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-formulation">Statistical formulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theory">Theory</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-plot-style">Set plot style</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-sampling-with-emcee-and-pocomc-samplers">Setup sampling with emcee and pocomc samplers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-experimental-observations-for-height">Generate “experimental” observations for height</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-physics-model">Define physics model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-model-discrepancy-class">Define model discrepancy class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-priors">Define priors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#without-model-discrepancy">Without model discrepancy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-do-the-sampling-and-plot-the-posteriors">Now do the sampling and plot the posteriors</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#with-model-discrepancy">With model discrepancy</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="model-discrepancy-example-the-ball-drop-experiment">
+<span id="demo-ball-drop-experiment"></span><h1><span class="section-number">11.5. </span>📥 Model discrepancy example: The ball-drop experiment<a class="headerlink" href="#model-discrepancy-example-the-ball-drop-experiment" title="Link to this heading">#</a></h1>
+<p>A ball is dropped from a tower of height <span class="math notranslate nohighlight">\(h_0\)</span> at initial time <span class="math notranslate nohighlight">\(t_0=0\)</span> with intial velocity <span class="math notranslate nohighlight">\(v_0=0\)</span>. The height from the ground is recorded at discrete time points. Data is generated based on a model with drag, and includes uncorrelated Gaussian measurement errors. The aim is to extract the value of accelaration due to gravity, <span class="math notranslate nohighlight">\(g\)</span>.</p>
+<p>The problem is that the data is noisy <em>and</em> our theoretical model, which is simply free fall without drag, is incorrect. How can we best formulate our analysis such that the extraction of <span class="math notranslate nohighlight">\(g\)</span> is robust? I.e., that we get a distribution for <span class="math notranslate nohighlight">\(g\)</span> that covers the true answer with plausible uncertainty.</p>
+<p><strong>This notebook was created by Dr. Sunil Jaiswal in July, 2025.</strong></p>
+<section id="statistical-formulation">
+<h2>Statistical formulation<a class="headerlink" href="#statistical-formulation" title="Link to this heading">#</a></h2>
+<p>We will follow the article by <a class="reference external" href="https://epubs.siam.org/doi/10.1137/S1064827503426693">Higdon et.al.</a>
+The statistical equation accounting for model discrepancy is:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+    y(x_i) = \eta(x_i; {\boldsymbol \theta}) + \delta(x_i;{\boldsymbol \phi}) + \epsilon(x_i;{\boldsymbol \sigma_{\boldsymbol \epsilon}}) \,, \quad i =1, \dots , n
+\tag{1}
+\end{equation*}\]</div>
+<p>where <span class="math notranslate nohighlight">\(x\)</span> is the input vector (time in the case of the ball drop experiment) of length <span class="math notranslate nohighlight">\(n\)</span>.</p>
+<ul class="simple">
+<li><p>We shall denote the input domain as <span class="math notranslate nohighlight">\(\{x_1,\cdots,x_n\}\in \chi_*\)</span>.</p></li>
+<li><p>The above equation should be understood as an equation which holds on the range (set of all possible outcomes) of the probability distributions. It means that a sample drawn at a given <span class="math notranslate nohighlight">\(x_i\)</span> from the probability distributions <span class="math notranslate nohighlight">\(\mathrm{pr}(y)\)</span> should be equal to the sum of the sample drawn from each of the distributions <span class="math notranslate nohighlight">\(\mathrm{pr}(\eta|{\boldsymbol \theta})\)</span>, <span class="math notranslate nohighlight">\(\mathrm{pr}(\delta|{\boldsymbol \phi})\)</span> and <span class="math notranslate nohighlight">\(\mathrm{pr}(\epsilon|{\boldsymbol \sigma_{\boldsymbol \epsilon}})\)</span>.</p></li>
+<li><p>Note that for given <span class="math notranslate nohighlight">\(x_i\)</span>, <span class="math notranslate nohighlight">\(\mathrm{pr}(\eta(x_i)|{\boldsymbol \theta}) = \delta(\eta(x_i)-\eta(x_i;{\boldsymbol \theta}))\)</span> is deterministic since the model is deterministic given <span class="math notranslate nohighlight">\({\boldsymbol \theta}\)</span> (note: <span class="math notranslate nohighlight">\(\delta\)</span> is the Dirac delta function).</p></li>
+</ul>
+<p>In Eq. (1), <span class="math notranslate nohighlight">\(y(x_i)\)</span> are vectors of the measured observables (velocity and height) at each input point <span class="math notranslate nohighlight">\(x_i\)</span>.</p>
+<ul class="simple">
+<li><p>The error in the measurement of <span class="math notranslate nohighlight">\(y(x_i)\)</span> is represented by <span class="math notranslate nohighlight">\(\epsilon(x_i;{\boldsymbol \sigma_{\boldsymbol \epsilon}})\)</span>, which is assumed to be independently and identically distributed <span class="math notranslate nohighlight">\(\sim N(0, {\boldsymbol \sigma_{\boldsymbol \epsilon}}^2)\)</span> for each type of observable (velocity and height: <span class="math notranslate nohighlight">\(\{\sigma_v, \sigma_h\} \in {\boldsymbol \sigma_{\boldsymbol \epsilon}}\)</span>).</p></li>
+<li><p>Note that <span class="math notranslate nohighlight">\(\{\sigma_v, \sigma_h\}\)</span> are fixed constants since we have assumed the distribution for each type of observable to be iid’s. We shall treat them as information `<span class="math notranslate nohighlight">\(I\)</span>’ whenever we write any probability distribution <span class="math notranslate nohighlight">\(\mathrm{pr}(\bullet|\bullet,I)\)</span>, and will not state them explicitly.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta(x;{\boldsymbol \theta})\)</span> denotes the observable predictions of the physics theory given the value of the parameters of the theory <span class="math notranslate nohighlight">\(\{g, \sigma_{v_0}\}\in {\boldsymbol \theta}\)</span>.</p></li>
+<li><p>The stochastic model <span class="math notranslate nohighlight">\(\mathrm{pr}(\delta(x)|{\boldsymbol \phi}) = GP[0,\kappa(x, x';{\boldsymbol \phi})]\)</span>, accounts for model discrepancy (discrepancy between the physics model and reality) where <span class="math notranslate nohighlight">\(\kappa\)</span> is covariance kernel of the Gaussian Process (GP) with  <span class="math notranslate nohighlight">\(\{\bar{c}_v,\, l_v,\, \bar{c}_h,\, l_h\}\in {\boldsymbol \phi}\)</span> representing the hyperparameters.</p></li>
+<li><p>We define   <span class="math notranslate nohighlight">\(\{{\boldsymbol \theta}, {\boldsymbol \phi}\} \in {\boldsymbol \alpha}\)</span> as a vector containing <span class="math notranslate nohighlight">\({\boldsymbol \theta}\)</span> and <span class="math notranslate nohighlight">\({\boldsymbol \phi}\)</span> for compact notation.</p></li>
+</ul>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading">#</a></h2>
+<p>Consider the drag force on the ball (sphere) for the true model to behave as</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+{\bf f}_D = -(b v + c v^2)\, \hat{\bf{v}} \,, \tag{2}
+\end{equation*}\]</div>
+<!-- $${\bf f}_D = -(b v + c v^2)\, \hat{\bf{v}} \,, \tag(2)$$ -->
+<p>where <span class="math notranslate nohighlight">\(v\)</span> is magnitude of velocity <span class="math notranslate nohighlight">\(\bf{v}\)</span>.
+The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <span class="math notranslate nohighlight">\(c\)</span> are drag coefficients.</p>
+<p><span class="math notranslate nohighlight">\(\bullet\)</span> Equation of motion:</p>
+<div class="math notranslate nohighlight">
+\[m\frac{d\bf{v}}{dt} = m {\bf g} - b {\bf v}- c v^2 \hat{\bf{v}} \,.\]</div>
+<p>We have considerd the downward direction to be positive. Here <span class="math notranslate nohighlight">\(\color{red}{m=1\, kg}\)</span> is the mass of the sphere and <span class="math notranslate nohighlight">\(\color{red}{g=9.8\, m/s^2}\)</span> the acceleration due to gravity.</p>
+<p><span class="math notranslate nohighlight">\(\bullet\)</span> The equation for velocity can be written as <span class="math notranslate nohighlight">\(m\frac{d v}{dt} = m g - b v- c v \sqrt{v^2}\)</span>. The last term is written such that it takes into account the direction of velocity in quadratic term. We need to solve the equations:</p>
+<div class="math notranslate nohighlight">
+\[\frac{d v}{dt} = g - \frac{b}{m} v- \frac{c}{m} v |v| \,, \qquad 
+\frac{dh}{dt} = -v \,.\]</div>
+<p>By default we consider the ball to have the initial height <span class="math notranslate nohighlight">\(\color{red}{h_0=60\, m}\)</span> at initial time <span class="math notranslate nohighlight">\(\color{red}{t_0=0\,sec}\)</span> with initial velocity <span class="math notranslate nohighlight">\(\color{red}{v_0=0\, m/s^2}\)</span>.</p>
+<section id="set-plot-style">
+<h3>Set plot style<a class="headerlink" href="#set-plot-style" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># # Add the local CodeLocal directory to the path so Jupyter finds the module file.</span>
+<span class="c1"># import sys</span>
+<span class="c1"># sys.path.append(&#39;./CodeLocal&#39;)</span>
+<span class="c1"># from setup_rc_params import setup_rc_params  # import from setup_rc_params.py in subdirectory CodeLocal</span>
+
+<span class="c1"># setup_rc_params(presentation=True, constrained_layout=True, usetex=True, dpi=400)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="setup-sampling-with-emcee-and-pocomc-samplers">
+<h3>Setup sampling with emcee and pocomc samplers<a class="headerlink" href="#setup-sampling-with-emcee-and-pocomc-samplers" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">emcee</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pocomc</span>   <span class="c1"># uncomment here when using pocomc sampler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>  
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">uniform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="c1"># ================================ emcee sampler ==================================</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">emcee_sampling</span><span class="p">(</span><span class="n">min_param</span><span class="p">,</span> <span class="n">max_param</span><span class="p">,</span> <span class="n">log_posterior</span><span class="p">,</span> 
+                   <span class="n">nburn</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">num_walker_per_dim</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function for sampling in parallel using emcee.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters:</span>
+<span class="sd">      - min_param (list or array): minimum values parameters</span>
+<span class="sd">      - max_param (list or array): maximum values parameters</span>
+<span class="sd">      - log_posterior (callable): log posterior</span>
+<span class="sd">      - nburn (int): &quot;burn-in&quot; period to let chains stabilize</span>
+<span class="sd">      - nsteps (int): # number of MCMC steps to take after burn-in</span>
+<span class="sd">      - num_walker_per_dim (int): number of walker per dimension</span>
+<span class="sd">      - samples_save_dir (string): directory name in which the samples will be saved</span>
+<span class="sd">      - progress (boolean): toggle the progress bar</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">min_param</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">max_param</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;min_param and max_param must have the same length.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="n">ndim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">min_param</span><span class="p">)</span>  <span class="c1"># number of parameters in the model</span>
+    <span class="n">nwalkers</span> <span class="o">=</span> <span class="n">ndim</span> <span class="o">*</span> <span class="n">num_walker_per_dim</span>  <span class="c1"># number of MCMC walkers</span>
+    
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting MCMC sampling using emcee with </span><span class="si">{</span><span class="n">nwalkers</span><span class="si">}</span><span class="s2"> walkers in parallel...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Generate starting guesses within the prior bounds</span>
+    <span class="n">starting_guesses</span> <span class="o">=</span>  <span class="n">min_param</span> <span class="o">+</span> <span class="p">(</span><span class="n">max_param</span> <span class="o">-</span> <span class="n">min_param</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span><span class="n">ndim</span><span class="p">)</span>
+    
+    <span class="c1"># Create a pool of workers using multiprocessing</span>
+    <span class="k">with</span> <span class="n">Pool</span><span class="p">()</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+        <span class="c1"># Pass the pool to the sampler</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span><span class="n">ndim</span><span class="p">,</span><span class="n">log_posterior</span><span class="p">,</span><span class="n">pool</span><span class="o">=</span><span class="n">pool</span><span class="p">)</span>
+    
+        <span class="c1"># &quot;Burn-in&quot; period</span>
+        <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">starting_guesses</span><span class="p">,</span> <span class="n">nburn</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">)</span>
+        <span class="n">sampler</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    
+        <span class="c1"># Sampling period</span>
+        <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">)</span>
+
+    <span class="c1"># Collect samples</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sampling complete. Time taken: </span><span class="si">{</span><span class="p">(</span><span class="n">end_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean acceptance fraction: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (in total </span><span class="si">{</span><span class="n">nwalkers</span><span class="o">*</span><span class="n">nsteps</span><span class="si">}</span><span class="s2"> steps)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Samples shape: </span><span class="si">{</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">samples</span>
+
+
+<span class="c1"># ================================ pocoMC sampler ==================================</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pocomc_sampling</span><span class="p">(</span><span class="n">min_param</span><span class="p">,</span> <span class="n">max_param</span><span class="p">,</span> <span class="n">log_posterior</span><span class="p">,</span>
+                    <span class="n">n_effective</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">n_active</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="c1"># n_prior=2048, n_max_steps=200, </span>
+                    <span class="n">n_total</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">n_evidence</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">ncores</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                   <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is based on PocoMC package (version 1.2.1).</span>
+<span class="sd">    pocoMC is a Preconditioned Monte Carlo (PMC) sampler that uses </span>
+<span class="sd">    normalizing flows to precondition the target distribution.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">      - min_param (list or array): Minimum values parameters</span>
+<span class="sd">      - max_param (list or array): Maximum values parameters</span>
+<span class="sd">      - log_posterior (callable): Log posterior</span>
+
+<span class="sd">      - n_effective (int): The effective sample size maintained during the run. Default: 2000.</span>
+<span class="sd">      - n_active (int): Number of active particles. Default: 800. Must be &lt; n_effective.</span>
+<span class="sd">      - n_steps (int): Number of MCMC steps after logP plateau. Default: None -&gt; n_steps=n_dim. </span>
+<span class="sd">                       Higher values lead to better exploration but increases computational cost.</span>
+<span class="sd">      - n_total (int): Total effectively independent samples to be collected. Default: 5000.</span>
+<span class="sd">      - n_evidence (int): Number of importance samples used to estimate evidence. Default: 5000. </span>
+<span class="sd">                          If 0, the evidence is not estimated using importance sampling.</span>
+
+<span class="sd">      - ncores: Number of cores to use in sampling. </span>
+<span class="sd">                  -1 (default): use all availaible cores</span>
+<span class="sd">                   n (int): use n cores</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Generating prior range for pocomc</span>
+    <span class="n">priors</span> <span class="o">=</span> <span class="p">[</span><span class="n">uniform</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">-</span> <span class="n">lower</span><span class="p">)</span> <span class="k">for</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">min_param</span><span class="p">,</span> <span class="n">max_param</span><span class="p">)]</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="n">pocomc</span><span class="o">.</span><span class="n">Prior</span><span class="p">(</span><span class="n">priors</span><span class="p">)</span>
+    
+    <span class="n">ndim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">min_param</span><span class="p">)</span>  <span class="c1"># number of parameters in the model</span>
+
+    <span class="c1"># -------------------------------------------------------------------------------------------- </span>
+    <span class="c1"># Try to get the allowed CPU count via affinity (works on Linux/Windows)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">available_cores</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sched_getaffinity</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="c1"># len(psutil.Process().cpu_affinity())</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="c1"># On systems where affinity is not available (e.g., macOS), use total CPU count</span>
+        <span class="n">available_cores</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+
+    <span class="c1"># Validate that ncores is an integer and at least -1</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ncores</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ncores</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ncores must be an integer greater than or equal to -1. Specify &#39;-1&#39; to use all available cores.&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">ncores</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Use all available cores</span>
+        <span class="n">num_cores</span> <span class="o">=</span> <span class="n">available_cores</span>
+    <span class="k">elif</span> <span class="n">ncores</span> <span class="o">&gt;</span> <span class="n">available_cores</span><span class="p">:</span>
+        <span class="c1"># Warn if more cores are requested than available and then use available cores</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;ncores (</span><span class="si">{</span><span class="n">ncores</span><span class="si">}</span><span class="s2">) exceeds available cores (</span><span class="si">{</span><span class="n">available_cores</span><span class="si">}</span><span class="s2">). Using available cores.&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span>
+        <span class="p">)</span>
+        <span class="n">num_cores</span> <span class="o">=</span> <span class="n">available_cores</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">num_cores</span> <span class="o">=</span> <span class="n">ncores</span>     
+    <span class="c1"># --------------------------------------------------------------------------------------------</span>
+    
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">pocomc</span><span class="o">.</span><span class="n">Sampler</span><span class="p">(</span><span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">likelihood</span><span class="o">=</span><span class="n">log_posterior</span><span class="p">,</span>
+                                 <span class="n">n_effective</span><span class="o">=</span><span class="n">n_effective</span><span class="p">,</span> <span class="n">n_active</span><span class="o">=</span><span class="n">n_active</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="n">n_steps</span><span class="p">,</span>
+                                 <span class="c1"># dynamic=True, n_prior=n_prior, n_max_steps=n_max_steps,</span>
+                                 <span class="n">pytorch_threads</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># use all availaible threads for training</span>
+                                 <span class="n">pool</span><span class="o">=</span><span class="n">num_cores</span>
+                                 <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting sampling using pocomc in </span><span class="si">{</span><span class="n">num_cores</span><span class="si">}</span><span class="s2"> cores...&quot;</span><span class="p">)</span>
+
+    <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">n_total</span><span class="o">=</span><span class="n">n_total</span><span class="p">,</span> 
+                <span class="n">n_evidence</span><span class="o">=</span><span class="n">n_evidence</span><span class="p">,</span> 
+                <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+    <span class="c1"># Generating the posterior samples</span>
+    <span class="c1"># samples, weights, logl, logp = sampler.posterior() # Weighted posterior samples</span>
+    <span class="n">samples</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">posterior</span><span class="p">(</span><span class="n">resample</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># equal weights for samples </span>
+    
+    <span class="c1"># Generating the evidence</span>
+    <span class="c1"># logz, logz_err = sampler.evidence() # Bayesian model evidence estimate and uncertainty</span>
+    <span class="c1"># print(&quot;Log evidence: &quot;, logz)</span>
+    <span class="c1"># print(&quot;Log evidence error: &quot;, logz_err)</span>
+    
+    <span class="c1"># logging.info(&#39;Writing pocoMC chains to file...&#39;)</span>
+    <span class="c1"># chain_data = {&#39;chain&#39;: samples, &#39;weights&#39;: weights, &#39;logl&#39;: logl,</span>
+    <span class="c1">#                 &#39;logp&#39;: logp, &#39;logz&#39;: logz, &#39;logz_err&#39;: logz_err}</span>
+
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sampling complete. Time taken: </span><span class="si">{</span><span class="p">(</span><span class="n">end_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Samples shape: </span><span class="si">{</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">samples</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="generate-experimental-observations-for-height">
+<h3>Generate “experimental” observations for height<a class="headerlink" href="#generate-experimental-observations-for-height" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">odeint</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">True_height</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">h0</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">v0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">g</span><span class="o">=</span><span class="mf">9.8</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">0.4</span><span class="p">):</span>    <span class="c1"># initial conditions</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Height of a falling ball with linear + quadratic air drag.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : float or 1-D array_like</span>
+<span class="sd">        Time(s) at which to evaluate the height.</span>
+<span class="sd">    h0, v0 : float, optional</span>
+<span class="sd">        Initial height and velocity at time t = 0.</span>
+<span class="sd">    g : float, optional</span>
+<span class="sd">        Acceleration due to gravity (m s⁻²) (taken positive downward).</span>
+<span class="sd">    m : float, optional</span>
+<span class="sd">        Mass of the ball (kg).</span>
+<span class="sd">    b, c : float, optional</span>
+<span class="sd">        Linear and quadratic drag coefficients.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    h : 1darray</span>
+<span class="sd">        Height(s) at the requested time points (same shape as `t`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">derivatives</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">_t</span><span class="p">):</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="n">dhdt</span> <span class="o">=</span> <span class="o">-</span><span class="n">v</span>
+        <span class="n">dvdt</span> <span class="o">=</span> <span class="n">g</span> <span class="o">-</span> <span class="p">(</span><span class="n">b</span><span class="o">*</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">m</span> <span class="o">-</span> <span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="nb">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">m</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">dhdt</span><span class="p">,</span> <span class="n">dvdt</span><span class="p">]</span>
+
+    <span class="c1"># Ensure we integrate from t0 out to the requested time(s)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">t</span><span class="p">))</span>  <span class="c1"># add t[0] to get solution at t=0 </span>
+    <span class="n">sol</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="n">derivatives</span><span class="p">,</span> <span class="p">[</span><span class="n">h0</span><span class="p">,</span> <span class="n">v0</span><span class="p">],</span> <span class="n">times</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># Set a random seed for reproducibility. Change 42 -&gt; 0 for different seeds every time.</span>
+
+<span class="c1"># Generate an array of time where height are observed --&gt;</span>
+<span class="n">t_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">t_noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">t_obs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># random noise added to time. helps in inversion of covariance matrix.</span>
+<span class="n">t_noise</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># No noise for initial time</span>
+<span class="n">t_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">t_obs</span> <span class="o">+</span> <span class="n">t_noise</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+
+<span class="c1"># Compute height of ball at these time steps --&gt;</span>
+<span class="n">hexp_std</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># standard deviation of assumed gaussian noise as error of measurment</span>
+<span class="n">hexp_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">hexp_std</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">t_obs</span><span class="p">))</span>  <span class="c1"># adding gaussian noise to observation of height</span>
+<span class="n">hexp_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">True_height</span><span class="p">(</span><span class="n">t_obs</span><span class="p">),</span> <span class="n">hexp_err</span><span class="p">)</span>    <span class="c1"># observed height at input times</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> 
+<span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">t_obs</span><span class="p">,</span> <span class="n">hexp_mean</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="p">[</span><span class="mf">1.96</span><span class="o">*</span><span class="n">hexp_err</span><span class="p">,</span> <span class="mf">1.96</span><span class="o">*</span><span class="n">hexp_err</span><span class="p">],</span> 
+             <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">capsize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> 
+             <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;``Experiment&quot;: 95\% CI&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/a04c12d4a5a26a9a0f42da07c1e27c9f6c3e9810885d2ff11076c296bd057a3e.png" src="../../../_images/a04c12d4a5a26a9a0f42da07c1e27c9f6c3e9810885d2ff11076c296bd057a3e.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="define-physics-model">
+<h2>Define physics model<a class="headerlink" href="#define-physics-model" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">model_height</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">v0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">h0</span><span class="o">=</span><span class="mf">60.0</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">h0</span>  <span class="o">-</span> <span class="n">v0</span> <span class="o">*</span> <span class="n">t</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">t</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="p">)</span>
+
+<span class="c1"># def model_height(t, g, v0, h0=60.0):</span>
+<span class="c1">#     f = True_height(t, h0=60.0, v0=v0, g=g, m=1.0, b=0.0, c=0.0)</span>
+<span class="c1">#     return np.atleast_1d(f)</span>
+<span class="c1"># model_height(t=t_obs, g = 9.8)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="define-model-discrepancy-class">
+<h2>Define model discrepancy class<a class="headerlink" href="#define-model-discrepancy-class" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">mahalanobis</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelDiscrepancy</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">,</span> <span class="n">hexp_mean</span><span class="p">,</span> <span class="n">hexp_err</span><span class="p">,</span> <span class="n">model_height</span><span class="p">,</span> <span class="n">num_model_param</span><span class="p">,</span> <span class="n">log_priors</span><span class="p">,</span> <span class="n">MD</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">kernel_func</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_obs</span> <span class="o">=</span> <span class="n">t_obs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hexp_mean</span> <span class="o">=</span> <span class="n">hexp_mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hexp_err</span> <span class="o">=</span> <span class="n">hexp_err</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_height</span> <span class="o">=</span> <span class="n">model_height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_model_param</span> <span class="o">=</span> <span class="n">num_model_param</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_priors</span> <span class="o">=</span> <span class="n">log_priors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MD</span> <span class="o">=</span> <span class="n">MD</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_func</span> <span class="o">=</span> <span class="n">kernel_func</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">MD</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_priors_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_priors</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">num_model_param</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_priors_MDGP</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_priors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_model_param</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_priors_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_priors</span>
+        
+        <span class="c1"># standardize experimental data  -----&gt;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hexp_mean_scaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hexp_mean</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">mean_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">scale_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">hexp_err_scaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hexp_err</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span>
+    <span class="c1">#=======================================================================</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="p">[]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the log-likelihood of a dataset given the mean and covariance matrix.</span>
+<span class="sd">    </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">            theta: 1D NumPy array containing model parameters.</span>
+<span class="sd">            phi: 1D NumPy array containing GP kernel hyperparameters.</span>
+<span class="sd">    </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Log-likelihood of the dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_model_param</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">model_height</span><span class="p">(</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_obs</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_model_param</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">g</span><span class="p">,</span> <span class="n">v0</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_height</span><span class="p">(</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_obs</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="p">,</span> <span class="n">v0</span> <span class="o">=</span> <span class="n">v0</span><span class="p">)</span>
+    
+        <span class="n">hmodel_scaled</span> <span class="o">=</span> <span class="p">(</span><span class="n">h</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span>
+    
+        <span class="n">cov_exp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hexp_err_scaled</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">MD</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">cov_total</span> <span class="o">=</span> <span class="n">cov_exp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_obs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">cov_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_func</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="o">*</span><span class="n">phi</span><span class="p">)</span> <span class="o">+</span> <span class="n">cov_exp</span>
+                                
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_obs</span><span class="p">)</span>  <span class="c1"># number of observables</span>
+    
+        <span class="n">md2</span> <span class="o">=</span> <span class="n">mahalanobis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hexp_mean_scaled</span><span class="p">,</span> <span class="n">hmodel_scaled</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">cov_total</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+    
+        <span class="c1"># calculate the log-likelihood</span>
+        <span class="n">log_likelihood_value</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">md2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">cov_total</span><span class="p">))</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="p">)</span>
+                                    
+        <span class="k">return</span> <span class="n">log_likelihood_value</span>
+    <span class="c1">#=======================================================================</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta_and_phi</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the log posterior = sum of log priors + log likelihood.</span>
+<span class="sd">    </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        theta_and_phi : np.ndarray (1D)</span>
+<span class="sd">            Combined array of model params (theta) and discrepancy params (phi) if MD=True.</span>
+<span class="sd">    </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The log posterior value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">theta_and_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">theta_and_phi</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">MD</span><span class="p">:</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">theta_and_phi</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">num_model_param</span><span class="p">]</span>
+            <span class="n">phi</span> <span class="o">=</span> <span class="n">theta_and_phi</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_model_param</span><span class="p">:]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">theta_and_phi</span>
+            <span class="n">phi</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># ----------------------------------------</span>
+        <span class="c1"># Calculate log-prior for model parameters</span>
+        <span class="c1"># ----------------------------------------</span>
+        <span class="n">log_prior_val</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prior_func</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_priors_model</span><span class="p">):</span>
+            <span class="n">lp</span> <span class="o">=</span> <span class="n">prior_func</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">lp</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">1e5</span><span class="p">:</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mf">1e30</span>
+            <span class="n">log_prior_val</span> <span class="o">+=</span> <span class="n">lp</span>
+
+        <span class="c1"># ------------------------------------------------------</span>
+        <span class="c1"># If MD ==True, accumulate log-prior for phi as well</span>
+        <span class="c1"># ------------------------------------------------------</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">MD</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prior_func</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_priors_MDGP</span><span class="p">):</span>
+                <span class="n">lp</span> <span class="o">=</span> <span class="n">prior_func</span><span class="p">(</span><span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">lp</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">1e5</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="o">-</span><span class="mf">1e30</span>
+                <span class="n">log_prior_val</span> <span class="o">+=</span> <span class="n">lp</span>
+
+        <span class="c1"># ------------------------</span>
+        <span class="c1"># Calculate log-likelihood</span>
+        <span class="c1"># ------------------------</span>
+        <span class="n">log_likelihood_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">log_prior_val</span> <span class="o">+</span> <span class="n">log_likelihood_val</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="define-priors">
+<h2>Define priors<a class="headerlink" href="#define-priors" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">beta</span>
+
+<span class="c1"># Define function for general beta priors </span>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_prior_param</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">alpha_val</span><span class="p">,</span> <span class="n">beta_val</span><span class="p">,</span> <span class="n">param_min</span><span class="p">,</span> <span class="n">param_max</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Log prior for parameter based on a Beta distribution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">param_max</span> <span class="o">-</span> <span class="n">param_min</span>  <span class="c1"># Rescaling factor</span>
+
+    <span class="k">if</span> <span class="n">param_min</span> <span class="o">&lt;</span> <span class="n">param</span> <span class="o">&lt;</span> <span class="n">param_max</span><span class="p">:</span>
+        <span class="c1"># Rescale param to the range [param_min, param_max]</span>
+        <span class="n">param_rescaled</span> <span class="o">=</span> <span class="p">(</span><span class="n">param</span> <span class="o">-</span> <span class="n">param_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span>
+        
+        <span class="n">prior</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">param_rescaled</span><span class="p">,</span> <span class="n">alpha_val</span><span class="p">,</span> <span class="n">beta_val</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">prior</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_param_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="mf">20.0</span> <span class="p">],</span>
+                               <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span> <span class="p">,</span>  <span class="mf">2.0</span> <span class="p">]])</span>
+
+<span class="c1"># model_param_bounds = np.array([[ 0.0,  20.0 ]])  # When only model parameter is g -- That&#39;s all the change required in code</span>
+
+<span class="n">num_model_param</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_param_bounds</span><span class="p">)</span>
+
+<span class="c1"># Define a list of log_prior functions for model parameters</span>
+<span class="n">log_prior_theta</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="k">lambda</span> <span class="n">param</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">:</span> <span class="n">log_prior_param</span><span class="p">(</span>
+        <span class="n">param</span><span class="p">,</span> <span class="n">alpha_val</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">beta_val</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span>  <span class="c1"># for flat priors</span>
+        <span class="n">param_min</span><span class="o">=</span><span class="n">model_param_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">param_max</span><span class="o">=</span><span class="n">model_param_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_model_param</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="without-model-discrepancy">
+<h2>Without model discrepancy<a class="headerlink" href="#without-model-discrepancy" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate class  --&gt;</span>
+<span class="n">MDC</span> <span class="o">=</span> <span class="n">ModelDiscrepancy</span><span class="p">(</span><span class="n">t_obs</span><span class="o">=</span><span class="n">t_obs</span><span class="p">,</span> <span class="n">hexp_mean</span><span class="o">=</span><span class="n">hexp_mean</span><span class="p">,</span> <span class="n">hexp_err</span><span class="o">=</span><span class="n">hexp_err</span><span class="p">,</span> 
+                      <span class="n">model_height</span><span class="o">=</span><span class="n">model_height</span><span class="p">,</span> <span class="n">num_model_param</span><span class="o">=</span><span class="n">num_model_param</span><span class="p">,</span> 
+                      <span class="n">log_priors</span><span class="o">=</span><span class="n">log_prior_theta</span><span class="p">,</span> <span class="n">MD</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">kernel_func</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimize</span>
+
+<span class="n">guess</span> <span class="o">=</span> <span class="n">model_param_bounds</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Find Maximum likelihood value for parameters --&gt;</span>
+<span class="n">nll</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="o">-</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">nll</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span>  <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Powell&#39;</span><span class="p">)</span>
+<span class="n">max_lik</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Maximum likelihood value for parameters:&quot;</span><span class="p">,</span> <span class="n">max_lik</span><span class="p">,</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># Find MAP values for parameters --&gt;</span>
+<span class="n">nlp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="o">-</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">nlp</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span>  <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Powell&#39;</span><span class="p">)</span>
+<span class="n">MAP</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">MAP values for parameters:&quot;</span><span class="p">,</span> <span class="n">MAP</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> message: Maximum number of function evaluations has been exceeded.
+ success: False
+  status: 1
+     fun: -8.556378888999681
+       x: [ 3.977e+00  1.354e+00]
+     nit: 83
+   direc: [[ 7.342e-03  7.656e-05]
+           [ 9.371e-03 -8.352e-04]]
+    nfev: 2000
+
+Maximum likelihood value for parameters: [3.97682437 1.35379069] 
+
+ message: Maximum number of function evaluations has been exceeded.
+ success: False
+  status: 1
+     fun: -4.17801963736677
+       x: [ 3.978e+00  1.353e+00]
+     nit: 83
+   direc: [[ 7.276e-03  1.052e-04]
+           [ 9.307e-03 -8.065e-04]]
+    nfev: 2000
+
+MAP values for parameters: [3.97794526 1.35323281]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">corner</span>
+
+<span class="n">min_param</span> <span class="o">=</span> <span class="n">model_param_bounds</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">max_param</span> <span class="o">=</span> <span class="n">model_param_bounds</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">lab</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$g$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$v_0$&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="now-do-the-sampling-and-plot-the-posteriors">
+<h3>Now do the sampling and plot the posteriors<a class="headerlink" href="#now-do-the-sampling-and-plot-the-posteriors" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_burn</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># 2000 is a minimum</span>
+<span class="n">num_steps</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># 2000 is a minimum</span>
+
+<span class="n">samples_WMD</span> <span class="o">=</span> <span class="n">emcee_sampling</span><span class="p">(</span><span class="n">min_param</span> <span class="o">=</span> <span class="n">min_param</span><span class="p">,</span> <span class="n">max_param</span> <span class="o">=</span> <span class="n">max_param</span><span class="p">,</span> 
+                         <span class="n">log_posterior</span> <span class="o">=</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">,</span> 
+                         <span class="n">nburn</span> <span class="o">=</span> <span class="n">num_burn</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">num_walker_per_dim</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">samples_WMD</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">lab</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">],</span>
+                   <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span> <span class="n">hist_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Starting MCMC sampling using emcee with 16 walkers in parallel...
+Sampling complete. Time taken: 0.07 minutes.
+Mean acceptance fraction: 0.714 (in total 1600 steps)
+Samples shape: (1600, 2)
+</pre></div>
+</div>
+<img alt="../../../_images/1555dfd8a183c3c9c29fcf6e93d79da97b74dabeb09fee139b41f5f5689a9fc7.png" src="../../../_images/1555dfd8a183c3c9c29fcf6e93d79da97b74dabeb09fee139b41f5f5689a9fc7.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># # sampling with pocomc for consistency check ---&gt; </span>
+
+<span class="c1"># n_effective_mltpl = 500</span>
+<span class="c1"># n_active_mltpl = 150  # 0.3 x n_eff</span>
+<span class="c1"># n_steps_mltpl = 2</span>
+<span class="c1"># num_param = len(min_param)</span>
+
+<span class="c1"># n_effective = n_effective_mltpl * num_param</span>
+<span class="c1"># n_active = n_active_mltpl * num_param</span>
+<span class="c1"># n_steps = n_steps_mltpl * num_param</span>
+<span class="c1"># # print(n_effective, n_active, n_steps)</span>
+
+<span class="c1"># n_total = 20000</span>
+
+<span class="c1"># samples_WMD_poco = pocomc_sampling(min_param, max_param, MDC.log_posterior,</span>
+<span class="c1">#                                   n_effective=n_effective, n_active=n_effective, n_steps=n_steps,</span>
+<span class="c1">#                                   n_total=n_total, n_evidence=n_total)</span>
+
+<span class="c1"># fig = corner.corner(samples_WMD_poco, labels=lab, color=&#39;C0&#39;, quantiles=[0.16, 0.5, 0.84],</span>
+<span class="c1">#                    show_titles=True, title_kwargs={&quot;fontsize&quot;: 12}, hist_kwargs={&#39;density&#39;: True})</span>
+<span class="c1"># plt.show()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="with-model-discrepancy">
+<h2>With model discrepancy<a class="headerlink" href="#with-model-discrepancy" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.gaussian_process.kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">DotProduct</span><span class="p">,</span> <span class="n">RBF</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">MD_kernel</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">cbar</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the covariance matrix using a custom kernel:</span>
+<span class="sd">    K(X1, X2) = s^2 + cbar^2 * (X1 @ X2.T)^r * exp(-||X1 - X2||^2 / (2 * l^2)).</span>
+
+<span class="sd">    This kernel serves as the core of the Model Discrepancy framework and should be modified</span>
+<span class="sd">    to suit specific problems.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        - X1 (numpy.ndarray): A matrix where each row represents an input vector.</span>
+<span class="sd">        - X2 (numpy.ndarray): A matrix where each row represents an input vector.</span>
+<span class="sd">        - cbar (float): The marginal variance parameter.</span>
+<span class="sd">        - l (float): The length scale parameter for the RBF term.</span>
+<span class="sd">        - r (float): The power applied to the dot product term.</span>
+<span class="sd">        - s (float): A constant shift.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - numpy.ndarray: A covariance matrix computed using the defined kernel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compute the dot product term</span>
+    <span class="n">dot_product_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">**</span> <span class="n">r</span> <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
+
+    <span class="c1"># Compute the RBF kernel term</span>
+    <span class="n">rbf_kernel</span> <span class="o">=</span> <span class="n">RBF</span><span class="p">(</span><span class="n">length_scale</span><span class="o">=</span><span class="n">l</span><span class="p">)</span>
+    <span class="n">rbf_term</span> <span class="o">=</span> <span class="n">rbf_kernel</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span>
+
+    <span class="c1"># Combine terms</span>
+    <span class="n">cov_matrix</span> <span class="o">=</span>  <span class="n">s</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">cbar</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">dot_product_term</span> <span class="o">*</span> <span class="n">rbf_term</span>
+    <span class="k">return</span> <span class="n">cov_matrix</span>
+    
+<span class="c1"># ===========================================================================================</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define hyperparameter bounds and priors </span>
+<span class="n">HP_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="mf">10.0</span> <span class="p">],</span>     <span class="c1"># for cbar</span>
+                      <span class="p">[</span> <span class="mf">0.0</span> <span class="p">,</span>  <span class="mf">10.0</span> <span class="p">],</span>    <span class="c1"># for l</span>
+                      <span class="p">[</span> <span class="mf">0.0</span> <span class="p">,</span>  <span class="mf">10.0</span> <span class="p">]</span>     <span class="c1"># for r</span>
+                      <span class="c1"># [ 0.0 ,  10.0 ]   # for s</span>
+                     <span class="p">])</span>  
+
+<span class="c1"># Define priors for GP hyperparmeters</span>
+<span class="n">log_prior_cbar</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">param</span><span class="p">:</span> <span class="n">log_prior_param</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">alpha_val</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">beta_val</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">param_min</span><span class="o">=</span><span class="n">HP_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">param_max</span><span class="o">=</span><span class="n">HP_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">log_prior_l</span> <span class="o">=</span>    <span class="k">lambda</span> <span class="n">param</span><span class="p">:</span> <span class="n">log_prior_param</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">alpha_val</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">beta_val</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">param_min</span><span class="o">=</span><span class="n">HP_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">param_max</span><span class="o">=</span><span class="n">HP_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">log_prior_r</span> <span class="o">=</span>    <span class="k">lambda</span> <span class="n">param</span><span class="p">:</span> <span class="n">log_prior_param</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">alpha_val</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">beta_val</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">param_min</span><span class="o">=</span><span class="n">HP_bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">param_max</span><span class="o">=</span><span class="n">HP_bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+<span class="c1"># log_prior_s =    lambda param: log_prior_param(param, alpha_val=1.01, beta_val=1.01, param_min=HP_bounds[3][0], param_max=HP_bounds[3][1])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">cbar</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">MD_kernel</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">cbar</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">log_prior_phi</span> <span class="o">=</span> <span class="p">[</span><span class="n">log_prior_cbar</span><span class="p">,</span> <span class="n">log_prior_l</span><span class="p">,</span> <span class="n">log_prior_r</span><span class="p">]</span>
+
+<span class="n">log_priors_thetaphi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">log_prior_theta</span><span class="p">,</span> <span class="n">log_prior_phi</span><span class="p">])</span>
+<span class="n">param_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">model_param_bounds</span><span class="p">,</span> <span class="n">HP_bounds</span><span class="p">])</span>
+
+<span class="c1"># Instantiate class  --&gt;</span>
+<span class="n">MDC</span> <span class="o">=</span> <span class="n">ModelDiscrepancy</span><span class="p">(</span><span class="n">t_obs</span><span class="o">=</span><span class="n">t_obs</span><span class="p">,</span> <span class="n">hexp_mean</span><span class="o">=</span><span class="n">hexp_mean</span><span class="p">,</span> <span class="n">hexp_err</span><span class="o">=</span><span class="n">hexp_err</span><span class="p">,</span> 
+                      <span class="n">model_height</span><span class="o">=</span><span class="n">model_height</span><span class="p">,</span> <span class="n">num_model_param</span><span class="o">=</span><span class="n">num_model_param</span><span class="p">,</span> 
+                      <span class="n">log_priors</span><span class="o">=</span><span class="n">log_priors_thetaphi</span><span class="p">,</span> <span class="n">MD</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">kernel_func</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimize</span>
+
+<span class="c1"># Find MAP values for parameters --&gt;</span>
+<span class="n">guess</span> <span class="o">=</span> <span class="n">param_bounds</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">nlp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="o">-</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">nlp</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span>  <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Powell&#39;</span><span class="p">)</span>
+<span class="n">MAP</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">MAP values for parameters:&quot;</span><span class="p">,</span> <span class="n">MAP</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> message: Optimization terminated successfully.
+ success: True
+  status: 0
+     fun: 1.130478145440673
+       x: [ 6.949e+00  5.352e-01  6.789e-01  6.310e+00  6.134e+00]
+     nit: 11
+   direc: [[-7.990e-01  1.626e-01 ... -6.852e-01  5.009e-01]
+           [ 3.777e-02  3.153e-02 ...  3.087e-01 -1.696e-01]
+           ...
+           [ 0.000e+00  0.000e+00 ...  1.000e+00  0.000e+00]
+           [-3.678e-01  6.470e-02 ... -4.417e-01  8.013e-01]]
+    nfev: 583
+
+MAP values for parameters: [6.94940459 0.53522913 0.67887983 6.30979757 6.13444589]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">corner</span>
+
+<span class="n">min_param</span> <span class="o">=</span> <span class="n">param_bounds</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">max_param</span> <span class="o">=</span> <span class="n">param_bounds</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">lab</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$g$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$v_0$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\bar</span><span class="si">{c}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\ell$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$r$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$s$&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_burn</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># 2000 is a minimum</span>
+<span class="n">num_steps</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># 2000 is a minimum</span>
+
+<span class="n">samples_MD</span> <span class="o">=</span> <span class="n">emcee_sampling</span><span class="p">(</span><span class="n">min_param</span> <span class="o">=</span> <span class="n">min_param</span><span class="p">,</span> <span class="n">max_param</span> <span class="o">=</span> <span class="n">max_param</span><span class="p">,</span> 
+                         <span class="n">log_posterior</span> <span class="o">=</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">,</span> 
+                         <span class="n">nburn</span> <span class="o">=</span> <span class="n">num_burn</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">num_walker_per_dim</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">samples_MD</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">lab</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">],</span>
+                   <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span> <span class="n">hist_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Starting MCMC sampling using emcee with 40 walkers in parallel...
+Sampling complete. Time taken: 0.20 minutes.
+Mean acceptance fraction: 0.355 (in total 4000 steps)
+Samples shape: (4000, 5)
+</pre></div>
+</div>
+<img alt="../../../_images/069f49febc9b6dd6e1e2710fad36cfc793922c68356edc03fb61875da5cdef52.png" src="../../../_images/069f49febc9b6dd6e1e2710fad36cfc793922c68356edc03fb61875da5cdef52.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># # sampling with pocomc for consistency check ---&gt; </span>
+
+<span class="c1"># n_effective_mltpl = 500</span>
+<span class="c1"># n_active_mltpl = 150  # 0.3 x n_eff</span>
+<span class="c1"># n_steps_mltpl = 2</span>
+<span class="c1"># num_param = len(min_param)</span>
+
+<span class="c1"># n_effective = n_effective_mltpl * num_param</span>
+<span class="c1"># n_active = n_active_mltpl * num_param</span>
+<span class="c1"># n_steps = n_steps_mltpl * num_param</span>
+<span class="c1"># # print(n_effective, n_active, n_steps)</span>
+
+<span class="c1"># n_total = 20000</span>
+
+<span class="c1"># samples_MD_poco = pocomc_sampling(min_param, max_param, MDC.log_posterior,</span>
+<span class="c1">#                                   n_effective=n_effective, n_active=n_effective, n_steps=n_steps,</span>
+<span class="c1">#                                   n_total=n_total, n_evidence=n_total)</span>
+
+<span class="c1"># fig = corner.corner(samples_MD_poco, labels=lab, color=&#39;C0&#39;, quantiles=[0.16, 0.5, 0.84],</span>
+<span class="c1">#                    show_titles=True, title_kwargs={&quot;fontsize&quot;: 12}, hist_kwargs={&#39;density&#39;: True})</span>
+<span class="c1"># plt.show()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "2025-book-env"
+        },
+        kernelOptions: {
+            name: "2025-book-env",
+            path: "./content/Advanced-Bayesian-methods/discrepancy-models"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = '2025-book-env'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="sec-real-world-application-of-discrepancy-model.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">11.4. </span>Real-world application of discrepancy model</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../assigning-probabilities/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">12. </span>Assigning probabilities</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-formulation">Statistical formulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theory">Theory</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-plot-style">Set plot style</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-sampling-with-emcee-and-pocomc-samplers">Setup sampling with emcee and pocomc samplers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-experimental-observations-for-height">Generate “experimental” observations for height</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-physics-model">Define physics model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-model-discrepancy-class">Define model discrepancy class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-priors">Define priors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#without-model-discrepancy">Without model discrepancy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-do-the-sampling-and-plot-the-posteriors">Now do the sampling and plot the posteriors</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#with-model-discrepancy">With model discrepancy</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
