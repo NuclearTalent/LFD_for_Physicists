@@ -11,15 +11,35 @@ description: >- # this means to ignore newlines
   University, respectively.
 only_build_toc_files: true
 
-execute:
-  execute_notebooks         : cache  # force  # off  # cache  # Whether to execute notebooks at build time. Must be one of ("auto", "force", "cache", "off")
-  cache                     : ""    # A path to the jupyter cache that will be used to store execution artifacs. Defaults to `_build/.jupyter_cache/`
-  exclude_patterns          : ["exercise_Jupyter_Python_intro_01.ipynb","demo-cnn.ipynb"]    # A list of patterns to *skip* in execution (e.g. a notebook that takes a really long time)
-  timeout                   : 100    # The maximum time (in seconds) each notebook cell is allowed to run.
-  run_in_temp               : false # If `True`, then a temporary directory will be created and used as the command working directory (cwd),
-                                    # otherwise the notebook's parent directory will be the cwd.
-  allow_errors              : false # If `False`, when a code cell raises an error the execution is stopped, otherwise all cells are always run.
-  stderr_output             : show  # One of 'show', 'remove', 'remove-warn', 'warn', 'error', 'severe'
+#######################################################################################
+# Execution exclude list in JB 1.x (still build the pages, just don't run them)
+# Translated all options from the previous execute block to the mystnb block to
+# avoid conflicts
+# EDIT: redundant since a sphinx config block was added which has priority
+# EDIT: mystnb:
+# EDIT:   execution_mode: force        # (old: execute_notebooks)
+# EDIT:   execution_timeout: 100       # (old: timeout)
+# EDIT:   execution_in_temp: false     # (old: run_in_temp)
+# EDIT:   execution_allow_errors: false # (old: allow_errors)
+# EDIT:   execution_show_tb: false     # similar to old stderr behavior
+# EDIT:   output_stderr: show          # (old: stderr_output) One of 'show', 'remove', 'remove-warn', 'warn', 'error', 'severe'
+# EDIT:   execution_cache+path: ""     # (old: cache)
+# EDIT: 
+# EDIT:   execution_excludepatterns:
+# EDIT:     - "exercise-jupyter-notebooks-and-python.ipynb"
+# EDIT:     - "**/demo-cnn.ipynb"
+# EDIT:     - "**/demo-ball-drop-experiment.ipynb"
+# EDIT:     - "**/demo-making-a-simple-widget-based-ui.ipynb"
+# EDIT:     - "**/*ptemcee*.ipynb"
+# EDIT:     - "**/demo-*cnn*.ipynb"
+# EDIT:     - "**/demo-gaussian-processes.ipynb"
+# EDIT:     - "**/demo-comparing-samplers-for-a-simple-problem.ipynb"
+# EDIT:     - "**/demo-multimodal-distributions-with-two-samplers.ipynb"
+# EDIT:     - "**/demo-pymc-introduction.ipynb"
+# EDIT:     - "**/demo-variational-inference-and-bnn.ipynb"
+# EDIT:     - "**/exercise-logreg-and-neural-networks.ipynb"
+# EDIT:     - "**/mini-project_IIIa_bayesian_optimization.ipynb"
+# EDIT:     - "**/mini-project_IIIb_Bayesian_neural_networks_from_demo.ipynb"
 
 #######################################################################################
 # LaTeX-specific settings
@@ -29,7 +49,7 @@ latex:
     targetname: book.tex
 
 bibtex_bibfiles: 
-  - LearningFromData-content/References/references.bib
+  - content/References/references.bib
 
 bibtex_reference_style:  
   - author_year
@@ -37,7 +57,7 @@ bibtex_reference_style:
 #######################################################################################
 # Information about where the book exists on the web
 repository:
-  url                       : https://github.com/NuclearTalent/LFD_for_Physicists  # The URL to your book's repository
+  url                       : https://github.com/cforssen/LFD_development_v2.0  # The URL to your book's repository
   path_to_book              : "./"  # A path to your book's folder, relative to the repository root.
   branch                    : main  # Which branch of the repository should be used when creating links
 
@@ -53,7 +73,8 @@ html:
   use_issues_button         : true  # Whether to add an "open an issue" button
   extra_navbar              : Powered by <a href="https://jupyterbook.org">Jupyter Book</a>  # Will be displayed underneath the left navbar.
   extra_footer              : ""  # Will be displayed underneath the footer.
-  google_analytics_id       : ""  # A GA id that can be used to track book views.
+  analytics.google_analytics_id: "" # A GA id that can be used to track book views.
+# google_analytics_id       : ""  # A GA id that can be used to track book views.
   comments:
     hypothesis              : false
 #  home_page_in_navbar       : true  # Whether to include your home page in the left Navigation Bar
@@ -80,6 +101,30 @@ html:
 # from tif385   
 sphinx:
   config:
+    nb_execution_mode: "auto"
+    nb_execution_timeout: 100
+    nb_execution_in_temp: false
+    nb_execution_allow_errors: false
+    nb_execution_show_tb: false
+    nb_output_stderr: "show"
+    nb_execution_cache_path: ""
+    nb_execution_excludepatterns:
+      - "**/demo-ball-drop-experiment.ipynb"
+      - "**/demo-making-a-simple-widget-based-ui.ipynb"
+      - "exercise-jupyter-notebooks-and-python.ipynb"
+      - "**/demo-cnn.ipynb"
+      - "**/demo-ball-drop-experiment.ipynb"
+      - "**/demo-making-a-simple-widget-based-ui.ipynb"
+      - "**/*ptemcee*.ipynb"
+      - "**/demo-*cnn*.ipynb"
+      - "**/demo-gaussian-processes.ipynb"
+      - "**/demo-comparing-samplers-for-a-simple-problem.ipynb"
+      - "**/demo-multimodal-distributions-with-two-samplers.ipynb"
+      - "**/demo-pymc-introduction.ipynb"
+      - "**/demo-variational-inference-and-bnn.ipynb"
+      - "**/exercise-logreg-and-neural-networks.ipynb"
+      - "**/mini-project_IIIa_bayesian_optimization.ipynb"
+      - "**/mini-project_IIIb_Bayesian_neural_networks_from_demo.ipynb"
     source_encoding: utf-8-sig
     html_css_files:
       - coloredpages.css
