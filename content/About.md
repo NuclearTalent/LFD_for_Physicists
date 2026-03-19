@@ -54,9 +54,9 @@ Appendix C has various materials to set you up for Learning from Data (see {ref}
 ## Acknowledgments
 
 The material in this book has evolved over several years. The genesis was an intensive three-week summer school course taught at the [University of York](https://www.york.ac.uk/) in 2019 by the authors as part of the [TALENT](https://fribtheoryalliance.org/TALENT/) initiative. 
-New material was subsequently added by [Christian Forssén](https://www.chalmers.se/en/persons/f2bcf/) for course developments at Chalmers and for lecture series at other universities. Significant contributions from Andreas Ekström are particulaly acknowledged. 
+New material was subsequently added by [Christian Forssén](https://www.chalmers.se/en/persons/f2bcf/) for course developments at Chalmers and for lecture series at other universities. Contributions from Andreas Ekström are particulaly acknowledged. 
 In parallel, [Dick Furnstahl](https://physics.osu.edu/people/furnstahl.1) adapted the TALENT material (plus much of Forssén's new material) for a graduate course at The Ohio State University, which was then revised by [Daniel Phillips](https://www.ohio.edu/cas/phillid1) for a course at Ohio University.
-This book is a merger and update of all these developments.
+This book is a merger and update of all these developments. It includes significant additions of new material. A previous version of this book is archived at a [legacy site](https://nucleartalent.github.io/LFD_for_Physicists/legacy/).
 
 Both the original notes and subsequent revisions have been informed by interactions with many colleagues, who have taught us different aspects of Bayesian inference. 
 This includes many statistician colleagues who have taken the time to carefully and patiently address our misconceptions regarding statistics, probability, or even basic mathematics. Many of the important interactions have occurred at meetings in the [ISNET](https://isnet-series.github.io/meetings/) series.
