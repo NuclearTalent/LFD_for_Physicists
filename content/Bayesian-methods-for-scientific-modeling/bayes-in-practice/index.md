@@ -8,3 +8,5 @@ In this chapter:
 * {ref}`sec:BayesianWorkflow` gives a more detailed version of the workflow for principled Bayesian inference, including checklists.
 
 * {ref}`sec:BayesianLinearRegression` has a complete treatment of an important class of problems for Bayesian inference.
+
+* We finish with a demonstration notebook {ref}`demo:linear-regression-and-model-validation`.
