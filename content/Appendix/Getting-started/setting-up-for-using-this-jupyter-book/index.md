@@ -1,6 +1,6 @@
 (sec:SettingUpJB)=
-# Setting up to use this Jupyter book
+# Setting up for interactive use of this Jupyter Book
 
-The following guides are available in this Jupyter Book to help you get set up:
-* For setting up a Python environment, we recommend Anaconda. Details in {ref}`sec:InstallingAnaconda`.
-* For info on accessing Github repository for the tex and downloading files (or cloning the repository to generate your own version), see {ref}`sec:UsingGithub`.
+The following guides are available to help you get set up:
+* Cloning the git repository of this Jupyter Book for local, interactive use of learning material, see {ref}`sec:UsingGit`.
+* Recommended installation of a Python environment, see {ref}`sec:InstallingPython`.
