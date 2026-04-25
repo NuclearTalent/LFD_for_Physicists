@@ -29,17 +29,17 @@ The book format is powered by [Jupyter Book](https://jupyterbook.org/).
 
 ## Materials to help you get started
 
-Appendix C has various materials to set you up for Learning from Data (see {ref}`sec:RootGettingStarted`). You may have the option to run the Jupyter notebooks on a cloud server, but eventually you will likely want to set up an environment on your own machine. You will need to know enough Python to be able to modify the Jupyter notebook (e.g., changing the input parameters) and how to get the notebooks from the [Github repository](https://github.com/NuclearTalent/LFD_development).
+Appendix C has various materials to set you up for Learning from Data (see {ref}`sec:RootGettingStarted`). You may have the option to run the Jupyter notebooks on a cloud server, but eventually you will likely want to set up an environment on your own machine. 
+* See {ref}`sec:SettingUpJB` for instructions how to use git for cloning the repository with all the book material ({ref}`sec:UsingGit`) and for guides to setting up a Python environment on your computer ({ref}`sec:InstallingPython`).
 * If Python and/or Jupyter notebooks are new to you (or if you need a refresher), you can find a notebook: {ref}`exercise:jupyter-notebooks-and-python` that will take you from zero to just what you need to know about Python and running the Jupyter notebooks in this Jupyter Book.
 * For more advanced Python summaries, see the other Python notebooks linked in Appendix C.
-* See {ref}`sec:SettingUpJB` for guides to setting up a Python environment on your computer ({ref}`sec:InstallingAnaconda`) and using the Github repository for this Jupyter Book ({ref}`sec:UsingGithub`).
 
 
 ## Brief guide to online Jupyter Book features
 
 
 ```{admonition} Icons and menus
-  The Jupyter book has many useful features:
+  The Jupyter Book has many useful features:
 * A clickable high-level table of contents (TOC) is available in the panel at the left of each page. (You can toggle this panel open or close with the contents icon at the upper left of the middle panel.) At the top of this TOC is a search box for the book.
 * The icons at the top-right in the middle panel can be used to take you to the source repository for the book; download the source code for the page (in different formats); view the page in full-screen mode; or switch between light and dark mode.
 * For each section that has subsections, a clickable table of contents appears in the rightmost panel.
