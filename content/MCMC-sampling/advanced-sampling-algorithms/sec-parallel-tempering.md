@@ -1,3 +1,23 @@
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+kernelspec:
+  display_name: Python 3
+  language: python
+  name: python3
+---
+
+```{math}
+
+\newcommand\pos{\boldsymbol{x}}
+\newcommand\mom{\boldsymbol{p}}
+\newcommand\mass{\mathcal{M}}
+```
+
+(sec:parallel-tempering)=
 # Parallel tempering
 
 Parallel tempering was particularly introduced to deal with multimodal distributions.
@@ -126,4 +146,3 @@ Comments:
 * The setup for `ptemcee` includes a temperature grid chosen so that numerically integrating over temperature for the evidence has a finer grid at low temperatures for greater accuracy.
 
 * Note the corner plots for different temperatures and how the multimodal structure emerges. 
-

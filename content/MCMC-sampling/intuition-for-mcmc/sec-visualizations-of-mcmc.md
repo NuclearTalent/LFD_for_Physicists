@@ -11,7 +11,7 @@ kernelspec:
 ---
 
 (sec:VisualizingMCMC)=
-# Visualizations
+# Visualizations of MCMC
 
 
 ## Javascript visualizations of MCMC

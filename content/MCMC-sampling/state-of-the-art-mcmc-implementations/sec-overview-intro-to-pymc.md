@@ -1,4 +1,18 @@
-# Overview of Intro to PyMC notebook
+(sec:intro-to-pymc)=
+# Intro to PyMC
+
+[PyMC](https://www.pymc.io/welcome.html) is a _probabilistic programming library_ for Python. 
+Let's quote from the [documentation](https://www.pymc.io/welcome.html): "PyMC strives to make Bayesian modeling as simple and painless as possible, allowing users to focus on their problem rather than the methods." 
+The list of features are (taken directly from the documentation page):
+* **Modern**: Includes state-of-the-art inference algorithms, including MCMC (NUTS) and variational inference (ADVI).
+* **User friendly**: Write your models using friendly Python syntax. [Learn Bayesian modeling](https://www.pymc.io/projects/docs/en/latest/learn.html#) from the many [example notebooks](https://www.pymc.io/projects/examples/en/latest/gallery.html).
+* **Fast**: Uses {doc}`PyTensor <pytensor:index>` as its computational backend to compile through C, Numba or JAX, [run your models on the GPU](https://www.pymc-labs.io/blog-posts/pymc-stan-benchmark/), and benefit from complex graph-optimizations.
+* **Batteries included**: Includes probability distributions, Gaussian processes, ABC, SMC and much more. It integrates nicely with {doc}`ArviZ <arviz:index>` for visualizations and diagnostics, as well as {doc}`Bambi <bambi:index>` for high-level mixed-effect models.
+* **Community focused**: Ask questions on [discourse](https://discourse.pymc.io), join [MeetUp events](https://meetup.com/pymc-online-meetup/), follow us on [Twitter](https://twitter.com/pymc_devs), and start [contributing](https://www.pymc.io/projects/docs/en/latest/contributing/index.html).
+
+## Overview of Intro to PyMC notebook
+
+In the following demo notebook, we provide a hands-on, active-learning introduction to PyMC.
 
 {ref}`demo:pymc-introduction` starts with sampling to find the posterior for $\mu$, the mean of a distribution, given data that is generated according to a normal distribution with mean zero.
 * Try changing the true $\mu$, sampling sigma as well.

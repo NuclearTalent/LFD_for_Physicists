@@ -1,15 +1,27 @@
-# The Zeus Ensemble Slice Sampler
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+kernelspec:
+  display_name: Python 3
+  language: python
+  name: python3
+---
 
-From the documentation at the [Zeus webpage](https://zeus-mcmc.readthedocs.io/en/latest/index.html):
+```{math}
 
-* `zeus` is a Python implementation of the Ensemble Slice Sampling method.
-    * Fast & Robust Bayesian Inference,
-    * Efficient Markov Chain Monte Carlo (MCMC),
-    * Black-box inference, no hand-tuning,
-    * Excellent performance in terms of autocorrelation time and    convergence rate,
-    * Scale to multiple CPUs without any extra effort.
+\newcommand\pos{\boldsymbol{x}}
+\newcommand\mom{\boldsymbol{p}}
+\newcommand\mass{\mathcal{M}}
+```
 
-There are two relevant arXiv references for zeus:
+(sec:slice-sampling)=
+# Slice sampling
+
+The idea of slice sampling is well documented in
+two arXiv references for the ensemble slice sampler `zeus` (which is a particular implementation):
 1. [*Ensemble Slice Sampling: Parallel, black-box and gradient-free inference for correlated & multimodal distributions*](https://arxiv.org/abs/2002.06212) by Minas Karamanis and Florian Beutler.
 2. [*zeus: A Python implementation of Ensemble Slice Sampling for efficient Bayesian parameter inference*](https://arxiv.org/abs/2105.03468) by Minas Karamanis, Florian Beutler, and John A. Peacock.
 
@@ -45,7 +57,7 @@ There is one parameter to tune: the width $\mu$ of the interval from $L$ to $R$ 
 
 The "ensemble" aspect of `zeus` is that there are multiple walkers, as in the ensemble sampler `emcee`. 
 {numref}`zeus_fig_2` illustrates how the ensemble of walkers is used to do what is called a "differential move". There are several choices for moves, including a global one that is effective for multi-modal distributions.
-The basic call for `zeus` compared to `emcee` and `PyMC` is illustrated in {ref}`demo:comparing-samplers-for-a-simple-problem`.
-<!--* An example from the `zeus` documentation of sampling from a multimodal distribution is given in {ref}`project:zeus-multimodal`.-->
-* The text case for parallel tempering in a very simple multi-modal example is compared to `zeus` in {ref}`demo:multimodal-distributions-with-two-samplers`.
 
+<!--* An example from the `zeus` documentation of sampling from a multimodal distribution is given in {ref}`project:zeus-multimodal`.-->
+* A text case for parallel tempering (using `ptemcee`) vs. slice sampling (using `zeus`) in a very simple multi-modal example is in {ref}`demo:multimodal-distributions-with-two-samplers`.
+* The basic call for `zeus` compared to `emcee` and `PyMC` is illustrated in {ref}`demo:comparing-samplers-for-a-simple-problem`.

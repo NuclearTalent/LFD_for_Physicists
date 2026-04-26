@@ -10,10 +10,10 @@ kernelspec:
   name: python3
 ---
 
-(sec:ImplementationsMCMC)=
-# State-of-the-art MCMC implementations
+(sec:overview-implementations)=
+# Overview: individual sampling libraries and full probabilistic packages
 
-Here we present an (incomplete) list of state-of-the-art MCMC implementations and packages that are available in Python (and often other languages).
+Here we present an (incomplete) list of state-of-the-art MCMC implementations and packages that are available in Python (and often other languages). Several demo notebooks follow in subsequent sections.
 
 ## Individual libraries for MCMC sampling
 

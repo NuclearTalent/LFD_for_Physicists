@@ -18,7 +18,7 @@ kernelspec:
 ```
 
 (sec:AdvancedMCMC:HMC)=
-# Introduction to Hamilton Monte Carlo
+# Hamiltonian Monte Carlo
 
 ```{epigraph}
 > "Why walk when you can flow."

@@ -11,7 +11,7 @@ kernelspec:
 ---
 
 (sec:MetropolisHastings)=
-# The Metropolis-Hastings algorithm
+# Derivation of the Metropolis-Hastings algorithm
 
 How can we collect random samples from an arbitrary probability distribution $p(\pars)$? In particular, how can we perform this task when we might not even have a closed form expression for the PDF? It is common in Bayesian inference that we find ourselves in the situation that we can evaluate $p(\pars)$ at any position $\pars$, but we don't know beforehand if it will be large or small.
 

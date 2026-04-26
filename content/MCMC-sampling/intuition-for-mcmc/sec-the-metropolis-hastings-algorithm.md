@@ -11,11 +11,11 @@ kernelspec:
 ---
 
 (sec:BasicStructureMCMC)=
-# Basic structure and intuition for MH
+# The Metropolis–Hastings algorithm
 
-## Basic structure of Metropolis-Hastings algorithm
+## Basic structure of the Metropolis-Hastings algorithm
 
-Let's elaborate on the structure of the MCMC algorithm.
+Let's first elaborate on the structure of the historically very important Metropolis algorithm.
 
 1. Given $\thetavec_i$, *propose* a value for $\thetavec_{i+1}$, call it the "candidate" $\phivec$, sampled from $q(\phivec|\thetavec_i)$. This $q$ could take many forms, so for concreteness imagine it as a multivariate normal distribution with mean given by $\thetavec_i$ and variance $\sigmavec^2$ (to be specified). 
 This entails a decreased probability to step further away from the current sample and $\sigmavec$ sets scale of the step size.

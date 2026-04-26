@@ -18,7 +18,7 @@ kernelspec:
 ```
 
 (sec:AdvancedMCMC)=
-# Overview of diagnostics for MCMC sampling
+# Diagnostics for MCMC sampling
 
 
 We've seen that using MCMC with the Metropolis-Hastings algorithm (or an alternative algorithm) leads to a Markov chain: a set of configurations of the parameters we are sampling. This chain enables inference because they are samples of the posterior of interest.
