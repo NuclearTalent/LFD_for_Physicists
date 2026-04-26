@@ -1,4 +1,4 @@
-(sec:IntuitionMCMC)=
+(sec:intuition-for-mcmc)=
 # Intuition for MCMC
 
 Intuition for Markov Chain Monte Carlo (MCMC) includes:

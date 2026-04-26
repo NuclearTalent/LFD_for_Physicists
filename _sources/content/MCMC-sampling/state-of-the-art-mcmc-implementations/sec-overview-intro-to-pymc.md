@@ -1,0 +1,69 @@
+(sec:intro-to-pymc)=
+# Intro to PyMC
+
+[PyMC](https://www.pymc.io/welcome.html) is a _probabilistic programming library_ for Python. 
+Let's quote from the [documentation](https://www.pymc.io/welcome.html): "PyMC strives to make Bayesian modeling as simple and painless as possible, allowing users to focus on their problem rather than the methods." 
+The list of features are (taken directly from the documentation page):
+* **Modern**: Includes state-of-the-art inference algorithms, including MCMC (NUTS) and variational inference (ADVI).
+* **User friendly**: Write your models using friendly Python syntax. [Learn Bayesian modeling](https://www.pymc.io/projects/docs/en/latest/learn.html#) from the many [example notebooks](https://www.pymc.io/projects/examples/en/latest/gallery.html).
+* **Fast**: Uses {doc}`PyTensor <pytensor:index>` as its computational backend to compile through C, Numba or JAX, [run your models on the GPU](https://www.pymc-labs.io/blog-posts/pymc-stan-benchmark/), and benefit from complex graph-optimizations.
+* **Batteries included**: Includes probability distributions, Gaussian processes, ABC, SMC and much more. It integrates nicely with {doc}`ArviZ <arviz:index>` for visualizations and diagnostics, as well as {doc}`Bambi <bambi:index>` for high-level mixed-effect models.
+* **Community focused**: Ask questions on [discourse](https://discourse.pymc.io), join [MeetUp events](https://meetup.com/pymc-online-meetup/), follow us on [Twitter](https://twitter.com/pymc_devs), and start [contributing](https://www.pymc.io/projects/docs/en/latest/contributing/index.html).
+
+## Overview of Intro to PyMC notebook
+
+In the following demo notebook, we provide a hands-on, active-learning introduction to PyMC.
+
+{ref}`demo:pymc-introduction` starts with sampling to find the posterior for $\mu$, the mean of a distribution, given data that is generated according to a normal distribution with mean zero.
+* Try changing the true $\mu$, sampling sigma as well.
+* The standard deviation is initially fixed at 1.
+
+In the code, one specifies priors and then the likelihood. This is sufficient to specify the posterior for $\mu$ by Bayes' theorem (up to a normalization):
+
+$$
+  p(\mu|D,\sigma) \propto p(D|\mu,\sigma) p(\mu | \mu_\mu^0, \sigma_\mu^0) ,
+$$
+    
+* $p(\mu|D,\sigma)$ is the pdf to sample,
+* $D$ is the *observed* data,
+* $p(D|\mu,\sigma)$ is the likelihood, which is specified last. Here it is $\sim \mathcal{N}(\mu,\sigma^2)$.
+* $\mu_\mu^0$ and $\sigma_\mu^0$ are hyperparameters specifying the priors for $\mu$ and $\sigma$. The statements for these priors appear first.
+
+## Looking at PyMC getting started notebook
+
+{ref}`demo:pymc-introduction` starts with a brief overview and a list of features of PyMC. Note the comment about Theano being used to calculate gradients needed for HMC. The technique of ["automatic differentiation"](https://en.wikipedia.org/wiki/Automatic_differentiation) ensures machine precision results for these derivatives.
+
+Consider the "Motivating Example" on linear regression model that predicts the outcome $Y \sim \mathcal{N}(\mu,\sigma^2)$ from a "linear model", meaning the expected result is a linear combination of the two input variables $X_1$ and $X_2$, $\mu = \alpha + \beta_1 X_1 + \beta_2 X_2$. 
+* This is what we have written elsewhere as 
+
+    $$
+      y_{\text{expt}} = y_{\text{th}} + \delta y_{\text{exp}}
+    $$
+
+    (no model discrepancy $\delta y_{\text{th}}$), with $y_{\text{expt}} \rightarrow Y$, $y_{\text{th}} \rightarrow \mu$, and $\delta y_{\text{exp}}$ Gaussian noise with mean zero and variance $\sigma^2$.
+* The basic workflow is: make data then encode the model in approximate statistical notation.
+* Step through the line-by-line explanation of the model (more detail than here!). 
+    * Use the Python `with` for a context manager. Note that the first two statements could have been combined to be `with pm.Model() as basic_model:`.
+    * Compare the code to first the priors for *unknown* parameters:
+
+        $$\begin{align}
+          \alpha \sim \mathcal{N}(0,100), \quad 
+          \beta_i \sim \mathcal{N}(0,100), \quad
+          \sigma \sim |\mathcal{N}(0,1)|,
+        \end{align}$$
+
+        Investigate the options for `Normal`, such as `shape` in the documentation for [Probability Distributions in PyMC](https://docs.pymc.io/en/stable/Probability_Distributions.html).
+
+    * Then the encoding of $\mu = \alpha + \beta_1 X_1 + \beta_2 X_2$.
+
+    * Finally the statement of the likelihood (always comes last) $Y \sim \mathcal{N}(\mu,\sigma^2)$. Note the use of `observed=Y`.
+    * Read through all the background!. This and the other examples can serve as prototypes for your use of PyMC.
+
+
+Your task: run through the notebook!
+
+
+
+
+
+    
