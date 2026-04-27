@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>13. 📥 Demo: Dealing with outliers &#8212; Combined Learning from Data materials</title>
+    <title>13.4. 📥 Demo: Illustrating approaches to outliers &#8212; Combined Learning from Data materials</title>
   
   
   
@@ -68,8 +68,8 @@
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="13.10. Demo: Student’s t-distribution from Gaussians" href="demo-student-t-distribution-from-gaussians.html" />
-    <link rel="prev" title="12.4. 📥 Demo: Maximum Entropy for reconstructing a function from its moments" href="../assigning-probabilities/demo-maximum-entropy-for-reconstructing-a-function-from-its-moments.html" />
+    <link rel="next" title="13.5. Demo: Student’s t-distribution from Gaussians" href="demo-student-t-distribution-from-gaussians.html" />
+    <link rel="prev" title="13.3. Bayesian methods to deal with outliers" href="sec-bayesian-methods-for-outliers.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -276,8 +276,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../assigning-probabilities/demo-maximum-entropy-for-reconstructing-a-function-from-its-moments.html">12.4. Demo: Maximum Entropy for reconstructing a function</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">13. Demo: Dealing with outliers</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="demo-student-t-distribution-from-gaussians.html">13.10. Demo: Student t distribution from Gaussians</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">13. Dealing with outliers</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="sec-setup-linear-regression-outliers.html">13.1. Setup: linear regression with bad data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-frequentist-methods-for-outliers.html">13.2. Frequentist methods to deal with outliers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-bayesian-methods-for-outliers.html">13.3. Bayesian methods to deal with outliers</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">13.4. Demo: Illustrating approaches to outliers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-student-t-distribution-from-gaussians.html">13.5. Demo: Student t distribution from Gaussians</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../bayes-goes-linear-history-matching/index.html">14. Bayes goes linear — History matching</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -711,7 +715,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>📥 Demo: Dealing with outliers</h1>
+    <h1>📥 Demo: Illustrating approaches to outliers</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -721,25 +725,17 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-good-data-bad-data">13.1. Example: good data / bad data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#import-python-modules">Import Python modules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-good-data-bad-data">Example: good data / bad data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-likelihood-approach">Standard Likelihood Approach</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#frequentist-correction-for-outliers-huber-loss">Frequentist Correction for Outliers: Huber Loss</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approaches-to-erratic-data">Bayesian approaches to erratic data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-1-a-conservative-formulation">Bayesian Approach to Outliers no. 1: A conservative formulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-2-good-and-bad-data">Bayesian Approach to Outliers no. 2: Good-and-bad data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-3-the-cauchy-formulation">Bayesian Approach to Outliers no. 3: The Cauchy formulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-to-compare-bayesian-methods">Sampling to compare Bayesian methods</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-4-many-nuisance-parameters">Bayesian Approach to Outliers no. 4: Many nuisance parameters</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model">13.2. The Model</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-likelihood-approach">Standard Likelihood Approach</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#frequentist-correction-for-outliers-huber-loss">Frequentist Correction for Outliers: Huber Loss</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approaches-to-erratic-data">13.3. Bayesian approaches to erratic data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-are-outliers-problematic-with-a-gaussian-model">Why are outliers problematic with a Gaussian model?</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-1-a-conservative-formulation">13.4. Bayesian Approach to Outliers no. 1: A conservative formulation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-2-good-and-bad-data">13.5. Bayesian Approach to Outliers no. 2: Good-and-bad data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-3-the-cauchy-formulation">13.6. Bayesian Approach to Outliers no. 3: The Cauchy formulation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling">13.7. Sampling</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-4-many-nuisance-parameters">13.8. Bayesian Approach to Outliers no. 4: Many nuisance parameters</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion">13.9. Discussion</a></li>
 </ul>
             </nav>
         </div>
@@ -751,24 +747,20 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="demo-dealing-with-outliers">
-<span id="id1"></span><h1><span class="section-number">13. </span>📥 Demo: Dealing with outliers<a class="headerlink" href="#demo-dealing-with-outliers" title="Link to this heading">#</a></h1>
-<p>By <strong>outliers</strong> in data, we mean data points that significantly differ from the pattern of other observations in a set of data. They may arise from unaccounted for or underestimated errors, or just be anomalous occurrences. Here we consider a representative case of outliers and examine several different ways (both frequentist and Bayesian) to account for them in an analysis of a linear fit to noisy data.</p>
-<p>This notebook was adapted from one first created by Christian Forssen for the TALENT Course 11 in June 2019, with subsequent revisions by Dick Furnstahl.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="demo-illustrating-approaches-to-outliers">
+<span id="demo-dealing-with-outliers"></span><h1><span class="section-number">13.4. </span>📥 Demo: Illustrating approaches to outliers<a class="headerlink" href="#demo-illustrating-approaches-to-outliers" title="Link to this heading">#</a></h1>
+<p>In this demo we apply the frequentist and Bayesian methods illustrated in the last two sections to account for outliers in an analysis of a linear fit to noisy data. The difference here is that you are able to generate new datasets to test the robustness of the results.</p>
+<p>(Adapted from the blog post <a class="reference external" href="http://jakevdp.github.io/blog/2014/06/06/frequentism-and-bayesianism-2-when-results-differ/">Frequentism and Bayesianism II: When Results Differ</a>).</p>
 <section id="example-good-data-bad-data">
-<h2><span class="section-number">13.1. </span>Example: good data / bad data<a class="headerlink" href="#example-good-data-bad-data" title="Link to this heading">#</a></h2>
-<p><strong>Linear regression with data outliers</strong></p>
-<p>Adapted from the blog post <a class="reference external" href="http://jakevdp.github.io/blog/2014/06/06/frequentism-and-bayesianism-2-when-results-differ/">Frequentism and Bayesianism II: When Results Differ</a>.</p>
-<section id="import-python-modules">
-<h3>Import Python modules<a class="headerlink" href="#import-python-modules" title="Link to this heading">#</a></h3>
+<h2>Example: good data / bad data<a class="headerlink" href="#example-good-data-bad-data" title="Link to this heading">#</a></h2>
+<p>In the previous sections we used a fixed dataset relating the observed variables <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>, with the error of <span class="math notranslate nohighlight">\(y\)</span> stored in <span class="math notranslate nohighlight">\(e\)</span>. Here we will generate new datasets with the function <code class="docutils literal notranslate"><span class="pre">generate_line_data_with_outliers</span></code>, which takes parameters that let you adjust the (random) generation of points with a specified number of outliers.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimize</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-
-<span class="c1"># Not really needed, but nicer plots</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">();</span> <span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s2">&quot;talk&quot;</span><span class="p">)</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">emcee</span>
@@ -786,16 +778,146 @@ For details and migration guidance, visit: https://python.arviz.org/en/latest/us
 </div>
 </div>
 </div>
-<p>One situation where the concept of nuisance parameters can be helpful is accounting for outliers in data. Consider the following dataset, relating the observed variables <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>, with the error of <span class="math notranslate nohighlight">\(y\)</span> stored in <span class="math notranslate nohighlight">\(e\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># note that x and y will be used as global arrays</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span>
-              <span class="mi">40</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">54</span><span class="p">,</span> <span class="mi">56</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">69</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">88</span><span class="p">])</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">33</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">71</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span>
-              <span class="mi">53</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">56</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">61</span><span class="p">,</span> <span class="mi">63</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">71</span><span class="p">])</span>
-<span class="n">sig0</span> <span class="o">=</span> <span class="mf">3.</span>
-<span class="n">e</span> <span class="o">=</span> <span class="n">sig0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_line_data_with_outliers</span><span class="p">(</span>
+    <span class="n">num</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">x_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">x_max</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">a</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">b</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
+    <span class="n">sig0</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">n_outlier</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">outlier_scale</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">integer_x</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">sort_x</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate data for a straight-line model with Gaussian noise and outliers.</span>
+
+<span class="sd">    Model:</span>
+<span class="sd">        y = a*x + b + Gaussian noise</span>
+
+<span class="sd">    Outliers:</span>
+<span class="sd">        n_outlier randomly selected points have an additional displacement</span>
+<span class="sd">        that is forced to be relatively far from the line.</span>
+
+<span class="sd">        The displacement has random sign and magnitude approximately</span>
+<span class="sd">        outlier_scale * sig0.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    num : int</span>
+<span class="sd">        Number of data points.</span>
+<span class="sd">    x_min, x_max : float</span>
+<span class="sd">        Range for random x values.</span>
+<span class="sd">    a, b : float</span>
+<span class="sd">        Parameters of the line y = a*x + b.</span>
+<span class="sd">    sig0 : float</span>
+<span class="sd">        Standard deviation of the normal observational noise.</span>
+<span class="sd">    n_outlier : int</span>
+<span class="sd">        Number of points to turn into outliers.</span>
+<span class="sd">    outlier_scale : float</span>
+<span class="sd">        Typical outlier displacement in units of sig0.</span>
+<span class="sd">    seed : int or None</span>
+<span class="sd">        Random seed for reproducibility.</span>
+<span class="sd">    integer_x : bool</span>
+<span class="sd">        If True, generate integer x values.</span>
+<span class="sd">    sort_x : bool</span>
+<span class="sd">        If True, sort the data by increasing x.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x : ndarray</span>
+<span class="sd">        x values.</span>
+<span class="sd">    y : ndarray</span>
+<span class="sd">        noisy y values, including outliers.</span>
+<span class="sd">    e : ndarray</span>
+<span class="sd">        error bars, all equal to sig0.</span>
+<span class="sd">    outlier_indices : ndarray</span>
+<span class="sd">        indices of the points selected as outliers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n_outlier</span> <span class="o">&gt;</span> <span class="n">num</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_outlier cannot be larger than num.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Generate x values</span>
+    <span class="k">if</span> <span class="n">integer_x</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">num</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">num</span><span class="p">)</span>
+
+    <span class="c1"># Optionally sort x values</span>
+    <span class="k">if</span> <span class="n">sort_x</span><span class="p">:</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+
+    <span class="c1"># Gaussian noise about the line</span>
+    <span class="n">y_true</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y_true</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sig0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">num</span><span class="p">)</span>
+
+    <span class="c1"># Choose which points will become outliers</span>
+    <span class="n">outlier_indices</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_outlier</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Add large outlier displacements.</span>
+    <span class="c1"># Each outlier is shifted either up or down.</span>
+    <span class="n">signs</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">n_outlier</span><span class="p">)</span>
+
+    <span class="c1"># The absolute displacement is centered around outlier_scale * sig0.</span>
+    <span class="c1"># Taking abs() helps prevent accidentally tiny outlier shifts.</span>
+    <span class="n">magnitudes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span>
+        <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+            <span class="n">loc</span><span class="o">=</span><span class="n">outlier_scale</span> <span class="o">*</span> <span class="n">sig0</span><span class="p">,</span>
+            <span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">outlier_scale</span> <span class="o">*</span> <span class="n">sig0</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">n_outlier</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">y</span><span class="p">[</span><span class="n">outlier_indices</span><span class="p">]</span> <span class="o">+=</span> <span class="n">signs</span> <span class="o">*</span> <span class="n">magnitudes</span>
+
+    <span class="c1"># Error bars</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">sig0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">sig0</span><span class="p">,</span> <span class="n">outlier_indices</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># generate a particular dataset. Note that seed can be omitted to </span>
+<span class="c1">#   a get new dataset everytime this sell is run.</span>
+<span class="c1">#   We don&#39;t print out the outlier_indices by default, but you can </span>
+<span class="c1"># add a print statement.</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">sig0</span><span class="p">,</span> <span class="n">outlier_indices</span> <span class="o">=</span> <span class="n">generate_line_data_with_outliers</span><span class="p">(</span>
+    <span class="n">num</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">x_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">x_max</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">a</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">b</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
+    <span class="n">sig0</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">n_outlier</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">outlier_scale</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">101</span>
+<span class="p">)</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Set 3 decimal places</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x = &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;y = &quot;</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;e = &quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>x =  [ 7 13 13 22 29 31 36 36 36 40 59 62 67 70 78 79 87 93 95 98]
+y =  [31. 39. 32. 40. 77. 40. 48. 71. 47. 46. 59. 64. 64. 65. 65. 71. 75. 31.
+ 82. 81.]
+e =  [3. 3. 3. 3. 3. 3. 3. 3. 3. 3. 3. 3. 3. 3. 3. 3. 3. 3. 3. 3.]
 </pre></div>
 </div>
 </div>
@@ -810,61 +932,14 @@ For details and migration guidance, visit: https://python.arviz.org/en/latest/us
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/97cf8f7b518fcffd76b96c47860753e450aa31ff2f3fd99f62f49267afc041b4.png" src="../../../_images/97cf8f7b518fcffd76b96c47860753e450aa31ff2f3fd99f62f49267afc041b4.png" />
+<img alt="../../../_images/efefdbc1d86d805acf21ecd12c238eb784bae9ee71b6f39c187cb4141d8818f4.png" src="../../../_images/efefdbc1d86d805acf21ecd12c238eb784bae9ee71b6f39c187cb4141d8818f4.png" />
 </div>
 </div>
-<p>Our task is to find a line of best-fit to the data. It’s clear upon visual inspection that there are some outliers among these points, but let’s start with a simple non-robust maximum likelihood approach.</p>
+<p>Our task is to find a line of best-fit to the data. The statistical model for the data is the same as introduced at the beginning of the chapter.</p>
 </section>
-</section>
-<section id="the-model">
-<h2><span class="section-number">13.2. </span>The Model<a class="headerlink" href="#the-model" title="Link to this heading">#</a></h2>
-<p>We follow the procedure outlined in <a class="reference external" href="https://nucleartalent.github.io/LFD_for_Physicists/content/BayesianStatistics/BayesianParameterEstimation/parameter_estimation_fitting_straight_line_I.html">parameter_estimation_fitting_straight_line_I.ipynb</a>.</p>
-<p>Thus, we’re fitting a straight line to data (“<span class="math notranslate nohighlight">\(M\)</span>” here stands for “Model”; elsewhere we use “th” for theory),</p>
-<div class="math notranslate nohighlight">
-\[
-y_M(x; \boldsymbol{\theta}) = \theta_0 + \theta_1 x ,
-\]</div>
-<p>where our parameter vector will be</p>
-<div class="math notranslate nohighlight">
-\[
-\boldsymbol{\theta} = [\theta_0, \theta_1].
-\]</div>
-<p>But this is only half the picture: what we mean by a “model” in a Bayesian sense is not only this expected value <span class="math notranslate nohighlight">\(y_M(x;\boldsymbol{\theta})\)</span>, but a <strong>probability distribution</strong> for our data.
-That is, we need an expression to compute the likelihood <span class="math notranslate nohighlight">\(p(D\mid\boldsymbol{\theta},I)\)</span> for our data as a function of the parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>.</p>
-<p>The Bayesian statistical model we employ is that the distribution of data <span class="math notranslate nohighlight">\(D\)</span> is the sum of the distributions for the model, the model discrepancy, and the observation error:</p>
-<div class="math notranslate nohighlight">
-\[
-   D = M + \delta M + \delta D .   
-\]</div>
-<p>The model discrepancy term <span class="math notranslate nohighlight">\(\delta M\)</span> is in general important to consider, but we will neglect it here (e.g., assuming it is much smaller than <span class="math notranslate nohighlight">\(\delta D\)</span>).</p>
-<p>To establish <span class="math notranslate nohighlight">\(\delta D\)</span>, we note that here we are given data with simple error bars, which imply that the probability for any <em>single</em> data point is a normal distribution about the true value. In this example, the errors are specified by a single parameter <span class="math notranslate nohighlight">\(\sigma_0\)</span> (again, we neglect <span class="math notranslate nohighlight">\(\delta M\)</span>). That is, <span class="math notranslate nohighlight">\(y_i = D_i\)</span> is given by</p>
-<div class="math notranslate nohighlight">
-\[
-y_i \sim \mathcal{N}(y_M(x_i;\boldsymbol{\theta}), \sigma_0^2)
-\]</div>
-<p>or, in functional form,</p>
-<div class="math notranslate nohighlight">
-\[
-p(y_i\mid x_i,\boldsymbol{\theta}) = \frac{1}{\sqrt{2\pi\sigma_0^2}} \exp\left(\frac{-\left[y_i - y_M(x_i;\boldsymbol{\theta})\right]^2}{2\sigma_0^2}\right)
-\]</div>
-<p>The (known) variance of the measurement errors, <span class="math notranslate nohighlight">\(\sigma_0\)</span>, is indicated in the figure below by the error bars.</p>
-<p>Assuming all the points are independent, we can find the full likelihood by multiplying the individual likelihoods together:</p>
-<div class="math notranslate nohighlight">
-\[
-p(D\mid\boldsymbol{\theta}, I) = \prod_{i=1}^N p(y_i\mid x_i,\boldsymbol{\theta}, I) .
-\]</div>
-<p>For convenience (and also for numerical accuracy) this is often expressed in terms of the log-likelihood:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bb45fc4d-0ac1-4df0-8556-1ac94183042d">
-<span class="eqno">(13.1)<a class="headerlink" href="#equation-bb45fc4d-0ac1-4df0-8556-1ac94183042d" title="Permalink to this equation">#</a></span>\[\begin{align}
-\log p(D\mid\boldsymbol{\theta}, I) &amp;= -\frac{1}{2}\sum_{i=1}^N\left(\log(2\pi\sigma_0^2) + \frac{\left[ y_i - y_M(x_i;\theta)\right]^2}{\sigma_0^2}\right) \\
-&amp;= \text{constant} - \sum_{i=1}^N \frac{\left[ y_i - y_M(x_i;\boldsymbol{\theta})\right]^2}{2 \sigma_0^2} .
-\end{align}\]</div>
-<p>We often define the <em>residuals</em> (the notation <span class="math notranslate nohighlight">\(z_i\)</span> is also common)</p>
-<div class="math notranslate nohighlight">
-\[
-R_i = \left[ y_i - y_M(x_i;\boldsymbol{\boldsymbol{\theta}}) \right]/\sigma_0,
-\]</div>
-<p>so that the relevant chi-square sum is <span class="math notranslate nohighlight">\(\chi^2 =  \sum_{i=1}^N R_i^2\)</span>.</p>
+<section id="standard-likelihood-approach">
+<h2>Standard Likelihood Approach<a class="headerlink" href="#standard-likelihood-approach" title="Link to this heading">#</a></h2>
+<p>For simplicity, we’ll use scipy’s <code class="docutils literal notranslate"><span class="pre">optimize</span></code> package to minimize the loss (in the case of squared loss, this computation can be done more efficiently using matrix methods, but we’ll use numerical minimization for simplicity here).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">residuals</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">sigma0</span><span class="o">=</span><span class="n">sig0</span><span class="p">):</span>
@@ -890,16 +965,9 @@ R_i = \left[ y_i - y_M(x_i;\boldsymbol{\boldsymbol{\theta}}) \right]/\sigma_0,
 </div>
 </div>
 </div>
-<p>The summation term that appears in this log-likelihood is often known as the <em>loss function</em>.  This particular loss function is known as a <em>squared loss</em> or <em>chi-squared</em>; but as you can see it can be derived from the Gaussian log likelihood.</p>
-<section id="standard-likelihood-approach">
-<h3>Standard Likelihood Approach<a class="headerlink" href="#standard-likelihood-approach" title="Link to this heading">#</a></h3>
-<p>We can maximize the likelihood (or, equivalently, minimize the loss) to find <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> within a frequentist paradigm. For a flat prior in <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>, the maximum of the Bayesian posterior will yield the same result. (Note that there are good arguments based on the <a class="reference external" href="https://nucleartalent.github.io/LFD_for_Physicists/content/BayesianStatistics/AssigningProbabilities/MaxEnt2.html">principle of maximum entropy</a> that a flat prior is not the best choice here; we’ll ignore that detail for now, as it’s a small effect for this problem.)</p>
-<p>For simplicity, we’ll use scipy’s <code class="docutils literal notranslate"><span class="pre">optimize</span></code> package to minimize the loss (in the case of squared loss, this computation can be done more efficiently using matrix methods, but we’ll use numerical minimization for simplicity here).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimize</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">squared_loss</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">sigma0</span><span class="o">=</span><span class="n">sig0</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">squared_loss</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">sigma0</span><span class="o">=</span><span class="n">sig0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loss function is sum of squared residuals divided by 2, which</span>
 <span class="sd">        is what we usually call chi^2 / 2. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -924,17 +992,20 @@ R_i = \left[ y_i - y_M(x_i;\boldsymbol{\boldsymbol{\theta}}) \right]/\sigma_0,
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MLE: theta0 = 41.2, theta1 = 0.25
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MLE: theta0 = 37.2, theta1 = 0.36
 </pre></div>
 </div>
-<img alt="../../../_images/0b6474c37f5d399992a288ca66259062a82512b5a249aff440e6ac7781e6db1c.png" src="../../../_images/0b6474c37f5d399992a288ca66259062a82512b5a249aff440e6ac7781e6db1c.png" />
+<img alt="../../../_images/1fbdd9806f25a43ce07197280436d3d6fcf645d014199b09b1390e420dbc4b62.png" src="../../../_images/1fbdd9806f25a43ce07197280436d3d6fcf645d014199b09b1390e420dbc4b62.png" />
 </div>
 </div>
-<p>It’s clear on examination that the <strong>outliers are exerting a disproportionate influence on the fit</strong>. This is due to the nature of the squared loss function. If you have a single outlier that is, say 10 standard deviations away from the fit, its contribution to the loss will out-weigh that of 25 points which are 2 standard deviations away!</p>
-<p>Clearly the squared loss is overly sensitive to outliers, and this is causing issues with our fit. One way to address this within the frequentist paradigm is to simply adjust the loss function to be more robust.</p>
+<ul class="simple">
+<li><p>Are the outliers exerting a disproportionate influence on the fit for this dataset?</p></li>
+<li><p>If so, what is it about the squared loss function that makes this likely to happen.</p></li>
+</ul>
+<p>In most cases we will find that the squared loss is overly sensitive to outliers, and this is causing issues with our fit. One way to address this within the frequentist paradigm is to simply adjust the loss function to be more robust.</p>
 </section>
 <section id="frequentist-correction-for-outliers-huber-loss">
-<h3>Frequentist Correction for Outliers: Huber Loss<a class="headerlink" href="#frequentist-correction-for-outliers-huber-loss" title="Link to this heading">#</a></h3>
+<h2>Frequentist Correction for Outliers: Huber Loss<a class="headerlink" href="#frequentist-correction-for-outliers-huber-loss" title="Link to this heading">#</a></h2>
 <p>The variety of possible loss functions is quite literally infinite, but one relatively well-motivated option is the <a class="reference external" href="http://en.wikipedia.org/wiki/Huber_loss_function">Huber loss</a>. The Huber loss defines a critical value at which the loss curve transitions from quadratic to linear. Let’s create a plot which compares the Huber loss to the standard squared loss for several critical values <span class="math notranslate nohighlight">\(c\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -981,18 +1052,19 @@ R_i = \left[ y_i - y_M(x_i;\boldsymbol{\boldsymbol{\theta}}) \right]/\sigma_0,
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Huber: theta0 = 34.9, theta1 = 0.38
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Huber: theta0 = 30.1, theta1 = 0.50
 </pre></div>
 </div>
-<img alt="../../../_images/80f7cb5b329d15323e956dd87de07819ff402750cae359cb348888948d5db4be.png" src="../../../_images/80f7cb5b329d15323e956dd87de07819ff402750cae359cb348888948d5db4be.png" />
+<img alt="../../../_images/8b4725e1ae2abbee04b454ff3737f84de869d2e50b87f2c8ebecf470bbcfc049.png" src="../../../_images/8b4725e1ae2abbee04b454ff3737f84de869d2e50b87f2c8ebecf470bbcfc049.png" />
 </div>
 </div>
-<p>By eye, this seems to have worked as desired: the fit is much closer to our intuition!
-<em>However, a Bayesian might point out that the motivation for this new loss function is a bit suspect: as we showed, the squared-loss can be straightforwardly derived from a Gaussian likelihood. The Huber loss seems a bit <em>ad hoc</em>: where does it come from? How should we decide what value of <span class="math notranslate nohighlight">\(c\)</span> to use? Is there any good motivation for using a linear loss on outliers, or should we simply remove them instead? How might this choice affect our resulting model?</em></p>
-</section>
+<ul class="simple">
+<li><p>By eye, has this worked as desired? Namely, is the fit much closer to our intuition?</p></li>
+<li><p>As noted in an earlier section, a Bayesian might point out that the motivation for this new loss function is a bit suspect: as we showed, the squared-loss can be straightforwardly derived from a Gaussian likelihood. The Huber loss seems a bit <em>ad hoc</em>: where does it come from? How should we decide what value of <span class="math notranslate nohighlight">\(c\)</span> to use? Is there any good motivation for using a linear loss on outliers, or should we simply remove them instead? How might this choice affect our resulting model?</p></li>
+</ul>
 </section>
 <section id="bayesian-approaches-to-erratic-data">
-<h2><span class="section-number">13.3. </span>Bayesian approaches to erratic data<a class="headerlink" href="#bayesian-approaches-to-erratic-data" title="Link to this heading">#</a></h2>
+<h2>Bayesian approaches to erratic data<a class="headerlink" href="#bayesian-approaches-to-erratic-data" title="Link to this heading">#</a></h2>
 <p>We’ll consider four Bayesian approaches to outliers:</p>
 <ol class="arabic simple">
 <li><p>A conservative model (treat all data points as equally possible outliers).</p></li>
@@ -1000,61 +1072,8 @@ R_i = \left[ y_i - y_M(x_i;\boldsymbol{\boldsymbol{\theta}}) \right]/\sigma_0,
 <li><p>The Cauchy formulation.</p></li>
 <li><p>Many nuisance parameters.</p></li>
 </ol>
-<p>First, let’s preview our approaches by considering what is problematic about a Gaussian model for the observation errors when we have outliers.</p>
-<section id="why-are-outliers-problematic-with-a-gaussian-model">
-<h3>Why are outliers problematic with a Gaussian model?<a class="headerlink" href="#why-are-outliers-problematic-with-a-gaussian-model" title="Link to this heading">#</a></h3>
-<p>As noted already, with a Gaussian log likelihood,</p>
-<div class="math notranslate nohighlight">
-\[
-\log p(D\mid\boldsymbol{\theta}, I) = \text{constant} - \sum_{i=1}^N \frac{\left[ y_i - y_M(x_i;\boldsymbol{\theta})\right]^2}{2 \sigma_0^2} ,
-\]</div>
-<p>in units of <span class="math notranslate nohighlight">\(\sigma_0\)</span> it costs a lot to have an outlier <span class="math notranslate nohighlight">\(y_j\)</span> far from <span class="math notranslate nohighlight">\(y_M(x_j;\boldsymbol{\theta})\)</span> (i.e., to have an outlier with respect to the current model).
-This distorts the fit of the mean value at <span class="math notranslate nohighlight">\(x_j\)</span>, namely <span class="math notranslate nohighlight">\(y_M(x_j;\boldsymbol{\theta})\)</span>.
-Let’s see how that distortion works analytically.</p>
-<p>Suppose we first calculate the log likelihood with <span class="math notranslate nohighlight">\(N\)</span> points, none of which are outliers. Then the maximum likelihood parameters
-<span class="math notranslate nohighlight">\(\boldsymbol{\widehat\theta}\)</span> are such that</p>
-<div class="math notranslate nohighlight">
-\[
-  \left.\frac{\partial}{\partial\theta_n} \log p(D\mid\boldsymbol{\theta}, I)\right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}} = 0 \quad \text{for each } \theta_n \in \boldsymbol{\theta}. 
-\]</div>
-<p>Now hold <span class="math notranslate nohighlight">\(\boldsymbol{\widehat\theta}\)</span> fixed but add a new outlier point <span class="math notranslate nohighlight">\((x_j,y_j)\)</span>. What happens to the maximum likelihood condition? Only the new term in the sum will contribute because the derivatives of the other will sum to zero when <span class="math notranslate nohighlight">\(\boldsymbol{\theta} = \boldsymbol{\widehat\theta}\)</span>. So now</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}
-  \left.\frac{\partial}{\partial\theta_n} \log p(D\mid\boldsymbol{\theta}, I)\right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}} &amp;= 
-     \left.\frac{\partial}{\partial\theta_n} \biggl[-\frac{1}{2}\frac{\bigl(y_j - y_M(x_j;\boldsymbol{\theta})\bigr)^2}{\sigma_0^2} \biggr] \right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}}  \\
-     &amp;= -\left. \frac{y_{j}-y_M(x_j;\boldsymbol{\widehat\theta})}{\sigma_0^2} \frac{\partial y_M(x_j;\boldsymbol{\theta})}{\partial\theta_n} \right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}} ,
-\end{align}\end{split}\]</div>
-<p>where only the first factor depends on <span class="math notranslate nohighlight">\(y_j\)</span>. Thus this factor will grow without bound:</p>
-<div class="math notranslate nohighlight">
-\[
-  \frac{y_{j}-y_M(x_j;\boldsymbol{\widehat\theta})}{\sigma_0^2} \overset{y_{j}\rightarrow\infty}{\longrightarrow} \infty ,
-\]</div>
-<p>and therefore the parameters in <span class="math notranslate nohighlight">\(\boldsymbol{\widehat\theta}\)</span> are pulled more and more by the single outlier point as the magnitude of the outlier grows. This influence will be the case for any theoretical model,
-but is intrinsic to the normal distribution for the likelihoo. How to avoid it?</p>
-<p>One possibility is to switch to a heavier-tailed distribution that doesn’t have this property of unbounded influence. For example, replace the normal distribution by Student’s t-distribution (here this is any <span class="math notranslate nohighlight">\(i\)</span>):</p>
-<div class="math notranslate nohighlight">
-\[
-  y_i \sim t_\nu(\mu, \sigma) \quad \Longrightarrow \quad p(y_i | \mu, \sigma^2) \propto \Bigl[ 1 + \frac{(y_i-\mu)^2}{\nu\sigma^2} \Bigr] ,
-\]</div>
-<p>with <span class="math notranslate nohighlight">\(\mu = y_M(x_i;\boldsymbol{\theta})\)</span> and <span class="math notranslate nohighlight">\(\sigma = \sigma_0\)</span> here.
-Then</p>
-<div class="math notranslate nohighlight">
-\[
-  \log p(y_i | \mu, \sigma^2) = \text{const.} - \frac{\nu+1}{2}\log\Bigl(1 + \frac{(y_i - \mu)^2}{\nu\sigma^2}  \Bigr) ,
-\]</div>
-<p>and the contribution of <span class="math notranslate nohighlight">\(y_j\)</span> to the minimization of the likelihood is (substituting for <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>)</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}
-\left.\frac{\partial}{\partial\theta_n} \log p(y_j | y_M(x_j;\boldsymbol{\theta}), \sigma_0^2)\right|_{\boldsymbol{\theta} = \boldsymbol{\widehat\theta}}
-  &amp;= \frac{\nu+1}{2} \frac{1}{1 + (y_j - y_M(x_j;\boldsymbol{\widehat\theta}))^2/\nu\sigma_0^2}\frac{2(y_j - y_M(x_i;\boldsymbol{\widehat\theta}))}{\nu\sigma_0^2} \\ 
-   &amp;= \frac{\nu+1}{\nu\sigma_0^2 + (y_j - y_M(x_j;\boldsymbol{\widehat\theta}))^2} (y_j - y_M(x_i;\boldsymbol{\widehat\theta})) .
-\end{align}\end{split}\]</div>
-<p>The t-distribution becomes a Gaussian distribution as <span class="math notranslate nohighlight">\(\nu \rightarrow \infty\)</span>, and we see that in that case the derivative will go to infinity like <span class="math notranslate nohighlight">\(y_j - y_M(x_j;\boldsymbol{\widehat\theta})\)</span>, as we saw earlier. But for any finite <span class="math notranslate nohighlight">\(\nu\)</span>, the <span class="math notranslate nohighlight">\(\bigl(y_j - y_M(x_j;\boldsymbol{\widehat\theta})\bigr)^2\)</span> factor in the denominator with dominate over the <span class="math notranslate nohighlight">\(\nu\sigma_0^2\)</span> factor, and the derivative will vanish as <span class="math notranslate nohighlight">\(y_j \rightarrow \infty\)</span>. In other words, the influence on the parameters from the outlier will go away.</p>
-<p>In the next section we will see how a heavy-tailed distribution, such as the Student t distribution, can naturally arise in a Bayesian formulation when the uncertainty is itself uncertain.</p>
-</section>
-</section>
 <section id="bayesian-approach-to-outliers-no-1-a-conservative-formulation">
-<h2><span class="section-number">13.4. </span>Bayesian Approach to Outliers no. 1: A conservative formulation<a class="headerlink" href="#bayesian-approach-to-outliers-no-1-a-conservative-formulation" title="Link to this heading">#</a></h2>
+<h3>Bayesian Approach to Outliers no. 1: A conservative formulation<a class="headerlink" href="#bayesian-approach-to-outliers-no-1-a-conservative-formulation" title="Link to this heading">#</a></h3>
 <p>Assuming that the specified error bars, <span class="math notranslate nohighlight">\(\sigma_0\)</span>, can be viewed as a recommended lower bound, we can construct a more conservative posterior through a marginal likelihood (that is, we introduce <span class="math notranslate nohighlight">\(\sigma\)</span> as a supplementary parameter for what might be the true error, then integrate over it):</p>
 <div class="math notranslate nohighlight">
 \[
@@ -1068,8 +1087,8 @@ p(\sigma|\sigma_0,I) = \frac{\sigma_0}{\sigma^2},
 \]</div>
 <p>for <span class="math notranslate nohighlight">\(\sigma \geq \sigma_0\)</span> and zero otherwise. (This enables us to do the integral up to infinity.) Conservative here means that we treat all data points with suspicion (i.e., we do not single out any points).</p>
 <p>The likelihood for a single data point <span class="math notranslate nohighlight">\(D_i\)</span>, given by <span class="math notranslate nohighlight">\((x_i,y_i,\sigma_i=\sigma_0)\)</span>, is then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b99afc8c-ddc1-45d7-8784-cb909fd2723a">
-<span class="eqno">(13.2)<a class="headerlink" href="#equation-b99afc8c-ddc1-45d7-8784-cb909fd2723a" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-71e9180d-4631-4ecf-9b6f-fbf840496ece">
+<span class="eqno">(13.3)<a class="headerlink" href="#equation-71e9180d-4631-4ecf-9b6f-fbf840496ece" title="Permalink to this equation">#</a></span>\[\begin{align}
 p(D_i | \boldsymbol{\theta}, \sigma_0, I) &amp;= 
   \int_{\sigma_0}^{\infty} \frac{1}{\sqrt{2\pi}\sigma}
     e^{-\sigma_0^2 R_i^2/2\sigma^2}\, \frac{\sigma_0}{\sigma^2}\, d\sigma
@@ -1154,7 +1173,7 @@ p(D_i | \boldsymbol{\theta}, \sigma_0, I) &amp;=
 <p>If we wanted to get a general Student t distribution, we can do an integration of the variance over an inverse-gamma distribution or, equivalently, integrate over the inverse of the variance with a gamma distribtion. An animation of the latter is created in <a class="reference external" href="https://nucleartalent.github.io/LFD_for_Physicists/content/OtherTopics/Student_t_distribution_from_Gaussians_HTML5.html">Student’s t-distribution from Gaussians</a>.</p>
 </section>
 <section id="bayesian-approach-to-outliers-no-2-good-and-bad-data">
-<h2><span class="section-number">13.5. </span>Bayesian Approach to Outliers no. 2: Good-and-bad data<a class="headerlink" href="#bayesian-approach-to-outliers-no-2-good-and-bad-data" title="Link to this heading">#</a></h2>
+<h3>Bayesian Approach to Outliers no. 2: Good-and-bad data<a class="headerlink" href="#bayesian-approach-to-outliers-no-2-good-and-bad-data" title="Link to this heading">#</a></h3>
 <p>See Sivia, Ch. 8.3.2 for more details.</p>
 <p>In this approach, we are less pessimistic about the data.  In particular, we allow for two possibilities: <br>
 a) the datum and its error are reliable; <br>
@@ -1173,7 +1192,7 @@ b) the datum is bad and the error should be larger by a (large) factor <span cla
 <p>We won’t code this approach here but leave it to an exercise.  We will generalize the idea to the extreme in approach #4 below.</p>
 </section>
 <section id="bayesian-approach-to-outliers-no-3-the-cauchy-formulation">
-<h2><span class="section-number">13.6. </span>Bayesian Approach to Outliers no. 3: The Cauchy formulation<a class="headerlink" href="#bayesian-approach-to-outliers-no-3-the-cauchy-formulation" title="Link to this heading">#</a></h2>
+<h3>Bayesian Approach to Outliers no. 3: The Cauchy formulation<a class="headerlink" href="#bayesian-approach-to-outliers-no-3-the-cauchy-formulation" title="Link to this heading">#</a></h3>
 <p>In this approach, we assume <span class="math notranslate nohighlight">\(\sigma \approx \sigma_0\)</span> but allow it to be either narrower or wider:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -1206,8 +1225,8 @@ b) the datum is bad and the error should be larger by a (large) factor <span cla
 </div>
 </div>
 </section>
-<section id="sampling">
-<h2><span class="section-number">13.7. </span>Sampling<a class="headerlink" href="#sampling" title="Link to this heading">#</a></h2>
+<section id="sampling-to-compare-bayesian-methods">
+<h3>Sampling to compare Bayesian methods<a class="headerlink" href="#sampling-to-compare-bayesian-methods" title="Link to this heading">#</a></h3>
 <p>We’ll use the <code class="docutils literal notranslate"><span class="pre">emcee</span></code> sampler to generate MCMC samples of our posteriors.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1277,12 +1296,12 @@ Log posterior: Std Gaussian
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>... EMCEE sampler performing 10000 samples.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3.25 s, sys: 1.68 ms, total: 3.25 s
-Wall time: 3.25 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.07 s, sys: 0 ns, total: 4.07 s
+Wall time: 4.07 s
 done
 </pre></div>
 </div>
-<img alt="../../../_images/ede4ea49998763841a38d2d996be30c7c00f2ca4fef28413d0ae218be5859c96.png" src="../../../_images/ede4ea49998763841a38d2d996be30c7c00f2ca4fef28413d0ae218be5859c96.png" />
+<img alt="../../../_images/9bdecbbe9cfbccf1c0df2bb1d33df66541d526aadfe0f4e9c007a4eea21c03a9.png" src="../../../_images/9bdecbbe9cfbccf1c0df2bb1d33df66541d526aadfe0f4e9c007a4eea21c03a9.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Log posterior: Conservative
 ... EMCEE sampler performing 1000 warnup iterations.
 </pre></div>
@@ -1290,12 +1309,12 @@ done
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>... EMCEE sampler performing 10000 samples.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3.73 s, sys: 6.77 ms, total: 3.74 s
-Wall time: 3.74 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.69 s, sys: 0 ns, total: 4.69 s
+Wall time: 4.69 s
 done
 </pre></div>
 </div>
-<img alt="../../../_images/01b172f7e6057c1834ec105cd9f34ff91552448ccd0ac0e17f6d7311057a1ec3.png" src="../../../_images/01b172f7e6057c1834ec105cd9f34ff91552448ccd0ac0e17f6d7311057a1ec3.png" />
+<img alt="../../../_images/da0b1f03bbc7a9c08e12a55f32bcf4074cd2a2fadfc9f4ca61f256d93ba8dbf0.png" src="../../../_images/da0b1f03bbc7a9c08e12a55f32bcf4074cd2a2fadfc9f4ca61f256d93ba8dbf0.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Log posterior: Cauchy
 ... EMCEE sampler performing 1000 warnup iterations.
 </pre></div>
@@ -1303,12 +1322,12 @@ done
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>... EMCEE sampler performing 10000 samples.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3.58 s, sys: 2.08 ms, total: 3.58 s
-Wall time: 3.58 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.54 s, sys: 0 ns, total: 4.54 s
+Wall time: 4.53 s
 done
 </pre></div>
 </div>
-<img alt="../../../_images/389502cd278e71f317e1b0ef39d36bc87977da117961ac6d05332000deb22a1e.png" src="../../../_images/389502cd278e71f317e1b0ef39d36bc87977da117961ac6d05332000deb22a1e.png" />
+<img alt="../../../_images/d3bff1943e36cd81acd368a295b29781c136d02173ff586c564a2744e2c18a90.png" src="../../../_images/d3bff1943e36cd81acd368a295b29781c136d02173ff586c564a2744e2c18a90.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1334,17 +1353,17 @@ done
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Summary:             Mean offset  68% CR     Mean slope     68% CR
-        Std Gaussian    41.14   -1.21,+1.24     0.253    -0.028,+0.028
-        Conservative    31.69   -2.25,+2.32     0.450    -0.050,+0.052
-              Cauchy    31.65   -2.06,+2.05     0.449    -0.044,+0.043
+        Std Gaussian    37.23   -1.37,+1.37     0.364    -0.023,+0.023
+        Conservative    27.26   -2.44,+2.46     0.546    -0.040,+0.041
+              Cauchy    27.00   -2.18,+2.24     0.552    -0.035,+0.036
 </pre></div>
 </div>
-<img alt="../../../_images/cbfbc01cf286eb52c929d718ab259c7851bd399fd401ebc9a3310f2a19fe90d0.png" src="../../../_images/cbfbc01cf286eb52c929d718ab259c7851bd399fd401ebc9a3310f2a19fe90d0.png" />
+<img alt="../../../_images/4187cc7f68408de27ecc7da99717c5010bbf1f0e075e5db4a82f79df7d3d93ef.png" src="../../../_images/4187cc7f68408de27ecc7da99717c5010bbf1f0e075e5db4a82f79df7d3d93ef.png" />
 </div>
 </div>
 </section>
 <section id="bayesian-approach-to-outliers-no-4-many-nuisance-parameters">
-<h2><span class="section-number">13.8. </span>Bayesian Approach to Outliers no. 4: Many nuisance parameters<a class="headerlink" href="#bayesian-approach-to-outliers-no-4-many-nuisance-parameters" title="Link to this heading">#</a></h2>
+<h3>Bayesian Approach to Outliers no. 4: Many nuisance parameters<a class="headerlink" href="#bayesian-approach-to-outliers-no-4-many-nuisance-parameters" title="Link to this heading">#</a></h3>
 <p>The Bayesian approach to accounting for outliers generally involves <em>modifying the model</em> so that the outliers are accounted for. For this data, it is abundantly clear that a simple straight line is not a good fit to our data. So let’s propose a more complicated model that has the flexibility to account for outliers. One option is to choose a mixture between a signal and a background:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -1423,7 +1442,7 @@ p(\{y_i\}~|~\{x_i\}, \{e_i\},~\boldsymbol{\theta},\{g_i\},\sigma_B) = &amp; \fra
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/07c0b6e53383553a3bc2c8e6c67ced699ca69c920f4c94a666b6631682d0b193.png" src="../../../_images/07c0b6e53383553a3bc2c8e6c67ced699ca69c920f4c94a666b6631682d0b193.png" />
+<img alt="../../../_images/86aa087df5f47ff8f14dc1a40b1646e0ab0d8bbc0dce24d424cd2b2cbda2abb6.png" src="../../../_images/86aa087df5f47ff8f14dc1a40b1646e0ab0d8bbc0dce24d424cd2b2cbda2abb6.png" />
 </div>
 </div>
 <p>We see a distribution of points near a slope of <span class="math notranslate nohighlight">\(\sim 0.4-0.5\)</span>, and an intercept of <span class="math notranslate nohighlight">\(\sim 29-34\)</span>. We’ll plot this model over the data below, but first let’s see what other information we can extract from this trace.</p>
@@ -1444,11 +1463,11 @@ p(\{y_i\}~|~\{x_i\}, \{e_i\},~\boldsymbol{\theta},\{g_i\},\sigma_B) = &amp; \fra
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>g1 mean: 0.65
-g2 mean: 0.39
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>g1 mean: 0.64
+g2 mean: 0.52
 </pre></div>
 </div>
-<img alt="../../../_images/678ea066dd40e04593a53b076d70ae13f29436dadd088c6c4f5b4c6a3300382d.png" src="../../../_images/678ea066dd40e04593a53b076d70ae13f29436dadd088c6c4f5b4c6a3300382d.png" />
+<img alt="../../../_images/ad442fb5f3b74fb94232fbe88bbf91ee09c25f4909bd8772de5882498484ef5f.png" src="../../../_images/ad442fb5f3b74fb94232fbe88bbf91ee09c25f4909bd8772de5882498484ef5f.png" />
 </div>
 </div>
 <p>There is not an extremely strong constraint on either of these, but we do see that <span class="math notranslate nohighlight">\((g_1, g_2) = (1, 0)\)</span> is slightly favored: the means of <span class="math notranslate nohighlight">\(g_1\)</span> and <span class="math notranslate nohighlight">\(g_2\)</span> are greater than and less than 0.5, respectively. If we choose a cutoff at <span class="math notranslate nohighlight">\(g=0.5\)</span>, our algorithm has identified <span class="math notranslate nohighlight">\(g_2\)</span> as an outlier.</p>
@@ -1482,18 +1501,16 @@ g2 mean: 0.39
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/a23b9a3cfe144c5730cee68efc95bf68d2ea43b6c511104721c0bcfe5938c697.png" src="../../../_images/a23b9a3cfe144c5730cee68efc95bf68d2ea43b6c511104721c0bcfe5938c697.png" />
+<img alt="../../../_images/3a4ad2eec00533e60fd8d83a579dec4e446b156e32654df88fb19217dd4406b8.png" src="../../../_images/3a4ad2eec00533e60fd8d83a579dec4e446b156e32654df88fb19217dd4406b8.png" />
 </div>
 </div>
-<p>The result, shown by the dark line, matches our intuition! Furthermore, the points automatically identified as outliers are the ones we would identify by hand.  For comparison, the gray lines show the two previous approaches: the simple maximum likelihood and the frequentist approach based on Huber loss.</p>
+<ul class="simple">
+<li><p>Does the result, shown by the dark line, match your intuition?</p></li>
+<li><p>Are the points automatically identified as outliers the ones you would identify by hand?</p></li>
+<li><p>Make a comparison with the gray lines, which show the two previous approaches: the simple maximum likelihood and the frequentist approach based on Huber loss.</p></li>
+</ul>
 </section>
-<section id="discussion">
-<h2><span class="section-number">13.9. </span>Discussion<a class="headerlink" href="#discussion" title="Link to this heading">#</a></h2>
-<p>Here we’ve dived into linear regression in the presence of outliers. A typical Gaussian maximum likelihood approach fails to account for the outliers, but we were able to correct this in the frequentist paradigm by modifying the loss function, and in the Bayesian paradigm by adopting a mixture model with a large number of nuisance parameters.</p>
-<p>Both approaches have their advantages and disadvantages: the frequentist approach here is relatively straightforward and computationally efficient, but is based on the use of a loss function which is not particularly well-motivated. The Bayesian approach is well-founded and produces very nice results, but it is much more intensive in both coding time and computational time. It also requires a specification of a prior that must be motivated. The advantage is that this prior choice can be tested and compared to alternatives. While you will often see this choice described in the literature (mostly older literature now) as “subjective”, in fact it is a more objective approach because of the ability to evaluate it!</p>
 </section>
-<div class="toctree-wrapper compound">
-</div>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1527,12 +1544,12 @@ g2 mean: 0.39
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../assigning-probabilities/demo-maximum-entropy-for-reconstructing-a-function-from-its-moments.html"
+       href="sec-bayesian-methods-for-outliers.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">12.4. </span>📥 Demo: Maximum Entropy for reconstructing a function from its moments</p>
+        <p class="prev-next-title"><span class="section-number">13.3. </span>Bayesian methods to deal with outliers</p>
       </div>
     </a>
     <a class="right-next"
@@ -1540,7 +1557,7 @@ g2 mean: 0.39
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">13.10. </span>Demo: Student’s t-distribution from Gaussians</p>
+        <p class="prev-next-title"><span class="section-number">13.5. </span>Demo: Student’s t-distribution from Gaussians</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1560,25 +1577,17 @@ g2 mean: 0.39
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-good-data-bad-data">13.1. Example: good data / bad data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#import-python-modules">Import Python modules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-good-data-bad-data">Example: good data / bad data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-likelihood-approach">Standard Likelihood Approach</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#frequentist-correction-for-outliers-huber-loss">Frequentist Correction for Outliers: Huber Loss</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approaches-to-erratic-data">Bayesian approaches to erratic data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-1-a-conservative-formulation">Bayesian Approach to Outliers no. 1: A conservative formulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-2-good-and-bad-data">Bayesian Approach to Outliers no. 2: Good-and-bad data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-3-the-cauchy-formulation">Bayesian Approach to Outliers no. 3: The Cauchy formulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-to-compare-bayesian-methods">Sampling to compare Bayesian methods</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-4-many-nuisance-parameters">Bayesian Approach to Outliers no. 4: Many nuisance parameters</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model">13.2. The Model</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-likelihood-approach">Standard Likelihood Approach</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#frequentist-correction-for-outliers-huber-loss">Frequentist Correction for Outliers: Huber Loss</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approaches-to-erratic-data">13.3. Bayesian approaches to erratic data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-are-outliers-problematic-with-a-gaussian-model">Why are outliers problematic with a Gaussian model?</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-1-a-conservative-formulation">13.4. Bayesian Approach to Outliers no. 1: A conservative formulation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-2-good-and-bad-data">13.5. Bayesian Approach to Outliers no. 2: Good-and-bad data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-3-the-cauchy-formulation">13.6. Bayesian Approach to Outliers no. 3: The Cauchy formulation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling">13.7. Sampling</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-approach-to-outliers-no-4-many-nuisance-parameters">13.8. Bayesian Approach to Outliers no. 4: Many nuisance parameters</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion">13.9. Discussion</a></li>
 </ul>
   </nav></div>
 
