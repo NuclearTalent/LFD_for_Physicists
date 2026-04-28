@@ -12,7 +12,7 @@ jupytext:
 # Setup: linear regression with data outliers
 
 
-We will use as our canonical analysis a set of data that mostly lies on a straight line but has several points that are far away. 
+We will use as our canonical example a set of data that mostly lies close to a straight line, and is expected to lie on a straight line, but has several points that are far away. 
 (This example and subsequent discussion was adapted from the blog post [Frequentism and Bayesianism II: When Results Differ](http://jakevdp.github.io/blog/2014/06/06/frequentism-and-bayesianism-2-when-results-differ/).)
 
 ## Sample dataset
@@ -45,7 +45,9 @@ ax.errorbar(x, y, e, fmt='o');
 
 ```
 
-Our task is to find a line of best-fit to the data. It's clear upon visual inspection that there are some outliers among these points, but let's start with a simple non-robust maximum likelihood approach. 
+Our task is to find a line of best-fit to the data. It's clear upon visual inspection that there are some outliers among these points, but how do we deal with them. In the subsequent sections we will consider both frequentist and Bayesian approaches.
+But first we need to set up our model.
+
 
 ## The Model
 
