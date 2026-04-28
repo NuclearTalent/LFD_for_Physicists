@@ -1,21 +1,21 @@
 (sec:Gaussians)=
-# Gaussians: A couple of frequentist connections
+# More on Gaussian distributions
 
 
 ## The near ubiquity of Gaussians
 
-In {ref}`exercise:gaussian-noise-and-averages-ii` we sample a Gaussian distribution and
-estimated its mean and variance. We are going to see a lot of Gaussian
-distributions in this course. And indeed some people implicitly always
-assume Gaussian distributions. So this seems like as good a place as
-any to pause and consider why Gaussian distributions are a common
+We will see a lot of Gaussian distributions in this course.
+For example, in {ref}`exercise:gaussian-noise-and-averages-ii` we sample a Gaussian distribution and
+estimate its mean and variance.  Some people implicitly *always*
+assume Gaussian distributions. So this seems like a good place
+to pause and consider why Gaussian distributions are a common
 choice to describe noise, as well as thinking about the circumstances
 in which that choice might be a poor one.
 
 It turns out there are several reasons why one might choose a Gaussian
-to describe a probability distribution. Here are two:
+to describe a probability distribution. Here are two.
 
-### The Gaussian is to statistics what the harmonic oscillator is to mechanics
+## The Gaussian is to statistics what the harmonic oscillator is to mechanics
 
 Suppose we have a probability distribution $p(x | D,I)$ that is
 unimodal (has only one hump), then one way to form a "best estimate''
@@ -100,7 +100,7 @@ minus infinity.
 A pdf must be normalizable and positive definite, so this approximation violates these conditions!
 :::
 
-### The Central Limit Theorem
+## The Central Limit Theorem
 
 Another reason a Gaussian pdf emerges in many calculations is because
 the Central Limit Theorem (CLT) states that the sum of random variables drawn
@@ -113,7 +113,7 @@ pdf of finite variance $\sigma^2$ tends as $n \rightarrow \infty$ to
 be Gaussian distributed about the expectation value of the sum, with
 variance $n \sigma^2$.
 
-#### Consequences:
+### Consequences:
 
 * The mean of a large number of values becomes normally distributed
   _regardless_ of the probability distribution the values are drawn
@@ -138,7 +138,7 @@ If we add up $n$ random variables from Bin($1,p$), each with value 0 or 1, this 
 ::::
 
 
-#### Proof of the CLT in a special case:
+### Proof of the CLT in a special case:
 
 Start with *independent* random variables $x_1,\cdots,x_n$ drawn from a distribution with mean $\langle x \rangle = 0$ and variance $\langle x^2\rangle = \sigma^2$, where
 
@@ -268,9 +268,7 @@ All terms that we dropped in truncating the Taylor expansions for each Fourier i
 ::::
 
 
-
-
-#### Notebook:
+### Demo notebook
 
 Look at {ref}`demo:visualization-of-the-central-limit-theorem`.
 
@@ -282,127 +280,6 @@ it matter where we look?*
 * *If we have a large number of draws from a uniform distribution, does the CLT imply that the histogrammed distribution should look like a Gaussian?*
 
 * *Can you identify a case where the CLT will fail?*
-
-
-## p-values: when all you can do is falsify
-
-A common way for a frequentist to discuss a theory/model, or put a
-bound on a parameter value, is to quote a p-value.
-This is set up using something called the null hypothesis. Somewhat
-perversely you should pick the null hypothesis to be the opposite of
-what you want to prove. So if you want to discover the Higgs boson,
-the null hypothesis is that the Higgs boson does not exist.
-
-Then you pick a level of proof you are comfortable with. For the
-Higgs boson (and for many other particle physics experiments) it is
-"5 sigma''. *How do you think we convert this statement to a
-probability?* [Hint: refer to a Gaussian distribution.]
-One minus the resulting probability is called the $p$-value. We will
-denote it $p_{\rm crit}$. There is nothing
-God-given about it. It is a standard (like "beyond a reasonable
-doubt") that has been agreed upon in a research community for
-determining that something is (likely) going on. 
-
-You then take data and compute $p(D|{\rm null~hypothesis})$. If
-$p(D|{\rm null~ hypothesis}) < p_{\rm crit}$ then you conclude that the "the null
-hypothesis is rejected at the $p_{\rm crit}$ significance level''.
-Note that if $p(D|{\rm null~hypothesis}) > p_{\rm crit}$ you cannot
-conclude that the null hypothesis is true. It just means "no effect
-was observed".
-
-:::{admonition} Exercise
-  Look at
-  {ref}`demo:bayesian-coin-tossing-interactive`. Pick
-  a $p_{\rm crit}$-value. If  $p_h=0.4$, work out how many coin tosses it would take
-  to reject the null hypothesis that it's a fair coin ($p_h=0.5$) at
-  this significance level. 
-:::
-
-
-
-## Contrast Bayesian and significance analyses for coin flipping
-
-Suppose we do a coin flipping experiment where we toss a coin 20 times and it comes up heads 14 times. Let's compare how we might analyze this with Bayesian methods to how we might do a significance analysis with p-values.
-
-**Bayesian analysis.** 
-Following our study in {ref}`demo:bayesian-coin-tossing-interactive`, let's calculate the probability of heads, which we call $p_h$, given data $D = \{R \text{ heads}, N \text{ tosses}\}$. 
-* Let's assume a uniform prior (encoded as a beta function with $\alpha=1$, $\beta=1$).
-* We found that this can be expressed as a beta function, which we can calculate in Python using
-$p(p_h|D) = p(D|p_h)p(p_h)$ $\longrightarrow$ `scipy.stats.beta.pdf(p_h,1+R,1+N-R)`. For $N=20$, $R=14$, this is shown on the left below.
-* Now we can answer many questions, such as: what is the probability that $p_h$ is between $0.49$ and $0.51$? The answer comes from integrating our pdf over this interval (i.e., the area under the curve).
-* Note that in the Bayesian analysis, the data is given while the probability of heads is a random value.
-
-```{image} ../assets/beta_distribution_14heads_in_20tosses.png
-:alt: bootstrapping
-:class: bg-primary
-:width: 700px
-:align: center
-```
-
-**Significance test.** Here we will try to answer the question: Is the coin fair? We'll follow the discussion in Wikipedia under [p-value](https://en.wikipedia.org/wiki/P-value) titled "Testing the fairness of a coin". 
-* We interpret "fair" as meaning $p_h = 0.5$. Our null hypothesis is that the coin is fair and $p_h = 0.5$.
-* We plot the probabilities for getting $R$ heads in $N=20$ tosses using the binomial probability mass distribution on the right above.
-* We decide on the significance $p_{\rm crit} = 0.05$.
-* (Important conceptual question:) $p_{\rm crit}$ and $p_h$ are both probabilities. Turn to your neighbor and explain to them what they are the probabilities of and how they are different. 
-* We need to find the probability of getting data *at least as extreme* as $D = \{R \text{ heads}, N \text{ tosses}\}$. For our example, that means adding up the binomial probabilities for $R = 14, 15, \ldots, 20$, which is 0.058. (This is called a "one-tailed test". If we wanted to consider deviations favoring tails as well, we would would add as well the probabilities for $R = 0, 1, \ldots, 6$, so $0.115$ in total. This would be a "two-tailed test".) 
-* Comparing to $p_{\rm crit} = 0.05$, we find the p-value is greater than $p_{\rm crit}$, so the null hypothesis is not rejected at the 95\% level. (Note that we say "not rejected" as opposed to "accepted".) If we had gotten 15 heads instead we would have rejected the null hypothesis.
-* Note that in this frequentist analysis, the *data* is random while $p_h$ is fixed (although unknown). 
-
-:::{admonition} Exercise
-  Verify that if we had gotten 15 heads in $N=20$ tosses that we would have rejected the null hypothesis.
-:::
-
-
-
-
-## Bayesian credible intervals and frequentist confidence intervals
-
-We already commented on the difference between the
-68% degree of belief interval for the most likely value (in that case
-the bias weighting of the coin) and a frequentist $1 \sigma$ confidence
-interval.
-
-* First point is that $1 \sigma=68$% assumes a Gaussian distribution
-  around the maximum of the posterior (cf. above). While this will
-  often work out okay, it may not. And, as we seek to translate, 
-  $n \sigma$ intervals into DoB statements, assuming a Gaussian
-  becomes more and more questionable the higher $n$ is. (Why?)
-
-* But the second point is more philosophical (meta-statistical?). One
-  interval is a statement about $p(x|D,I)$, while the other is a
-  statement about $p(D|x,I)$.
-
-* (Note that because the conversion between the two pdfs requires the
- use of Bayes' theorem the Bayesian interval may be affected by the
- choice of the prior.)
-
-* Bayesian version is easy; a 68% credible interval or Bayesian
-  confidence interval or degree-of-belief (DoB) interval is: given
-  some data and some information $I$, there is a 68% chance (probability) that the interval contains the true parameter. 
-
-* Frequentist 68% confidence interval
-    * Assuming the model (contained in $I$) and the value of the
-      parameter $x$ then if we do the experiment a large number of
-      times then 68% of them will produce data in that interval.
-   * So the *parameter* is fixed (no pdf) and the confidence
-     interval is a statement about data
-   * Frequentists will try to make statements about parameters, but
-     they end up a bit tangled, e.g., "There is a 68% probability
-     that when I compute a confidence interval from data of this sort
-     that the true value of $\theta$ will fall within the
-     (hypothetical) space of observations."
-
-
-* For a one-dimensional posterior that is symmetric, it is clear how to define the $d\%$ confidence interval. 
-    * Algorithm: start from the center, step outward on both sides, stop when $d\%$ is enclosed.
-    * For a two-dimensional posterior, need a way to integrate from the top. (Could lower a plane, as desribed below for HPD.)
-
-* What if asymmetic or multimodal? Two of the possible choices:
-    * Equal-tailed interval (central interval): the area above and below the interval are equal.
-    * Highest posterior density (HPD) region: posterior density for
-      every point is higher than the posterior density for any point
-      outside the
-      interval. [E.g., lower a horizontal line over the distribution until the desired interval percentage is covered by regions above the line.]
 
 
 
