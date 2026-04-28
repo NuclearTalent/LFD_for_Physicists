@@ -6,7 +6,7 @@ We've divided the material into chapters on:
 
 * {ref}`ch:Inferenceandpdfs`, with an introduction to Bayes' theorem and other ingredients of Bayesian statistical analysis, including our first look at parameter estimation;
 
-* {ref}`sec:BayesianPosteriors`, with explorations of probability density (or distribution) functions (PDFs);
+* {ref}`sec:MoreOnPDFs`, with further details and explorations of probability density (or distribution) functions (PDFs);
 
 * {ref}`sec:UpdatingBayes`, with interactive guides to the updating of PDFs when additional knowledge is acquired; 
 
