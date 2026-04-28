@@ -52,13 +52,6 @@ y = np.array([33, 68, 34, 34, 37, 71, 37, 44, 48, 49,
 sig0 = 3.
 e = sig0*np.ones_like(y)
 
-<<<<<<< HEAD
-=======
-fig = plt.figure(figsize=(8,6))
-ax = fig.add_subplot(1,1,1)
-ax.errorbar(x, y, e, fmt='o');
-
->>>>>>> main
 
 def residuals(theta, x=x, y=y, sigma0=sig0):
     """
@@ -93,11 +86,7 @@ def squared_loss(theta, x=x, y=y, sigma0=sig0):
 #  square_loss function using scipy.optimize.fmin. (Minimizing chi^2 gives
 #  the same result as maximizing e^{chi^2/2}.)
 theta_MLE = optimize.fmin(squared_loss, [0, 0], disp=False)
-<<<<<<< HEAD
 print(f"Maximum likelihood estimate (MLE): theta0 = {theta_MLE[0]:.1f}, theta1 = {theta_MLE[1]:.2f}")
-=======
-print(f"MLE: theta0 = {theta_MLE[0]:.1f}, theta1 = {theta_MLE[1]:.2f}")
->>>>>>> main
 
 # Plot the MLE fit versus the data
 xfit = np.linspace(0, 100)
@@ -165,10 +154,6 @@ By eye, this seems to have worked as desired: the fit is much closer to our intu
 * The Huber loss seems a bit *ad hoc*: where does it come from? 
 * How should we decide what value of $c$ to use? 
 * Is there any good motivation for using a linear loss on outliers, or should we simply remove them instead? 
-<<<<<<< HEAD
 * How might this choice affect our resulting model?
-=======
-* How might this choice affect our resulting model?*
->>>>>>> main
 
 
