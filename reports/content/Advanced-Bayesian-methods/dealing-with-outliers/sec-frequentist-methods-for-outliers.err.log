@@ -1,0 +1,101 @@
+Traceback (most recent call last):
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 1323, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+%matplotlib inline
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set(); sns.set_context("talk")
+
+import emcee
+import corner
+
+# note that x and y will be used as global arrays
+x = np.array([ 0,  3,  9, 14, 15, 19, 20, 21, 30, 35,
+              40, 41, 42, 43, 54, 56, 67, 69, 72, 88])
+y = np.array([33, 68, 34, 34, 37, 71, 37, 44, 48, 49,
+              53, 49, 50, 48, 56, 60, 61, 63, 44, 71])
+sig0 = 3.
+e = sig0*np.ones_like(y)
+
+<<<<<<< HEAD
+=======
+fig = plt.figure(figsize=(8,6))
+ax = fig.add_subplot(1,1,1)
+ax.errorbar(x, y, e, fmt='o');
+
+>>>>>>> main
+
+def residuals(theta, x=x, y=y, sigma0=sig0):
+    """
+    Residuals between data y (a vector at points x) and the theoretical model,
+    which here is a straight line with theta[0] = b and theta[1] = m.
+    """
+    delta_y = y - theta[0] - theta[1] * x
+    return delta_y / sigma0
+
+ 
+def log_posterior_gaussian(theta):
+    """
+    Returns the logarithm of the posterior, with a standard chi^2 likelihood 
+    in terms of the residuals, with Gaussian errors as specified and a
+    uniform prior assumed for theta between 0 and 100.
+    """
+    if (all(theta > 0) and all(theta < 100)):
+        return -0.5 * np.sum(residuals(theta)**2)
+    else:
+        return -np.inf  # recall log(0) = -inf    
+
+from scipy import optimize
+
+def squared_loss(theta, x=x, y=y, sigma0=sig0):
+    """Loss function is sum of squared residuals divided by 2, which
+        is what we usually call chi^2 / 2. 
+    """
+    delta_y = y - theta[0] - theta[1] * x
+    return np.sum(0.5 * (delta_y / sigma0) ** 2)
+
+# Find the maximum likelihood estimate (MLE) for theta by minimizing the
+#  square_loss function using scipy.optimize.fmin. (Minimizing chi^2 gives
+#  the same result as maximizing e^{chi^2/2}.)
+theta_MLE = optimize.fmin(squared_loss, [0, 0], disp=False)
+<<<<<<< HEAD
+print(f"Maximum likelihood estimate (MLE): theta0 = {theta_MLE[0]:.1f}, theta1 = {theta_MLE[1]:.2f}")
+=======
+print(f"MLE: theta0 = {theta_MLE[0]:.1f}, theta1 = {theta_MLE[1]:.2f}")
+>>>>>>> main
+
+# Plot the MLE fit versus the data
+xfit = np.linspace(0, 100)
+yfit = theta_MLE[0] + theta_MLE[1] * xfit
+
+fig, ax = plt.subplots(1, 1, figsize=(8,6))
+ax.errorbar(x, y, sig0, fmt='o', color='blue')
+ax.plot(xfit, yfit, color='black')
+ax.set_title('Maximum Likelihood fit: Squared Loss');
+------------------
+
+
+  [36mCell[39m[36m [39m[32mIn[1][39m[32m, line 18[39m
+[31m    [39m[31m<<<<<<< HEAD[39m
+    ^
+[31mSyntaxError[39m[31m:[39m invalid syntax
+
+

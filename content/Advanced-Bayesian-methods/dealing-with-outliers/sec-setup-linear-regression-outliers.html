@@ -279,7 +279,7 @@
 <li class="toctree-l2"><a class="reference internal" href="sec-frequentist-methods-for-outliers.html">13.2. Frequentist methods to deal with outliers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec-bayesian-methods-for-outliers.html">13.3. Bayesian methods to deal with outliers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="demo-dealing-with-outliers.html">13.4. Demo: Illustrating approaches to outliers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-student-t-distribution-from-gaussians.html">13.5. Demo: Student t distribution from Gaussians</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-student-t-distribution-from-gaussians.html">13.5. Demo: Student's t-distribution from Gaussians</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../bayes-goes-linear-history-matching/index.html">14. Bayes goes linear — History matching</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -707,7 +707,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="setup-linear-regression-with-data-outliers">
 <span id="sec-setuplinearregressionoutliers"></span><h1><span class="section-number">13.1. </span>Setup: linear regression with data outliers<a class="headerlink" href="#setup-linear-regression-with-data-outliers" title="Link to this heading">#</a></h1>
-<p>We will use as our canonical analysis a set of data that mostly lies on a straight line but has several points that are far away.
+<p>We will use as our canonical example a set of data that mostly lies close to a straight line, and is expected to lie on a straight line, but has several points that are far away.
 (This example and subsequent discussion was adapted from the blog post <a class="reference external" href="http://jakevdp.github.io/blog/2014/06/06/frequentism-and-bayesianism-2-when-results-differ/">Frequentism and Bayesianism II: When Results Differ</a>.)</p>
 <section id="sample-dataset">
 <h2>Sample dataset<a class="headerlink" href="#sample-dataset" title="Link to this heading">#</a></h2>
@@ -747,7 +747,8 @@ document.write(`
 <img alt="../../../_images/97cf8f7b518fcffd76b96c47860753e450aa31ff2f3fd99f62f49267afc041b4.png" src="../../../_images/97cf8f7b518fcffd76b96c47860753e450aa31ff2f3fd99f62f49267afc041b4.png" />
 </div>
 </div>
-<p>Our task is to find a line of best-fit to the data. It’s clear upon visual inspection that there are some outliers among these points, but let’s start with a simple non-robust maximum likelihood approach.</p>
+<p>Our task is to find a line of best-fit to the data. It’s clear upon visual inspection that there are some outliers among these points, but how do we deal with them. In the subsequent sections we will consider both frequentist and Bayesian approaches.
+But first we need to set up our model.</p>
 </section>
 <section id="the-model">
 <h2>The Model<a class="headerlink" href="#the-model" title="Link to this heading">#</a></h2>
@@ -786,8 +787,8 @@ p(y_i\mid x_i,\boldsymbol{\theta}) = \frac{1}{\sqrt{2\pi\sigma_0^2}} \exp\left(\
 p(D\mid\boldsymbol{\theta}, I) = \prod_{i=1}^N p(y_i\mid x_i,\boldsymbol{\theta}, I) .
 \]</div>
 <p>For convenience (and also for numerical accuracy) this is often expressed in terms of the log-likelihood:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-02611cd1-6c7f-4aba-9bc4-b194c2d73f4d">
-<span class="eqno">(13.1)<a class="headerlink" href="#equation-02611cd1-6c7f-4aba-9bc4-b194c2d73f4d" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-651c39cf-3b32-4147-9264-ed2aee3fec77">
+<span class="eqno">(13.1)<a class="headerlink" href="#equation-651c39cf-3b32-4147-9264-ed2aee3fec77" title="Permalink to this equation">#</a></span>\[\begin{align}
 \log p(D\mid\boldsymbol{\theta}, I) &amp;= -\frac{1}{2}\sum_{i=1}^N\left(\log(2\pi\sigma_0^2) + \frac{\left[ y_i - y_M(x_i;\theta)\right]^2}{\sigma_0^2}\right) \\
 &amp;= \text{constant} - \sum_{i=1}^N \frac{\left[ y_i - y_M(x_i;\boldsymbol{\theta})\right]^2}{2 \sigma_0^2} .
 \end{align}\]</div>
