@@ -88,11 +88,7 @@ The t-distribution becomes a Gaussian distribution as $\nu \rightarrow \infty$, 
 In the next section we will see how a heavy-tailed distribution, such as the Student t distribution, can naturally arise in a Bayesian formulation when the uncertainty is itself uncertain.
 
 
-<<<<<<< HEAD
 ## Approach no. 1: A conservative formulation
-=======
-## Bayesian Approach to Outliers no. 1: A conservative formulation
->>>>>>> main
 
 Assuming that the specified error bars, $\sigma_0$, can be viewed as a recommended lower bound, we can construct a more conservative posterior through a marginal likelihood (that is, we introduce $\sigma$ as a supplementary parameter for what might be the true error, then integrate over it):  
 
@@ -196,18 +192,10 @@ So by marginalizing over the error for each data point, we introduce long tails 
 
 Now we can sample using this conservative posterior and compare to the others.
 
-<<<<<<< HEAD
 If we wanted to get a general Student's t-distribution, we can do an integration of the variance over an inverse-gamma distribution or, equivalently, integrate over the inverse of the variance with a gamma distribtion. An animation of the integration leading to a t-distribution is created in [Student's t-distribution from Gaussians](https://nucleartalent.github.io/LFD_for_Physicists/content/OtherTopics/Student_t_distribution_from_Gaussians_HTML5.html). 
 
 ## Approach no. 2: Good-and-bad data
 
-=======
-If we wanted to get a general Student t distribution, we can do an integration of the variance over an inverse-gamma distribution or, equivalently, integrate over the inverse of the variance with a gamma distribtion. An animation of the latter is created in [Student's t-distribution from Gaussians](https://nucleartalent.github.io/LFD_for_Physicists/content/OtherTopics/Student_t_distribution_from_Gaussians_HTML5.html). 
-
-## Bayesian Approach to Outliers no. 2: Good-and-bad data
-
-See Sivia, Ch. 8.3.2 for more details.
->>>>>>> main
 
 In this approach, we are less pessimistic about the data.  In particular, we allow for two possibilities: <br>
 a) the datum and its error are reliable; <br>
@@ -226,16 +214,10 @@ $$
    \left\{ \frac{\beta}{\gamma}\, e^{-R_i^2/2\gamma^2} + (1-\beta)\, e^{-R_i^2/2}  \right\}
 $$
 
-<<<<<<< HEAD
 We won't provide code for this approach here but leave it to an exercise (see Sivia, Ch. 8.3.2 for more details).
 However, we will generalize the idea to the extreme in approach #4 below.  
 
 ## Approach no. 3: The Cauchy formulation
-=======
-We won't code this approach here but leave it to an exercise.  We will generalize the idea to the extreme in approach #4 below.  
-
-## Bayesian Approach to Outliers no. 3: The Cauchy formulation
->>>>>>> main
 
 In this approach, we assume $\sigma \approx \sigma_0$ but allow it to be either narrower or wider:
 
@@ -257,11 +239,7 @@ $$
 
 
 
-<<<<<<< HEAD
 ## Sampling to compare methods
-=======
-## Sampling
->>>>>>> main
 
 We'll use the `emcee` sampler to generate MCMC samples of our posteriors.
 
@@ -420,22 +398,10 @@ ax.legend(loc='best');
 
 ```
 
-<<<<<<< HEAD
 In this plot we see a comparison of five approaches. The standard Gaussian and MLE lines are the same, showing the deleterious effect of the outliers. The Huber loss approach gives a reasonable fit (by eye). The conservative and Cauchy fits are indistinguishable and similar but not identical to the Huber loss fit. Which do you think is better?  
 
 
 ## Approach no. 4: Many nuisance parameters
-=======
-
-
-
-
-
-
-
-
-## Bayesian Approach to Outliers no. 4: Many nuisance parameters
->>>>>>> main
 
 The Bayesian approach to accounting for outliers generally involves *modifying the model* so that the outliers are accounted for. For this data, it is abundantly clear that a simple straight line is not a good fit to our data. So let's propose a more complicated model that has the flexibility to account for outliers. One option is to choose a mixture between a signal and a background:
 
