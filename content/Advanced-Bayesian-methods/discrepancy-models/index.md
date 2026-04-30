@@ -1,5 +1,5 @@
 (sec:ModelDiscrepancy)=
-# Bayesian approach to model discrepancy
+# Discrepancy models with GPs
 
 In {numref}`sec:DataModelsPredictions` we introduced the mismatch term $\delta M$, typically referred to as a model discrepancy, in the statistical model
 
