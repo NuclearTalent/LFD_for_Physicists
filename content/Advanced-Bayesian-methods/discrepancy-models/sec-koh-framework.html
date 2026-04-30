@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>11.2. The Kennedy and O’Hagan framework &#8212; Combined Learning from Data materials</title>
+    <title>11.2. The KOH and BOH frameworks &#8212; Combined Learning from Data materials</title>
   
   
   
@@ -259,12 +259,12 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">10. Overview of Part II</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">11. Discrepancy Models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">11. Discrepancy Models with GPs</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="sec-introduction-to-discrepancy-models.html">11.1. Introduction to discrepancy models</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">11.2. The Kennedy and O’Hagan framework</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">11.2. The KOH and BOH frameworks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec-the-ball-drop-model.html">11.3. The ball-drop model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-real-world-application-of-discrepancy-model.html">11.4. Real-world application of discrepancy model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-ball-drop-experiment.html">11.5. Demo: Ball-drop experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-ball-drop-experiment.html">11.4. Demo: Ball-drop experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-real-world-application-of-discrepancy-model.html">11.5. Example: Discrepancy models for relativistic heavy-ion collisions</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../assigning-probabilities/index.html">12. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -680,7 +680,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>The Kennedy and O’Hagan framework</h1>
+    <h1>The KOH and BOH frameworks</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -694,9 +694,9 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="the-kennedy-and-ohagan-framework">
-<h1><span class="section-number">11.2. </span>The Kennedy and O’Hagan framework<a class="headerlink" href="#the-kennedy-and-ohagan-framework" title="Link to this heading">#</a></h1>
-<p>We begin by setting up the model discrepancy framework following KOH. Let the <span class="math notranslate nohighlight">\(i\)</span>-th measurement for an observable <span class="math notranslate nohighlight">\(y\)</span> be denoted as</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="the-koh-and-boh-frameworks">
+<span id="sec-kohframework"></span><h1><span class="section-number">11.2. </span>The KOH and BOH frameworks<a class="headerlink" href="#the-koh-and-boh-frameworks" title="Link to this heading">#</a></h1>
+<p>We begin by setting up the model discrepancy framework following the Kennedy and O’Hagan framework. Let the <span class="math notranslate nohighlight">\(i\)</span>-th measurement for an observable <span class="math notranslate nohighlight">\(y\)</span> be denoted as</p>
 <div class="math notranslate nohighlight" id="equation-eq-stat-true">
 <span class="eqno">(11.2)<a class="headerlink" href="#equation-eq-stat-true" title="Link to this equation">#</a></span>\[
     y(x_i) \sim \zeta(x_i) + \epsilon_i \,,
@@ -728,19 +728,21 @@ The statiscal model is summarized in <a class="reference internal" href="#fig-st
     \delta(\cdot \mid\boldsymbol{\phi}) \sim {\rm GP} \left(\boldsymbol{0}, K(\cdot,\cdot \mid\boldsymbol{\phi}) \right) \,,
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(K(\cdot,\cdot \mid\boldsymbol{\phi})\)</span> is the covariance kernel, which depends on a set of hyperparameters <span class="math notranslate nohighlight">\(\boldsymbol{\phi}\)</span>. A GP specifies a distribution over functions, with the covariance kernel <span class="math notranslate nohighlight">\(K\)</span> serving as the central object that defines the properties of the functions in the distribution. In this framework, we incorporate prior knowledge about the theoretical model’s uncertainties through the choice of the covariance kernel. Adopting a Bayesian approach, we assign prior probability distributions to both the model parameters <span class="math notranslate nohighlight">\(\pars\)</span> and the GP hyperparameters <span class="math notranslate nohighlight">\(\boldsymbol{\phi}\)</span>, and update these to obtain their posterior distributions conditioned on the observations. In all examples discussed in this work, uniform priors (in appropriate ranges) are used for both the model parameters and the GP hyperparameters.</p>
-<p>The particular <span class="math notranslate nohighlight">\(K\)</span> we use for the test case explored here is</p>
+<p>The particular <span class="math notranslate nohighlight">\(K\)</span> we use for the test case explored in the next section (the “ball-drop model”) is motivated by the observations in BOH, in particular that to extract physical parameters it is necessary to adequately inform the model discrepancy GP. Here we use:</p>
 <div class="math notranslate nohighlight" id="equation-eq-balldrop-kernel">
 <span class="eqno">(11.5)<a class="headerlink" href="#equation-eq-balldrop-kernel" title="Link to this equation">#</a></span>\[
 K(x_i, x_j) = {\color{ForestGreen}{\bar{c}}}^2 (x_i x_j)^{\color{ForestGreen}{r}} \exp\left(- \frac{\lVert x_i-x_j\rVert^2}{2{\color{ForestGreen}{\ell}}^2} \right)
 \]</div>
-<p>The hyperparameters control the nature of the possible random draws, as illustrated in <a class="reference internal" href="#fig-gp-nonstationary-comparison"><span class="std std-numref">Fig. 11.2</span></a>. The parameter <span class="math notranslate nohighlight">\(\bar{c}\)</span>, which is fixed at <span class="math notranslate nohighlight">\(\bar{c}=1\)</span> in the figure, controls the overall scale over which the random functions vary. The parameter <span class="math notranslate nohighlight">\(\ell\)</span> is the correlation length between any two points; as <span class="math notranslate nohighlight">\(|x -x'|\)</span> becomes greater than <span class="math notranslate nohighlight">\(\ell\)</span>, the points become increasingly uncorrelated. Comparing <span class="math notranslate nohighlight">\(\ell=1\)</span> to <span class="math notranslate nohighlight">\(\ell=3\)</span> shows that the latter curves have a longer “wavelength”. Finally, <span class="math notranslate nohighlight">\(r\)</span> is a parameter introduced to generate functions that increase with <span class="math notranslate nohighlight">\(x\)</span> for <span class="math notranslate nohighlight">\(r&gt;0\)</span>.</p>
+<p>The hyperparameters control the nature of the possible random draws, as illustrated in <a class="reference internal" href="#fig-gp-nonstationary-comparison"><span class="std std-numref">Fig. 11.2</span></a>. The parameter <span class="math notranslate nohighlight">\(\bar{c}\)</span>, which is fixed at <span class="math notranslate nohighlight">\(\bar{c}=1\)</span> in the figure, controls the overall scale over which the random functions vary. The parameter <span class="math notranslate nohighlight">\(\ell\)</span> is the correlation length between any two points; as <span class="math notranslate nohighlight">\(|x -x'|\)</span> becomes greater than <span class="math notranslate nohighlight">\(\ell\)</span>, the points become increasingly uncorrelated. Comparing <span class="math notranslate nohighlight">\(\ell=1\)</span> to <span class="math notranslate nohighlight">\(\ell=3\)</span> shows that the latter curves have a longer “wavelength”. Finally, <span class="math notranslate nohighlight">\(r\)</span> is a parameter introduced to generate functions that increase with <span class="math notranslate nohighlight">\(x\)</span> for <span class="math notranslate nohighlight">\(r&gt;0\)</span>.
+It is the addition of the term with <span class="math notranslate nohighlight">\(r\)</span> that importantly informs the GP that the model is more reliable at small <span class="math notranslate nohighlight">\(x\)</span> than at large <span class="math notranslate nohighlight">\(x\)</span>.</p>
 <figure class="align-default" id="fig-gp-nonstationary-comparison">
 <a class="reference internal image-reference" href="../../../_images/GP_nonstationary_comparison.png"><img alt="../../../_images/GP_nonstationary_comparison.png" src="../../../_images/GP_nonstationary_comparison.png" style="height: 500px;" />
 </a>
 <figcaption>
-<p><span class="caption-number">Fig. 11.2 </span><span class="caption-text">Five draws from each of four GPs of the form in Eq. <a class="reference internal" href="#equation-eq-balldrop-kernel">(11.5)</a> with hyperparameters <span class="math notranslate nohighlight">\(\ell\)</span>, <span class="math notranslate nohighlight">\(\bar c\)</span>, and <span class="math notranslate nohighlight">\(r\)</span> as listed.</span><a class="headerlink" href="#fig-gp-nonstationary-comparison" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 11.2 </span><span class="caption-text">Five draws from each of four GPs of the form in Eq. <a class="reference internal" href="#equation-eq-balldrop-kernel">(11.5)</a> with hyperparameters <span class="math notranslate nohighlight">\(\ell\)</span>, <span class="math notranslate nohighlight">\(\bar c\)</span>, and <span class="math notranslate nohighlight">\(r\)</span> as listed. Note that with <span class="math notranslate nohighlight">\(r&gt;0\)</span>, the variance grows with <span class="math notranslate nohighlight">\(x\)</span>.</span><a class="headerlink" href="#fig-gp-nonstationary-comparison" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
+<p>Having set up our ingredients (which will also apply to the real-world application example in <a class="reference internal" href="sec-real-world-application-of-discrepancy-model.html#sec-realworldexample"><span class="std std-ref">Example: Discrepancy models for relativistic heavy-ion collisions</span></a>), we now turn to an illustrative toy model: “The Ball-Drop Experiment”.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If sampled at any one input point <span class="math notranslate nohighlight">\(x\)</span>, the prior GP will yield a Gaussian distribution with mean and variance specified by the GP definition. In many cases, the prior GP is taken to be mean zero with a constant variance for all <span class="math notranslate nohighlight">\(x\)</span>. If sampled at any two input points <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(x'\)</span>, the joint distribution will be a bivariate Gaussian, with covariance given by <span class="math notranslate nohighlight">\(K(x,x'|\boldsymbol{\phi})\)</span>.</p>

@@ -1,6 +1,7 @@
-# The Kennedy and O’Hagan framework
+(sec:KOHFramework)=
+# The KOH and BOH frameworks
 
-We begin by setting up the model discrepancy framework following KOH. Let the $i$-th measurement for an observable $y$ be denoted as
+We begin by setting up the model discrepancy framework following the Kennedy and O'Hagan framework. Let the $i$-th measurement for an observable $y$ be denoted as
 
 $$
     y(x_i) \sim \zeta(x_i) + \epsilon_i \,,
@@ -41,13 +42,14 @@ $$
 
 where $K(\cdot,\cdot \mid\boldsymbol{\phi})$ is the covariance kernel, which depends on a set of hyperparameters $\boldsymbol{\phi}$. A GP specifies a distribution over functions, with the covariance kernel $K$ serving as the central object that defines the properties of the functions in the distribution. In this framework, we incorporate prior knowledge about the theoretical model's uncertainties through the choice of the covariance kernel. Adopting a Bayesian approach, we assign prior probability distributions to both the model parameters $\pars$ and the GP hyperparameters $\boldsymbol{\phi}$, and update these to obtain their posterior distributions conditioned on the observations. In all examples discussed in this work, uniform priors (in appropriate ranges) are used for both the model parameters and the GP hyperparameters.
 
-The particular $K$ we use for the test case explored here is
+The particular $K$ we use for the test case explored in the next section (the "ball-drop model") is motivated by the observations in BOH, in particular that to extract physical parameters it is necessary to adequately inform the model discrepancy GP. Here we use:
 
 $$
 K(x_i, x_j) = {\color{ForestGreen}{\bar{c}}}^2 (x_i x_j)^{\color{ForestGreen}{r}} \exp\left(- \frac{\lVert x_i-x_j\rVert^2}{2{\color{ForestGreen}{\ell}}^2} \right)
 $$ (eq:Balldrop_Kernel)
 
 The hyperparameters control the nature of the possible random draws, as illustrated in {numref}`fig-GP_nonstationary_comparison`. The parameter $\bar{c}$, which is fixed at $\bar{c}=1$ in the figure, controls the overall scale over which the random functions vary. The parameter $\ell$ is the correlation length between any two points; as $|x -x'|$ becomes greater than $\ell$, the points become increasingly uncorrelated. Comparing $\ell=1$ to $\ell=3$ shows that the latter curves have a longer "wavelength". Finally, $r$ is a parameter introduced to generate functions that increase with $x$ for $r>0$.
+It is the addition of the term with $r$ that importantly informs the GP that the model is more reliable at small $x$ than at large $x$.
 
 
 
@@ -55,9 +57,10 @@ The hyperparameters control the nature of the possible random draws, as illustra
 :height: 500px
 :name: fig-GP_nonstationary_comparison
 
-Five draws from each of four GPs of the form in Eq. {eq}`eq:Balldrop_Kernel` with hyperparameters $\ell$, $\bar c$, and $r$ as listed.
+Five draws from each of four GPs of the form in Eq. {eq}`eq:Balldrop_Kernel` with hyperparameters $\ell$, $\bar c$, and $r$ as listed. Note that with $r>0$, the variance grows with $x$.
 :::
 
+Having set up our ingredients (which will also apply to the real-world application example in {ref}`sec:RealWorldExample`), we now turn to an illustrative toy model: "The Ball-Drop Experiment".
 
 
 :::{note}

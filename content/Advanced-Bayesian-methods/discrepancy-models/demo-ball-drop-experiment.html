@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>11.5. 📥 Demo: Model discrepancy example: The ball-drop experiment &#8212; Combined Learning from Data materials</title>
+    <title>11.4. 📥 Demo: Ball-drop experiment &#8212; Combined Learning from Data materials</title>
   
   
   
@@ -68,8 +68,8 @@
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="12. Assigning probabilities" href="../assigning-probabilities/index.html" />
-    <link rel="prev" title="11.4. Real-world application of discrepancy model" href="sec-real-world-application-of-discrepancy-model.html" />
+    <link rel="next" title="11.5. Example: Discrepancy models for relativistic heavy-ion collisions" href="sec-real-world-application-of-discrepancy-model.html" />
+    <link rel="prev" title="11.3. The ball-drop model" href="sec-the-ball-drop-model.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -259,12 +259,12 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">10. Overview of Part II</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">11. Discrepancy Models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">11. Discrepancy Models with GPs</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="sec-introduction-to-discrepancy-models.html">11.1. Introduction to discrepancy models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-koh-framework.html">11.2. The Kennedy and O’Hagan framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-koh-framework.html">11.2. The KOH and BOH frameworks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec-the-ball-drop-model.html">11.3. The ball-drop model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-real-world-application-of-discrepancy-model.html">11.4. Real-world application of discrepancy model</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">11.5. Demo: Ball-drop experiment</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">11.4. Demo: Ball-drop experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-real-world-application-of-discrepancy-model.html">11.5. Example: Discrepancy models for relativistic heavy-ion collisions</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../assigning-probabilities/index.html">12. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -713,7 +713,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>📥 Demo: Model discrepancy example: The ball-drop experiment</h1>
+    <h1>📥 Demo: Ball-drop experiment</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -723,10 +723,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-formulation">Statistical formulation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theory">Theory</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-plot-style">Set plot style</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-sampling-with-emcee-and-pocomc-samplers">Setup sampling with emcee and pocomc samplers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theory-for-the-truth">Theory for the truth</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-sampling-with-emcee-and-if-loaded-pocomc-samplers">Setup sampling with emcee (and, if loaded, pocomc) samplers</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-experimental-observations-for-height">Generate “experimental” observations for height</a></li>
 </ul>
 </li>
@@ -737,7 +735,10 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-do-the-sampling-and-plot-the-posteriors">Now do the sampling and plot the posteriors</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#with-model-discrepancy">With model discrepancy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#with-model-discrepancy">With model discrepancy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#things-to-do">Things to do</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -749,37 +750,12 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="demo-model-discrepancy-example-the-ball-drop-experiment">
-<span id="demo-ball-drop-experiment"></span><h1><span class="section-number">11.5. </span>📥 Demo: Model discrepancy example: The ball-drop experiment<a class="headerlink" href="#demo-model-discrepancy-example-the-ball-drop-experiment" title="Link to this heading">#</a></h1>
-<p>A ball is dropped from a tower of height <span class="math notranslate nohighlight">\(h_0\)</span> at initial time <span class="math notranslate nohighlight">\(t_0=0\)</span> with intial velocity <span class="math notranslate nohighlight">\(v_0=0\)</span>. The height from the ground is recorded at discrete time points. Data is generated based on a model with drag, and includes uncorrelated Gaussian measurement errors. The aim is to extract the value of accelaration due to gravity, <span class="math notranslate nohighlight">\(g\)</span>.</p>
-<p>The problem is that the data is noisy <em>and</em> our theoretical model, which is simply free fall without drag, is incorrect. How can we best formulate our analysis such that the extraction of <span class="math notranslate nohighlight">\(g\)</span> is robust? I.e., that we get a distribution for <span class="math notranslate nohighlight">\(g\)</span> that covers the true answer with plausible uncertainty.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="demo-ball-drop-experiment">
+<span id="id1"></span><h1><span class="section-number">11.4. </span>📥 Demo: Ball-drop experiment<a class="headerlink" href="#demo-ball-drop-experiment" title="Link to this heading">#</a></h1>
+<p>This notebook has an implementation of the discrepancy model for the ball-drop experiment from the last section, simplified so that the height is the only observable that is measured.</p>
 <p><strong>This notebook was created by Dr. Sunil Jaiswal in July, 2025.</strong></p>
-<section id="statistical-formulation">
-<h2>Statistical formulation<a class="headerlink" href="#statistical-formulation" title="Link to this heading">#</a></h2>
-<p>We will follow the article by <a class="reference external" href="https://epubs.siam.org/doi/10.1137/S1064827503426693">Higdon et.al.</a>
-The statistical equation accounting for model discrepancy is:</p>
-<div class="amsmath math notranslate nohighlight">
-\[\begin{equation*}
-    y(x_i) = \eta(x_i; {\boldsymbol \theta}) + \delta(x_i;{\boldsymbol \phi}) + \epsilon(x_i;{\boldsymbol \sigma_{\boldsymbol \epsilon}}) \,, \quad i =1, \dots , n
-\tag{1}
-\end{equation*}\]</div>
-<p>where <span class="math notranslate nohighlight">\(x\)</span> is the input vector (time in the case of the ball drop experiment) of length <span class="math notranslate nohighlight">\(n\)</span>.</p>
-<ul class="simple">
-<li><p>We shall denote the input domain as <span class="math notranslate nohighlight">\(\{x_1,\cdots,x_n\}\in \chi_*\)</span>.</p></li>
-<li><p>The above equation should be understood as an equation which holds on the range (set of all possible outcomes) of the probability distributions. It means that a sample drawn at a given <span class="math notranslate nohighlight">\(x_i\)</span> from the probability distributions <span class="math notranslate nohighlight">\(\mathrm{pr}(y)\)</span> should be equal to the sum of the sample drawn from each of the distributions <span class="math notranslate nohighlight">\(\mathrm{pr}(\eta|{\boldsymbol \theta})\)</span>, <span class="math notranslate nohighlight">\(\mathrm{pr}(\delta|{\boldsymbol \phi})\)</span> and <span class="math notranslate nohighlight">\(\mathrm{pr}(\epsilon|{\boldsymbol \sigma_{\boldsymbol \epsilon}})\)</span>.</p></li>
-<li><p>Note that for given <span class="math notranslate nohighlight">\(x_i\)</span>, <span class="math notranslate nohighlight">\(\mathrm{pr}(\eta(x_i)|{\boldsymbol \theta}) = \delta(\eta(x_i)-\eta(x_i;{\boldsymbol \theta}))\)</span> is deterministic since the model is deterministic given <span class="math notranslate nohighlight">\({\boldsymbol \theta}\)</span> (note: <span class="math notranslate nohighlight">\(\delta\)</span> is the Dirac delta function).</p></li>
-</ul>
-<p>In Eq. (1), <span class="math notranslate nohighlight">\(y(x_i)\)</span> are vectors of the measured observables (velocity and height) at each input point <span class="math notranslate nohighlight">\(x_i\)</span>.</p>
-<ul class="simple">
-<li><p>The error in the measurement of <span class="math notranslate nohighlight">\(y(x_i)\)</span> is represented by <span class="math notranslate nohighlight">\(\epsilon(x_i;{\boldsymbol \sigma_{\boldsymbol \epsilon}})\)</span>, which is assumed to be independently and identically distributed <span class="math notranslate nohighlight">\(\sim N(0, {\boldsymbol \sigma_{\boldsymbol \epsilon}}^2)\)</span> for each type of observable (velocity and height: <span class="math notranslate nohighlight">\(\{\sigma_v, \sigma_h\} \in {\boldsymbol \sigma_{\boldsymbol \epsilon}}\)</span>).</p></li>
-<li><p>Note that <span class="math notranslate nohighlight">\(\{\sigma_v, \sigma_h\}\)</span> are fixed constants since we have assumed the distribution for each type of observable to be iid’s. We shall treat them as information `<span class="math notranslate nohighlight">\(I\)</span>’ whenever we write any probability distribution <span class="math notranslate nohighlight">\(\mathrm{pr}(\bullet|\bullet,I)\)</span>, and will not state them explicitly.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\eta(x;{\boldsymbol \theta})\)</span> denotes the observable predictions of the physics theory given the value of the parameters of the theory <span class="math notranslate nohighlight">\(\{g, \sigma_{v_0}\}\in {\boldsymbol \theta}\)</span>.</p></li>
-<li><p>The stochastic model <span class="math notranslate nohighlight">\(\mathrm{pr}(\delta(x)|{\boldsymbol \phi}) = GP[0,\kappa(x, x';{\boldsymbol \phi})]\)</span>, accounts for model discrepancy (discrepancy between the physics model and reality) where <span class="math notranslate nohighlight">\(\kappa\)</span> is covariance kernel of the Gaussian Process (GP) with  <span class="math notranslate nohighlight">\(\{\bar{c}_v,\, l_v,\, \bar{c}_h,\, l_h\}\in {\boldsymbol \phi}\)</span> representing the hyperparameters.</p></li>
-<li><p>We define   <span class="math notranslate nohighlight">\(\{{\boldsymbol \theta}, {\boldsymbol \phi}\} \in {\boldsymbol \alpha}\)</span> as a vector containing <span class="math notranslate nohighlight">\({\boldsymbol \theta}\)</span> and <span class="math notranslate nohighlight">\({\boldsymbol \phi}\)</span> for compact notation.</p></li>
-</ul>
-</section>
-<section id="theory">
-<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading">#</a></h2>
+<section id="theory-for-the-truth">
+<h2>Theory for the truth<a class="headerlink" href="#theory-for-the-truth" title="Link to this heading">#</a></h2>
 <p>Consider the drag force on the ball (sphere) for the true model to behave as</p>
 <div class="amsmath math notranslate nohighlight">
 \[\begin{equation*}
@@ -797,29 +773,15 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 \[\frac{d v}{dt} = g - \frac{b}{m} v- \frac{c}{m} v |v| \,, \qquad 
 \frac{dh}{dt} = -v \,.\]</div>
 <p>By default we consider the ball to have the initial height <span class="math notranslate nohighlight">\(\color{red}{h_0=60\, m}\)</span> at initial time <span class="math notranslate nohighlight">\(\color{red}{t_0=0\,sec}\)</span> with initial velocity <span class="math notranslate nohighlight">\(\color{red}{v_0=0\, m/s^2}\)</span>.</p>
-<section id="set-plot-style">
-<h3>Set plot style<a class="headerlink" href="#set-plot-style" title="Link to this heading">#</a></h3>
+<section id="setup-sampling-with-emcee-and-if-loaded-pocomc-samplers">
+<h3>Setup sampling with emcee (and, if loaded, pocomc) samplers<a class="headerlink" href="#setup-sampling-with-emcee-and-if-loaded-pocomc-samplers" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">emcee</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">corner</span>
 
-<span class="c1"># # Add the local CodeLocal directory to the path so Jupyter finds the module file.</span>
-<span class="c1"># import sys</span>
-<span class="c1"># sys.path.append(&#39;./CodeLocal&#39;)</span>
-<span class="c1"># from setup_rc_params import setup_rc_params  # import from setup_rc_params.py in subdirectory CodeLocal</span>
-
-<span class="c1"># setup_rc_params(presentation=True, constrained_layout=True, usetex=True, dpi=400)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="setup-sampling-with-emcee-and-pocomc-samplers">
-<h3>Setup sampling with emcee and pocomc samplers<a class="headerlink" href="#setup-sampling-with-emcee-and-pocomc-samplers" title="Link to this heading">#</a></h3>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">emcee</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pocomc</span>   <span class="c1"># uncomment here when using pocomc sampler</span>
+<span class="c1">#import pocomc   # uncomment here when using pocomc sampler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>  
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">uniform</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
@@ -1059,7 +1021,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/a04c12d4a5a26a9a0f42da07c1e27c9f6c3e9810885d2ff11076c296bd057a3e.png" src="../../../_images/a04c12d4a5a26a9a0f42da07c1e27c9f6c3e9810885d2ff11076c296bd057a3e.png" />
+<img alt="../../../_images/fee138884e2ad3c703403f3dcde2b96ff7448c9831646d6599522064eceab148.png" src="../../../_images/fee138884e2ad3c703403f3dcde2b96ff7448c9831646d6599522064eceab148.png" />
 </div>
 </div>
 </section>
@@ -1321,9 +1283,7 @@ MAP values for parameters: [3.97794526 1.35323281]
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">corner</span>
-
-<span class="n">min_param</span> <span class="o">=</span> <span class="n">model_param_bounds</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">min_param</span> <span class="o">=</span> <span class="n">model_param_bounds</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">max_param</span> <span class="o">=</span> <span class="n">model_param_bounds</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">lab</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$g$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$v_0$&#39;</span><span class="p">]</span>
 </pre></div>
@@ -1332,10 +1292,11 @@ MAP values for parameters: [3.97794526 1.35323281]
 </div>
 <section id="now-do-the-sampling-and-plot-the-posteriors">
 <h3>Now do the sampling and plot the posteriors<a class="headerlink" href="#now-do-the-sampling-and-plot-the-posteriors" title="Link to this heading">#</a></h3>
+<p>The initial values for the the numbers of burn-in and sampling steps are initially rather low (for both this section and the next), which can lead to poorly converged posteriors. After your first analysis (to the end of the notebook), return and re-run with increased values (see suggested values in the comments; note that it will take a while to run).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_burn</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># 2000 is a minimum</span>
-<span class="n">num_steps</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># 2000 is a minimum</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_burn</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># 2000 is a minimum</span>
+<span class="n">num_steps</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># 2000 is a minimum</span>
 
 <span class="n">samples_WMD</span> <span class="o">=</span> <span class="n">emcee_sampling</span><span class="p">(</span><span class="n">min_param</span> <span class="o">=</span> <span class="n">min_param</span><span class="p">,</span> <span class="n">max_param</span> <span class="o">=</span> <span class="n">max_param</span><span class="p">,</span> 
                          <span class="n">log_posterior</span> <span class="o">=</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">,</span> 
@@ -1349,12 +1310,12 @@ MAP values for parameters: [3.97794526 1.35323281]
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Starting MCMC sampling using emcee with 16 walkers in parallel...
-Sampling complete. Time taken: 0.07 minutes.
-Mean acceptance fraction: 0.714 (in total 1600 steps)
-Samples shape: (1600, 2)
+Sampling complete. Time taken: 0.17 minutes.
+Mean acceptance fraction: 0.735 (in total 3200 steps)
+Samples shape: (3200, 2)
 </pre></div>
 </div>
-<img alt="../../../_images/1555dfd8a183c3c9c29fcf6e93d79da97b74dabeb09fee139b41f5f5689a9fc7.png" src="../../../_images/1555dfd8a183c3c9c29fcf6e93d79da97b74dabeb09fee139b41f5f5689a9fc7.png" />
+<img alt="../../../_images/ad6d2285221589a477d3aa7f5e5048f3df25bb341cedc3c26570f54e3a1568b9.png" src="../../../_images/ad6d2285221589a477d3aa7f5e5048f3df25bb341cedc3c26570f54e3a1568b9.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1498,9 +1459,7 @@ MAP values for parameters: [6.94940459 0.53522913 0.67887983 6.30979757 6.134445
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">corner</span>
-
-<span class="n">min_param</span> <span class="o">=</span> <span class="n">param_bounds</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">min_param</span> <span class="o">=</span> <span class="n">param_bounds</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">max_param</span> <span class="o">=</span> <span class="n">param_bounds</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">lab</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$g$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$v_0$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\bar</span><span class="si">{c}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\ell$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$r$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$s$&#39;</span><span class="p">]</span>
 </pre></div>
@@ -1509,8 +1468,8 @@ MAP values for parameters: [6.94940459 0.53522913 0.67887983 6.30979757 6.134445
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_burn</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># 2000 is a minimum</span>
-<span class="n">num_steps</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># 2000 is a minimum</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_burn</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># 2000 is a minimum</span>
+<span class="n">num_steps</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># 2000 is a minimum</span>
 
 <span class="n">samples_MD</span> <span class="o">=</span> <span class="n">emcee_sampling</span><span class="p">(</span><span class="n">min_param</span> <span class="o">=</span> <span class="n">min_param</span><span class="p">,</span> <span class="n">max_param</span> <span class="o">=</span> <span class="n">max_param</span><span class="p">,</span> 
                          <span class="n">log_posterior</span> <span class="o">=</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">,</span> 
@@ -1524,41 +1483,23 @@ MAP values for parameters: [6.94940459 0.53522913 0.67887983 6.30979757 6.134445
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Starting MCMC sampling using emcee with 40 walkers in parallel...
-Sampling complete. Time taken: 0.20 minutes.
-Mean acceptance fraction: 0.355 (in total 4000 steps)
-Samples shape: (4000, 5)
+Sampling complete. Time taken: 0.52 minutes.
+Mean acceptance fraction: 0.357 (in total 8000 steps)
+Samples shape: (8000, 5)
 </pre></div>
 </div>
-<img alt="../../../_images/069f49febc9b6dd6e1e2710fad36cfc793922c68356edc03fb61875da5cdef52.png" src="../../../_images/069f49febc9b6dd6e1e2710fad36cfc793922c68356edc03fb61875da5cdef52.png" />
+<img alt="../../../_images/1b8e36e3c4a6240ae10f7d3a8e0e470a2062ec18fac2b2ad215816ac8fcf9e53.png" src="../../../_images/1b8e36e3c4a6240ae10f7d3a8e0e470a2062ec18fac2b2ad215816ac8fcf9e53.png" />
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># # sampling with pocomc for consistency check ---&gt; </span>
-
-<span class="c1"># n_effective_mltpl = 500</span>
-<span class="c1"># n_active_mltpl = 150  # 0.3 x n_eff</span>
-<span class="c1"># n_steps_mltpl = 2</span>
-<span class="c1"># num_param = len(min_param)</span>
-
-<span class="c1"># n_effective = n_effective_mltpl * num_param</span>
-<span class="c1"># n_active = n_active_mltpl * num_param</span>
-<span class="c1"># n_steps = n_steps_mltpl * num_param</span>
-<span class="c1"># # print(n_effective, n_active, n_steps)</span>
-
-<span class="c1"># n_total = 20000</span>
-
-<span class="c1"># samples_MD_poco = pocomc_sampling(min_param, max_param, MDC.log_posterior,</span>
-<span class="c1">#                                   n_effective=n_effective, n_active=n_effective, n_steps=n_steps,</span>
-<span class="c1">#                                   n_total=n_total, n_evidence=n_total)</span>
-
-<span class="c1"># fig = corner.corner(samples_MD_poco, labels=lab, color=&#39;C0&#39;, quantiles=[0.16, 0.5, 0.84],</span>
-<span class="c1">#                    show_titles=True, title_kwargs={&quot;fontsize&quot;: 12}, hist_kwargs={&#39;density&#39;: True})</span>
-<span class="c1"># plt.show()</span>
-</pre></div>
-</div>
-</div>
-</div>
+<section id="things-to-do">
+<h3>Things to do<a class="headerlink" href="#things-to-do" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Compare the results from this notebook to the relevant figure from the section on “The ball-drop model”. Are they consistent?</p></li>
+<li><p>Summarize the difference between results without and with model discrepancy.</p></li>
+<li><p>Do you think you have enough samples? How can you tell? If you have time, increase the numbers and re-run to see if your observations change.</p></li>
+<li><p>(Advanced) Repeat using the pocomc sampler and comment on the comparison with emcee.</p></li>
+</ul>
+</section>
 </section>
 </section>
 
@@ -1593,20 +1534,20 @@ Samples shape: (4000, 5)
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="sec-real-world-application-of-discrepancy-model.html"
+       href="sec-the-ball-drop-model.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">11.4. </span>Real-world application of discrepancy model</p>
+        <p class="prev-next-title"><span class="section-number">11.3. </span>The ball-drop model</p>
       </div>
     </a>
     <a class="right-next"
-       href="../assigning-probabilities/index.html"
+       href="sec-real-world-application-of-discrepancy-model.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">12. </span>Assigning probabilities</p>
+        <p class="prev-next-title"><span class="section-number">11.5. </span>Example: Discrepancy models for relativistic heavy-ion collisions</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1626,10 +1567,8 @@ Samples shape: (4000, 5)
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-formulation">Statistical formulation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theory">Theory</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-plot-style">Set plot style</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-sampling-with-emcee-and-pocomc-samplers">Setup sampling with emcee and pocomc samplers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theory-for-the-truth">Theory for the truth</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-sampling-with-emcee-and-if-loaded-pocomc-samplers">Setup sampling with emcee (and, if loaded, pocomc) samplers</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-experimental-observations-for-height">Generate “experimental” observations for height</a></li>
 </ul>
 </li>
@@ -1640,7 +1579,10 @@ Samples shape: (4000, 5)
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-do-the-sampling-and-plot-the-posteriors">Now do the sampling and plot the posteriors</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#with-model-discrepancy">With model discrepancy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#with-model-discrepancy">With model discrepancy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#things-to-do">Things to do</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
