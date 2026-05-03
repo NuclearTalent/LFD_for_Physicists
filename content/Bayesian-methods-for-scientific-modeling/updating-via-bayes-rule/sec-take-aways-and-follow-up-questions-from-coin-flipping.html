@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>6.5. Take-aways and follow-up questions from coin flipping &#8212; Combined Learning from Data materials</title>
+    <title>6.4. Take-aways and follow-up questions from coin flipping &#8212; Combined Learning from Data materials</title>
   
   
   
@@ -68,8 +68,8 @@
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="6.6. 📥 Demo: Bayesian Coin Tossing" href="demo-bayesian-coin-tossing.html" />
-    <link rel="prev" title="6.4. Degree of belief/credibility intervals vs frequentist 1-sigma intervals" href="sec-degree-of-belief-credibility-intervals-vs-frequentist-one-sigma.html" />
+    <link rel="next" title="6.5. Analytic coin-flipping posterior" href="sec-computing-the-posterior-analytically.html" />
+    <link rel="prev" title="6.3. Demo: Widgetized coin tossing" href="demo-widget-coin-tossing.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -215,18 +215,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-oneD-and-twoD-PDFs.html">5.1. One-D and two-D PDFs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-exploring-PDFs.html">5.2. Demo: Exploring PDFs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-more-on-gaussians.html">5.3. More on Gaussians</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-visualization-of-the-central-limit-theorem.html">5.4. 📥 Demo: Visualization of the Central Limit Theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-visualization-of-the-central-limit-theorem.html">5.4. Demo: Visualization of the Central Limit Theorem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-some-frequentist-connections.html">5.5. Some frequentist connections</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">6. Updating via Bayes' rule</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="sec-coin-tossing-frequentists-and-bayesians.html">6.1. Coin tossing: Frequentists and Bayesians</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-when-do-priors-matter-when-don-t-they-matter.html">6.2. When do priors matter? When don’t they matter?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-computing-the-posterior-analytically.html">6.3. Computing the posterior analytically</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-degree-of-belief-credibility-intervals-vs-frequentist-one-sigma.html">6.4. Degree of belief/credibility intervals</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">6.5. Take-aways and follow-up questions from coin flipping</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing.html">6.6. Demo: Bayesian Coin Tossing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing-interactive.html">6.7. Demo: Coin tossing (with widget)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing.html">6.2. Demo: Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-widget-coin-tossing.html">6.3. Demo: Widgetized coin tossing</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">6.4. Take-aways and follow-ups for coin flipping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-computing-the-posterior-analytically.html">6.5. Analytic coin-flipping posterior</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../error-propagation/index.html">7. Error propagation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -669,7 +667,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -685,6 +685,16 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-do-priors-matter-when-dont-they-matter">When do priors matter? When don’t they matter?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-squentially-after-every-toss-vs-all-at-once">Updating squentially (after every toss) vs. all at once</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other-questions">Other questions</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -695,33 +705,84 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="take-aways-and-follow-up-questions-from-coin-flipping">
-<h1><span class="section-number">6.5. </span>Take-aways and follow-up questions from coin flipping<a class="headerlink" href="#take-aways-and-follow-up-questions-from-coin-flipping" title="Link to this heading">#</a></h1>
-<p>Answer the questions in italics.</p>
-<ol class="arabic simple">
-<li><p><em>How often should the 68% degree of belief interval contain the true
-answer for <span class="math notranslate nohighlight">\(p_H\)</span>?</em></p></li>
-<li><p><em>What would your standard be for deciding the coin was so unfair that you would walk away? That you’d call the police? That you’d try and publish the fact that you found an unfair coin in a scientific journal?</em></p></li>
-<li><p><em>Is there a difference between updating sequentially or all at once?</em></p></li>
-</ol>
-<p>Let’s do the simplest version of the last question first: two tosses.
+<h1><span class="section-number">6.4. </span>Take-aways and follow-up questions from coin flipping<a class="headerlink" href="#take-aways-and-follow-up-questions-from-coin-flipping" title="Link to this heading">#</a></h1>
+<section id="when-do-priors-matter-when-dont-they-matter">
+<h2>When do priors matter? When don’t they matter?<a class="headerlink" href="#when-do-priors-matter-when-dont-they-matter" title="Link to this heading">#</a></h2>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Interpreting priors</p>
+<p>Give an interpretion to each of the priors in the widgetized demo</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Possible answers</p>
+<ul class="simple">
+<li><p>uniform prior: any probability is equally likely. Is this <em>uninformative</em>? (More later!)</p></li>
+<li><p>centered prior (informative): we have reason to believe the coin is more-or-less fair.</p></li>
+<li><p>anti-prior: could be anything but most likely a two-headed or two-tailed coin.</p></li>
+</ul>
+</div>
+<p>What is the minimal common information about <span class="math notranslate nohighlight">\(p_H\)</span> (meaning it is true of <em>any</em> prior PDF)?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<div class="math notranslate nohighlight">
+\[
+  0 \leq p_H \leq 1 \quad \mbox{and} \quad \int_0^1 \p{p_H}\, dp_H = 1
+\]</div>
+</div>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Bayesian convergence</p>
+<p>What happens when enough data is collected?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>All posteriors, independent of prior, converge to a narrow PDF including <span class="math notranslate nohighlight">\((p_H)_{\text{true}}\)</span>. This is called <em>Bayesian convergence</em>.</p>
+</div>
+<p>Different priors <em>eventually</em> give the same posterior with enough
+data.  How many tosses
+constitute ``eventually” for <span class="math notranslate nohighlight">\(p_H = 0.4\)</span> or <span class="math notranslate nohighlight">\(p_H = 0.9\)</span>?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(p_H = 0.4\)</span> <span class="math notranslate nohighlight">\(\Longrightarrow\)</span> <span class="math notranslate nohighlight">\(\approx 200\)</span> tosses will get you most of the way.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p_H = 0.9\)</span> <span class="math notranslate nohighlight">\(\Longrightarrow\)</span> much longer for the informative prior than the others.</p></li>
+</ul>
+</div>
+<p>Which prior(s) get to the correct conclusion fastest for <span class="math notranslate nohighlight">\(p_H = 0.4, 0.9, 0.5\)</span>? Can you explain your observations?</p>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Anti-prior</p>
+<p>Why does the “anti-prior” work well even though its dominant assumptions (most likely <span class="math notranslate nohighlight">\(p_H = 0\)</span> or <span class="math notranslate nohighlight">\(1\)</span>) are proven wrong early on?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>The &quot;heavy tails&quot; (which in general means the probability away from the peaks; in the middle for the &quot;anti-prior&quot;) mean it is like uniform (renormalized!) after the ends are eliminated. An important lesson for formulating priors: allow for deviations from your expectations.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A good reference about selecting priors is the Stan page on <a class="reference external" href="https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations">Prior Choice Recommendations</a>.</p>
+</div>
+</section>
+<section id="updating-squentially-after-every-toss-vs-all-at-once">
+<h2>Updating squentially (after every toss) vs. all at once<a class="headerlink" href="#updating-squentially-after-every-toss-vs-all-at-once" title="Link to this heading">#</a></h2>
+<p>Let’s do the simplest version of the question first: two tosses.
 Let the results of the first <span class="math notranslate nohighlight">\(k\)</span> tosses be <span class="math notranslate nohighlight">\(D = \{D_k\}\)</span> (in practice take 0’s and 1’s as the two choices <span class="math notranslate nohighlight">\(\Longrightarrow\)</span> <span class="math notranslate nohighlight">\(R = \sum_k D_k\)</span>).</p>
 <ul>
 <li><p>First consider <span class="math notranslate nohighlight">\(k=1\)</span> (so <span class="math notranslate nohighlight">\(D_1 = 0\)</span> or <span class="math notranslate nohighlight">\(D_1 = 1\)</span>):</p>
 <div class="math notranslate nohighlight" id="equation-eq-k-eq-1">
-<span class="eqno">(6.8)<a class="headerlink" href="#equation-eq-k-eq-1" title="Link to this equation">#</a></span>\[ p(p_h | D_1,I) \propto p(D_1|p_h,I) p(p_h|I)\]</div>
+<span class="eqno">(6.1)<a class="headerlink" href="#equation-eq-k-eq-1" title="Link to this equation">#</a></span>\[ p(p_H | D_1,I) \propto p(D_1|p_H,I) p(p_H|I)\]</div>
 </li>
 <li><p>Now <span class="math notranslate nohighlight">\(k=2\)</span>, starting with the expression for updating all at once and then using the sum and product rules (including their corollaries, the marginalization and Bayes’ Rule) to move the <span class="math notranslate nohighlight">\(D_1\)</span> result to the right of the <span class="math notranslate nohighlight">\(|\)</span> so it can be related to sequential updating:</p>
 <div class="math notranslate nohighlight" id="equation-eq-k-eq-2">
-<span class="eqno">(6.9)<a class="headerlink" href="#equation-eq-k-eq-2" title="Link to this equation">#</a></span>\[\begin{split}\begin{align}
-    p(p_h|D_2, D_1) &amp;\propto p(D_2, D_1|p_h, I)\times p(p_h|I) \\
-         &amp;\propto p(D_2|p_h,D_1,I)\times p(D_1|p_h, I)\times p(p_h|I) \\
-         &amp;\propto p(D_2|p_h,D_1,I)\times p(p_h|D_1,I) \\
-         &amp;\propto p(D_2|p_h,I)\times p(p_h|D_1,I) \\
-         &amp;\propto p(D_2|p_h,I)\times p(D_1|p_h,I) \times p(p_h,I)
+<span class="eqno">(6.2)<a class="headerlink" href="#equation-eq-k-eq-2" title="Link to this equation">#</a></span>\[\begin{split}\begin{align}
+    p(p_H|D_2, D_1) &amp;\propto p(D_2, D_1|p_H, I)\times p(p_H|I) \\
+         &amp;\propto p(D_2|p_H,D_1,I)\times p(D_1|p_H, I)\times p(p_H|I) \\
+         &amp;\propto p(D_2|p_H,D_1,I)\times p(p_H|D_1,I) \\
+         &amp;\propto p(D_2|p_H,I)\times p(p_H|D_1,I) \\
+         &amp;\propto p(D_2|p_H,I)\times p(D_1|p_H,I) \times p(p_H,I)
     \end{align}\end{split}\]</div>
 <div class="my-checkpoint admonition">
 <p class="admonition-title">Checkpoint question</p>
-<p>What is the justification for each step in <a class="reference internal" href="#equation-eq-k-eq-2">(6.9)</a>?</p>
+<p>What is the justification for each step in <a class="reference internal" href="#equation-eq-k-eq-2">(6.2)</a>?</p>
 <div class="dropdown my-answer admonition">
 <p class="admonition-title">Answer</p>
 <ul class="simple">
@@ -733,32 +794,40 @@ Let the results of the first <span class="math notranslate nohighlight">\(k\)</s
 </ul>
 </div>
 </div>
-<p>The fourth line of <a class="reference internal" href="#equation-eq-k-eq-2">(6.9)</a> is the sequential result! (The prior for the 2nd flip is the posterior <a class="reference internal" href="#equation-eq-k-eq-1">(6.8)</a> from the first flip.)</p>
+<p>The fourth line of <a class="reference internal" href="#equation-eq-k-eq-2">(6.2)</a> is the sequential result! (The prior for the 2nd flip is the posterior <a class="reference internal" href="#equation-eq-k-eq-1">(6.1)</a> from the first flip.)</p>
 </li>
-<li><p>So all at once is the same as sequential as a function of <span class="math notranslate nohighlight">\(p_h\)</span>, when normalized!</p></li>
+<li><p>So all at once is the same as sequential as a function of <span class="math notranslate nohighlight">\(p_H\)</span>, when normalized!</p></li>
 <li><p>To go to <span class="math notranslate nohighlight">\(k=3\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
-    p(p_h|D_3,D_2,D_1,I) &amp;\propto p(D_3|p_h,I) p(p_h|D_2,D_1,I) \\
-       &amp;\propto p(D_3|p_h,I) p(D_2|p_h,I) p(D_1|p_h,I) p(p_h)
+    p(p_H|D_3,D_2,D_1,I) &amp;\propto p(D_3|p_H,I) p(p_H|D_2,D_1,I) \\
+       &amp;\propto p(D_3|p_H,I) p(D_2|p_H,I) p(D_1|p_H,I) p(p_H)
     \end{align}\end{split}\]</div>
 </li>
 </ul>
 <p>and so on.</p>
 <p>So they are not different, as long as the tosses are independent.</p>
-<ol class="arabic" start="4">
-<li><p><em>What about “bootstrapping”?</em> Why can’t we use the data to improve the prior and apply it (repeatedly) for the <em>same</em> data. I.e., use the posterior from the first set of data as the prior for the same set of data. Let’s see what this leads to (we’ll label the sequence of posteriors we get <span class="math notranslate nohighlight">\(p_1,p_2,\ldots,p_N\)</span>):</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">What about “bootstrapping”?</p>
+<p>Why can’t we use the data to improve the prior and apply it (repeatedly) for the <em>same</em> data. I.e., use the posterior from the first set of data as the prior for the same set of data.</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>Let’s see what this leads to (we’ll label the sequence of posteriors we get <span class="math notranslate nohighlight">\(p_1,p_2,\ldots,p_N\)</span>):</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
-      p_1(p_h | D_1,I) &amp;\propto p(D_1 | p_h, I) \, p(p_h | I) \\
-            \\
-      \Longrightarrow p_2(p_h | D_1, I) &amp;\propto p(D_1 | p_h, I) \,  p_1(p_h | D_1, I) \\
-        &amp;\propto [p(D_1 | p_h,I)]^2 \, p(p_h | I) \\[5pt]
-      \mbox{What if we keep going $N$ times?}\quad &amp; \\[5pt]
-      \Longrightarrow p_N(p_h | D_1, I) &amp;\propto p(D_1|p_h, I)\, p_{N-1}(p_h | D_1, I) \\
-        &amp;\propto [p(D_1 | p_h, I)]^N \, p(p_h | I)
-    \end{align}\end{split}\]</div>
-<p>Suppose <span class="math notranslate nohighlight">\(D_1\)</span> was 0, then <span class="math notranslate nohighlight">\([p(\text{tails}|p_h,I)]^N \propto (1-p_h)^N p(p_h|I) \overset{N\rightarrow\infty}{\longrightarrow} \delta(p_h)\)</span> (i.e., the posterior is only at <span class="math notranslate nohighlight">\(p_h=0\)</span>!). Similarly, if <span class="math notranslate nohighlight">\(D_1\)</span> was 1, then <span class="math notranslate nohighlight">\([p(\text{tails}|p_h,I)]^N \propto p_h^N p(p_h|I) \overset{N\rightarrow\infty}{\longrightarrow} \delta(1-p_h)\)</span> (i.e., the posterior is only at <span class="math notranslate nohighlight">\(p_h=1\)</span>.)</p>
+  p_1(p_H | D_1,I) &amp;\propto p(D_1 | p_H, I) \, p(p_H | I) \\
+        \\
+  \Longrightarrow p_2(p_H | D_1, I) &amp;\propto p(D_1 | p_H, I) \,  p_1(p_H | D_1, I) \\
+    &amp;\propto [p(D_1 | p_H,I)]^2 \, p(p_H | I) 
+\end{align}\end{split}\]</div>
+<p>What if we keep going <span class="math notranslate nohighlight">\(N\)</span> times?</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+  \Longrightarrow p_N(p_H | D_1, I) &amp;\propto p(D_1|p_H, I)\, p_{N-1}(p_H | D_1, I) \\
+    &amp;\propto [p(D_1 | p_H, I)]^N \, p(p_H | I)
+\end{align}\end{split}\]</div>
+<p>Suppose <span class="math notranslate nohighlight">\(D_1\)</span> was 0, then <span class="math notranslate nohighlight">\([p(\text{tails}|p_H,I)]^N \propto (1-p_H)^N p(p_H|I) \overset{N\rightarrow\infty}{\longrightarrow} \delta(p_H)\)</span> (i.e., the posterior is only at <span class="math notranslate nohighlight">\(p_H=0\)</span>!).</p>
+<p>Similarly, if <span class="math notranslate nohighlight">\(D_1\)</span> was 1, then <span class="math notranslate nohighlight">\([p(\text{tails}|p_H,I)]^N \propto p_H^N p(p_H|I) \overset{N\rightarrow\infty}{\longrightarrow} \delta(1-p_H)\)</span> (i.e., the posterior is only at <span class="math notranslate nohighlight">\(p_H=1\)</span>.)</p>
 <p>More generally, this bootstrapping procedure would cause the posterior to get narrower and narrower with each iteration so you think you are getting more and more certain, with no new data!</p>
 <a class="bg-primary reference internal image-reference" href="../../../_images/bootstrapping_cartoon.png"><img alt="bootstrapping" class="bg-primary align-right" src="../../../_images/bootstrapping_cartoon.png" style="width: 300px;" />
 </a>
@@ -766,8 +835,27 @@ Let the results of the first <span class="math notranslate nohighlight">\(k\)</s
 <p class="admonition-title">Warning</p>
 <p>Don’t do that!</p>
 </div>
-</li>
-</ol>
+</div>
+<div class="docutils">
+</div>
+</div>
+</section>
+<section id="other-questions">
+<h2>Other questions<a class="headerlink" href="#other-questions" title="Link to this heading">#</a></h2>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>How often should the 68% credible interval contain the true
+answer for <span class="math notranslate nohighlight">\(p_H\)</span>?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>68% of the time!</p>
+</div>
+</div>
+<div class="admonition-discussion-question admonition">
+<p class="admonition-title">Discussion question</p>
+<p>What would your standard be for deciding the coin was so unfair that you would walk away? That you’d call the police? That you’d try and publish the fact that you found an unfair coin in a scientific journal?</p>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -801,20 +889,20 @@ Let the results of the first <span class="math notranslate nohighlight">\(k\)</s
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="sec-degree-of-belief-credibility-intervals-vs-frequentist-one-sigma.html"
+       href="demo-widget-coin-tossing.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">6.4. </span>Degree of belief/credibility intervals vs frequentist 1-sigma intervals</p>
+        <p class="prev-next-title"><span class="section-number">6.3. </span>Demo: Widgetized coin tossing</p>
       </div>
     </a>
     <a class="right-next"
-       href="demo-bayesian-coin-tossing.html"
+       href="sec-computing-the-posterior-analytically.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">6.6. </span>📥 Demo:  Bayesian Coin Tossing</p>
+        <p class="prev-next-title"><span class="section-number">6.5. </span>Analytic coin-flipping posterior</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -824,6 +912,23 @@ Let the results of the first <span class="math notranslate nohighlight">\(k\)</s
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-do-priors-matter-when-dont-they-matter">When do priors matter? When don’t they matter?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-squentially-after-every-toss-vs-all-at-once">Updating squentially (after every toss) vs. all at once</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other-questions">Other questions</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

@@ -215,18 +215,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-oneD-and-twoD-PDFs.html">5.1. One-D and two-D PDFs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-exploring-PDFs.html">5.2. Demo: Exploring PDFs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-more-on-gaussians.html">5.3. More on Gaussians</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-visualization-of-the-central-limit-theorem.html">5.4. 📥 Demo: Visualization of the Central Limit Theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-visualization-of-the-central-limit-theorem.html">5.4. Demo: Visualization of the Central Limit Theorem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-some-frequentist-connections.html">5.5. Some frequentist connections</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">6. Updating via Bayes' rule</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="sec-coin-tossing-frequentists-and-bayesians.html">6.1. Coin tossing: Frequentists and Bayesians</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-when-do-priors-matter-when-don-t-they-matter.html">6.2. When do priors matter? When don’t they matter?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-computing-the-posterior-analytically.html">6.3. Computing the posterior analytically</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-degree-of-belief-credibility-intervals-vs-frequentist-one-sigma.html">6.4. Degree of belief/credibility intervals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-take-aways-and-follow-up-questions-from-coin-flipping.html">6.5. Take-aways and follow-up questions from coin flipping</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing.html">6.6. Demo: Bayesian Coin Tossing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing-interactive.html">6.7. Demo: Coin tossing (with widget)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing.html">6.2. Demo: Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-widget-coin-tossing.html">6.3. Demo: Widgetized coin tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-take-aways-and-follow-up-questions-from-coin-flipping.html">6.4. Take-aways and follow-ups for coin flipping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-computing-the-posterior-analytically.html">6.5. Analytic coin-flipping posterior</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../error-propagation/index.html">7. Error propagation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -696,23 +694,42 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="updating-via-bayes-rule">
 <span id="sec-updatingbayes"></span><h1><span class="section-number">6. </span>Updating via Bayes’ rule<a class="headerlink" href="#updating-via-bayes-rule" title="Link to this heading">#</a></h1>
-<p>Consider Bayes’ rule (or theorem, same thing!) for the case where we seek the PDF of parameters <span class="math notranslate nohighlight">\(\thetavec\)</span> contingent on some data.</p>
+<p>Bayes’ rule (or theorem, same thing!) plays a central role in Bayesian statistics. It is the heart of how we update our knowledge given new information:</p>
+<div class="math notranslate nohighlight">
+\[
+        \text{\large prior} \quad \overset{\text{\Large likelihood}}{\Large\longrightarrow} 
+        \ \ \ \text{\large posterior}
+\]</div>
+<p>Let us recall the specifics and nomenclature of Bayes’ rule  for the case where we seek the PDF of parameters <span class="math notranslate nohighlight">\(\thetavec\)</span> contingent on some data:</p>
 <div class="math notranslate nohighlight">
 \[
   \overbrace{\p{\thetavec|\text{data}, I}}^{\text{posterior}} =
-  \frac{\overbrace{\p{\text{data}|\thetavec,I}}^{\text{likelihood}}\times \overbrace{\p{\thetavec,I}}^{\text{prior}}}{\underbrace{\p{\text{data}|I}}_{\text{evidence}}}
+  \frac{\overbrace{\p{\text{data}|\thetavec,I}}^{\text{likelihood}}\times \overbrace{\p{\thetavec|I}}^{\text{prior}}}{\underbrace{\p{\text{data}|I}}_{\text{evidence}}}
+  ,
 \]</div>
+<p>where</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\thetavec\)</span> is a general <em>vector</em> of parameters</p></li>
-<li><p>The denominator is the data probability or “fully marginalized likelihood” or evidence or maybe some other name (these are all used in the literature). We’ll come back to it later. As will be clear later, it is a normalization factor.</p></li>
-<li><p>The <em>prior</em> PDF is what information <span class="math notranslate nohighlight">\(I\)</span> we have (or believe) about <span class="math notranslate nohighlight">\(\thetavec\)</span> before we observe the data.</p></li>
+<li><p>The <em>prior</em> PDF is based on information <span class="math notranslate nohighlight">\(I\)</span> we have (or believe) about <span class="math notranslate nohighlight">\(\thetavec\)</span> before we observe the data.</p></li>
 <li><p>The <em>posterior</em> PDF is our new PDF for <span class="math notranslate nohighlight">\(\thetavec\)</span>, given that we have observed the data.</p></li>
 <li><p>The <em>likelihood</em> is the probability of getting the specified data <em>given</em> the parameters <span class="math notranslate nohighlight">\(\thetavec\)</span> under consideration on the left side.</p></li>
+<li><p>The denominator is the data probability or “fully marginalized likelihood” or evidence or maybe some other name (these are all used in the literature).  It is a normalization factor that scales the posterior <em>independent of <span class="math notranslate nohighlight">\(\thetavec\)</span></em> and so often does not need to be calculated.</p></li>
 </ul>
 <p>The bottom line is that Bayes’ rule tells us how to <em>update</em> our
 expectations. I.e., how we should modify our prior beliefs <span class="math notranslate nohighlight">\(I\)</span> about the
-parameters <span class="math notranslate nohighlight">\(\thetavec\)</span> after we have acquired new data <span class="math notranslate nohighlight">\(D\)</span> that has
-implications for their values.</p>
+parameters <span class="math notranslate nohighlight">\(\thetavec\)</span> after we have acquired new data that has
+implications for their values. (Note this says “new” data; we can build upon previous data.)</p>
+<p>There are many types of parameter estimation based on Bayes’ rule; each of the <a class="reference internal" href="../exercises-bayesian-methods-for-scientific-modeling/index.html#ch-partiexercises"><span class="std std-ref">Exercises for Part I</span></a> provides an example.
+But we will apply Bayes’ rule for updating in other contexts in this book. These include</p>
+<!-- * {ref}`sec:ThePPD` -->
+<ul class="simple">
+<li><p><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-bayesian-model-selection.html#sec-bayesianmodelselection"><span class="std std-ref">Bayesian model selection</span></a></p></li>
+<li><p>Model discrepancy (<a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/index.html#sec-modeldiscrepancy"><span class="std std-ref">Discrepancy models with GPs</span></a>)</p></li>
+<li><p><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/index.html#sec-modelmixing"><span class="std std-ref">Model averaging and mixing</span></a></p></li>
+<li><p><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/bayesian-optimization/sec-bayesian-optimization.html#sec-bayesian-optimization"><span class="std std-ref">Bayesian Optimization</span></a></p></li>
+<li><p><a class="reference internal" href="../../Machine-learning-A-Bayesian-perspective/bayesian-neural-nets/index.html#sec-bnn"><span class="std std-ref">Bayesian neural networks</span></a></p></li>
+</ul>
+<p>In this chapter we return to the prototypical coin-tossing experiment introduced in <a class="reference internal" href="../inference-and-pdfs/sec-review-of-bayes-theorem.html#sec-coinexample"><span class="std std-ref">Example: Is this a fair coin?</span></a> and look at the updating process in more detail.</p>
 <div class="toctree-wrapper compound">
 </div>
 </section>

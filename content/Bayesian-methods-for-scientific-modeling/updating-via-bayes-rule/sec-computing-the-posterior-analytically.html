@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>6.3. Computing the posterior analytically &#8212; Combined Learning from Data materials</title>
+    <title>6.5. Analytic coin-flipping posterior &#8212; Combined Learning from Data materials</title>
   
   
   
@@ -68,8 +68,8 @@
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="6.4. Degree of belief/credibility intervals vs frequentist 1-sigma intervals" href="sec-degree-of-belief-credibility-intervals-vs-frequentist-one-sigma.html" />
-    <link rel="prev" title="6.2. When do priors matter? When don’t they matter?" href="sec-when-do-priors-matter-when-don-t-they-matter.html" />
+    <link rel="next" title="7. Error propagation" href="../error-propagation/index.html" />
+    <link rel="prev" title="6.4. Take-aways and follow-up questions from coin flipping" href="sec-take-aways-and-follow-up-questions-from-coin-flipping.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -215,18 +215,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-oneD-and-twoD-PDFs.html">5.1. One-D and two-D PDFs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-exploring-PDFs.html">5.2. Demo: Exploring PDFs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-more-on-gaussians.html">5.3. More on Gaussians</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-visualization-of-the-central-limit-theorem.html">5.4. 📥 Demo: Visualization of the Central Limit Theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-visualization-of-the-central-limit-theorem.html">5.4. Demo: Visualization of the Central Limit Theorem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-some-frequentist-connections.html">5.5. Some frequentist connections</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">6. Updating via Bayes' rule</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="sec-coin-tossing-frequentists-and-bayesians.html">6.1. Coin tossing: Frequentists and Bayesians</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-when-do-priors-matter-when-don-t-they-matter.html">6.2. When do priors matter? When don’t they matter?</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">6.3. Computing the posterior analytically</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-degree-of-belief-credibility-intervals-vs-frequentist-one-sigma.html">6.4. Degree of belief/credibility intervals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-take-aways-and-follow-up-questions-from-coin-flipping.html">6.5. Take-aways and follow-up questions from coin flipping</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing.html">6.6. Demo: Bayesian Coin Tossing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing-interactive.html">6.7. Demo: Coin tossing (with widget)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing.html">6.2. Demo: Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-widget-coin-tossing.html">6.3. Demo: Widgetized coin tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-take-aways-and-follow-up-questions-from-coin-flipping.html">6.4. Take-aways and follow-ups for coin flipping</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">6.5. Analytic coin-flipping posterior</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../error-propagation/index.html">7. Error propagation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -682,7 +680,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Computing the posterior analytically</h1>
+    <h1>Analytic coin-flipping posterior</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -706,44 +704,48 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="computing-the-posterior-analytically">
-<h1><span class="section-number">6.3. </span>Computing the posterior analytically<a class="headerlink" href="#computing-the-posterior-analytically" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="analytic-coin-flipping-posterior">
+<h1><span class="section-number">6.5. </span>Analytic coin-flipping posterior<a class="headerlink" href="#analytic-coin-flipping-posterior" title="Link to this heading">#</a></h1>
+<p>In practical applications, we will very often find posteriors by <em>sampling</em>, which means we acquire a (generally multi-dimensional) set of outcomes, whose histogram approximates the exact posterior.
+In some cases we are able to derive an analytic expression for the posterior. This includes the case of <em>conjugate priors</em>, which we exploit below.
+In the process we see the flexibility of the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html">beta distribution</a>, which we use to parametrize a rather general prior distribution.</p>
+<p>Here we derive analytic expressions for the coin-flipping posterior that are used in the demo notebooks <a class="reference internal" href="demo-bayesian-coin-tossing.html#demo-bayesian-coin-tossing"><span class="std std-ref">📥 Demo:  Bayesian Coin Tossing</span></a> and <a class="reference internal" href="demo-widget-coin-tossing.html#demo-widgetcointossing"><span class="std std-ref">Demo: Widgetized coin tossing</span></a>.</p>
 <section id="first-the-likelihood">
 <h2>First the likelihood<a class="headerlink" href="#first-the-likelihood" title="Link to this heading">#</a></h2>
-<p>Suppose we had a fair coin <span class="math notranslate nohighlight">\(\Longrightarrow\)</span> <span class="math notranslate nohighlight">\(p_h = 0.5\)</span></p>
+<p>Suppose we had a fair coin <span class="math notranslate nohighlight">\(\Longrightarrow\)</span> <span class="math notranslate nohighlight">\(p_H = 0.5\)</span></p>
 <div class="math notranslate nohighlight">
 \[
-  p(\mbox{$R$ heads of out $N$ tosses | fair coin}) = p(R,N|p_h = 0.5)
-   = {N \choose R} (0.5)^R (0.5)^{N-R}
+  p(\mbox{$H$ heads of out $N$ tosses | fair coin}) = p(H,N|p_H = 0.5)
+   = {N \choose H} (0.5)^H (0.5)^{N-H}
 \]</div>
 <p>Is the sum rule obeyed?</p>
 <div class="math notranslate nohighlight">
 \[
- \sum_{R=0}^{N} p(R,N| p_h = 1/2) = \sum_{R=0}^N {N \choose R} \left(\frac{1}{2}\right)^N
+ \sum_{H=0}^{N} p(H,N| p_H = 1/2) = \sum_{H=0}^N {N \choose H} \left(\frac{1}{2}\right)^N
    = \left(\frac{1}{2}\right)^N \times 2^N = 1 
 \]</div>
 <div class="dropdown my-answer admonition">
 <p class="admonition-title">Proof of penultimate equality</p>
-<p><span class="math notranslate nohighlight">\((x+y)^N = \sum_{R=0}^N {N \choose R} x^R y^{N-R} \overset{x=y=1}{\longrightarrow} \sum_{R=0}^N {N \choose R} = 2^N\)</span>.  More generally, <span class="math notranslate nohighlight">\(x = p_h\)</span> and <span class="math notranslate nohighlight">\(y = 1 - p_h\)</span> shows that the sum rule works in general.</p>
+<p><span class="math notranslate nohighlight">\((x+y)^N = \sum_{H=0}^N {N \choose H} x^H y^{N-H} \overset{x=y=1}{\longrightarrow} \sum_{H=0}^N {N \choose H} = 2^N\)</span>.  More generally, <span class="math notranslate nohighlight">\(x = p_H\)</span> and <span class="math notranslate nohighlight">\(y = 1 - p_H\)</span> shows that the sum rule works in general.</p>
 </div>
-<p>The likelihood for a more general <span class="math notranslate nohighlight">\(p_h\)</span> is the binomial distribution:</p>
+<p>The likelihood for a more general <span class="math notranslate nohighlight">\(p_H\)</span> is the binomial distribution:</p>
 <div class="math notranslate nohighlight" id="equation-eq-binomial-likelihood">
-<span class="eqno">(6.1)<a class="headerlink" href="#equation-eq-binomial-likelihood" title="Link to this equation">#</a></span>\[
-   p(R,N|p_h) = {N \choose R} (p_h)^R (1 - p_h)^{N-R}
+<span class="eqno">(6.3)<a class="headerlink" href="#equation-eq-binomial-likelihood" title="Link to this equation">#</a></span>\[
+   p(H,N|p_H) = {N \choose H} (p_H)^H (1 - p_H)^{N-H}
    \]</div>
-<p>Maximum-likelihood means: what value of <span class="math notranslate nohighlight">\(p_h\)</span> maximizes the likelihood (notation: <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> is often used for the likelihood)?</p>
+<p>Maximum-likelihood means: what value of <span class="math notranslate nohighlight">\(p_H\)</span> maximizes the likelihood (notation: <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> is often used for the likelihood)?</p>
 <div class="math notranslate nohighlight">
 \[
-  p(R,N|p_h) \equiv \mathcal{L}(R,N|p_h) = \mathcal{N}p_h^R (1-p_h)^{N-R} \,?
+  p(H,N|p_H) \equiv \mathcal{L}(H,N|p_H) = \mathcal{N}p_H^H (1-p_H)^{N-H} \,?
 \]</div>
 <p>Exercise: Carry out the maximization</p>
-<p>But, as a Bayesian, we want to know about the PDF for <span class="math notranslate nohighlight">\(p_h\)</span>, so we actually want the PDF the other way around: <span class="math notranslate nohighlight">\(p(p_h|R,N)\)</span>. Bayes says</p>
+<p>But, as a Bayesian, we want to know about the PDF for <span class="math notranslate nohighlight">\(p_H\)</span>, so we actually want the PDF the other way around: <span class="math notranslate nohighlight">\(p(p_H|H,N)\)</span>. Bayes says</p>
 <div class="math notranslate nohighlight">
 \[
-  p(p_h | R,N) \propto p(R,N|p_h) \cdot p(p_h)
+  p(p_H | H,N) \propto p(H,N|p_H) \cdot p(p_H)
 \]</div>
 <ul class="simple">
-<li><p>Note that the denominator doesn’t depend on <span class="math notranslate nohighlight">\(p_h\)</span> (it is just a normalization).</p></li>
+<li><p>Note that the denominator doesn’t depend on <span class="math notranslate nohighlight">\(p_H\)</span> (it is just a normalization).</p></li>
 </ul>
 <p>So how are we doing the calculation of the updated posterior?</p>
 <ul class="simple">
@@ -753,57 +755,57 @@ document.write(`
 <section id="case-i-uniform-flat-prior">
 <h2>Case I: uniform (flat) prior<a class="headerlink" href="#case-i-uniform-flat-prior" title="Link to this heading">#</a></h2>
 <div class="math notranslate nohighlight" id="equation-eq-coinflip-posterior">
-<span class="eqno">(6.2)<a class="headerlink" href="#equation-eq-coinflip-posterior" title="Link to this equation">#</a></span>\[
- \Longrightarrow\quad p(p_h| R, N, I) = \mathcal{N} p(R,N|p_h) p(p_h)
+<span class="eqno">(6.4)<a class="headerlink" href="#equation-eq-coinflip-posterior" title="Link to this equation">#</a></span>\[
+ \Longrightarrow\quad p(p_H| H, N, I) = \mathcal{N} p(H,N|p_H) p(p_H)
 \]</div>
 <p>where we will suppress the “<span class="math notranslate nohighlight">\(I\)</span>” going forward.
 But</p>
 <div class="math notranslate nohighlight" id="equation-eq-coinflip-posterior-norm">
-<span class="eqno">(6.3)<a class="headerlink" href="#equation-eq-coinflip-posterior-norm" title="Link to this equation">#</a></span>\[
+<span class="eqno">(6.5)<a class="headerlink" href="#equation-eq-coinflip-posterior-norm" title="Link to this equation">#</a></span>\[
 \begin{align}
- \int_0^1 dp_h \, p(p_h|R,N) &amp;= 1 \quad \Longrightarrow \quad 
-         \mathcal{N}\frac{\Gamma(1+N-R)\Gamma(1+R)}{\Gamma(2+N)} = 1
+ \int_0^1 dp_H \, p(p_H|H,N) &amp;= 1 \quad \Longrightarrow \quad 
+         \mathcal{N}\frac{\Gamma(1+N-H)\Gamma(1+H)}{\Gamma(2+N)} = 1
 \end{align}
 \]</div>
 <div class="admonition-recall-beta-function admonition">
 <p class="admonition-title">Recall Beta function</p>
 <div class="math notranslate nohighlight" id="equation-eq-beta-function">
-<span class="eqno">(6.4)<a class="headerlink" href="#equation-eq-beta-function" title="Link to this equation">#</a></span>\[
+<span class="eqno">(6.6)<a class="headerlink" href="#equation-eq-beta-function" title="Link to this equation">#</a></span>\[
   B(x,y) = \int_0^1 t^{x-1} (1-t)^{y-1} \, dt = \frac{\Gamma(x)\Gamma(y)}{\Gamma(x+y)}
-  \ \  \mbox{for } \text{Re}(x,y) &gt; 0
+  \ \  \mbox{for } \text{He}(x,y) &gt; 0
 \]</div>
 <p>and <span class="math notranslate nohighlight">\(\Gamma(x) = (x-1)!\)</span> for integers.</p>
 </div>
 <div class="math notranslate nohighlight" id="equation-eq-beta-normalization">
-<span class="eqno">(6.5)<a class="headerlink" href="#equation-eq-beta-normalization" title="Link to this equation">#</a></span>\[
-  \Longrightarrow\quad \mathcal{N} = \frac{\Gamma(2+N)}{\Gamma(1+N-R)\Gamma(1+R)}
+<span class="eqno">(6.7)<a class="headerlink" href="#equation-eq-beta-normalization" title="Link to this equation">#</a></span>\[
+  \Longrightarrow\quad \mathcal{N} = \frac{\Gamma(2+N)}{\Gamma(1+N-H)\Gamma(1+H)}
 \]</div>
-<p>and so evaluating the posterior for <span class="math notranslate nohighlight">\(p_h\)</span> for new values of <span class="math notranslate nohighlight">\(R\)</span> and <span class="math notranslate nohighlight">\(N\)</span> is direct: substitute <a class="reference internal" href="#equation-eq-beta-normalization">(6.5)</a> into <a class="reference internal" href="#equation-eq-coinflip-posterior">(6.2)</a>.
-If we want the unnormalized result with a uniform prior (meaning we ignore the normalization constant <span class="math notranslate nohighlight">\(\mathcal{N}\)</span> that simply gives an overall scaling of the distribution), then we just use the likelihood <a class="reference internal" href="#equation-eq-binomial-likelihood">(6.1)</a> since <span class="math notranslate nohighlight">\(p(p_h) = 1\)</span> for this case.</p>
+<p>and so evaluating the posterior for <span class="math notranslate nohighlight">\(p_H\)</span> for new values of <span class="math notranslate nohighlight">\(H\)</span> and <span class="math notranslate nohighlight">\(N\)</span> is direct: substitute <a class="reference internal" href="#equation-eq-beta-normalization">(6.7)</a> into <a class="reference internal" href="#equation-eq-coinflip-posterior">(6.4)</a>.
+If we want the unnormalized result with a uniform prior (meaning we ignore the normalization constant <span class="math notranslate nohighlight">\(\mathcal{N}\)</span> that simply gives an overall scaling of the distribution), then we just use the likelihood <a class="reference internal" href="#equation-eq-binomial-likelihood">(6.3)</a> since <span class="math notranslate nohighlight">\(p(p_H) = 1\)</span> for this case.</p>
 </section>
 <section id="case-ii-conjugate-prior">
 <h2>Case II: conjugate prior<a class="headerlink" href="#case-ii-conjugate-prior" title="Link to this heading">#</a></h2>
 <p>Choosing a conjugate prior (if possible) means that the posterior will have the same form as the prior. Here if we pick a beta distribution as prior, it is conjugate with the coin-flipping likelihood. From the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html">scipy.stats.beta documentation</a> the beta distribution (function of <span class="math notranslate nohighlight">\(x\)</span> with parameters <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span>):</p>
 <div class="math notranslate nohighlight" id="equation-eq-scipy-beta-distribution">
-<span class="eqno">(6.6)<a class="headerlink" href="#equation-eq-scipy-beta-distribution" title="Link to this equation">#</a></span>\[
+<span class="eqno">(6.8)<a class="headerlink" href="#equation-eq-scipy-beta-distribution" title="Link to this equation">#</a></span>\[
   f(x, a, b) = \frac{\Gamma(a+b) x^{a-1} (1-x)^{b-1}}{\Gamma(a)\Gamma(b)}
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(0 \leq x \leq 1\)</span> and <span class="math notranslate nohighlight">\(a&gt;0\)</span>, <span class="math notranslate nohighlight">\(b&gt;0\)</span>.
-So <span class="math notranslate nohighlight">\(p(x|a,b) = f(x,a,b)\)</span> and our likelihood is a beta distribution <span class="math notranslate nohighlight">\(p(R,N|p_h) = f(p_h,1+R,1+N-R)\)</span> to agree with <a class="reference internal" href="#equation-eq-binomial-likelihood">(6.1)</a>.</p>
-<p>If the prior is <span class="math notranslate nohighlight">\(p(p_h|I) = f(p_h,\alpha,\beta)\)</span> with <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> to reproduce our prior expectations (or knowledge), then by Bayes’ theorem the <em>normalized</em> posterior is</p>
+So <span class="math notranslate nohighlight">\(p(x|a,b) = f(x,a,b)\)</span> and our likelihood is a beta distribution <span class="math notranslate nohighlight">\(p(H,N|p_H) = f(p_H,1+H,1+N-H)\)</span> to agree with <a class="reference internal" href="#equation-eq-binomial-likelihood">(6.3)</a>.</p>
+<p>If the prior is <span class="math notranslate nohighlight">\(p(p_H|I) = f(p_H,\alpha,\beta)\)</span> with <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> to reproduce our prior expectations (or knowledge), then by Bayes’ theorem the <em>normalized</em> posterior is</p>
 <div class="math notranslate nohighlight" id="equation-eq-coinflip-updated">
-<span class="eqno">(6.7)<a class="headerlink" href="#equation-eq-coinflip-updated" title="Link to this equation">#</a></span>\[\begin{split}
+<span class="eqno">(6.9)<a class="headerlink" href="#equation-eq-coinflip-updated" title="Link to this equation">#</a></span>\[\begin{split}
 \begin{align}
-  p(p_h | R,N) &amp;\propto p(R,N | p_h) p(p_h) \\
-  &amp; \propto f(p_h,1+R,1+N-R) \times f(p_h,\alpha,\beta) \\
-  &amp; \longrightarrow f(p_h, \alpha+R, \beta+N-R)
+  p(p_H | H,N) &amp;\propto p(H,N | p_H) p(p_H) \\
+  &amp; \propto f(p_H,1+H,1+N-H) \times f(p_H,\alpha,\beta) \\
+  &amp; \longrightarrow f(p_H, \alpha+H, \beta+N-H)
 \end{align}  
 \end{split}\]</div>
-<p>so we <em>update the prior</em> simply by changing the arguments of the beta distribution: <span class="math notranslate nohighlight">\(\alpha \rightarrow \alpha + R\)</span>, <span class="math notranslate nohighlight">\(\beta \rightarrow \beta + N-R\)</span> because the (normalized) product of two beta distributions is another beta distribution. Really easy!</p>
+<p>so we <em>update the prior</em> simply by changing the arguments of the beta distribution: <span class="math notranslate nohighlight">\(\alpha \rightarrow \alpha + H\)</span>, <span class="math notranslate nohighlight">\(\beta \rightarrow \beta + N-H\)</span> because the (normalized) product of two beta distributions is another beta distribution. Heally easy!</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Check this against the code!
-Look in the code where the posterior is calculated and see how the beta distribution is used. Verify that <a class="reference internal" href="#equation-eq-coinflip-updated">(6.7)</a> is evaluated. Try changing the values of <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> used in defining the prior to see the shapes.</p>
+Look in the code where the posterior is calculated and see how the beta distribution is used. Verify that <a class="reference internal" href="#equation-eq-coinflip-updated">(6.9)</a> is evaluated. Try changing the values of <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> used in defining the prior to see the shapes.</p>
 </div>
 </section>
 </section>
@@ -839,20 +841,20 @@ Look in the code where the posterior is calculated and see how the beta distribu
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="sec-when-do-priors-matter-when-don-t-they-matter.html"
+       href="sec-take-aways-and-follow-up-questions-from-coin-flipping.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">6.2. </span>When do priors matter? When don’t they matter?</p>
+        <p class="prev-next-title"><span class="section-number">6.4. </span>Take-aways and follow-up questions from coin flipping</p>
       </div>
     </a>
     <a class="right-next"
-       href="sec-degree-of-belief-credibility-intervals-vs-frequentist-one-sigma.html"
+       href="../error-propagation/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">6.4. </span>Degree of belief/credibility intervals vs frequentist 1-sigma intervals</p>
+        <p class="prev-next-title"><span class="section-number">7. </span>Error propagation</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

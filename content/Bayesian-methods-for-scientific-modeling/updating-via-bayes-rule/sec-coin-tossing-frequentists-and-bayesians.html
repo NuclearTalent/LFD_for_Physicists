@@ -68,7 +68,7 @@
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="6.2. When do priors matter? When don’t they matter?" href="sec-when-do-priors-matter-when-don-t-they-matter.html" />
+    <link rel="next" title="6.2. 📥 Demo: Bayesian Coin Tossing" href="demo-bayesian-coin-tossing.html" />
     <link rel="prev" title="6. Updating via Bayes’ rule" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -215,18 +215,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-oneD-and-twoD-PDFs.html">5.1. One-D and two-D PDFs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-exploring-PDFs.html">5.2. Demo: Exploring PDFs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-more-on-gaussians.html">5.3. More on Gaussians</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-visualization-of-the-central-limit-theorem.html">5.4. 📥 Demo: Visualization of the Central Limit Theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-visualization-of-the-central-limit-theorem.html">5.4. Demo: Visualization of the Central Limit Theorem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-some-frequentist-connections.html">5.5. Some frequentist connections</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">6. Updating via Bayes' rule</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">6.1. Coin tossing: Frequentists and Bayesians</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-when-do-priors-matter-when-don-t-they-matter.html">6.2. When do priors matter? When don’t they matter?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-computing-the-posterior-analytically.html">6.3. Computing the posterior analytically</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-degree-of-belief-credibility-intervals-vs-frequentist-one-sigma.html">6.4. Degree of belief/credibility intervals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-take-aways-and-follow-up-questions-from-coin-flipping.html">6.5. Take-aways and follow-up questions from coin flipping</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing.html">6.6. Demo: Bayesian Coin Tossing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing-interactive.html">6.7. Demo: Coin tossing (with widget)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-bayesian-coin-tossing.html">6.2. Demo: Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-widget-coin-tossing.html">6.3. Demo: Widgetized coin tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-take-aways-and-follow-up-questions-from-coin-flipping.html">6.4. Take-aways and follow-ups for coin flipping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-computing-the-posterior-analytically.html">6.5. Analytic coin-flipping posterior</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../error-propagation/index.html">7. Error propagation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -698,80 +696,41 @@ document.write(`
 <h1><span class="section-number">6.1. </span>Coin tossing: Frequentists and Bayesians<a class="headerlink" href="#coin-tossing-frequentists-and-bayesians" title="Link to this heading">#</a></h1>
 <p><strong>Storyline:</strong>
 We are observing successive flips of a coin. There is a definite true
-probability of getting heads <span class="math notranslate nohighlight">\((p_h)_{\text{true}}\)</span>, but we don’t know
+probability of getting heads <span class="math notranslate nohighlight">\((p_H)_{\text{true}}\)</span>, but we don’t know
 what the value is, although we do know that it is between 0 and 1.</p>
-<p>So, is the coin fair? The frequentist approach to this problem is to set up a null hypothesis, i.e., the hypothesis that the coin is fair, and then determine the probability that the observed data is generated given that that hypothesis holds. If the probability is a low number <span class="math notranslate nohighlight">\(p_h \ll 1\)</span> then the null hypothesis can be rejected at a confidence of <span class="math notranslate nohighlight">\(1 - p_h\)</span>.</p>
-<p>Thus, if the data is that the coin produces <span class="math notranslate nohighlight">\(R\)</span> heads after <span class="math notranslate nohighlight">\(N\)</span> tosses
+<p>So, is the coin fair? The frequentist approach to this problem is to set up a null hypothesis, i.e., the hypothesis that the coin is fair (meaning <span class="math notranslate nohighlight">\(p_H=0.5\)</span>), and then determine the probability that the observed data is generated given that that hypothesis holds. If the probability is a low number <span class="math notranslate nohighlight">\(p_H \ll 1\)</span> then the null hypothesis can be rejected at a confidence of <span class="math notranslate nohighlight">\(1 - p_H\)</span>.</p>
+<p>Thus, if the data is that the coin produces <span class="math notranslate nohighlight">\(H\)</span> heads after <span class="math notranslate nohighlight">\(N\)</span> tosses
 the frequentist wants to compute</p>
 <div class="math notranslate nohighlight">
-\[\p{N~\text{tosses}, R~\text{heads}|p_h=0.5}\]</div>
+\[\p{N~\text{tosses}, H~\text{heads}|p_H=0.5},\]</div>
 <p>and only is allowed to get excited if this probability is a low number.</p>
-<p>The Bayesian, however, gets to ask a more general question:</p>
-<p>What is:</p>
+<p>The Bayesian, however, gets to ask a more general question. What is:</p>
 <div class="math notranslate nohighlight">
 \[
-  \p{p_h | N~\text{tosses}, R~\text{heads}, I} \, ?
+  \p{p_H | N~\text{tosses}, H~\text{heads}, I} \, ?
 \]</div>
 <p>Note that the <em>outcome</em> of any one coin toss is discrete (either heads or tails) but
-<span class="math notranslate nohighlight">\(p_h\)</span> can take any value between 0 and 1, and this PDF is a function
-of the continuous variable <span class="math notranslate nohighlight">\(p_h\)</span>.   Best estimates for <span class="math notranslate nohighlight">\(p_h\)</span>,
+<span class="math notranslate nohighlight">\(p_H\)</span> can take any value between 0 and 1, therefore this PDF is a function
+of the continuous variable <span class="math notranslate nohighlight">\(p_H\)</span>.   Best estimates for <span class="math notranslate nohighlight">\(p_H\)</span>,
 intervals that encompass the true value with a certain probability,
 etc. can then all be computed from the probability density
-function <span class="math notranslate nohighlight">\(\p{p_h | N~\text{tosses}, R~\text{heads}, I}\)</span>. Determining
-the probability distribution function for <span class="math notranslate nohighlight">\(p_h\)</span> given the data on the
+function <span class="math notranslate nohighlight">\(\p{p_H | N~\text{tosses}, H~\text{heads}, I}\)</span>. Determining
+this probability distribution function for <span class="math notranslate nohighlight">\(p_H\)</span> given the data on the
 coin’s behavior is an example of Bayesian parameter estimation.</p>
 <p>One of the key points of this exercise, is that with each flip of the
-coin we acquire more information on the value of <span class="math notranslate nohighlight">\(p_h\)</span>. The logical
-thing to do is to update the state of our belief, our PDF for <span class="math notranslate nohighlight">\(\p{p_h|\rm{How~many~heads~in~as~many~tosses~as~we've~made},I}\)</span> each time the number of coin tosses is incremented by 1. The PDF will tend to get narrower, i.e., our state of knowledge of <span class="math notranslate nohighlight">\(p_h\)</span> more definite, as we acquire more data.</p>
-<p>Note that in what follows we exploit the fungibility of mathematical symbols to let <span class="math notranslate nohighlight">\(I\)</span> stand for different things at different stages of the coin tossing experiment. If we are going to “update” after every coin toss then <span class="math notranslate nohighlight">\(D\)</span> is just the result of the <span class="math notranslate nohighlight">\(N\)</span>th coin toss and <span class="math notranslate nohighlight">\(I\)</span> is what we know about the coin after <span class="math notranslate nohighlight">\(N-1\)</span> coin tosses.</p>
-<p>The notebook is <a class="reference internal" href="demo-bayesian-coin-tossing.html#demo-bayesian-coin-tossing"><span class="std std-ref">📥 Demo:  Bayesian Coin Tossing</span></a> (non-widget) and/or <a class="reference internal" href="demo-bayesian-coin-tossing-interactive.html#demo-bayesian-coin-tossing-interactive"><span class="std std-ref">📥 Demo: Coin tossing (with widget)</span></a>. Try both!</p>
-<p>Let’s first play a bit with the simulation and then come back and think of the details.</p>
+coin we acquire more information on the value of <span class="math notranslate nohighlight">\(p_H\)</span>. The logical
+thing to do is to update the state of our belief, our PDF for <span class="math notranslate nohighlight">\(\p{p_H|\rm{How~many~heads~in~as~many~tosses~as~we've~made},I}\)</span> each time the number of coin tosses is incremented by 1. The PDF will tend to get narrower, i.e., our state of knowledge of <span class="math notranslate nohighlight">\(p_H\)</span> more definite, as we acquire more data.</p>
+<p>Note that we exploit the fungibility of mathematical symbols to let <span class="math notranslate nohighlight">\(I\)</span> stand for different things at different stages of the coin tossing experiment. If we are going to “update” after every coin toss then <span class="math notranslate nohighlight">\(D\)</span> is just the result of the <span class="math notranslate nohighlight">\(N\)</span>th coin toss and <span class="math notranslate nohighlight">\(I\)</span> is what we know about the coin after <span class="math notranslate nohighlight">\(N-1\)</span> coin tosses.</p>
+<p>There are two demo notebooks you can use to explore this problem:
+<a class="reference internal" href="demo-bayesian-coin-tossing.html#demo-bayesian-coin-tossing"><span class="std std-ref">📥 Demo:  Bayesian Coin Tossing</span></a> (non-widget) and/or <a class="reference internal" href="demo-widget-coin-tossing.html#demo-widgetcointossing"><span class="std std-ref">Demo: Widgetized coin tossing</span></a>. Try both!</p>
+<p>Play a bit with the simulation and then we’ll consider some of the details.
+Here are some things to try with the widgetized version:</p>
 <ul class="simple">
-<li><p>Note a few of the Python features:</p>
-<ul>
-<li><p>there is a class for data called Data. Python classes are easy compared to C++!</p></li>
-<li><p>a function is defined to make a type of plot that is used repeatedly</p></li>
-<li><p>elaborate widget <span class="math notranslate nohighlight">\(\Longrightarrow\)</span> use it as a guide for making your own! (Optional!) Read from the bottom up in the widget definition to understand its structure.</p></li>
-</ul>
-</li>
-<li><p>Widget user interface features:</p>
-<ul>
-<li><p>tabs to control parameters or look at documentation</p></li>
-<li><p>set the true <span class="math notranslate nohighlight">\(p_h\)</span> by the slider</p></li>
-<li><p>press “Next” to flip “jump” # of times</p></li>
-<li><p>plot shows updating from three different initial prior PDFs</p></li>
-</ul>
-</li>
-</ul>
-<div class="my-checkpoint admonition">
-<p class="admonition-title">Class exercises</p>
-<p>Tell your neighbor how to interpret each of the priors</p>
-<div class="dropdown my-hint admonition">
-<p class="admonition-title">Possible answers</p>
-<ul class="simple">
-<li><p>uniform prior: any probability is equally likely. Is this <em>uninformative</em>? (More later!)</p></li>
-<li><p>centered prior (informative): we have reason to believe the coin is more-or-less fair.</p></li>
-<li><p>anti-prior: could be anything but most likely a two-headed or two-tailed coin.</p></li>
-</ul>
-</div>
-<p>What is the minimal common information about <span class="math notranslate nohighlight">\(p_h\)</span> (meaning it is true of <em>any</em> prior PDF)?</p>
-<div class="dropdown my-answer admonition">
-<p class="admonition-title">Answer</p>
-<div class="math notranslate nohighlight">
-\[
-  0 \leq p_h \leq 1 \quad \mbox{and} \quad \int_0^1 \p{p_h}\, dp_h = 1
-\]</div>
-</div>
-</div>
-<ul class="simple">
-<li><p>Things to try:</p>
-<ul>
-<li><p>First one flip at a time. How do you understand the changes intuitively?</p></li>
-<li><p>What happens with more and more tosses?</p></li>
-<li><p>Try different values of the true <span class="math notranslate nohighlight">\(p_h\)</span>.</p></li>
-<li><p>Hit <code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">Data</span></code> multiple times to see the fluctuations.</p></li>
-</ul>
-</li>
+<li><p>Look at each of the priors under the <em>Priors</em> tab and interpret them.</p></li>
+<li><p>First do one flip at a time. How do you understand the changes intuitively?</p></li>
+<li><p>What happens with more and more tosses? Can you explain the differences with different priors?</p></li>
+<li><p>Hit <code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">Data</span></code> multiple times to see the fluctuations (this changes the random seed).</p></li>
+<li><p>Try different values of the true <span class="math notranslate nohighlight">\(p_H\)</span>.</p></li>
 </ul>
 </section>
 
@@ -815,11 +774,11 @@ thing to do is to update the state of our belief, our PDF for <span class="math 
       </div>
     </a>
     <a class="right-next"
-       href="sec-when-do-priors-matter-when-don-t-they-matter.html"
+       href="demo-bayesian-coin-tossing.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">6.2. </span>When do priors matter? When don’t they matter?</p>
+        <p class="prev-next-title"><span class="section-number">6.2. </span>📥 Demo:  Bayesian Coin Tossing</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

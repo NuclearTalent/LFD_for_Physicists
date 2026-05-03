@@ -120,7 +120,7 @@ Often we do not need an absolutely normalized posterior distribution, so we can 
 Bayesian parameter estimation can sometimes be very challenging. In the chapter on {ref}`sec:BayesianLinearRegression` we will see an example of where we can perform analytical calculations throughout. However, in most realistic applications the posterior must be evaluated numerically, and most often by sampling using {ref}`sec:RootMCMC`. This is no silver bullet and to quantify (or characterize) a multi-dimensional posterior, sometimes with a complicated geometry, for an intricate physical model, is by no means guaranteed to succeed. At least not in finite time. Nevertheless, obtaining posterior distributions to represent uncertainties is the gold standard in any inferential analysis.
 
 
-
+(sec:ThePPD)=
 ## The posterior predictive distribution 
 The distribution of future data conditioned on past data and background information, i.e., $\pdf{\futuredata}{\data,I}$, is called a posterior predictive distribution (ppd). Assuming that we have a model $M(\pars)$ for the data-generating mechanism we can express this distribution by marginalizing over the uncertain model parameters $\pars \in \Omega$
 
