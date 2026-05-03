@@ -1,3 +1,4 @@
+(sec:BayesianModelSelection)=
 # Bayesian model selection
 
 ## The Story of Dr. A and Prof. B

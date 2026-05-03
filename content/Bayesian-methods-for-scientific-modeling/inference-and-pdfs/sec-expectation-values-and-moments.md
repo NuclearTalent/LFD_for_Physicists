@@ -123,7 +123,7 @@ $$
 $$
 
 Note that $\Sigma$ is symmetric and positive definite.
-See the {ref}`demo:visualizing-correlated-gaussians` notebook for plotting what this looks like.
+See {numref}`sec:1and2dPDFs` for plotting what this looks like.
 
 :::
 

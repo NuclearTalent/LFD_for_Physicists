@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bayesian Coin Tossing Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+    }
+    body {
+      margin: 0;
+      padding: 1.5rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      background: #f6f7f9;
+      color: #222;
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 1.6rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Bayesian Coin Tossing Demo</h1>
+
+<div id="coin_3b705de8" class="coin-demo">
+  <style>
+    #coin_3b705de8 { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin: 1rem 0; background: #fff; }
+    #coin_3b705de8 .tabs { display: flex; gap: .35rem; margin-bottom: .75rem; flex-wrap: wrap; }
+    #coin_3b705de8 .tab-button { border: 1px solid #bbb; background: #f7f7f7; border-radius: 6px 6px 0 0; padding: .35rem .65rem; cursor: pointer; }
+    #coin_3b705de8 .tab-button.active { background: #e8eefc; border-bottom-color: #e8eefc; }
+    #coin_3b705de8 .panel { display: none; border: 1px solid #ddd; padding: .75rem; border-radius: 0 6px 6px 6px; background: #fafafa; }
+    #coin_3b705de8 .panel.active { display: block; }
+    #coin_3b705de8 .controls { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+    #coin_3b705de8 label { display: inline-flex; align-items: center; gap: .3rem; white-space: nowrap; }
+    #coin_3b705de8 input[type='range'] { width: 130px; }
+    #coin_3b705de8 button, #coin_3b705de8 select { font: inherit; }
+    #coin_3b705de8 canvas { width: 100%; max-width: 900px; height: 420px; display: block; margin: 1rem auto 0 auto; border: 1px solid #eee; background: white; }
+    #coin_3b705de8 .help-tab { display: inline-block; margin: .2rem; }
+    #coin_3b705de8 .readout { font-weight: 600; margin-top: .5rem; }
+    #coin_3b705de8 .math-var { font-style: italic; white-space: nowrap; }
+    #coin_3b705de8 .math-sub { font-size: 0.72em; position: relative; top: 0.28em; line-height: 0; font-style: normal; }
+    #coin_3b705de8 .small { font-size: .9rem; color: #444; }
+  </style>
+  <div class="tabs" role="tablist">
+    <button class="tab-button active" data-panel="toss">Toss Coin</button>
+    <button class="tab-button" data-panel="priors">Priors</button>
+    <button class="tab-button" data-panel="setup">Set-up</button>
+    <button class="tab-button" data-panel="help">Help</button>
+  </div>
+  <div class="panel active" data-panel="toss">
+    <p>The graph shows three posteriors that result from three choices for the prior. The true probability of heads, <span class="math-var">p<span class="math-sub">H</span></span>, is indicated by a dashed vertical line.</p>
+    <div class="controls">
+      <button id="next">Next</button>
+      <label>Jump: <select id="jump"><option>1</option><option>10</option><option>100</option><option>1000</option></select></label>
+      <button id="reset">Reset</button>
+      <button id="newdata">New data</button>
+      <label>true <span class="math-var">p<span class="math-sub">H</span></span>: <input id="prob" type="range" min="0" max="1" step="0.05" value="0.4"><span id="probv">0.40</span></label>
+    </div>
+  </div>
+  <div class="panel" data-panel="priors">
+    <p>Hyperparameters for three beta-distribution priors. Prior 1 is initially uniform. Prior 2 is concentrated near 0.5. Prior 3 is peaked near the ends.</p>
+    <div class="controls">
+      <label>α1 <input id="a1" type="range" min="0.1" max="2" step="0.1" value="1"><span id="a1v">1.0</span></label>
+      <label>β1 <input id="b1" type="range" min="0.1" max="2" step="0.1" value="1"><span id="b1v">1.0</span></label>
+      <label>α2 <input id="a2" type="range" min="5" max="200" step="5" value="30"><span id="a2v">30</span></label>
+      <label>β2 <input id="b2" type="range" min="5" max="200" step="5" value="30"><span id="b2v">30</span></label>
+      <label>α3 <input id="a3" type="range" min="0.1" max="1" step="0.1" value="0.2"><span id="a3v">0.2</span></label>
+      <label>β3 <input id="b3" type="range" min="0.1" max="1" step="0.1" value="0.2"><span id="b3v">0.2</span></label>
+    </div>
+  </div>
+  <div class="panel" data-panel="setup">
+    <div class="controls"><label>max # trials: <input id="nmax" type="range" min="100" max="10000" step="100" value="5000"><span id="nmaxv">5000</span></label></div>
+  </div>
+  <div class="panel" data-panel="help">
+    <p><strong>Bayesian updating:</strong> each coin toss updates the posterior for <span class="math-var">p<span class="math-sub">H</span></span>. For a beta prior, observing H heads in N tosses gives another beta distribution with updated parameters α+H and β+N−H.</p>
+    <p><strong>Controls:</strong> use Next to add tosses, Reset to return to zero tosses, New data to regenerate a random sequence, and the sliders to change the true coin probability and prior parameters.</p>
+  </div>
+  <div class="readout" id="readout"></div>
+  <canvas id="plot" width="900" height="420" aria-label="Posterior probability density plot for the Bayesian coin-tossing example"></canvas>
+    <script>
+  (function(){
+    const root = document.getElementById('coin_3b705de8');
+    const $ = (id) => root.querySelector('#' + id);
+    let N = 0, data = [];
+    const state = { prob:0.4, nmax:5000, a1:1, b1:1, a2:30, b2:30, a3:0.2, b3:0.2 };
+    function randData(){ data = Array.from({length: state.nmax}, () => Math.random() < state.prob ? 1 : 0); }
+    function logGamma(z){
+      const p=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+      if(z<0.5) return Math.log(Math.PI)-Math.log(Math.sin(Math.PI*z))-logGamma(1-z);
+      z -= 1; let x = 0.99999999999980993;
+      for(let i=0;i<p.length;i++) x += p[i]/(z+i+1);
+      let t = z + p.length - 0.5;
+      return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x);
+    }
+    function betaPdf(x,a,b){
+      if(x<=0 || x>=1) return 0;
+      return Math.exp((a-1)*Math.log(x)+(b-1)*Math.log(1-x)+logGamma(a+b)-logGamma(a)-logGamma(b));
+    }
+    function heads(){ let s=0; for(let i=0;i<N && i<data.length;i++) s += data[i]; return s; }
+    function setText(id, value, digits){ $(id).textContent = Number(value).toFixed(digits); }
+    function updateLabels(){ setText('probv', state.prob, 2); setText('a1v', state.a1, 1); setText('b1v', state.b1, 1); $('a2v').textContent=state.a2; $('b2v').textContent=state.b2; setText('a3v', state.a3, 1); setText('b3v', state.b3, 1); $('nmaxv').textContent=state.nmax; }
+    function draw(){
+      const c=$('plot'), ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height);
+      const margin={l:60,r:25,t:20,b:55}, W=c.width-margin.l-margin.r, Hh=c.height-margin.t-margin.b;
+      const h=heads();
+      const params=[[state.a1+h,state.b1+N-h,'uniform prior'],[state.a2+h,state.b2+N-h,'informative prior'],[state.a3+h,state.b3+N-h,'anti prior']];
+      const xs=[]; for(let i=1;i<300;i++) xs.push(i/300);
+      const ys=params.map(p=>xs.map(x=>betaPdf(x,p[0],p[1])));
+      let ymax=Math.max(...ys[0],...ys[1]); if(!isFinite(ymax)||ymax<=0) ymax=1; ymax*=1.12;
+      function X(x){return margin.l+x*W;} function Y(y){return margin.t+Hh-y/ymax*Hh;}
+      ctx.strokeStyle='#222'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(margin.l, margin.t); ctx.lineTo(margin.l, margin.t+Hh); ctx.lineTo(margin.l+W, margin.t+Hh); ctx.stroke();
+      ctx.fillStyle='#222';
+      const labelX = margin.l + W/2 - 92;
+      const labelY = c.height - 16;
+      ctx.font = '16px sans-serif';
+      ctx.fillText('p', labelX, labelY);
+      const pWidth = ctx.measureText('p').width;
+      ctx.font = '11px sans-serif';
+      ctx.fillText('H', labelX + pWidth + 1, labelY + 5);
+      ctx.font = '16px sans-serif';
+      ctx.fillText(', probability of heads', labelX + pWidth + 10, labelY);
+      ctx.setLineDash([8,6]); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(X(state.prob), margin.t); ctx.lineTo(X(state.prob), margin.t+Hh); ctx.stroke(); ctx.setLineDash([]);
+      const colors=['blue','red','green'];
+      ys.forEach((arr,j)=>{ ctx.strokeStyle=colors[j]; ctx.lineWidth=2; ctx.beginPath(); arr.forEach((y,i)=>{ const xx=X(xs[i]), yy=Y(Math.min(y,ymax)); if(i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy); }); ctx.stroke(); });
+      ctx.fillStyle='#222'; ctx.font='18px sans-serif'; ctx.fillText(`observe ${N} tosses,`, margin.l+15, margin.t+35); ctx.fillText(`${h} heads`, margin.l+15, margin.t+60);
+      params.forEach((p,j)=>{ ctx.fillStyle=colors[j]; ctx.fillRect(margin.l+W-190, margin.t+20+j*28, 22, 4); ctx.fillStyle='#222'; ctx.font='15px sans-serif'; ctx.fillText(p[2], margin.l+W-160, margin.t+26+j*28); });
+      $('readout').innerHTML = `N = ${N}; heads = ${h}; true <span class="math-var">p<span class="math-sub">H</span></span> = ${state.prob.toFixed(2)}`;
+    }
+    root.querySelectorAll('.tab-button').forEach(btn=>btn.addEventListener('click',()=>{ const p=btn.dataset.panel; root.querySelectorAll('.tab-button').forEach(b=>b.classList.toggle('active',b===btn)); root.querySelectorAll('.panel').forEach(panel=>panel.classList.toggle('active',panel.dataset.panel===p)); }));
+    ['prob','a1','b1','a2','b2','a3','b3','nmax'].forEach(id=>$(id).addEventListener('input',()=>{ state[id]=Number($(id).value); if(id==='prob'||id==='nmax'){ N=0; randData(); } updateLabels(); draw(); }));
+    $('next').addEventListener('click',()=>{ N=Math.min(state.nmax, N+Number($('jump').value)); draw(); });
+    $('reset').addEventListener('click',()=>{ N=0; draw(); });
+    $('newdata').addEventListener('click',()=>{ randData(); draw(); });
+    randData(); updateLabels(); draw();
+  })();
+  </script>
+</div>
+
+  </main>
+</body>
+</html>

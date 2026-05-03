@@ -7,13 +7,13 @@
 -- Niels Bohr
 ```
 
-Here we continue the discussion of Bayes' theorem, which is the starting point for all Bayesian methods. We will elaborate on how it encapsulates the process of learning from data, and show how it results from foundational axioms of probability theory.  Finally, we introduce an application of Bayes' theorem: the classical example of a coin tossing experiment (which you will revisit interactively). 
+Here we continue the discussion of Bayes' theorem, which is the starting point for all Bayesian methods. We will elaborate on how it encapsulates the process of learning from data, and show how it results from foundational axioms of probability theory.  Finally, we introduce an application of Bayes' theorem: the classical example of a coin tossing experiment (which you will revisit interactively in {ref}`demo:WidgetCoinTossing`). 
 
 
 (sec:BayesTheorem:axioms)=
 ## Axioms of probability theory
 
-Andrey Kolmogorov's axioms of probability form the standard theoretical framework in which the probability (measure) $\mathbb{P}$ is introduced. You can read more about those axioms in the definition of [](introduction:definitions). The most important aspect of his formalization of probability is not the axioms themselves but rather that he showed that probabilities can be incorporated into mathematics using the existing theory of measures. In fact, since then other axiomatic constructs of probability where, e.g., the conditional probability is taken as the primitive notion, has been constructed. In this book we rely on Kolmogorov's axioms from which the following two useful rules for how to manipulate probabilities and uncertainties can be derived
+Andrey Kolmogorov's axioms of probability form the standard theoretical framework in which the probability (measure) $\mathbb{P}$ is introduced. You can read more about those axioms in the definition of [](introduction:definitions). The most important aspect of his formalization of probability is not the axioms themselves but rather that he showed that probabilities can be incorporated into mathematics using the existing theory of measures. In fact, since then other axiomatic constructs of probability have been constructed, e.g., where the conditional probability is taken as the primitive notion. In this book we rely on Kolmogorov's axioms from which the following two useful rules for how to manipulate probabilities and uncertainties can be derived
 
 ```{prf:property} Product rule
 :label: property:product_rule
@@ -112,14 +112,14 @@ while the marginalization property corresponds to
 
   ```
 
-Marginalization is a very powerful device in data analysis because it enables us to deal with nuisance parameters; that is, quantities which necessarily enter the analysis but are of no intrinsic interest. The unwanted background signal present in many experimental measurements is an example of a nuisance parameter.
+Marginalization is a very powerful device in data analysis because it enables us to deal with *nuisance parameters*; that is, quantities which necessarily enter the analysis but are of no intrinsic interest. The unwanted background signal present in many experimental measurements is an example of a nuisance parameter.
 
 ::: note
-It is appropriate at this point to consider some remarks on the philosophical interpretation of probability: see {ref}`sec:BayesianEpistemology`.
+It is appropriate at this point to consider some remarks on the philosophical interpretation of probability: see {numref}`sec:BayesianEpistemology`.
 :::
 
 
-
+(sec:CoinExample)=
 ## Example: Is this a fair coin?
 
 {{ sub_extra_tif385_admonition }}
@@ -144,15 +144,15 @@ flips=np.random.rand(2**12) # simulates 4096 coin flips
 heads=flips<pH              # boolean array, heads[i]=True if flip i is heads
 ```
 
-In the light of this data, our inference about the fairness of this coin is summarized by the conditional pdf: $p(p_H|D,I)$. This is, of course, shorthand for the limiting case of a continuum of propositions for the value of $p_H$; that is to say, the probability that $p_H$ lies in an infinitesimally narrow range is given by $p(p_H|D,I) dp_H$. 
+In the light of this data, our inference about the fairness of this coin is summarized by the conditional PDF: $p(p_H|D,I)$. This is, of course, shorthand for the limiting case of a continuum of propositions for the value of $p_H$; that is to say, the probability that $p_H$ lies in an infinitesimally narrow range is given by $p(p_H|D,I) dp_H$. 
 
-To estimate this posterior pdf, we need to use Bayes’ theorem Eq. {eq}`eq:BayesTheorem:bayes-theorem-for-data`. We will ignore the denominator $\p{\data}{I}$ as it does not involve bias-weighting explicitly, and it will therefore not affect the shape of the desired pdf. At the end we can evaluate the missing constant subsequently from the normalization condition 
+To estimate this posterior PDF, we need to use Bayes’ theorem Eq. {eq}`eq:BayesTheorem:bayes-theorem-for-data`. We will ignore the denominator $p(D|I)$ as it does not involve bias-weighting explicitly, and it will therefore not affect the shape of the desired PDF. At the end we can evaluate the missing constant from the normalization condition 
 
 $$
 \int_0^1 p(p_H|D,I) dp_H = 1.
 $$ (eq:coin_posterior_norm)
 
-The prior pdf, $p(p_H|I)$, represents what we know about the coin given only the information $I$ that we are dealing with a ‘strange coin’. We could keep a very open mind about the nature of the coin; a simple probability assignment which reflects this is a uniform, or flat, prior
+The prior PDF, $p(p_H|I)$, represents what we know about the coin given only the information $I$ that we are dealing with a ‘strange coin’. We could keep a very open mind about the nature of the coin; a simple probability assignment which reflects this is a uniform, or flat, prior
 
 $$
 p(p_H|I) = \left\{ \begin{array}{ll}
@@ -161,7 +161,8 @@ p(p_H|I) = \left\{ \begin{array}{ll}
 \end{array} \right.
 $$ (eq:coin_prior_uniform)
 
-We will get back later to the choice of prior and its effect on the analysis.
+We will get back later to the choice of prior and its effect on the analysis in {numref}`sec:UpdatingBayes`
+.
 
 This prior state of knowledge, or ignorance, is modified by the data through the likelihood function $p(D|p_H,I)$. It is a measure of the chance that we would have obtained the data that we actually observed, if the value of the bias-weighting was given (as known). If, in the conditioning information $I$, we assume that the flips of the coin were independent events, so that the outcome of one did not influence that of another, then the probability of obtaining the data "H heads in N tosses" is given by the binomial distribution (we leave a formal definition of this to a statistics textbook)
 
@@ -171,26 +172,25 @@ p(D|p_H,I) \propto p_H^H (1-p_H)^{N-H}.
 
 It seems reasonable because $p_H$ is the chance of obtaining a head on any flip, and there were $H$ of them, and $1-p_H$ is the corresponding probability for a tail, of which there were $N-H$. We note that this binomial distribution also contains a normalization factor, but we will ignore it since it does not depend explicitly on $p_H$, the quantity of interest. It will be absorbed by the normalization condition Eq. {eq}`eq:coin_posterior_norm`.
 
-We perform the setup of this Bayesian framework on the computer.
-
+We perform the setup of this Bayesian framework on the computer by defining functions for the prior, likelihood, and posterior:
 
 ```python
 def prior(pH):
     p=np.zeros_like(pH)
     p[(0<=pH)&(pH<=1)]=1      # allowed range: 0<=pH<=1
-    return p                # uniform prior
+    return p                  # uniform prior
 def likelihood(pH,data):
     N = len(data)
-    no_of_heads = sum(data)
+    no_of_heads = sum(data)  # add up all the 1s = heads
     no_of_tails = N - no_of_heads
-    return pH**no_of_heads * (1-pH)**no_of_tails
+    return pH**no_of_heads * (1-pH)**no_of_tails  # unnormalized binomial distribution
 def posterior(pH,data):
-    p=prior(pH)*likelihood(pH,data)
-    norm=np.trapz(p,pH)
-    return p/norm
+    p=prior(pH)*likelihood(pH,data)  # Bayes' rule without denominator
+    norm=np.trapz(p,pH)  # 1/(normalization constant) numerically
+    return p/norm        # normalized posterior
 ```
 
-The next step is to confront this setup with the simulated data. To get a feel for the result, it is instructive to see how the posterior pdf evolves as we obtain more and more data pertaining to the coin. The results of such an analyses is shown in {numref}`fig-coinflipping`.
+The next step is to confront this setup with the simulated data. To get a feel for the result, it is instructive to see how the posterior PDF evolves as we obtain more and more data pertaining to the coin. The results of such an analyses is shown in {numref}`fig-coinflipping`. (You will be able to repeat such an analysis with different data and see how it develops interactively in the demos in Chapter 6: {ref}`demo:bayesian-coin-tossing` and {ref}`demo:WidgetCoinTossing`.)
 
 
 ```python
@@ -206,27 +206,28 @@ for row in range(4): axs[row,0].set_ylabel('$p(p_H|D_\mathrm{obs},I)$')
 for col in range(3): axs[-1,col].set_xlabel('$p_H$')
 ```
 
-<!-- ![<p><em>The evolution of the posterior pdf for the bias-weighting of a coin, as the number of data available increases. The figure on the top left-hand corner of each panel shows the number of data included in the analysis. <div id="fig:coinflipping"></div></em></p>](../assets/coinflipping_fig_1.png) -->
+<!-- ![<p><em>The evolution of the posterior PDF for the bias-weighting of a coin, as the number of data available increases. The figure on the top left-hand corner of each panel shows the number of data included in the analysis. <div id="fig:coinflipping"></div></em></p>](../assets/coinflipping_fig_1.png) -->
 
 ```{figure} ../assets/coinflipping_fig_1.png
 :name: fig-coinflipping
 
-The evolution of the posterior pdf for the bias-weighting of a coin, as the number of data available increases. The figure on the top left-hand corner of each panel shows the number of data included in the analysis. 
+The evolution of the posterior PDF for the bias-weighting of a coin, as the number of data available increases. The figure on the top left-hand corner of each panel shows the number of data included in the analysis. 
 ```
 
-The panel in the top left-hand corner shows the posterior pdf for $p_H$ given no data, i.e., it is the same as the prior pdf of Eq. {eq}`eq:coin_prior_uniform`. It indicates that we have no more reason to believe that the coin is fair than we have to think that it is double-headed, double-tailed, or of any other intermediate bias-weighting.
+The panel in the top left-hand corner shows the posterior PDF for $p_H$ given no data, i.e., it is the same as the prior PDF of Eq. {eq}`eq:coin_prior_uniform`. It indicates that we have no more reason to believe that the coin is fair than we have to think that it is double-headed, double-tailed, or of any other intermediate bias-weighting.
 
-The first flip is obviously tails. At this point we have no evidence that the coin has a side with heads, as indicated by the pdf going to zero as $p_H \to 1$. The second flip is obviously heads and we have now excluded both extreme options $p_H=0$ (double-tailed) and $p_H=1$ (double-headed). We can note that the posterior at this point has the simple form $p(p_H|D,I) = p_H(1-p_H)$ for $0 \le p_H \le 1$.
+The first flip is obviously tails. At this point we know with certainty that the coin does not have two heads, as indicated by the PDF going to zero as $p_H \to 1$. The second flip is obviously heads and we have now excluded both extreme options $p_H=0$ (double-tailed) and $p_H=1$ (double-headed). We can note that the posterior at this point has the simple form $p(p_H|D,I) = p_H(1-p_H)$ for $0 \le p_H \le 1$.
 
-The remainder of Fig. {numref}`fig-coinflipping` shows how the posterior pdf evolves as the number of data analysed becomes larger and larger. We see that the position of the maximum moves around, but that the amount by which it does so decreases with the increasing number of observations. The width of the posterior pdf also becomes narrower with more data, indicating that we are becoming increasingly confident in our estimate of the bias-weighting. For the coin in this example, the best estimate of $p_H$ eventually converges to 0.6, which, of course, was the value chosen to simulate the flips.
+The remainder of {numref}`fig-coinflipping` shows how the posterior PDF evolves as the number of data analysed becomes larger and larger. We see that the position of the maximum moves around, but that the amount by which it does so decreases with the increasing number of observations. The width of the posterior PDF also becomes narrower with more data, indicating that we are becoming increasingly confident in our estimate of the bias-weighting. For the coin in this example, the best estimate of $p_H$ eventually converges to 0.6, which, of course, was the value chosen to simulate the flips.
 
-### Take aways: Coin tossing
+### Summary points and previews of {ref}`sec:UpdatingBayes`
 
-* The Bayesian posterior $p(p_H | D, I)$ is proportional to the product of the prior and the likelihood (which is given by a binomial distribution in this case).
-* We can do this analysis sequentially (updating the prior after each toss and then adding new data; but don't use the same data more than once!). Or we can analyze all data at once. 
-* Why (and when) are these two approaches equivalent, and why should we not use the same data more than once?
-
-* Possible point estimates for the value of $p_H$ could be the maximum (mode), mean, or median of this posterior pdf. 
+* The core of the coin-flipping analysis is Bayes' rule, which dictates that the Bayesian posterior $p(p_H | D, I)$ is proportional to the product of the prior and the likelihood (which is given by a binomial distribution in this case).
+* Possible point estimates for the value of $p_H$ could be the maximum (also known as mode), mean, or median of this posterior PDF. 
 * Bayesian p-precent degree-of-belief (DoB) intervals correspond to ranges in which we would give a p-percent odds of finding the true value for $p_H$ based on the data and the information that we have.
-* The frequentist point estimate is $p_H^* = \frac{H}{N}$. It actually corresponds to one of the point estimates from the Bayesian analysis for a specific prior? Which point estimate and which prior?
+* Questions to be addressed in detail in {ref}`sec:UpdatingBayes`:
+    * What is the difference between the frequentist and Bayesian approaches to coin flipping?
+    * We can do the Bayesian analysis sequentially (updating the prior after each toss and then adding new data; but don't use the same data more than once!). Or we can analyze all data at once. Why (and when) are these two approaches equivalent.
+    * Why should we not use the same data more than once?
+    * The frequentist point estimate is $p_H^* = \frac{H}{N}$. It actually corresponds to one of the point estimates from the Bayesian analysis for a specific prior. Which point estimate and what prior?
 

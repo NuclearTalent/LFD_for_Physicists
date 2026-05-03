@@ -161,7 +161,7 @@ was observed".
 
 :::{admonition} Exercise
   Look at
-  {ref}`demo:bayesian-coin-tossing-interactive`. Pick
+  {ref}`demo:WidgetCoinTossing`. Pick
   a $p_{\rm crit}$-value. If  $p_h=0.4$, work out how many coin tosses it would take
   to reject the null hypothesis that it's a fair coin ($p_h=0.5$) at
   this significance level. 
@@ -174,7 +174,7 @@ was observed".
 Suppose we do a coin flipping experiment where we toss a coin 20 times and it comes up heads 14 times. Let's compare how we might analyze this with Bayesian methods to how we might do a significance analysis with p-values.
 
 **Bayesian analysis.** 
-Following our study in {ref}`demo:bayesian-coin-tossing-interactive`, let's calculate the probability of heads, which we call $p_h$, given data $D = \{R \text{ heads}, N \text{ tosses}\}$. 
+Following our study in {ref}`demo:WidgetCoinTossing`, let's calculate the probability of heads, which we call $p_h$, given data $D = \{R \text{ heads}, N \text{ tosses}\}$. 
 * Let's assume a uniform prior (encoded as a beta function with $\alpha=1$, $\beta=1$).
 * We found that this can be expressed as a beta function, which we can calculate in Python using
 $p(p_h|D) = p(D|p_h)p(p_h)$ $\longrightarrow$ `scipy.stats.beta.pdf(p_h,1+R,1+N-R)`. For $N=20$, $R=14$, this is shown on the left below.
