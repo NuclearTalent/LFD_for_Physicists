@@ -27,6 +27,10 @@ The materials are released under a [Creative Commons BY-NC license](https://crea
 
 The book format is powered by [Jupyter Book](https://jupyterbook.org/). 
 
+```{note} This book is work in progress
+New content is added and existing  sections are revised on an ongoing basis. We welcome feedback, suggestions, and bug reports. Please feel free to open an issue on our [GitHub repository](https://github.com/NuclearTalent/LFD_for_Physicists/issues) (see also the *Open an issue* box further down) or contact us by email. 
+```
+
 ## Materials to help you get started
 
 Appendix C has various materials to set you up for Learning from Data (see {ref}`sec:RootGettingStarted`). You may have the option to run the Jupyter notebooks on a cloud server, but eventually you will likely want to set up an environment on your own machine. 
@@ -48,7 +52,10 @@ Appendix C has various materials to set you up for Learning from Data (see {ref}
 
 
 ```{admonition} Open an issue
-  If you find a problem or have a suggestion when using this Jupyter Book (on physics, statistics, python, or formatting), from any page go under the github icon <img src="_assets/GitHub-Mark-32px.png" alt="github download icon" width="20px"> at the top-middle-right and select "open issue" (you may want to open in a new tab by *right-clicking* on "open issue"). This will take you to the Issues section of the Github repository for the book. You can either use the title already there or write your own, and then describe in the bigger box your problem or suggestion.
+
+If you find a problem or have a suggestion--whether related to physics, statistics, Python, or formatting--we encourage you to let us know via a GitHub issue. You will need a [GitHub account](https://github.com/signup) to do this (free to create).
+
+From any page in the book, click the GitHub icon <img src="_assets/GitHub-Mark-32px.png" alt="github icon" width="20px"> in the top right toolbar and select Open issue. This will take you to the Issues section of the book's GitHub repository, where you can give your issue a title and describe the problem or suggestion in the text box below.
   ```
 
 ## Acknowledgments
