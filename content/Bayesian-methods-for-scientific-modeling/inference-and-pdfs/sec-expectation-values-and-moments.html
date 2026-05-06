@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>4.5. Expectation values and moments &#8212; Combined Learning from Data materials</title>
+    <title>4.4. Expectation values and moments &#8212; Combined Learning from Data materials</title>
   
   
   
@@ -68,8 +68,8 @@
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="4.6. Data, models, and predictions" href="sec-data-models-predictions.html" />
-    <link rel="prev" title="4.4. Review of Bayes’ theorem" href="sec-review-of-bayes-theorem.html" />
+    <link rel="next" title="4.5. Review of Bayes’ theorem" href="sec-review-of-bayes-theorem.html" />
+    <link rel="prev" title="4.3. Probability density functions" href="sec-probability-density-functions.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -205,14 +205,14 @@
 <li class="toctree-l2"><a class="reference internal" href="sec-statements.html">4.1. Statements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec-manipulating-probabilities-bayesian-rules-of-probability-as.html">4.2. Manipulating probabilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec-probability-density-functions.html">4.3. Probability density functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-review-of-bayes-theorem.html">4.4. Review of Bayes’ theorem</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">4.5. Expectation values and moments</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">4.4. Expectation values and moments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-review-of-bayes-theorem.html">4.5. Review of Bayes’ theorem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec-data-models-predictions.html">4.6. Data, models, and predictions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec-bayesian-epistemology.html">4.7. *Aside: Bayesian epistemology</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../bayesian-posteriors/index.html">5. More on PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-oneD-and-twoD-PDFs.html">5.1. One-D and two-D PDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-one-and-two-dimensional-PDFs.html">5.1. One- and two-dimensional PDFs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-exploring-PDFs.html">5.2. Demo: Exploring PDFs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/sec-more-on-gaussians.html">5.3. More on Gaussians</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayesian-posteriors/demo-visualization-of-the-central-limit-theorem.html">5.4. Demo: Visualization of the Central Limit Theorem</a></li>
@@ -690,7 +690,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brief-summary-of-expectation-values-and-moments">Brief summary of expectation values and moments</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-expectation-values-and-moments">Summary of expectation values and moments</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#is-a-continuous-pdf-determined-by-its-moments">Is a continuous PDF determined by its moments?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correlations-and-the-effective-number-of-samples">Correlations and the effective number of samples</a></li>
 </ul>
             </nav>
@@ -704,13 +705,14 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="expectation-values-and-moments">
-<span id="sec-inference-looking-ahead"></span><h1><span class="section-number">4.5. </span>Expectation values and moments<a class="headerlink" href="#expectation-values-and-moments" title="Link to this heading">#</a></h1>
-<p>We have put on the table the axioms of probability theory and some of their consequences, in particular Bayes’ theorem.
-Before looking further at concrete applications of Bayesian inference, we provide further insight into Bayes’ theorem in <a class="reference internal" href="sec-review-of-bayes-theorem.html#sec-morebayestheorem"><span class="std std-ref">Review of Bayes’ theorem</span></a> and introduce some additional ingredients for Bayesian inference in <a class="reference internal" href="sec-data-models-predictions.html#sec-datamodelspredictions"><span class="std std-ref">Data, models, and predictions</span></a>. The latter include the idea of a statistical model, how to predict future data conditioned on (i.e., given) past data and background information (the posterior predictive distribution), and Bayesian parameter estimation.</p>
-<p>In Appendix A there is a summary and further details on <a class="reference internal" href="../../Appendix/Statistics/index.html#sec-statistics"><span class="std std-ref">Statistics concepts and notation</span></a>. Particularly important are <a class="reference internal" href="../../Appendix/Statistics/index.html#sec-expectationvaluesandmoments"><span class="std std-ref">Expectation values and moments</span></a> and <a class="reference internal" href="../../Appendix/Statistics/index.html#sec-centralmoments"><span class="std std-ref">Central moments: Variance and Covariance</span></a>; we summarize the key discrete and continuous definitions here.
-Note: there are multiple notations out there for these quantities!</p>
-<section id="brief-summary-of-expectation-values-and-moments">
-<h2>Brief summary of expectation values and moments<a class="headerlink" href="#brief-summary-of-expectation-values-and-moments" title="Link to this heading">#</a></h2>
+<span id="sec-inference-moments"></span><h1><span class="section-number">4.4. </span>Expectation values and moments<a class="headerlink" href="#expectation-values-and-moments" title="Link to this heading">#</a></h1>
+<p>In this section we provide a brief introduction to expectation values and moments, summarizing the key discrete and continuous definitions.
+Warning: there are multiple notations in the literature for expectation values and moments!
+In Appendix A there are further details on <a class="reference internal" href="../../Appendix/Statistics/index.html#sec-statistics"><span class="std std-ref">Statistics concepts and notation</span></a>, which includes <a class="reference internal" href="../../Appendix/Statistics/index.html#sec-expectationvaluesandmoments"><span class="std std-ref">Expectation values and moments</span></a> and <a class="reference internal" href="../../Appendix/Statistics/index.html#sec-centralmoments"><span class="std std-ref">Central moments: Variance and Covariance</span></a>.</p>
+<p>We also address the question: <em>Is a continuous PDF determined by its moments?</em>
+and consider the effective number of samples when the data being sampled is correlated. For independent (and hence uncorrelated) samples, we expect new information with each sample. But this is not the case if there are strong correlations between samples!</p>
+<section id="summary-of-expectation-values-and-moments">
+<h2>Summary of expectation values and moments<a class="headerlink" href="#summary-of-expectation-values-and-moments" title="Link to this heading">#</a></h2>
 <p>The <em>expectation value</em> of a function <span class="math notranslate nohighlight">\(h\)</span> of the random variable <span class="math notranslate nohighlight">\(X\)</span> with respect to its distribution <span class="math notranslate nohighlight">\(p(x_i)\)</span> (a PMF) or <span class="math notranslate nohighlight">\(p(x)\)</span> (a PDF) is</p>
 <div class="math notranslate nohighlight">
 \[
@@ -748,11 +750,8 @@ The <strong>correlation coefficient</strong> of <span class="math notranslate no
 \end{split}\]</div>
 <div class="my-checkpoint admonition">
 <p class="admonition-title">Checkpoint question</p>
-<p>Show that we can also write</p>
-<div class="math notranslate nohighlight">
-\[
-\sigma^2 = \mathbb{E}[X^2]  - \mathbb{E}[X]^2
-\]</div>
+<p>Show that we can also write
+<span class="math notranslate nohighlight">\(\sigma^2 = \mathbb{E}[X^2]  - \mathbb{E}[X]^2\)</span>.</p>
 <div class="dropdown my-answer admonition">
 <p class="admonition-title">Answer</p>
 <div class="math notranslate nohighlight">
@@ -803,7 +802,7 @@ p \longrightarrow \mathcal{N}(x | \mu,\sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} \e
         \quad\mbox{with}\ 0 &lt; \rho_{12}^2 &lt; 1  .          
 \end{split}\]</div>
 <p>Note that <span class="math notranslate nohighlight">\(\Sigma\)</span> is symmetric and positive definite.
-See <a class="reference internal" href="../bayesian-posteriors/sec-oneD-and-twoD-PDFs.html#sec-1and2dpdfs"><span class="std std-numref">Section 5.1</span></a> for plotting what this looks like.</p>
+See <a class="reference internal" href="../bayesian-posteriors/sec-one-and-two-dimensional-PDFs.html#sec-1and2dpdfs"><span class="std std-numref">Section 5.1</span></a> for plotting what this looks like.</p>
 </div>
 <div class="my-checkpoint admonition">
 <p class="admonition-title">Checkpoint question</p>
@@ -830,6 +829,75 @@ so that the Cauchy-Schwarz inequality implies that</p>
 <p>A consequence is that the matrix <span class="math notranslate nohighlight">\(\Sigma\)</span> would not be a valid covariance matrix because the determinant would be negative.</p>
 </div>
 </div>
+</section>
+<section id="is-a-continuous-pdf-determined-by-its-moments">
+<h2>Is a continuous PDF determined by its moments?<a class="headerlink" href="#is-a-continuous-pdf-determined-by-its-moments" title="Link to this heading">#</a></h2>
+<p>If we know some (or all) of the moments of a one-dimensional distribution <span class="math notranslate nohighlight">\(p(x)\)</span>, how can we find the PDF?
+Let us define the moments <span class="math notranslate nohighlight">\(m_k\)</span> for integer <span class="math notranslate nohighlight">\(k\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[
+    m_k = \int_S x^k\, p(x)\, dx,  \qquad k= 0,1,2,\ldots,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(S\)</span> denotes the support of the PDF (e.g., <span class="math notranslate nohighlight">\((-\infty,\infty)\)</span> for a Gaussian or <span class="math notranslate nohighlight">\([0,1]\)</span> for a Beta distribution). So <span class="math notranslate nohighlight">\(m_0 = 1\)</span>, the mean <span class="math notranslate nohighlight">\(\mu\)</span> is <span class="math notranslate nohighlight">\(m_1\)</span>, the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> is <span class="math notranslate nohighlight">\(m_2 - m_1^2\)</span>, and so on.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We can generalize this discussion to multi-dimensional PDFs with vector <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>, for which the moments will have multiple indices and the defining expression will be integrated over the space of <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>.</p>
+</div>
+<p>Here are some ways to find <span class="math notranslate nohighlight">\(p(x)\)</span> given a set of moments <span class="math notranslate nohighlight">\(\{m_k\}\)</span>:</p>
+<ol class="arabic">
+<li><p>If we know the PDF belongs to a particular parametric family, such as Gaussian or Beta (see <a class="reference internal" href="../bayesian-posteriors/demo-exploring-PDFs.html#demo-exploring-pdfs"><span class="std std-ref">📥 Demo: Exploring PDFs</span></a>), then we can solve for the defining parameters if we know the appropriate moments. For the case of a Gaussian, we know it is defined by its mean <span class="math notranslate nohighlight">\(\mu\)</span> and variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>, so those are the only two moments we need. (In fact, we can determine the mean and variance even if we only know higher moments!) This is also true for the less familiar case of a Beta distribution that is specified by the shape parameters <span class="math notranslate nohighlight">\(\alpha, \beta &gt; 0\)</span> (see <a class="reference external" href="https://en.widipedia.org/wiki/Beta_distribution">Beta distribution</a> on Wikipedia). If the variance satisfies <span class="math notranslate nohighlight">\(\sigma^2 &lt; \mu(1-\mu)\)</span>, then</p>
+<div class="math notranslate nohighlight">
+\[
+     \alpha = \mu \left(\frac{\mu(1-\mu)}{\sigma^2} - 1\right), \qquad
+     \beta = (1-\mu) \left(\frac{\mu(1-\mu)}{\sigma^2} - 1\right).
+   \]</div>
+</li>
+<li><p>We can use a maximum entropy reconstruction. We a finite number of known moments, we choose among distributions that reproduce the moments the one with the largest entropy. See <a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/sec-assigning-probabilities-ii-the-principle-of-maximum-entropy.html#sec-maxent"><span class="std std-numref">Section 12.3</span></a> to learn about the principle of maximum entropy and there is a demo notebook in <a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/demo-maximum-entropy-for-reconstructing-a-function-from-its-moments.html#demo-maximum-entropy-for-reconstructing-a-function-from-its-moments"><span class="std std-numref">Section 12.4</span></a> illustrating how to do a maximum entropy reconstruction from moments.</p></li>
+<li><p>We can try to invert from a <em>moment-generating function</em> or a <em>characteristic function</em>.
+If <span class="math notranslate nohighlight">\(X\)</span> is a random number with distribution <span class="math notranslate nohighlight">\(p_X(x)\)</span>, then the moment-generating function <span class="math notranslate nohighlight">\(M_X(t)\)</span> and characteristic function <span class="math notranslate nohighlight">\(\phi_X(t)\)</span> are for <span class="math notranslate nohighlight">\(t\in\mathbb{R}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+     M_X(t) &amp;= \mathbb{E}[e^{tX}] = \sum_{k=0}^\infty \frac{t^k}{k!}\mathbb{E}[X^k] = \sum_{k=0}^\infty \frac{m_k}{k!} t^k 
+     \quad\Longrightarrow\quad 
+     M^{(k)}_X(0) = m_k ,
+    \\
+     \phi_X(t) &amp;= \mathbb{E}[e^{itX}] = \sum_{k=0}^\infty \frac{(it)^k}{k!}\mathbb{E}[X^k] = \sum_{k=0}^\infty \frac{m_k}{k!} (it)^k 
+     \quad\Longrightarrow\quad 
+     \phi^{(k)}_X(0) = m_k ,
+   \end{align*}\end{split}\]</div>
+<p>where we have formally performed Taylor expansions and inverted the order of summation and expectation value (we’re assuming here that these are valid operations). The superscript <span class="math notranslate nohighlight">\((k)\)</span> means the <span class="math notranslate nohighlight">\(k^{\text{th}}\)</span> derivative. In integral form,</p>
+<div class="math notranslate nohighlight">
+\[
+     M_X(t) = \int_{-\infty}^{\infty} e^{tx}\, p_X(x)\, dx, \qquad
+     \phi_X(t) = \int_{-\infty}^{\infty} e^{itx}\, p_X(x)\, dx.
+   \]</div>
+<p>So the moment-generating function is essentially a Laplace transform of the distribution, while the characteristic function is essentially a Fourier transform.
+As such, we can try to invert them to find <span class="math notranslate nohighlight">\(p_X(x)\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We can derive immediately that for a Gaussian distribution with mean <span class="math notranslate nohighlight">\(\mu\)</span> and variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>,</p>
+<div class="math notranslate nohighlight" id="equation-eq-expectation-moments-gaussian">
+<span class="eqno">(4.7)<a class="headerlink" href="#equation-eq-expectation-moments-gaussian" title="Link to this equation">#</a></span>\[
+    M_X(t) = \exp(\mu t + \frac{1}{2}\sigma^2 t^2) , \qquad
+    \phi_X(t) = \exp(i\mu t - \frac{1}{2}\sigma^2 t^2) .
+\]</div>
+</div>
+</li>
+<li><p>We can use <em>discrete quadrature reconstruction</em>. In this case we approximate the PDF by a finite sum of <span class="math notranslate nohighlight">\(n\)</span> point masses (i.e., delta functions) with weights and locations chosen to reproduce the first <span class="math notranslate nohighlight">\(n\)</span> moments. That is, replace the continuous <span class="math notranslate nohighlight">\(p(x)\)</span> by the discrete <span class="math notranslate nohighlight">\(p_N(x)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+     p_N(x) = \sum_{i=1}^N w_i \delta(x-x_i), \qquad w_i \geq 0, \qquad \sum_{i=1}^N w_i = 1,
+   \]</div>
+<p>where the <span class="math notranslate nohighlight">\(x_i\)</span> are nodes and the <span class="math notranslate nohighlight">\(w_i\)</span> are the weights, such that</p>
+<div class="math notranslate nohighlight">
+\[
+      m_k \approx \sum{i=1}^N w_i x_i^k .
+   \]</div>
+<p>If <span class="math notranslate nohighlight">\(K\)</span> moments <span class="math notranslate nohighlight">\(m_k\)</span> for <span class="math notranslate nohighlight">\(k = 0, 1, \ldots , K\)</span> are known and the <span class="math notranslate nohighlight">\(x_i\)</span> are fixed, this is a linear problem in the weights <span class="math notranslate nohighlight">\(w_i\)</span>. If both <span class="math notranslate nohighlight">\(x_i\)</span> and <span class="math notranslate nohighlight">\(w_i\)</span> are unknown, one has more flexibility.
+Under suitable conditions, <span class="math notranslate nohighlight">\(2N−1\)</span> moments can be exactly matched by an <span class="math notranslate nohighlight">\(N\)</span>-point discrete representation (so this is closely related to Gaussian quadrature).</p>
+</li>
+</ol>
+<p>In most, but not all, cases a PDF will uniquely be determined by a complete set of moments.</p>
 </section>
 <section id="correlations-and-the-effective-number-of-samples">
 <h2>Correlations and the effective number of samples<a class="headerlink" href="#correlations-and-the-effective-number-of-samples" title="Link to this heading">#</a></h2>
@@ -858,7 +926,7 @@ We can interpret this as meaning the effective number of draws or samples is <sp
 The variance of <span class="math notranslate nohighlight">\(\widetilde z\)</span> is then the expectation value of <span class="math notranslate nohighlight">\(\widetilde z^2\)</span>, while <span class="math notranslate nohighlight">\(\langle y_i^2 \rangle = \sigma_0^2\)</span>. All of the covariances with <span class="math notranslate nohighlight">\(i\neq j\)</span> are the same, which we will specify as <span class="math notranslate nohighlight">\(\langle y_i y_j \rangle = \sigma_0^2 \rho\)</span>, with <span class="math notranslate nohighlight">\(0 \leq \rho &lt; 1\)</span>.
 Consider</p>
 <div class="math notranslate nohighlight" id="equation-eq-variance-n-effective">
-<span class="eqno">(4.18)<a class="headerlink" href="#equation-eq-variance-n-effective" title="Link to this equation">#</a></span>\[
+<span class="eqno">(4.8)<a class="headerlink" href="#equation-eq-variance-n-effective" title="Link to this equation">#</a></span>\[
  \langle \widetilde z^2 \rangle = \frac{1}{n^2} (
   \widetilde y_1^2 + \widetilde y_2^2 + \ldots + \widetilde y_1 \widetilde y_2 + \widetilde y_1 \widetilde y_3 + \widetilde y_2 \widetilde y_3 + \ldots
  ) 
@@ -890,7 +958,7 @@ Then the variance of <span class="math notranslate nohighlight">\(\widetilde z\)
   \text{Var}(\widetilde z | \yvec, \sigma_0^2, M) = \bigl[\boldsymbol{1_n}^{\top} (\sigma_0^2 M) \boldsymbol{1_n} \bigr]^{-1}
   = \frac{\sigma_0^2 [1 + (n-1)\rho]}{n} .
 \]</div>
-<p>We can get this result directly from <a class="reference internal" href="#equation-eq-variance-n-effective">(4.18)</a> by noting there are <span class="math notranslate nohighlight">\(n\)</span> terms with <span class="math notranslate nohighlight">\(i = j\)</span> and <span class="math notranslate nohighlight">\(n(n-1)\)</span> terms with <span class="math notranslate nohighlight">\(i \neq j\)</span>. So the variance is</p>
+<p>We can get this result directly from <a class="reference internal" href="#equation-eq-variance-n-effective">(4.8)</a> by noting there are <span class="math notranslate nohighlight">\(n\)</span> terms with <span class="math notranslate nohighlight">\(i = j\)</span> and <span class="math notranslate nohighlight">\(n(n-1)\)</span> terms with <span class="math notranslate nohighlight">\(i \neq j\)</span>. So the variance is</p>
 <div class="math notranslate nohighlight">
 \[
   \langle \widetilde z^2 \rangle = \frac{\sigma_0^2}{n^2} \bigl(n\cdot 1 + n(n-1)\cdot\rho \bigr)
@@ -969,20 +1037,20 @@ Then the variance of <span class="math notranslate nohighlight">\(\widetilde z\)
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="sec-review-of-bayes-theorem.html"
+       href="sec-probability-density-functions.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">4.4. </span>Review of Bayes’ theorem</p>
+        <p class="prev-next-title"><span class="section-number">4.3. </span>Probability density functions</p>
       </div>
     </a>
     <a class="right-next"
-       href="sec-data-models-predictions.html"
+       href="sec-review-of-bayes-theorem.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">4.6. </span>Data, models, and predictions</p>
+        <p class="prev-next-title"><span class="section-number">4.5. </span>Review of Bayes’ theorem</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1002,7 +1070,8 @@ Then the variance of <span class="math notranslate nohighlight">\(\widetilde z\)
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brief-summary-of-expectation-values-and-moments">Brief summary of expectation values and moments</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-expectation-values-and-moments">Summary of expectation values and moments</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#is-a-continuous-pdf-determined-by-its-moments">Is a continuous PDF determined by its moments?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correlations-and-the-effective-number-of-samples">Correlations and the effective number of samples</a></li>
 </ul>
   </nav></div>
