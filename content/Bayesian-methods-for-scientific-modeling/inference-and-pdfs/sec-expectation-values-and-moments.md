@@ -6,16 +6,18 @@ jupytext:
     format_name: myst
   name: python3
 ---
-(sec:Inference:looking_ahead)=
+(sec:Inference:moments)=
 # Expectation values and moments
 
-We have put on the table the axioms of probability theory and some of their consequences, in particular Bayes' theorem. 
-Before looking further at concrete applications of Bayesian inference, we provide further insight into Bayes' theorem in {ref}`sec:MoreBayesTheorem` and introduce some additional ingredients for Bayesian inference in {ref}`sec:DataModelsPredictions`. The latter include the idea of a statistical model, how to predict future data conditioned on (i.e., given) past data and background information (the posterior predictive distribution), and Bayesian parameter estimation.
 
-In Appendix A there is a summary and further details on {ref}`sec:Statistics`. Particularly important are {ref}`sec:ExpectationValuesAndMoments` and {ref}`sec:CentralMoments`; we summarize the key discrete and continuous definitions here.
-Note: there are multiple notations out there for these quantities!
+In this section we provide a brief introduction to expectation values and moments, summarizing the key discrete and continuous definitions.
+Warning: there are multiple notations in the literature for expectation values and moments!
+In Appendix A there are further details on {ref}`sec:Statistics`, which includes {ref}`sec:ExpectationValuesAndMoments` and {ref}`sec:CentralMoments`.
 
-## Brief summary of expectation values and moments
+We also address the question: *Is a continuous PDF determined by its moments?*
+and consider the effective number of samples when the data being sampled is correlated. For independent (and hence uncorrelated) samples, we expect new information with each sample. But this is not the case if there are strong correlations between samples! 
+
+## Summary of expectation values and moments
 
 The *expectation value* of a function $h$ of the random variable $X$ with respect to its distribution $p(x_i)$ (a PMF) or $p(x)$ (a PDF) is
 
@@ -62,10 +64,7 @@ $$
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
 Show that we can also write
-
-$$
-\sigma^2 = \mathbb{E}[X^2]  - \mathbb{E}[X]^2
-$$
+$\sigma^2 = \mathbb{E}[X^2]  - \mathbb{E}[X]^2$.
 :::{admonition} Answer 
 :class: dropdown, my-answer 
 $$\begin{align}
@@ -158,6 +157,81 @@ Dividing through by $\sigma_X \sigma_Y$ yields $-1 \leq \rho \leq 1$.
 A consequence is that the matrix $\Sigma$ would not be a valid covariance matrix because the determinant would be negative.
 :::
 ::::
+
+## Is a continuous PDF determined by its moments?
+
+If we know some (or all) of the moments of a one-dimensional distribution $p(x)$, how can we find the PDF?
+Let us define the moments $m_k$ for integer $k$ as
+
+$$
+    m_k = \int_S x^k\, p(x)\, dx,  \qquad k= 0,1,2,\ldots,
+$$
+
+where $S$ denotes the support of the PDF (e.g., $(-\infty,\infty)$ for a Gaussian or $[0,1]$ for a Beta distribution). So $m_0 = 1$, the mean $\mu$ is $m_1$, the variance $\sigma^2$ is $m_2 - m_1^2$, and so on. 
+
+```{note}
+We can generalize this discussion to multi-dimensional PDFs with vector $\mathbf{x}$, for which the moments will have multiple indices and the defining expression will be integrated over the space of $\mathbf{x}$.
+```
+
+Here are some ways to find $p(x)$ given a set of moments $\{m_k\}$:
+1. If we know the PDF belongs to a particular parametric family, such as Gaussian or Beta (see {ref}`demo:exploring-pdfs`), then we can solve for the defining parameters if we know the appropriate moments. For the case of a Gaussian, we know it is defined by its mean $\mu$ and variance $\sigma^2$, so those are the only two moments we need. (In fact, we can determine the mean and variance even if we only know higher moments!) This is also true for the less familiar case of a Beta distribution that is specified by the shape parameters $\alpha, \beta > 0$ (see [Beta distribution](https://en.widipedia.org/wiki/Beta_distribution) on Wikipedia). If the variance satisfies $\sigma^2 < \mu(1-\mu)$, then
+
+   $$
+     \alpha = \mu \left(\frac{\mu(1-\mu)}{\sigma^2} - 1\right), \qquad
+     \beta = (1-\mu) \left(\frac{\mu(1-\mu)}{\sigma^2} - 1\right).
+   $$  
+
+1. We can use a maximum entropy reconstruction. We a finite number of known moments, we choose among distributions that reproduce the moments the one with the largest entropy. See {numref}`sec:MaxEnt` to learn about the principle of maximum entropy and there is a demo notebook in {numref}`demo:maximum-entropy-for-reconstructing-a-function-from-its-moments` illustrating how to do a maximum entropy reconstruction from moments.
+
+1. We can try to invert from a *moment-generating function* or a *characteristic function*. 
+   If $X$ is a random number with distribution $p_X(x)$, then the moment-generating function $M_X(t)$ and characteristic function $\phi_X(t)$ are for $t\in\mathbb{R}$:
+
+   $$\begin{align*}
+     M_X(t) &= \mathbb{E}[e^{tX}] = \sum_{k=0}^\infty \frac{t^k}{k!}\mathbb{E}[X^k] = \sum_{k=0}^\infty \frac{m_k}{k!} t^k 
+     \quad\Longrightarrow\quad 
+     M^{(k)}_X(0) = m_k ,
+    \\
+     \phi_X(t) &= \mathbb{E}[e^{itX}] = \sum_{k=0}^\infty \frac{(it)^k}{k!}\mathbb{E}[X^k] = \sum_{k=0}^\infty \frac{m_k}{k!} (it)^k 
+     \quad\Longrightarrow\quad 
+     \phi^{(k)}_X(0) = m_k ,
+   \end{align*}$$
+
+   where we have formally performed Taylor expansions and inverted the order of summation and expectation value (we're assuming here that these are valid operations). The superscript $(k)$ means the $k^{\text{th}}$ derivative. In integral form,
+
+   $$
+     M_X(t) = \int_{-\infty}^{\infty} e^{tx}\, p_X(x)\, dx, \qquad
+     \phi_X(t) = \int_{-\infty}^{\infty} e^{itx}\, p_X(x)\, dx.
+   $$
+
+   So the moment-generating function is essentially a Laplace transform of the distribution, while the characteristic function is essentially a Fourier transform.
+   As such, we can try to invert them to find $p_X(x)$. 
+
+   ```{note}
+   We can derive immediately that for a Gaussian distribution with mean $\mu$ and variance $\sigma^2$,
+
+   $$
+       M_X(t) = \exp(\mu t + \frac{1}{2}\sigma^2 t^2) , \qquad
+       \phi_X(t) = \exp(i\mu t - \frac{1}{2}\sigma^2 t^2) .
+   $$  (eq:expectation:moments_gaussian)
+   ```
+
+1. We can use *discrete quadrature reconstruction*. In this case we approximate the PDF by a finite sum of $n$ point masses (i.e., delta functions) with weights and locations chosen to reproduce the first $n$ moments. That is, replace the continuous $p(x)$ by the discrete $p_N(x)$:
+
+   $$
+     p_N(x) = \sum_{i=1}^N w_i \delta(x-x_i), \qquad w_i \geq 0, \qquad \sum_{i=1}^N w_i = 1,
+   $$
+
+   where the $x_i$ are nodes and the $w_i$ are the weights, such that
+
+   $$
+      m_k \approx \sum{i=1}^N w_i x_i^k .
+   $$
+
+   If $K$ moments $m_k$ for $k = 0, 1, \ldots , K$ are known and the $x_i$ are fixed, this is a linear problem in the weights $w_i$. If both $x_i$ and $w_i$ are unknown, one has more flexibility.
+   Under suitable conditions, $2N−1$ moments can be exactly matched by an $N$-point discrete representation (so this is closely related to Gaussian quadrature). 
+
+In most, but not all, cases a PDF will uniquely be determined by a complete set of moments.
+
 
 
 ## Correlations and the effective number of samples

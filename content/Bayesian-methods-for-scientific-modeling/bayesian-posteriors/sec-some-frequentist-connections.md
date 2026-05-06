@@ -4,14 +4,15 @@ jupytext:
   text_representation:
     extension: .md
     format_name: myst
-kernelspec:
-  display_name: Python 3
-  language: python
   name: python3
 ---
 
 (sec:SomeFrequentistConnections)=
 # Some frequentist connections
+
+```{note}
+See also {ref}`sec:FrequentistHypothesisTesting` in {numref}`Chapter %s <sec:ModelSelection>`.
+```
 
 ## $\chi^2$/dof for model assessment and comparison  
 
@@ -111,7 +112,7 @@ def histogram_per_dof(ax, num, x_min=0, x_max=5, tot_vals=1000):
     dofs = num
     x = np.linspace(0,5*dofs,1000)
     ax.plot(x/dofs, dofs*stats.chi2.pdf(x, dofs),
-         'r-', lw=1, alpha=1, label=r'$\chi^2/dof$ pdf')
+         'r-', lw=1, alpha=1, label=r'$\chi^2/dof$ PDF')
 
     ax.set_xlim((x_min, x_max))
     ax.legend(loc='best', frameon=False)
@@ -178,7 +179,7 @@ Following our study in {ref}`demo:WidgetCoinTossing`, let's calculate the probab
 * Let's assume a uniform prior (encoded as a beta function with $\alpha=1$, $\beta=1$).
 * We found that this can be expressed as a beta function, which we can calculate in Python using
 $p(p_h|D) = p(D|p_h)p(p_h)$ $\longrightarrow$ `scipy.stats.beta.pdf(p_h,1+R,1+N-R)`. For $N=20$, $R=14$, this is shown on the left below.
-* Now we can answer many questions, such as: what is the probability that $p_h$ is between $0.49$ and $0.51$? The answer comes from integrating our pdf over this interval (i.e., the area under the curve).
+* Now we can answer many questions, such as: what is the probability that $p_h$ is between $0.49$ and $0.51$? The answer comes from integrating our PDF over this interval (i.e., the area under the curve).
 * Note that in the Bayesian analysis, the data is given while the probability of heads is a random value.
 
 ```{image} ../assets/beta_distribution_14heads_in_20tosses.png
@@ -192,10 +193,12 @@ $p(p_h|D) = p(D|p_h)p(p_h)$ $\longrightarrow$ `scipy.stats.beta.pdf(p_h,1+R,1+N-
 * We interpret "fair" as meaning $p_h = 0.5$. Our null hypothesis is that the coin is fair and $p_h = 0.5$.
 * We plot the probabilities for getting $R$ heads in $N=20$ tosses using the binomial probability mass distribution on the right above.
 * We decide on the significance $p_{\rm crit} = 0.05$.
-* (Important conceptual question:) $p_{\rm crit}$ and $p_h$ are both probabilities. Turn to your neighbor and explain to them what they are the probabilities of and how they are different. 
-* We need to find the probability of getting data *at least as extreme* as $D = \{R \text{ heads}, N \text{ tosses}\}$. For our example, that means adding up the binomial probabilities for $R = 14, 15, \ldots, 20$, which is 0.058. (This is called a "one-tailed test". If we wanted to consider deviations favoring tails as well, we would would add as well the probabilities for $R = 0, 1, \ldots, 6$, so $0.115$ in total. This would be a "two-tailed test".) 
-* Comparing to $p_{\rm crit} = 0.05$, we find the p-value is greater than $p_{\rm crit}$, so the null hypothesis is not rejected at the 95\% level. (Note that we say "not rejected" as opposed to "accepted".) If we had gotten 15 heads instead we would have rejected the null hypothesis.
-* Note that in this frequentist analysis, the *data* is random while $p_h$ is fixed (although unknown). 
+:::{admonition} Important conceptual question
+$p_{\rm crit}$ and $p_h$ are both probabilities. Explain what they are the probabilities of and how they are different. 
+:::
+We need to find the probability of getting data *at least as extreme* as $D = \{R \text{ heads}, N \text{ tosses}\}$. For our example, that means adding up the binomial probabilities for $R = 14, 15, \ldots, 20$, which is 0.058. (This is called a "one-tailed test". If we wanted to consider deviations favoring tails as well, we would would add as well the probabilities for $R = 0, 1, \ldots, 6$, so $0.115$ in total. This would be a "two-tailed test".) 
+Comparing to $p_{\rm crit} = 0.05$, we find the p-value is greater than $p_{\rm crit}$, so the null hypothesis is not rejected at the 95\% level. (Note that we say "not rejected" as opposed to "accepted".) If we had gotten 15 heads instead we would have rejected the null hypothesis.
+We emphasize that in this frequentist analysis, the *data* is random while $p_h$ is fixed (although unknown). 
 
 :::{admonition} Exercise
   Verify that if we had gotten 15 heads in $N=20$ tosses that we would have rejected the null hypothesis.
@@ -209,49 +212,47 @@ $p(p_h|D) = p(D|p_h)p(p_h)$ $\longrightarrow$ `scipy.stats.beta.pdf(p_h,1+R,1+N-
 We already commented on the difference between the
 68% degree of belief interval for the most likely value (in that case
 the bias weighting of the coin) and a frequentist $1 \sigma$ confidence
-interval.
+interval. Here are some additional comments.
 
-* First point is that $1 \sigma=68$% assumes a Gaussian distribution
-  around the maximum of the posterior (cf. above). While this will
-  often work out okay, it may not. And, as we seek to translate, 
-  $n \sigma$ intervals into DoB statements, assuming a Gaussian
-  becomes more and more questionable the higher $n$ is. (Why?)
+The first point is that $1 \sigma=68$% assumes a Gaussian distribution
+around the maximum of the posterior (cf. above). While this will
+often work out okay, it may not. And, as we seek to translate 
+$n \sigma$ intervals into DoB statements, assuming a Gaussian
+becomes more and more questionable the higher $n$ is. (Why?)
 
-* But the second point is more philosophical (meta-statistical?). One
+But the second point is more philosophical (meta-statistical?). One
   interval is a statement about $p(x|D,I)$, while the other is a
   statement about $p(D|x,I)$.
-
-* (Note that because the conversion between the two pdfs requires the
- use of Bayes' theorem the Bayesian interval may be affected by the
+(Note that because the conversion between the two PDFs requires the
+ use of Bayes' theorem, the Bayesian interval may be affected by the
  choice of the prior.)
 
-* Bayesian version is easy; a 68% credible interval or Bayesian
-  confidence interval or degree-of-belief (DoB) interval is: given
+The Bayesian version of a confidence interval is easy; a 68% credible interval or degree-of-belief (DoB) interval is: given
   some data and some information $I$, there is a 68% chance (probability) that the interval contains the true parameter. 
 
-* Frequentist 68% confidence interval
-    * Assuming the model (contained in $I$) and the value of the
-      parameter $x$ then if we do the experiment a large number of
-      times then 68% of them will produce data in that interval.
-   * So the *parameter* is fixed (no pdf) and the confidence
-     interval is a statement about data
-   * Frequentists will try to make statements about parameters, but
+On the other hand, the frequentist 68% confidence interval is trickier:
+assuming the model (contained in $I$) and the value of the
+parameter $x$, then if we do the experiment a large number of
+times then 68% of them will produce data in that interval.
+So the *parameter* is fixed (no PDF) and the confidence
+interval is a statement about *data*.
+Frequentists will try to make statements about parameters, but
      they end up a bit tangled, e.g., "There is a 68% probability
      that when I compute a confidence interval from data of this sort
      that the true value of $\theta$ will fall within the
      (hypothetical) space of observations."
 
 
-* For a one-dimensional posterior that is symmetric, it is clear how to define the $d\%$ confidence interval. 
-    * Algorithm: start from the center, step outward on both sides, stop when $d\%$ is enclosed.
-    * For a two-dimensional posterior, need a way to integrate from the top. (Could lower a plane, as desribed below for HPD.)
+For a one-dimensional posterior that is *symmetric*, it is clear how to define the $d\%$ confidence interval. 
+The algorithm is: start from the center, step outward on both sides, stop when $d\%$ is enclosed.
+For a two-dimensional posterior, we need a way to integrate from the top. (One approach is to lower a plane, as described below for HPD.)
 
-* What if asymmetic or multimodal? Two of the possible choices:
-    * Equal-tailed interval (central interval): the area above and below the interval are equal.
-    * Highest posterior density (HPD) region: posterior density for
-      every point is higher than the posterior density for any point
-      outside the
-      interval. [E.g., lower a horizontal line over the distribution until the desired interval percentage is covered by regions above the line.]
+What if the distribution is asymmetic or multimodal? Here are two possible choices.
+* Equal-tailed interval (or central interval): define the boundaries of the interval so that the area above and below the interval are equal.
+* Highest posterior density (HPD) region: the posterior density for
+every point is higher than the posterior density for any point
+outside the
+interval. E.g., lower a horizontal line over the distribution until the desired interval percentage is covered by regions where the distribution is above the line.
 
 
 

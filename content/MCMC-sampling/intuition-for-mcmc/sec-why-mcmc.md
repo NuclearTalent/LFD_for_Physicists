@@ -26,7 +26,7 @@ Given a PDF, we might be interested in:
      \{ g(\pars) \; : \; \pars \sim p(\pars) \}
      \end{equation}
      (Recall that this notation means "the distribution of $g(\pars)$ given the distribution of $\pars$".)
-   - The evaluation of **expectation values** (as discussed in {ref}`sec:Inference:looking_ahead`)
+   - The evaluation of **expectation values** (as discussed in {ref}`sec:Inference:moments`)
   
     $$
         \expect{g(\pars)} = \int d\pars\, g(\pars) p(\pars)
