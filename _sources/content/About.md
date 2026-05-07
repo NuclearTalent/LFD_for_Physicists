@@ -27,7 +27,8 @@ The materials are released under a [Creative Commons BY-NC license](https://crea
 
 The book format is powered by [Jupyter Book](https://jupyterbook.org/). 
 
-```{note} This book is work in progress
+```{admonition} This book is work in progress
+:class: note
 New content is added and existing  sections are revised on an ongoing basis. We welcome feedback, suggestions, and bug reports. Please feel free to open an issue on our [GitHub repository](https://github.com/NuclearTalent/LFD_for_Physicists/issues) (see also the *Open an issue* box further down) or contact us by email. 
 ```
 
