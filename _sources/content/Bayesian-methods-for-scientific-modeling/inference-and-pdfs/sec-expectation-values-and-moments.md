@@ -224,7 +224,7 @@ Here are some ways to find $p(x)$ given a set of moments $\{m_k\}$:
    where the $x_i$ are nodes and the $w_i$ are the weights, such that
 
    $$
-      m_k \approx \sum{i=1}^N w_i x_i^k .
+      m_k \approx \sum_{i=1}^N w_i x_i^k .
    $$
 
    If $K$ moments $m_k$ for $k = 0, 1, \ldots , K$ are known and the $x_i$ are fixed, this is a linear problem in the weights $w_i$. If both $x_i$ and $w_i$ are unknown, one has more flexibility.
