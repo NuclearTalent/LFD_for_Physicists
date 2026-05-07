@@ -711,13 +711,13 @@ document.write(`
 <section id="adagrad">
 <h2>Adagrad<a class="headerlink" href="#adagrad" title="Link to this heading">#</a></h2>
 <p>Adagrad <span id="id4">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id59" title="John Duchi, Elad Hazan, and Yoram Singer. Adaptive subgradient methods for online learning and stochastic optimization. Journal of Machine Learning Research, 12(61):2121–2159, 2011. URL: http://jmlr.org/papers/v12/duchi11a.html.">DHS11</a>]</span> is a simple algorithm that uses the history of past updates to adapt the learning rate to the different parameters. Let us introduce a shorthand notation <span class="math notranslate nohighlight">\(j_{n,i}\)</span> for the partial derivative of the cost function with respect to parameter <span class="math notranslate nohighlight">\(\para_i\)</span> at the position <span class="math notranslate nohighlight">\(\pars_n\)</span> corresponding to iteration <span class="math notranslate nohighlight">\(n\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-bfd4e272-6a42-4aab-a597-4f105cd98f30">
-<span class="eqno">(41.5)<a class="headerlink" href="#equation-bfd4e272-6a42-4aab-a597-4f105cd98f30" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0c273070-0a33-4f8a-af53-ce12a700089f">
+<span class="eqno">(41.5)<a class="headerlink" href="#equation-0c273070-0a33-4f8a-af53-ce12a700089f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 j_{n,i} \equiv \left. \frac{\partial C}{\partial \para_i} \right|_{\pars = \pars_n}.
 \end{equation}\]</div>
 <p>We also introduce a diagonal matrix <span class="math notranslate nohighlight">\(J^2_n \in \mathbb{R}^{N_p \times N_p}\)</span> where the <span class="math notranslate nohighlight">\(i\)</span>th diagonal element</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a9d10d13-03f3-4967-9b99-d3f688c77ed2">
-<span class="eqno">(41.6)<a class="headerlink" href="#equation-a9d10d13-03f3-4967-9b99-d3f688c77ed2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dc9f4c43-a643-4dc2-8b91-54b0566791c0">
+<span class="eqno">(41.6)<a class="headerlink" href="#equation-dc9f4c43-a643-4dc2-8b91-54b0566791c0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 J^2_{n,ii} \equiv \sum_{k=1}^{n} j_{k,i}^2
 \end{equation}\]</div>
 <p>is the sum of the squares of the gradients with respect to <span class="math notranslate nohighlight">\(\para_i\)</span> up to iteration <span class="math notranslate nohighlight">\(n\)</span>. In its update rule, at iteration <span class="math notranslate nohighlight">\(n\)</span>, Adagrad modifies the general learning rate <span class="math notranslate nohighlight">\(\eta_n\)</span> for every parameter <span class="math notranslate nohighlight">\(\para_i\)</span> based on the past gradients that have been computed as described by <span class="math notranslate nohighlight">\(J^2_{n,ii}\)</span>. The parameter <span class="math notranslate nohighlight">\(\para_i\)</span> at the next iteration <span class="math notranslate nohighlight">\(n+1\)</span> is then given by</p>
@@ -731,33 +731,33 @@ J^2_{n,ii} \equiv \sum_{k=1}^{n} j_{k,i}^2
 <section id="rmsprop">
 <h2>RMSprop<a class="headerlink" href="#rmsprop" title="Link to this heading">#</a></h2>
 <p>RMSprop is an extension of Adagrad that seeks to reduce its aggressive, monotonically decreasing learning rate. Instead of storing the sum of past squared gradients, the denominator is defined as a decaying average of past squared gradients. Labeling the decaying average at iteration <span class="math notranslate nohighlight">\(n\)</span> by <span class="math notranslate nohighlight">\(\bar{{J}^2}_{n,ii}\)</span>, we introduce a decay variable <span class="math notranslate nohighlight">\(\gamma\)</span> and define</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1c781fa1-f01d-443c-807f-c80051c98005">
-<span class="eqno">(41.8)<a class="headerlink" href="#equation-1c781fa1-f01d-443c-807f-c80051c98005" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d6a122ff-3529-456d-9f37-69e52e58fc91">
+<span class="eqno">(41.8)<a class="headerlink" href="#equation-d6a122ff-3529-456d-9f37-69e52e58fc91" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \bar{J}^2_{n,ii} = \gamma \bar{J}^2_{n-1,ii} + (1-\gamma) j_{n,i}^2.
 \end{equation}\]</div>
 <p>The inventor of RMSprop, Geoff Hinton, suggests setting the decay variable <span class="math notranslate nohighlight">\(\gamma=0.9\)</span> , while a good default value for the learning rate <span class="math notranslate nohighlight">\(\eta\)</span> is 0.001. The update rule in RMSprop is then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-56965b57-2d30-4066-b7c9-3b4e04e5b84b">
-<span class="eqno">(41.9)<a class="headerlink" href="#equation-56965b57-2d30-4066-b7c9-3b4e04e5b84b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9e7c6750-7dd6-479f-bc89-0a521f2e6763">
+<span class="eqno">(41.9)<a class="headerlink" href="#equation-9e7c6750-7dd6-479f-bc89-0a521f2e6763" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\bar{J}^2_{n,ii} + \varepsilon}} j_{n,i}.
 \end{equation}\]</div>
 </section>
 <section id="adam">
 <h2>Adam<a class="headerlink" href="#adam" title="Link to this heading">#</a></h2>
 <p>Adaptive Moment Estimation (Adam) <span id="id5">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id61" title="Diederik P. Kingma and Jimmy Ba. Adam: A Method for Stochastic Optimization. arXiv e-prints, pages arXiv:1412.6980, December 2014. arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">KingmaBa14</a>]</span> also computes adaptive learning rates for each parameter. However, in addition to storing an exponentially decaying average of past squared gradients like Adagrad and RMSprop, Adam also keeps an exponentially decaying average of past gradients similar to a momentum. Describing this latter quantity by the diagonal matrix <span class="math notranslate nohighlight">\(\hat{M}_n\)</span> (at iteration <span class="math notranslate nohighlight">\(n\)</span>) we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-aed5eedf-b103-45b9-9098-2f3f98bd6476">
-<span class="eqno">(41.10)<a class="headerlink" href="#equation-aed5eedf-b103-45b9-9098-2f3f98bd6476" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-03120d2a-e51f-4a09-a464-49579ef94c8b">
+<span class="eqno">(41.10)<a class="headerlink" href="#equation-03120d2a-e51f-4a09-a464-49579ef94c8b" title="Permalink to this equation">#</a></span>\[\begin{align}
 \bar{M}_{n,ii} &amp;= \gamma_1 \bar{M}_{n-1,ii} + (1-\gamma_1) j_{n,i}, \\
 \bar{J}^2_{n,ii} &amp;= \gamma_2 \bar{J}^2_{n-1,ii} + (1-\gamma_2) j_{n,i}^2.
 \end{align}\]</div>
 <p>Both of these quantities are initialized with zero vectors (<span class="math notranslate nohighlight">\(\bar{M}_{0,ii}=0\)</span> and <span class="math notranslate nohighlight">\(\bar{J}^2_{0,ii}=0\)</span> for all <span class="math notranslate nohighlight">\(i\)</span>) which tends to introduce a bias for early time steps. This bias can be large if <span class="math notranslate nohighlight">\(\gamma_1\)</span> and <span class="math notranslate nohighlight">\(\gamma_2\)</span> are close to one. It was therefore proposed to use bias-corrected first and second moment estimates</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2d10fdc1-85c4-459a-9acc-4aa03c13959d">
-<span class="eqno">(41.11)<a class="headerlink" href="#equation-2d10fdc1-85c4-459a-9acc-4aa03c13959d" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-8701cd21-b404-4de2-b121-9bc329ee3e87">
+<span class="eqno">(41.11)<a class="headerlink" href="#equation-8701cd21-b404-4de2-b121-9bc329ee3e87" title="Permalink to this equation">#</a></span>\[\begin{align}
 \hat{M}_{n,ii} &amp;= \frac{\bar{M}_{n,ii}}{1 - (\gamma_1)^n}, \\
 \hat{J}^2_{n,ii} &amp;= \frac{\bar{J}^2_{n,ii}}{1 - (\gamma_2)^n}.
 \end{align}\]</div>
 <p>The update rule then becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5af990b4-b629-47fc-ac6c-636bfba25fe2">
-<span class="eqno">(41.12)<a class="headerlink" href="#equation-5af990b4-b629-47fc-ac6c-636bfba25fe2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6968e1b6-40ec-4db0-9800-1e1507958709">
+<span class="eqno">(41.12)<a class="headerlink" href="#equation-6968e1b6-40ec-4db0-9800-1e1507958709" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\hat{J}^2_{n,ii}} + \varepsilon} \hat{M} _{n,ii}.
 \end{equation}\]</div>
 <p>Default, recommended values are <span class="math notranslate nohighlight">\(\gamma_1=0.9\)</span>, <span class="math notranslate nohighlight">\(\gamma_2=0.999\)</span>, and <span class="math notranslate nohighlight">\(\varepsilon=10^{-8}\)</span>.</p>
