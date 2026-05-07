@@ -346,7 +346,7 @@ All terms that we dropped in truncating the Taylor expansions for each Fourier i
 ::::
 
 
-### Lead in the demo notebook on visualizing the CLT
+### Lead in to the demo notebook on visualizing the CLT
 
 Look at {ref}`demo:visualization-of-the-central-limit-theorem` for more intuitive insight into the CLT.
 %
