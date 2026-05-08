@@ -8,7 +8,25 @@ jupytext:
 ---
 
 (sec:GPIntuition)=
-# Intuition for Gaussian process from simulations
+# Intuition for Gaussian process
+
+## Demo: Widget for GP intuition
+
+The widget here provides a Gaussian process (GP) visualization and some things to try to help build intuition about GPs.
+A GP defines a distribution over *functions*, so in the simulation we will see draws of random functions, in analogy to drawing random variables from a normal distribution (recall that "normal" and "Gaussian" are synonymous here). 
+Our principal goal is to experience how GPs look in practice and how they are used for interpolation or regression.
+
+The defining feature of an ensemble of GP function draws is that at *any* fixed point, the histogram of the function values at that point would approximate a Gaussian distribution; while for any two points the function values would be draws from a bivariate Gaussian distribution with a proscribed covariance matrix; and so on with more points being draws from a multivariate Gaussian distribution. The covariance in each case between any two points is specified by a *kernel* evaluated at those points. 
+
+
+```{raw} html
+<iframe src="../../../_static/demo-bayesian-coin-tossing-html5.html"
+    width="100%"
+    height="900"
+    style="border: none;"
+    scrolling="no">
+</iframe>
+```
 
 ## Websites with visualizations 
 
