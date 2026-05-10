@@ -66,6 +66,23 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/Appendix/Scientific-modeling/mathematical-optimization/sec-adaptive-gradient-descent-algorithms';</script>
     <script src="../../../../_static/custom.js?v=33f35b7a"></script>
+    <script src="../../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
+    <script src="../../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
+    <script src="../../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
+    <script src="../../../../_static/chi-feng/main/Simulation.js?v=efcc9372"></script>
+    <script src="../../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
+    <script src="../../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="42. Overview of getting started materials" href="../../Getting-started/index.html" />
@@ -704,17 +721,17 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="adaptive-gradient-descent-algorithms">
 <h1><span class="section-number">41.3. </span>Adaptive gradient descent algorithms<a class="headerlink" href="#adaptive-gradient-descent-algorithms" title="Link to this heading">#</a></h1>
 <p>As outlined above, there are several convergence challenges for the standard gradient-descent methods. These are in general connected with the difficulty of navigating complicated cost function surfaces using only pointwise information on the gradient. The use of the history of past updates can help to adapt the learning schedule and has been shown to significantly increase the efficiency of gradient descent. Somewhat simplified, the adaptive versions improves the parameter update by adding a fraction of the past update vector to the current one.</p>
-<p>Some examples of commonly employed, adaptive methods are Adagrad <span id="id1">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id59" title="John Duchi, Elad Hazan, and Yoram Singer. Adaptive subgradient methods for online learning and stochastic optimization. Journal of Machine Learning Research, 12(61):2121–2159, 2011. URL: http://jmlr.org/papers/v12/duchi11a.html.">DHS11</a>]</span>, Adadelta <span id="id2">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id60" title="Matthew D. Zeiler. ADADELTA: An Adaptive Learning Rate Method. arXiv e-prints, pages arXiv:1212.5701, December 2012. arXiv:1212.5701, doi:10.48550/arXiv.1212.5701.">Zeiler12</a>]</span>, RMSprop, and Adam <span id="id3">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id61" title="Diederik P. Kingma and Jimmy Ba. Adam: A Method for Stochastic Optimization. arXiv e-prints, pages arXiv:1412.6980, December 2014. arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">KingmaBa14</a>]</span>.</p>
+<p>Some examples of commonly employed, adaptive methods are Adagrad <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id59" title="John Duchi, Elad Hazan, and Yoram Singer. Adaptive subgradient methods for online learning and stochastic optimization. Journal of Machine Learning Research, 12(61):2121–2159, 2011. URL: http://jmlr.org/papers/v12/duchi11a.html.">DHS11</a>]</span>, Adadelta <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id60" title="Matthew D. Zeiler. ADADELTA: An Adaptive Learning Rate Method. arXiv e-prints, pages arXiv:1212.5701, December 2012. arXiv:1212.5701, doi:10.48550/arXiv.1212.5701.">Zeiler12</a>]</span>, RMSprop, and Adam <span class="bibtex-citation" id="id3">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id61" title="Diederik P. Kingma and Jimmy Ba. Adam: A Method for Stochastic Optimization. arXiv e-prints, pages arXiv:1412.6980, December 2014. arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">KingmaBa14</a>]</span>.</p>
 <section id="adagrad">
 <h2>Adagrad<a class="headerlink" href="#adagrad" title="Link to this heading">#</a></h2>
-<p>Adagrad <span id="id4">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id59" title="John Duchi, Elad Hazan, and Yoram Singer. Adaptive subgradient methods for online learning and stochastic optimization. Journal of Machine Learning Research, 12(61):2121–2159, 2011. URL: http://jmlr.org/papers/v12/duchi11a.html.">DHS11</a>]</span> is a simple algorithm that uses the history of past updates to adapt the learning rate to the different parameters. Let us introduce a shorthand notation <span class="math notranslate nohighlight">\(j_{n,i}\)</span> for the partial derivative of the cost function with respect to parameter <span class="math notranslate nohighlight">\(\para_i\)</span> at the position <span class="math notranslate nohighlight">\(\pars_n\)</span> corresponding to iteration <span class="math notranslate nohighlight">\(n\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-aecb58d9-8b14-4d9c-8b8e-2e963accd437">
-<span class="eqno">(41.5)<a class="headerlink" href="#equation-aecb58d9-8b14-4d9c-8b8e-2e963accd437" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>Adagrad <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id59" title="John Duchi, Elad Hazan, and Yoram Singer. Adaptive subgradient methods for online learning and stochastic optimization. Journal of Machine Learning Research, 12(61):2121–2159, 2011. URL: http://jmlr.org/papers/v12/duchi11a.html.">DHS11</a>]</span> is a simple algorithm that uses the history of past updates to adapt the learning rate to the different parameters. Let us introduce a shorthand notation <span class="math notranslate nohighlight">\(j_{n,i}\)</span> for the partial derivative of the cost function with respect to parameter <span class="math notranslate nohighlight">\(\para_i\)</span> at the position <span class="math notranslate nohighlight">\(\pars_n\)</span> corresponding to iteration <span class="math notranslate nohighlight">\(n\)</span></p>
+<div class="amsmath math notranslate nohighlight" id="equation-5bdc7166-7ff6-42c7-bfa1-b9432d703f4d">
+<span class="eqno">(41.5)<a class="headerlink" href="#equation-5bdc7166-7ff6-42c7-bfa1-b9432d703f4d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 j_{n,i} \equiv \left. \frac{\partial C}{\partial \para_i} \right|_{\pars = \pars_n}.
 \end{equation}\]</div>
 <p>We also introduce a diagonal matrix <span class="math notranslate nohighlight">\(J^2_n \in \mathbb{R}^{N_p \times N_p}\)</span> where the <span class="math notranslate nohighlight">\(i\)</span>th diagonal element</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3e5becdc-ecb5-4e53-bf5d-f86b0f21b671">
-<span class="eqno">(41.6)<a class="headerlink" href="#equation-3e5becdc-ecb5-4e53-bf5d-f86b0f21b671" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9b0b7754-70e4-4a64-8310-b93add1c7975">
+<span class="eqno">(41.6)<a class="headerlink" href="#equation-9b0b7754-70e4-4a64-8310-b93add1c7975" title="Permalink to this equation">#</a></span>\[\begin{equation}
 J^2_{n,ii} \equiv \sum_{k=1}^{n} j_{k,i}^2
 \end{equation}\]</div>
 <p>is the sum of the squares of the gradients with respect to <span class="math notranslate nohighlight">\(\para_i\)</span> up to iteration <span class="math notranslate nohighlight">\(n\)</span>. In its update rule, at iteration <span class="math notranslate nohighlight">\(n\)</span>, Adagrad modifies the general learning rate <span class="math notranslate nohighlight">\(\eta_n\)</span> for every parameter <span class="math notranslate nohighlight">\(\para_i\)</span> based on the past gradients that have been computed as described by <span class="math notranslate nohighlight">\(J^2_{n,ii}\)</span>. The parameter <span class="math notranslate nohighlight">\(\para_i\)</span> at the next iteration <span class="math notranslate nohighlight">\(n+1\)</span> is then given by</p>
@@ -728,33 +745,33 @@ J^2_{n,ii} \equiv \sum_{k=1}^{n} j_{k,i}^2
 <section id="rmsprop">
 <h2>RMSprop<a class="headerlink" href="#rmsprop" title="Link to this heading">#</a></h2>
 <p>RMSprop is an extension of Adagrad that seeks to reduce its aggressive, monotonically decreasing learning rate. Instead of storing the sum of past squared gradients, the denominator is defined as a decaying average of past squared gradients. Labeling the decaying average at iteration <span class="math notranslate nohighlight">\(n\)</span> by <span class="math notranslate nohighlight">\(\bar{{J}^2}_{n,ii}\)</span>, we introduce a decay variable <span class="math notranslate nohighlight">\(\gamma\)</span> and define</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c70666a0-8185-4a48-9129-db4cff5602ad">
-<span class="eqno">(41.8)<a class="headerlink" href="#equation-c70666a0-8185-4a48-9129-db4cff5602ad" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-463e97d8-d51e-4a8d-803e-3d46a1255488">
+<span class="eqno">(41.8)<a class="headerlink" href="#equation-463e97d8-d51e-4a8d-803e-3d46a1255488" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \bar{J}^2_{n,ii} = \gamma \bar{J}^2_{n-1,ii} + (1-\gamma) j_{n,i}^2.
 \end{equation}\]</div>
 <p>The inventor of RMSprop, Geoff Hinton, suggests setting the decay variable <span class="math notranslate nohighlight">\(\gamma=0.9\)</span> , while a good default value for the learning rate <span class="math notranslate nohighlight">\(\eta\)</span> is 0.001. The update rule in RMSprop is then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-79bd45de-e99e-410a-806a-0b62daa527bf">
-<span class="eqno">(41.9)<a class="headerlink" href="#equation-79bd45de-e99e-410a-806a-0b62daa527bf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-88770db5-0926-47c8-aa00-14d90ce8b22a">
+<span class="eqno">(41.9)<a class="headerlink" href="#equation-88770db5-0926-47c8-aa00-14d90ce8b22a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\bar{J}^2_{n,ii} + \varepsilon}} j_{n,i}.
 \end{equation}\]</div>
 </section>
 <section id="adam">
 <h2>Adam<a class="headerlink" href="#adam" title="Link to this heading">#</a></h2>
-<p>Adaptive Moment Estimation (Adam) <span id="id5">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id61" title="Diederik P. Kingma and Jimmy Ba. Adam: A Method for Stochastic Optimization. arXiv e-prints, pages arXiv:1412.6980, December 2014. arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">KingmaBa14</a>]</span> also computes adaptive learning rates for each parameter. However, in addition to storing an exponentially decaying average of past squared gradients like Adagrad and RMSprop, Adam also keeps an exponentially decaying average of past gradients similar to a momentum. Describing this latter quantity by the diagonal matrix <span class="math notranslate nohighlight">\(\hat{M}_n\)</span> (at iteration <span class="math notranslate nohighlight">\(n\)</span>) we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a37fcba9-eee0-41aa-83a5-de5dd309b38c">
-<span class="eqno">(41.10)<a class="headerlink" href="#equation-a37fcba9-eee0-41aa-83a5-de5dd309b38c" title="Permalink to this equation">#</a></span>\[\begin{align}
+<p>Adaptive Moment Estimation (Adam) <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id61" title="Diederik P. Kingma and Jimmy Ba. Adam: A Method for Stochastic Optimization. arXiv e-prints, pages arXiv:1412.6980, December 2014. arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">KingmaBa14</a>]</span> also computes adaptive learning rates for each parameter. However, in addition to storing an exponentially decaying average of past squared gradients like Adagrad and RMSprop, Adam also keeps an exponentially decaying average of past gradients similar to a momentum. Describing this latter quantity by the diagonal matrix <span class="math notranslate nohighlight">\(\hat{M}_n\)</span> (at iteration <span class="math notranslate nohighlight">\(n\)</span>) we have</p>
+<div class="amsmath math notranslate nohighlight" id="equation-8a412039-fdec-46a1-95e7-9c92b78e89ed">
+<span class="eqno">(41.10)<a class="headerlink" href="#equation-8a412039-fdec-46a1-95e7-9c92b78e89ed" title="Permalink to this equation">#</a></span>\[\begin{align}
 \bar{M}_{n,ii} &amp;= \gamma_1 \bar{M}_{n-1,ii} + (1-\gamma_1) j_{n,i}, \\
 \bar{J}^2_{n,ii} &amp;= \gamma_2 \bar{J}^2_{n-1,ii} + (1-\gamma_2) j_{n,i}^2.
 \end{align}\]</div>
 <p>Both of these quantities are initialized with zero vectors (<span class="math notranslate nohighlight">\(\bar{M}_{0,ii}=0\)</span> and <span class="math notranslate nohighlight">\(\bar{J}^2_{0,ii}=0\)</span> for all <span class="math notranslate nohighlight">\(i\)</span>) which tends to introduce a bias for early time steps. This bias can be large if <span class="math notranslate nohighlight">\(\gamma_1\)</span> and <span class="math notranslate nohighlight">\(\gamma_2\)</span> are close to one. It was therefore proposed to use bias-corrected first and second moment estimates</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5e25549f-c29a-4ce7-ae56-847e8acc242c">
-<span class="eqno">(41.11)<a class="headerlink" href="#equation-5e25549f-c29a-4ce7-ae56-847e8acc242c" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-9377dfc5-2da3-4d4e-a799-8251457a6175">
+<span class="eqno">(41.11)<a class="headerlink" href="#equation-9377dfc5-2da3-4d4e-a799-8251457a6175" title="Permalink to this equation">#</a></span>\[\begin{align}
 \hat{M}_{n,ii} &amp;= \frac{\bar{M}_{n,ii}}{1 - (\gamma_1)^n}, \\
 \hat{J}^2_{n,ii} &amp;= \frac{\bar{J}^2_{n,ii}}{1 - (\gamma_2)^n}.
 \end{align}\]</div>
 <p>The update rule then becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f3ff04e3-43e1-4c33-bb53-e53153589c77">
-<span class="eqno">(41.12)<a class="headerlink" href="#equation-f3ff04e3-43e1-4c33-bb53-e53153589c77" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-32609d9b-f082-4ac3-941b-7e19103e54a5">
+<span class="eqno">(41.12)<a class="headerlink" href="#equation-32609d9b-f082-4ac3-941b-7e19103e54a5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\hat{J}^2_{n,ii}} + \varepsilon} \hat{M} _{n,ii}.
 \end{equation}\]</div>
 <p>Default, recommended values are <span class="math notranslate nohighlight">\(\gamma_1=0.9\)</span>, <span class="math notranslate nohighlight">\(\gamma_2=0.999\)</span>, and <span class="math notranslate nohighlight">\(\varepsilon=10^{-8}\)</span>.</p>

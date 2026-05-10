@@ -66,6 +66,23 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/MCMC-sampling/intuition-for-mcmc/sec-visualizations-of-mcmc';</script>
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
+    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
+    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
+    <script src="../../../_static/chi-feng/main/Simulation.js?v=efcc9372"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
+    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="18.4. Demo: Sampling of a Poisson distribution" href="demo-sampling-of-a-poisson-distribution.html" />
@@ -687,8 +704,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#javascript-visualizations-of-mcmc">Javascript visualizations of MCMC</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-the-mh-simulation-from-mcelreath">Exploring the MH simulation from McElreath</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chi-feng-visualizations">Chi Feng visualizations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-the-metropolis-hastings-mh-simulation">Exploring the Metropolis-Hastings (MH) simulation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenges-in-mcmc-sampling">Challenges in MCMC sampling</a></li>
 </ul>
             </nav>
@@ -703,24 +720,32 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="visualizations-of-mcmc">
 <span id="sec-visualizingmcmc"></span><h1><span class="section-number">18.3. </span>Visualizations of MCMC<a class="headerlink" href="#visualizations-of-mcmc" title="Link to this heading">#</a></h1>
-<section id="javascript-visualizations-of-mcmc">
-<h2>Javascript visualizations of MCMC<a class="headerlink" href="#javascript-visualizations-of-mcmc" title="Link to this heading">#</a></h2>
+<section id="chi-feng-visualizations">
+<h2>Chi Feng visualizations<a class="headerlink" href="#chi-feng-visualizations" title="Link to this heading">#</a></h2>
 <p>There are excellent javascript visualizations of MCMC sampling available on the web.
-A particularly effective set of interactive demos was created by Chi Feng, available at <a class="reference external" href="https://chi-feng.github.io/mcmc-demo/">https://chi-feng.github.io/mcmc-demo/</a>
-These demos range from random walk Metropolis-Hastings (MH) to Adaptive MH to Hamiltonian Monte Carlo (HMC) to No-U-Turn Sampler (NUTS) to Metropolis-adjusted Langevin Algorithm (MALA) to Hesian-HMC (H2MC), to Stein Variational Gradient Descent (SVGD) to Nested Sampling with RadFriends (RadFriends-NS). We will only consider a subset of these samplers in this book, but the reader is encouraged to explore further.</p>
-<p>An accessible introduction to MCMC with simplified versions of Feng’s visualization by Richard McElreath. Let’s look at the first part of his blog entry at <a class="reference external" href="http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/">http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/</a>.
-(Overall this blog promotes Hamiltonian Monte Caro; we return to the HMC visualization in a later section.)</p>
-<p>When looking at the visualizations, remember the basic structure of the MH algorithm:</p>
-<ol class="arabic simple">
-<li><p>Make a random proposal for new parameter values.</p></li>
-<li><p>Accept or reject the proposal based on a Metropolis criterion.</p></li>
-</ol>
+A particularly effective set of interactive demos was created by Chi Feng, which are included in this section.
+These demos range from random walk Metropolis-Hastings (MH) to Adaptive MH to Hamiltonian Monte Carlo (HMC) to No-U-Turn Sampler (NUTS) to Metropolis-adjusted Langevin Algorithm (MALA) to Hessian-informed HMC (H2MC), to Stein Variational Gradient Descent (SVGD) to Nested Sampling with RadFriends (RadFriends-NS).
+We’ll start with the random walk MH, which is the algorithm discussed in <a class="reference internal" href="sec-the-metropolis-hastings-algorithm.html#sec-basicstructuremcmc"><span class="std std-numref">Section 18.2</span></a>.</p>
+<!--
+```{raw} html
+<iframe src="../../../_static/chi-feng/index_new.html"
+    width="100%"
+    height="400"
+    style="border: none;"
+    scrolling="no">
+</iframe>
+``` 
+-->
 </section>
-<section id="exploring-the-mh-simulation-from-mcelreath">
-<h2>Exploring the MH simulation from McElreath<a class="headerlink" href="#exploring-the-mh-simulation-from-mcelreath" title="Link to this heading">#</a></h2>
-<p>Here are some comments and observations on the basic MH simulation from the McElreath blog.</p>
-<ul>
-<li><p>The target distribution is a two-dimensional Gaussian (just the product of two one-dimensional Gaussians).</p>
+<section id="exploring-the-metropolis-hastings-mh-simulation">
+<h2>Exploring the Metropolis-Hastings (MH) simulation<a class="headerlink" href="#exploring-the-metropolis-hastings-mh-simulation" title="Link to this heading">#</a></h2>
+<iframe src="../../../_static/chi-feng/app_RandomWalkMH.html"
+    width="100%"
+    height="600"
+    style="border: none;"
+    scrolling="no">
+</iframe><p>Note the various <code class="docutils literal notranslate"><span class="pre">Simulation</span> <span class="pre">options</span></code>. For now, switch the <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">distribution</span></code> to <code class="docutils literal notranslate"><span class="pre">standard</span></code>. This distribution is a two-dimensional Gaussian (just the product of two one-dimensional Gaussians).
+Select <code class="docutils literal notranslate"><span class="pre">Close</span> <span class="pre">Controls</span></code> to avoid obscuring the simulation. Use <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Controls</span></code> when you want to make a change.</p>
 <div class="my-checkpoint admonition">
 <p class="admonition-title">Checkpoint question</p>
 <p>Is the distribution correlated? How do you know from the simulation?</p>
@@ -729,7 +754,13 @@ These demos range from random walk Metropolis-Hastings (MH) to Adaptive MH to Ha
 <p>The distribution is uncorrelated. The accumulated joint posterior has horizontally oriented ellipses (circles if the scales are equal). They would be slanted if there were correlations.</p>
 </div>
 </div>
-</li>
+<p>When looking at the visualizations, remember the basic structure of the MH algorithm:</p>
+<ol class="arabic simple">
+<li><p>Make a random proposal for new parameter values.</p></li>
+<li><p>Accept or reject the proposal based on a Metropolis criterion.</p></li>
+</ol>
+<p>Here are some comments and observations on the basic MH simulation:</p>
+<ul>
 <li><p>An uncolored arrow indicates a proposal, which is accepted (green) or rejected (red).</p></li>
 <li><p>Notice that the direction and the length of the proposal arrow varies and are, in fact, chosen randomly from a distribution. The direction is sampled uniformly.</p></li>
 <li><p>The MH MCMC seems to do ok on sampling such a simple distribution, as indicated by how well the projected posteriors get filled in.</p></li>
@@ -739,12 +770,12 @@ These demos range from random walk Metropolis-Hastings (MH) to Adaptive MH to Ha
 <li><p>if not specially tuned, many proposals can be rejected (red arrows).</p></li>
 </ul>
 </li>
-<li><p>Try the donut shape, which is much trickier.</p>
+<li><p>Try the <code class="docutils literal notranslate"><span class="pre">donut</span></code> target distribution, which is much trickier.</p>
 <ul class="simple">
 <li><p>Notice that the projected one-dimensional posteriors don’t seem to be so complex, but this is a difficult topology.</p></li>
-<li><p>Is this shape realistic? The claim is that when there are many parameters (a high-dimensional space), this is analogous to a common target distribution. The probability <em>mass</em> concentrates in this shape.</p></li>
+<li><p>Is this shape realistic? When there are many parameters (a high-dimensional space), this is analogous to a common target distribution. The probability <em>mass</em> concentrates in this shape.</p></li>
 </ul>
-<div class="admonition-note-on-donuts-in-high-dimensions admonition">
+<div class="note admonition">
 <p class="admonition-title">Note on donuts in high dimensions</p>
 <a class="bg-primary reference internal image-reference" href="../../../_images/bayes_talk.028.png"><img alt="point estimate" class="bg-primary align-right" src="../../../_images/bayes_talk.028.png" style="width: 300px;" />
 </a>
@@ -758,31 +789,37 @@ These demos range from random walk Metropolis-Hastings (MH) to Adaptive MH to Ha
 <li><p>Problems: we are constantly looking for the right step size, which is big enough to explore the space, but small enough to not get rejected too often.</p>
 <ul class="simple">
 <li><p>High dimensions is a big space! It is hard to stay in a region of high probability while also exploring enough of the full space (in a reasonable time).</p></li>
-</ul>
-</li>
-<li><p>Now take a look at the Feng site and try the different distributions available.</p>
-<ul class="simple">
-<li><p>The banana distribution <span class="math notranslate nohighlight">\(\Lra\)</span> difficult to sample.</p></li>
-<li><p>If the distribution multimodal <span class="math notranslate nohighlight">\(\Lra\)</span> very, very tough to sample effectively.</p></li>
 <li><p>Try adjusting the proposal <span class="math notranslate nohighlight">\(\sigma\)</span> (there is a Gaussian proposal with variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>) <span class="math notranslate nohighlight">\(\Lra\)</span> try this on donut: to get a reasonable rate of green arrows you need excellent step size tuning.</p></li>
-</ul>
-</li>
-<li><p>Back to the McElreath page. What is the answer to better sampling? His claim: “Better living through physics”</p>
-<ul class="simple">
-<li><p>For McElreath, this means to use Hamiltonian Monte Carlo (HMC).</p></li>
-<li><p>Later we’ll come back to HMC but stick with MH for now.</p></li>
 </ul>
 </li>
 </ul>
 </section>
 <section id="challenges-in-mcmc-sampling">
 <h2>Challenges in MCMC sampling<a class="headerlink" href="#challenges-in-mcmc-sampling" title="Link to this heading">#</a></h2>
-<p>We have seen that these are problematic PDFs:</p>
+<p>Use the pulldown menu to try the different target distributions available. The <code class="docutils literal notranslate"><span class="pre">banana</span></code> distribution is generally difficult to sample while
+the <code class="docutils literal notranslate"><span class="pre">multimodal</span></code> distribution is in general very tough to sample effectively.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>What makes the various distributions difficult to sample effectively?</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>We see several general classes of problematic PDFs:</p>
 <ul class="simple">
-<li><p>Correlated distributions that are very narrow in certain directions (scaled parameters needed).</p></li>
-<li><p>Donut or banana shapes (very low acceptance ratios).</p></li>
-<li><p>Multimodal distributions (might easily get stuck in local region of high probability and completely miss other regions).</p></li>
+<li><p>Correlated distributions that are very narrow in certain directions.</p></li>
+<li><p>Donut or banana shapes.</p></li>
+<li><p>Multimodal distributions.</p></li>
 </ul>
+<p>What is the difficulty with each of these?</p>
+</div>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<ul class="simple">
+<li><p>Correlated distributions: scaled parameters are needed.</p></li>
+<li><p>Donut or banana shapes: very low acceptance ratios.</p></li>
+<li><p>Multimodal distributions: might easily get stuck in local region of high probability and completely miss other regions.</p></li>
+</ul>
+</div>
+</div>
 </section>
 </section>
 
@@ -850,8 +887,8 @@ These demos range from random walk Metropolis-Hastings (MH) to Adaptive MH to Ha
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#javascript-visualizations-of-mcmc">Javascript visualizations of MCMC</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-the-mh-simulation-from-mcelreath">Exploring the MH simulation from McElreath</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chi-feng-visualizations">Chi Feng visualizations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-the-metropolis-hastings-mh-simulation">Exploring the Metropolis-Hastings (MH) simulation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenges-in-mcmc-sampling">Challenges in MCMC sampling</a></li>
 </ul>
   </nav></div>

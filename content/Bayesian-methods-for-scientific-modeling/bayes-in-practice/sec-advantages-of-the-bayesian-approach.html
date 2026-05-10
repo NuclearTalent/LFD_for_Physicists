@@ -66,6 +66,23 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-advantages-of-the-bayesian-approach';</script>
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
+    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
+    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
+    <script src="../../../_static/chi-feng/main/Simulation.js?v=efcc9372"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
+    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="8.2. Bayesian research workflow" href="sec-bayesian-research-workflow.html" />
@@ -765,15 +782,15 @@ document.write(`
 <li><p>Consider <span class="math notranslate nohighlight">\(N\)</span> different models <span class="math notranslate nohighlight">\(M_i\)</span> (<span class="math notranslate nohighlight">\(i = 1, \ldots, N\)</span>), each with a parameter vector <span class="math notranslate nohighlight">\(\pars_i\)</span>. The number of parameters (length of <span class="math notranslate nohighlight">\(\pars_i\)</span>) might be different for different models. Each of them implies a sampling distribution for possible data</p></li>
 <li><p>Consider a scientific model <span class="math notranslate nohighlight">\(M\)</span> with a parameter vector <span class="math notranslate nohighlight">\(\pars\)</span>. Together with error models this implies a statistical model that gives a sampling distribution for possible data</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-7caed44b-f336-4bf3-922d-e9175d325715">
-<span class="eqno">(8.1)<a class="headerlink" href="#equation-7caed44b-f336-4bf3-922d-e9175d325715" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dd61b7ca-0fc3-472a-a558-00b0451b91d0">
+<span class="eqno">(8.1)<a class="headerlink" href="#equation-dd61b7ca-0fc3-472a-a558-00b0451b91d0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(\data|{\pars}, M)
 \end{equation}\]</div>
 <ul class="simple">
 <li><p>The likelihood function is the pdf of the actual, observed data (<span class="math notranslate nohighlight">\(\data_\mathrm{obs}\)</span>) given a set of parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>:</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-f020b299-583e-4e09-9539-44d9f7ae9f05">
-<span class="eqno">(8.2)<a class="headerlink" href="#equation-f020b299-583e-4e09-9539-44d9f7ae9f05" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-54e241c4-d0a6-4b51-8038-eacda8b3b6b0">
+<span class="eqno">(8.2)<a class="headerlink" href="#equation-54e241c4-d0a6-4b51-8038-eacda8b3b6b0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 {\mathcal{L}}_i (\pars) \equiv p(\data_\mathrm{obs}|\pars, M)
 \end{equation}\]</div>
 <p>With these ingredients, several types of scientific inquiry can be addressed using a Bayesian framework.</p>
@@ -823,7 +840,7 @@ p(\data|{\pars}, M)
 <a class="reference internal image-reference" href="../../../_images/fig-model_mixed_eos.png"><img alt="../../../_images/fig-model_mixed_eos.png" src="../../../_images/fig-model_mixed_eos.png" style="width: 450px;" />
 </a>
 <figcaption>
-<p><span class="caption-number">Fig. 8.5 </span><span class="caption-text">Mixed model equation of state (scaled pressure vs. scaled density) for symmetric nuclear matter. Models with theory errors at low density (red) and very high density (blue) are mixed to bridge the gap between them (purple). One sigma error bands are shown. The figure is from Semposki et al. <span id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id6" title="A. C. Semposki, C. Drischler, R. J. Furnstahl, J. A. Melendez, and D. R. Phillips. From chiral effective field theory to perturbative QCD: A Bayesian model mixing approach to symmetric nuclear matter. Phys. Rev. C, 111(3):035804, 2025. arXiv:2404.06323, doi:10.1103/PhysRevC.111.035804.">SDF+25</a>]</span>.</span><a class="headerlink" href="#fig-model-mixed-eos" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 8.5 </span><span class="caption-text">Mixed model equation of state (scaled pressure vs. scaled density) for symmetric nuclear matter. Models with theory errors at low density (red) and very high density (blue) are mixed to bridge the gap between them (purple). One sigma error bands are shown. The figure is from Semposki et al. <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id6" title="A. C. Semposki, C. Drischler, R. J. Furnstahl, J. A. Melendez, and D. R. Phillips. From chiral effective field theory to perturbative QCD: A Bayesian model mixing approach to symmetric nuclear matter. Phys. Rev. C, 111(3):035804, 2025. arXiv:2404.06323, doi:10.1103/PhysRevC.111.035804.">SDF+25</a>]</span>.</span><a class="headerlink" href="#fig-model-mixed-eos" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </div>

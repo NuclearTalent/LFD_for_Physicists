@@ -66,6 +66,23 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-bayesian-research-workflow';</script>
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
+    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
+    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
+    <script src="../../../_static/chi-feng/main/Simulation.js?v=efcc9372"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
+    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="8.3. Bayesian Linear Regression" href="sec-bayesian-linear-regression.html" />
@@ -719,7 +736,7 @@ document.write(`
 <li><p>Do model checking.</p></li>
 </ol>
 </div>
-<p>In this chapter we elaborate on these steps. We start with a condensed description of a Bayesian workflow for rigorous scientific inference. It is based on the more extensive exposition in the Methods Primer by Van De Schoot et al. <span id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id62" title="Rens van de Schoot, Sarah Depaoli, Ruth King, Bianca Kramer, Kaspar Märtens, Mahlet G. Tadesse, Marina Vannucci, Andrew Gelman, Duco Veen, Joukje Willemsen, and Christopher Yau. Bayesian statistics and modelling. Nat Rev Methods Primers, 1:1, 2021. doi:10.1038/s43586-020-00001-2.">vandSchootDK+21</a>]</span>.</p>
+<p>In this chapter we elaborate on these steps. We start with a condensed description of a Bayesian workflow for rigorous scientific inference. It is based on the more extensive exposition in the Methods Primer by Van De Schoot et al. <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id62" title="Rens van de Schoot, Sarah Depaoli, Ruth King, Bianca Kramer, Kaspar Märtens, Mahlet G. Tadesse, Marina Vannucci, Andrew Gelman, Duco Veen, Joukje Willemsen, and Christopher Yau. Bayesian statistics and modelling. Nat Rev Methods Primers, 1:1, 2021. doi:10.1038/s43586-020-00001-2.">vandSchootDK+21</a>]</span>.</p>
 <p>This formulation divides a typical Bayesian workflow into three main steps (see <a class="reference internal" href="#fig-bayesianworkflow-research-cycle"><span class="std std-numref">Fig. 8.7</span></a>): (i) capturing available knowledge about given parameters in a statistical model via the prior distribution (typically performed before data collection); (ii) determining the likelihood function using the information about the data generating process; and (iii) combining both the prior distribution and the likelihood function using Bayes’ theorem in the form of the posterior distribution. The posterior distribution is used to conduct inferences.
 These steps correspond to those we have introduced, except that step 4 is not made explicit.
 In the following subsections we expand upon each step.</p>
@@ -727,7 +744,7 @@ In the following subsections we expand upon each step.</p>
 <a class="reference internal image-reference" href="../../../_images/2048px-Bayesian_research_cycle-mod1.png"><img alt="../../../_images/2048px-Bayesian_research_cycle-mod1.png" src="../../../_images/2048px-Bayesian_research_cycle-mod1.png" style="height: 600px;" />
 </a>
 <figcaption>
-<p><span class="caption-number">Fig. 8.7 </span><span class="caption-text">The Bayesian research cycle. The steps needed for a research cycle using Bayesian statistics include formalizing prior distributions based on background knowledge and prior elicitation; determining the likelihood function by specifying a data-generating model and including observed data; and obtaining the posterior distribution as a function of both the specified prior and the likelihood function. After obtaining the posterior results, inferences can be made that can then be used to start a new research cycle. Attribution: Stat math, <a class="reference external" href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>, via Wikimedia Commons. See also <span id="id2">[<a class="reference internal" href="../../Backmatter/bibliography.html#id62" title="Rens van de Schoot, Sarah Depaoli, Ruth King, Bianca Kramer, Kaspar Märtens, Mahlet G. Tadesse, Marina Vannucci, Andrew Gelman, Duco Veen, Joukje Willemsen, and Christopher Yau. Bayesian statistics and modelling. Nat Rev Methods Primers, 1:1, 2021. doi:10.1038/s43586-020-00001-2.">vandSchootDK+21</a>]</span>.</span><a class="headerlink" href="#fig-bayesianworkflow-research-cycle" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 8.7 </span><span class="caption-text">The Bayesian research cycle. The steps needed for a research cycle using Bayesian statistics include formalizing prior distributions based on background knowledge and prior elicitation; determining the likelihood function by specifying a data-generating model and including observed data; and obtaining the posterior distribution as a function of both the specified prior and the likelihood function. After obtaining the posterior results, inferences can be made that can then be used to start a new research cycle. Attribution: Stat math, <a class="reference external" href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>, via Wikimedia Commons. See also <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../../Backmatter/bibliography.html#id62" title="Rens van de Schoot, Sarah Depaoli, Ruth King, Bianca Kramer, Kaspar Märtens, Mahlet G. Tadesse, Marina Vannucci, Andrew Gelman, Duco Veen, Joukje Willemsen, and Christopher Yau. Bayesian statistics and modelling. Nat Rev Methods Primers, 1:1, 2021. doi:10.1038/s43586-020-00001-2.">vandSchootDK+21</a>]</span>.</span><a class="headerlink" href="#fig-bayesianworkflow-research-cycle" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <section id="experimentation-of-the-statistical-model">
@@ -800,12 +817,12 @@ compatibility.</p>
 </ol>
 </section>
 </div><p>Note that the first checklist matches up well with the Bayesian workflow.</p>
-<p>The second checklist, labeled WAMBS (when to Worry and how to Avoid the Misuse of Bayesian Statistics), originates in work by statistics experts from a wide range of application areas <span id="id3">[<a class="reference internal" href="../../Backmatter/bibliography.html#id62" title="Rens van de Schoot, Sarah Depaoli, Ruth King, Bianca Kramer, Kaspar Märtens, Mahlet G. Tadesse, Marina Vannucci, Andrew Gelman, Duco Veen, Joukje Willemsen, and Christopher Yau. Bayesian statistics and modelling. Nat Rev Methods Primers, 1:1, 2021. doi:10.1038/s43586-020-00001-2.">vandSchootDK+21</a>]</span>. This checklist also includes a number of recommendations for monitoring the MCMC convergence (more details in Part III).</p>
+<p>The second checklist, labeled WAMBS (when to Worry and how to Avoid the Misuse of Bayesian Statistics), originates in work by statistics experts from a wide range of application areas <span class="bibtex-citation" id="id3">[<a class="reference internal" href="../../Backmatter/bibliography.html#id62" title="Rens van de Schoot, Sarah Depaoli, Ruth King, Bianca Kramer, Kaspar Märtens, Mahlet G. Tadesse, Marina Vannucci, Andrew Gelman, Duco Veen, Joukje Willemsen, and Christopher Yau. Bayesian statistics and modelling. Nat Rev Methods Primers, 1:1, 2021. doi:10.1038/s43586-020-00001-2.">vandSchootDK+21</a>]</span>. This checklist also includes a number of recommendations for monitoring the MCMC convergence (more details in Part III).</p>
 <div class="proof remark admonition" id="remark:BayesianWorkflow:wambs-checklist">
 <p class="admonition-title"><span class="caption-number">Remark 8.3 </span> (The WAMBS checklist)</p>
 <section class="remark-content" id="proof-content">
 <p>WAMBS-v2, an updated version of the WAMBS (when to Worry and how to Avoid the
-Misuse of Bayesian Statistics) checklist. Reproduced from <span id="id4">[<a class="reference internal" href="../../Backmatter/bibliography.html#id62" title="Rens van de Schoot, Sarah Depaoli, Ruth King, Bianca Kramer, Kaspar Märtens, Mahlet G. Tadesse, Marina Vannucci, Andrew Gelman, Duco Veen, Joukje Willemsen, and Christopher Yau. Bayesian statistics and modelling. Nat Rev Methods Primers, 1:1, 2021. doi:10.1038/s43586-020-00001-2.">vandSchootDK+21</a>]</span>.</p>
+Misuse of Bayesian Statistics) checklist. Reproduced from <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../../Backmatter/bibliography.html#id62" title="Rens van de Schoot, Sarah Depaoli, Ruth King, Bianca Kramer, Kaspar Märtens, Mahlet G. Tadesse, Marina Vannucci, Andrew Gelman, Duco Veen, Joukje Willemsen, and Christopher Yau. Bayesian statistics and modelling. Nat Rev Methods Primers, 1:1, 2021. doi:10.1038/s43586-020-00001-2.">vandSchootDK+21</a>]</span>.</p>
 <ol class="arabic simple">
 <li><p>Ensure the prior distributions and the model or likelihood are well understood and described in detail in the text. Prior-predictive checking can help identify any prior–data conflict.</p></li>
 <li><p>Assess each parameter for convergence, using multiple convergence diagnostics

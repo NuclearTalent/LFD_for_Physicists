@@ -66,6 +66,23 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/Advanced-Bayesian-methods/model-selection/sec-evidence-calculations';</script>
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
+    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
+    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
+    <script src="../../../_static/chi-feng/main/Simulation.js?v=efcc9372"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
+    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="14.4. Demo: Evidence calculation for EFT expansions" href="demo-evidence-calculation-for-eft-expansions.html" />
@@ -712,36 +729,36 @@ document.write(`
 <h2>Laplace’s method<a class="headerlink" href="#laplaces-method" title="Link to this heading">#</a></h2>
 <p>The idea behind Laplace’s method is simple, namely to use the Taylor expansion of a function around its peak to construct a Gaussian approximation which can be easily integrated. Let us consider an unnormalized density <span class="math notranslate nohighlight">\(P^*(\theta)\)</span> that has a peak at a point <span class="math notranslate nohighlight">\(\theta_0\)</span>.
 We are interested in the evidence, <span class="math notranslate nohighlight">\(Z_P\)</span>, which is given by the integral</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fcaf67f0-e464-4b0a-bf11-ae6f67de6492">
-<span class="eqno">(14.14)<a class="headerlink" href="#equation-fcaf67f0-e464-4b0a-bf11-ae6f67de6492" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-29dde596-e53b-45ae-9313-96f509857e6d">
+<span class="eqno">(14.14)<a class="headerlink" href="#equation-29dde596-e53b-45ae-9313-96f509857e6d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 Z_P = \int P^*(\theta) d^K\theta,
 \end{equation} \]</div>
 <p>where we consider the general case in which <span class="math notranslate nohighlight">\(\theta\)</span> is a <span class="math notranslate nohighlight">\(K\)</span>-dimensional vector of parameters.</p>
 <p>We Taylor-expand the logarithm <span class="math notranslate nohighlight">\(\log P^*\)</span> around the peak:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dc1c215d-f705-48f8-a8e4-480420822ecf">
-<span class="eqno">(14.15)<a class="headerlink" href="#equation-dc1c215d-f705-48f8-a8e4-480420822ecf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5dd428db-8d78-465c-bf9f-d1cab8ad2508">
+<span class="eqno">(14.15)<a class="headerlink" href="#equation-5dd428db-8d78-465c-bf9f-d1cab8ad2508" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \log P^*(\theta) = \log P^*(\theta_0) - \frac{1}{2} (\theta - \theta_0)^T \Sigma^{-1} (\theta - \theta_0) + \ldots,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\Sigma^{-1} \equiv H\)</span> is the (Hessian) matrix of second derivatives at the maximum</p>
-<div class="amsmath math notranslate nohighlight" id="equation-86a37f1f-bd35-429a-9d95-f699f65eee56">
-<span class="eqno">(14.16)<a class="headerlink" href="#equation-86a37f1f-bd35-429a-9d95-f699f65eee56" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-53ce2f81-d15b-4722-a18c-3f6c766a90b5">
+<span class="eqno">(14.16)<a class="headerlink" href="#equation-53ce2f81-d15b-4722-a18c-3f6c766a90b5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 H_{ij} = - \left. \frac{\partial^2}{\partial \theta_i \partial \theta_j}  \log P^*(\theta)\right|_{\theta=\theta_0}.
 \end{equation}\]</div>
 <p>By truncating the Taylor expansion at the second order we find that <span class="math notranslate nohighlight">\(P^*(\theta)\)</span>
 is approximated by an unnormalized Gaussian,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7e7e394c-c92e-4f9d-ab62-a58179fae54e">
-<span class="eqno">(14.17)<a class="headerlink" href="#equation-7e7e394c-c92e-4f9d-ab62-a58179fae54e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-639df64b-35a3-4f12-9d8b-376f8ff783a1">
+<span class="eqno">(14.17)<a class="headerlink" href="#equation-639df64b-35a3-4f12-9d8b-376f8ff783a1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^*(\theta) \approx P^*(\theta_0) \exp \left[ - \frac{1}{2}(\theta - \theta_0)^T \Sigma^{-1} (\theta - \theta_0) \right].
 \end{equation}\]</div>
 <p>The integral of this Gaussian is given by <span class="math notranslate nohighlight">\(P^*(\theta_0)\)</span> times (the inverse of) its normalization constant. Thus we approximate <span class="math notranslate nohighlight">\(Z_P\)</span> by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8c3d2b9f-8f6c-4c10-b3e6-e31fe7828e17">
-<span class="eqno">(14.18)<a class="headerlink" href="#equation-8c3d2b9f-8f6c-4c10-b3e6-e31fe7828e17" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ef5244fc-501e-4bc6-bc07-ad04f2066cdd">
+<span class="eqno">(14.18)<a class="headerlink" href="#equation-ef5244fc-501e-4bc6-bc07-ad04f2066cdd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 Z_P \approx P^*(\theta_0) \sqrt{\frac{(2\pi)^K}{\det\Sigma^{-1}}}.
 \end{equation}\]</div>
 <p>Predictions can then be made using this approximation. Physicists also call this widely-used approximation the saddle-point approximation.</p>
 <p>Note, in particular, that if we consider a chi-squared likelihood: <span class="math notranslate nohighlight">\(P^*(\theta) = \mathcal{L}(D|\theta) = \exp \left( -\frac{1}{2} \chi^2(\theta)\right)\)</span>, then we get</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5ad79424-4a1f-44fa-be84-910d8e95d0ed">
-<span class="eqno">(14.19)<a class="headerlink" href="#equation-5ad79424-4a1f-44fa-be84-910d8e95d0ed" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cf459cf6-ce99-49c8-9b86-4abf71ef66ed">
+<span class="eqno">(14.19)<a class="headerlink" href="#equation-cf459cf6-ce99-49c8-9b86-4abf71ef66ed" title="Permalink to this equation">#</a></span>\[\begin{equation}
 Z_P \approx \exp \left( -\frac{1}{2} \chi^2(\theta_0)\right) \sqrt{\frac{(4\pi)^K}{\det\Sigma^{-1}}},
 \end{equation}\]</div>
 <p>where there is a factor <span class="math notranslate nohighlight">\(2^{K/2}\)</span> that comes from the extra factor <span class="math notranslate nohighlight">\(1/2\)</span> multiplying the covariance matrix <span class="math notranslate nohighlight">\(\Sigma^{-1}\)</span> and therefore appearing in all <span class="math notranslate nohighlight">\(K\)</span> eigenvalues.</p>
@@ -750,13 +767,13 @@ Z_P \approx \exp \left( -\frac{1}{2} \chi^2(\theta_0)\right) \sqrt{\frac{(4\pi)^
 <section id="normalization-of-a-multivariate-gaussian">
 <h2>Normalization of a multivariate Gaussian<a class="headerlink" href="#normalization-of-a-multivariate-gaussian" title="Link to this heading">#</a></h2>
 <p>The fact that the normalizing constant of a Gaussian is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f4336389-9cdf-43b2-b6a9-c234e846ef5b">
-<span class="eqno">(14.20)<a class="headerlink" href="#equation-f4336389-9cdf-43b2-b6a9-c234e846ef5b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ffe959f5-9281-43c8-8f9a-63c95c9e8564">
+<span class="eqno">(14.20)<a class="headerlink" href="#equation-ffe959f5-9281-43c8-8f9a-63c95c9e8564" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \int d^K\theta \exp \left[ - \frac{1}{2}\theta^T \Sigma^{-1} \theta \right] = \sqrt{\frac{(2\pi)^K}{\det\Sigma^{-1}}},
 \end{equation}\]</div>
 <p>can be proved by making an orthogonal transformation into the basis <span class="math notranslate nohighlight">\(u\)</span> in which <span class="math notranslate nohighlight">\(\Sigma\)</span> is transformed into a diagonal matrix of eigenvalues <span class="math notranslate nohighlight">\(\lambda_i\)</span>. The integral then separates into a product of one-dimensional integrals, each of the form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a0ef801b-7e6d-496a-a179-133efd948e37">
-<span class="eqno">(14.21)<a class="headerlink" href="#equation-a0ef801b-7e6d-496a-a179-133efd948e37" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d9486b05-dcfc-4c73-b4b8-c86bce638032">
+<span class="eqno">(14.21)<a class="headerlink" href="#equation-d9486b05-dcfc-4c73-b4b8-c86bce638032" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \int du_i \exp \left[ -\frac{1}{2} \lambda_i u_i^2 \right] = \sqrt{\frac{2\pi}{\lambda_i}}
 \end{equation}\]</div>
 <p>The product of the eigenvalues <span class="math notranslate nohighlight">\(\lambda_i\)</span> is the determinant of <span class="math notranslate nohighlight">\(\Sigma^{-1}\)</span>.</p>
@@ -771,26 +788,26 @@ Z_P \approx \exp \left( -\frac{1}{2} \chi^2(\theta_0)\right) \sqrt{\frac{(4\pi)^
 <section id="two-independent-parameters">
 <h3>Two independent parameters<a class="headerlink" href="#two-independent-parameters" title="Link to this heading">#</a></h3>
 <p>Independence implies that <span class="math notranslate nohighlight">\(p(x,y) = p_x(x) p_y(y)\)</span>. We will again consider the log-pdf <span class="math notranslate nohighlight">\(L(x,y) = \log\left( p(x,y) \right)\)</span> which will then be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-84cad4dd-2e19-4ff5-b826-6b7bed582eff">
-<span class="eqno">(14.22)<a class="headerlink" href="#equation-84cad4dd-2e19-4ff5-b826-6b7bed582eff" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f3aa1ca8-b856-4085-80d6-327f3aced8e2">
+<span class="eqno">(14.22)<a class="headerlink" href="#equation-f3aa1ca8-b856-4085-80d6-327f3aced8e2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 L(x,y) = L_x(x) + L_y(y).
 \end{equation}\]</div>
 <p>At the mode we will have <span class="math notranslate nohighlight">\(\partial p / \partial x = \partial p_x / \partial x = \partial L_x / \partial x = 0\)</span>, and similarly <span class="math notranslate nohighlight">\(\partial L_y / \partial y = 0\)</span>.</p>
 <p>The second derivatives will be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1ea4f083-f13a-467b-a14e-91eec7db3bdc">
-<span class="eqno">(14.23)<a class="headerlink" href="#equation-1ea4f083-f13a-467b-a14e-91eec7db3bdc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-61bf42c3-df2a-4bb1-a947-31bbc07f77b3">
+<span class="eqno">(14.23)<a class="headerlink" href="#equation-61bf42c3-df2a-4bb1-a947-31bbc07f77b3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 A \equiv \left. \frac{\partial^2 L_x}{\partial x^2} \right|_{x=x_0} &lt; 0, \quad
 B \equiv \left. \frac{\partial^2 L_y}{\partial y^2} \right|_{y=y_0} &lt; 0, \quad
 C \equiv \left. \frac{\partial L(x,y)}{\partial x \partial y} \right|_{x=x_0,y=y_0} = 0.
 \end{equation}\]</div>
 <p>such that our approximated (log) pdf near the mode will be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e1050680-bc48-4ce1-8aee-4600a28da0ec">
-<span class="eqno">(14.24)<a class="headerlink" href="#equation-e1050680-bc48-4ce1-8aee-4600a28da0ec" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-76a390b3-9a61-48c9-ac1a-8129f94696f8">
+<span class="eqno">(14.24)<a class="headerlink" href="#equation-76a390b3-9a61-48c9-ac1a-8129f94696f8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 L(x,y) = L(x_0, y_0) - \frac{1}{2} |A| (x-x_0)^2 - \frac{1}{2} |B| (y-y_0)^2.
 \end{equation}\]</div>
 <p>We could visualize this bivariate pdf by plotting iso-probability contours. Or, equivalently, iso-log-probability contours which correspond to</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c65c21c5-f9e0-48e5-9db8-8ceff856630f">
-<span class="eqno">(14.25)<a class="headerlink" href="#equation-c65c21c5-f9e0-48e5-9db8-8ceff856630f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3693e83e-d42f-4096-8640-4e0e9889e1ab">
+<span class="eqno">(14.25)<a class="headerlink" href="#equation-3693e83e-d42f-4096-8640-4e0e9889e1ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
 |A| (x-x_0)^2 + |B| (y-y_0)^2 = \mathrm{constant}.
 \end{equation}\]</div>
 <p>This you should recognize as the equation for an ellipse with its center in <span class="math notranslate nohighlight">\((x_0, y_0)\)</span>, the principal axes corresponding to the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> directions, and with the width and height parameters <span class="math notranslate nohighlight">\(\sigma_x = 1/\sqrt{|A|}\)</span> and <span class="math notranslate nohighlight">\(\sigma_y = 1/\sqrt{|B|}\)</span>, respectively.</p>
@@ -798,22 +815,22 @@ L(x,y) = L(x_0, y_0) - \frac{1}{2} |A| (x-x_0)^2 - \frac{1}{2} |B| (y-y_0)^2.
 <section id="two-dependent-parameters">
 <h3>Two dependent parameters<a class="headerlink" href="#two-dependent-parameters" title="Link to this heading">#</a></h3>
 <p>For two dependent parameters we cannot separate <span class="math notranslate nohighlight">\(p(x,y)\)</span> into a product of one-dimensional pdf:s. Instead, the Taylor expansion for the bivariate log-pdf <span class="math notranslate nohighlight">\(L(x,y)\)</span> around the mode <span class="math notranslate nohighlight">\((x_0,y_0)\)</span> gives</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7459f109-3b51-4b30-abcf-22ff87ba7007">
-<span class="eqno">(14.26)<a class="headerlink" href="#equation-7459f109-3b51-4b30-abcf-22ff87ba7007" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7d0817f3-d4d1-4113-be41-2f47836c4dac">
+<span class="eqno">(14.26)<a class="headerlink" href="#equation-7d0817f3-d4d1-4113-be41-2f47836c4dac" title="Permalink to this equation">#</a></span>\[\begin{equation}
 L(x,y) \approx L(x_0,y_0) + \frac{1}{2} \begin{pmatrix} x-x_0 &amp; y-y_0 \end{pmatrix}
 H
 \begin{pmatrix} x-x_0 \\ y-y_0 \end{pmatrix},
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(H\)</span> is the symmetric Hessian matrix</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7d0edfcf-ae53-4141-92ce-86fe99cb70ef">
-<span class="eqno">(14.27)<a class="headerlink" href="#equation-7d0edfcf-ae53-4141-92ce-86fe99cb70ef" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1b34b48d-bd15-4a78-988d-0f879480ef75">
+<span class="eqno">(14.27)<a class="headerlink" href="#equation-1b34b48d-bd15-4a78-988d-0f879480ef75" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{pmatrix}
 A &amp; C \\ C &amp; B
 \end{pmatrix}, 
 \end{equation}\]</div>
 <p>with elements</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cea93746-966b-4934-9345-1d20f5c77080">
-<span class="eqno">(14.28)<a class="headerlink" href="#equation-cea93746-966b-4934-9345-1d20f5c77080" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-33828a88-4ca4-4f89-857b-8649d7e6fcc5">
+<span class="eqno">(14.28)<a class="headerlink" href="#equation-33828a88-4ca4-4f89-857b-8649d7e6fcc5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 A = \left. \frac{\partial^2 L}{\partial x^2} \right|_{x_0,y_0} &lt; 0, \quad
 B = \left. \frac{\partial^2 L}{\partial y^2} \right|_{x_0,y_0} &lt; 0, \quad
 C = \left. \frac{\partial^2 L}{\partial x \partial y} \right|_{x_0,y_0} \neq 0.
@@ -825,19 +842,19 @@ C = \left. \frac{\partial^2 L}{\partial x \partial y} \right|_{x_0,y_0} \neq 0.
 <li><p>Take a minute to consider what that implies.</p></li>
 </ul>
 <p>Let us be explicit. The Hessian can be diagonalized (we will also change sign)</p>
-<div class="amsmath math notranslate nohighlight" id="equation-97ce4088-7f22-45c3-af25-64d7f8d5cfb8">
-<span class="eqno">(14.29)<a class="headerlink" href="#equation-97ce4088-7f22-45c3-af25-64d7f8d5cfb8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-67f5e071-8875-481e-b8b7-e22270f1072b">
+<span class="eqno">(14.29)<a class="headerlink" href="#equation-67f5e071-8875-481e-b8b7-e22270f1072b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 -H = U \begin{pmatrix} a &amp; 0 \\ 0 &amp; b \end{pmatrix} U^{-1},
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span> are the (positive) eigenvalues of <span class="math notranslate nohighlight">\(-H\)</span>, and <span class="math notranslate nohighlight">\(U = \begin{pmatrix} a_x &amp; b_x \\ a_y &amp; b_y \end{pmatrix}\)</span> is constructed from the eigenvectors. Defining a new set of translated and linearly combined parameters</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b369a0ac-114e-4488-960d-d7d9c8f10a63">
-<span class="eqno">(14.30)<a class="headerlink" href="#equation-b369a0ac-114e-4488-960d-d7d9c8f10a63" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b8241a5d-bf7e-46fd-bf5e-674415d0e3e7">
+<span class="eqno">(14.30)<a class="headerlink" href="#equation-b8241a5d-bf7e-46fd-bf5e-674415d0e3e7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x' = a_x (x - x_0) + a_y (y - y_0) \\
 y' = b_x (x - x_0) + b_y (y - y_0) 
 \end{equation}\]</div>
 <p>we find that the log-pdf in the new coordinates becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-69667094-b655-4616-b682-126a591a6a38">
-<span class="eqno">(14.31)<a class="headerlink" href="#equation-69667094-b655-4616-b682-126a591a6a38" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bcbc2b32-3193-4b78-a3ff-61f290741cce">
+<span class="eqno">(14.31)<a class="headerlink" href="#equation-bcbc2b32-3193-4b78-a3ff-61f290741cce" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{gathered}
 L(x',y') &amp;= L(0,0) - \frac{1}{2} \begin{pmatrix} x' &amp; y' \end{pmatrix}
 \begin{pmatrix} a &amp; 0 \\ 0 &amp; b \end{pmatrix}
