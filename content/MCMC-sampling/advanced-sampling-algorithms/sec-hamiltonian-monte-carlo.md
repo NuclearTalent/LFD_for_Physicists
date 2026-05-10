@@ -29,16 +29,26 @@ One of the most widespread techniques in contemporary samplers is Hamiltonian Mo
 which is a Metropolis method that uses gradient information to reduce the random-walk behavior and to collect effectively independent samples. 
 It was introduced in lattice QCD by Duane et al. {cite}`Duane:1987de` and was originally named Hybrid Monte Carlo as they were combining molecular dynamics with the Metropolis MCMC algorithm. A very good and detailed review of HMC is written by Radford Neal and is contained in the Handbook of Markov Chain Monte Carlo {cite}`brooks2011handbook`.
 
-To establish some intuition about HMC, we return to the excellent set of interactive demos by Chi Feng at [https://chi-feng.github.io/mcmc-demo/](https://chi-feng.github.io/mcmc-demo/) and their adaptation by Richard McElreath at [http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/](http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/). 
+To establish some intuition about HMC, we return to the excellent set of [interactive demos by Chi Feng](https://chi-feng.github.io/mcmc-demo/), which are reproduced here.
+You could start with the HMC demo or refresh your memory first on MH sampling.
 
-The McElreath blog piece forcefully advocates abandoning Metropolis-Hasting (MH) sampling in favor of HMC. Let's summarize the argument.
+```{raw} html
+<iframe src="../../../_static/chi-feng/index_new.html"
+    width="100%"
+    height="600"
+    style="border: none;"
+    scrolling="no">
+</iframe>
+``` 
+
+Let's summarize the argument for abandoning Metropolis-Hasting (MH) sampling in favor of HMC.
 First recall the random walk MH:
 1. Make a random proposal for new parameter values (a step in parameter space, indicated in the visualization by an arrow).
 2. Aceept (green arrow) or reject (red arrow) based on a Metropolis criterion (which is not deterministic but has a random element).
 This is *diffusion* (i.e., a random walk), so it is not efficient in exploring the parameter space and needs special tuning to avoid too high a rejection rate.
 The donut shape in the simulation is common in higher dimensions and it is difficult to explore. (I.e., consider a multidimensional uncorrelated Gaussian distribution. In spherical coordinates the distribution is $\propto r^n e^{-r^2/2\sigma^2}$, so the marginalized distribution will be peaked away from $r=0$.)
 
-Now consider the "Better living through Physics" part, which highlights an HMC simulation.
+Now consider the HMC simulation.
 The idea is that we map our parameter vector $\thetavec$ of length $n$ to a particle in an $n$-dimensional space. The surface is an $n$-dimensional (inverted) bowl with the shape given by minus-log(target distribution), where the target distribution is the posterior.
 Now treat the system as frictionless and "flick" the particle in a random direction, so it travels across the bowl.
 
@@ -79,7 +89,7 @@ Check the donut example: HMC works very well!
 ```
 
 
-There is a further improvement called NUTS, which stands for "no-U-turn sampler". 
+There is a further improvement called NUTS, which stands for "no-U-turn sampler" (there is a separate demo). 
 The idea is to address the problem that HMC needs to be told how many steps to take before another random flick.
 Too few steps and the samples are too similar;
 too many steps are also too similar.
