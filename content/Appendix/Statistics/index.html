@@ -83,6 +83,11 @@
     <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
     <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="38. Overview of scientific modeling material" href="../Scientific-modeling/index.html" />
@@ -830,8 +835,8 @@ document.write(`
 <p class="admonition-title"><span class="caption-number">Definition 37.2 </span> (Independent events)</p>
 <section class="definition-content" id="proof-content">
 <p>Two events <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> are independent if</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5202557f-8af8-40b4-9f45-678c1451e7c0">
-<span class="eqno">(37.1)<a class="headerlink" href="#equation-5202557f-8af8-40b4-9f45-678c1451e7c0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fcef59ab-4aa8-4cd8-908f-b90df0bd8aa1">
+<span class="eqno">(37.1)<a class="headerlink" href="#equation-fcef59ab-4aa8-4cd8-908f-b90df0bd8aa1" title="Permalink to this equation">#</a></span>\[\begin{equation}
   \prob (A, B) = \prob (A)\prob (B)
 \end{equation}\]</div>
 </section>
@@ -871,8 +876,8 @@ document.write(`
 <section class="definition-content" id="proof-content">
 <p>A random (or stochastic) variable is a function <span class="math notranslate nohighlight">\(X: S \to \mathbb{R}\)</span>.</p>
 <p>The <strong>distribution function</strong> <span class="math notranslate nohighlight">\(P\)</span> for a random variable <span class="math notranslate nohighlight">\(X\)</span> is the function <span class="math notranslate nohighlight">\(P : \mathbb{R} \to [0,1]\)</span>, given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a6f24425-b12b-4080-a7c0-a1581c0907de">
-<span class="eqno">(37.5)<a class="headerlink" href="#equation-a6f24425-b12b-4080-a7c0-a1581c0907de" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e98fcadc-eac8-4c06-b337-65688c69a448">
+<span class="eqno">(37.5)<a class="headerlink" href="#equation-e98fcadc-eac8-4c06-b337-65688c69a448" title="Permalink to this equation">#</a></span>\[\begin{equation}
     P(x) = \prob (X \leq x).
 \end{equation}\]</div>
 <p>We can write <span class="math notranslate nohighlight">\(P_X(x)\)</span> where it is necessary to emphasize the role of <span class="math notranslate nohighlight">\(X\)</span>.</p>
@@ -881,8 +886,8 @@ document.write(`
 <p class="admonition-title"><span class="caption-number">Definition 37.5 </span> (Joint probability distribution)</p>
 <section class="definition-content" id="proof-content">
 <p>The joint distribution function of a vector <span class="math notranslate nohighlight">\(\boldsymbol{X}\)</span> of random variables <span class="math notranslate nohighlight">\(\boldsymbol{X} = (X_1, X_2, \ldots, X_n)\)</span> is the function <span class="math notranslate nohighlight">\(P : \mathbb{R}^n \to [0,1]\)</span> given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-14815d5c-b6c7-4ebc-a53c-344bb0a544a9">
-<span class="eqno">(37.6)<a class="headerlink" href="#equation-14815d5c-b6c7-4ebc-a53c-344bb0a544a9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d5440d2b-ffac-43fa-9d43-cebadf6918f3">
+<span class="eqno">(37.6)<a class="headerlink" href="#equation-d5440d2b-ffac-43fa-9d43-cebadf6918f3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(\boldsymbol{x}) = \prob (\boldsymbol{X} \leq \boldsymbol{x}), \qquad x \in \mathbb{R}^n. 
 \end{equation}\]</div>
 <p>We can write <span class="math notranslate nohighlight">\(P_{\boldsymbol{X}}\)</span> where it is necessary to emphasize the role of <span class="math notranslate nohighlight">\(\boldsymbol{X}\)</span>.</p>
@@ -892,14 +897,14 @@ P(\boldsymbol{x}) = \prob (\boldsymbol{X} \leq \boldsymbol{x}), \qquad x \in \ma
 <p class="admonition-title"><span class="caption-number">Definition 37.6 </span> (Probability mass function)</p>
 <section class="definition-content" id="proof-content">
 <p>The random variable <span class="math notranslate nohighlight">\(X\)</span> is called <strong>discrete</strong> if it takes values only in some countable subset <span class="math notranslate nohighlight">\(\{ x_1, x_2, \ldots\}\)</span> of <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>. The function <span class="math notranslate nohighlight">\(p : \mathbb{R} \to [0,1]\)</span>, given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d8f18563-890e-4cdd-b1cd-e6e4a2ccfd87">
-<span class="eqno">(37.7)<a class="headerlink" href="#equation-d8f18563-890e-4cdd-b1cd-e6e4a2ccfd87" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-678fe579-fa39-4d0f-9347-6c38aeeaa830">
+<span class="eqno">(37.7)<a class="headerlink" href="#equation-678fe579-fa39-4d0f-9347-6c38aeeaa830" title="Permalink to this equation">#</a></span>\[\begin{equation}
     p(x) = \prob (X = x),
 \end{equation}\]</div>
 <p>is known as its <strong>probability mass function</strong>. Again, we can write <span class="math notranslate nohighlight">\(p_X(x)\)</span> where it is necessary to emphasize the role of <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <p>The <strong>joint probability mass function</strong> of a random vector <span class="math notranslate nohighlight">\(\boldsymbol{X} = (X_1, X_2, \ldots, X_n)\)</span> is the function <span class="math notranslate nohighlight">\(p : \mathbb{R}^n \to [0,1]\)</span> given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5bbf7ca4-38ea-4f9f-b6b3-ea6bf0cc1c24">
-<span class="eqno">(37.8)<a class="headerlink" href="#equation-5bbf7ca4-38ea-4f9f-b6b3-ea6bf0cc1c24" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-239c884f-0240-447f-b17e-9ef38cdd3374">
+<span class="eqno">(37.8)<a class="headerlink" href="#equation-239c884f-0240-447f-b17e-9ef38cdd3374" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(x_1, x_2, \ldots, x_n) = \prob (X_1=x_1, X_2=x_2, \ldots, X_n=x_n). 
 \end{equation}\]</div>
 </section>
@@ -907,14 +912,14 @@ p(x_1, x_2, \ldots, x_n) = \prob (X_1=x_1, X_2=x_2, \ldots, X_n=x_n).
 <p class="admonition-title"><span class="caption-number">Definition 37.7 </span> (Probability density function)</p>
 <section class="definition-content" id="proof-content">
 <p>The random variable <span class="math notranslate nohighlight">\(X\)</span> is called <strong>continuous</strong> if its distribution function can be expressed as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2712721e-0a06-49ac-8e06-c7cd461cae6b">
-<span class="eqno">(37.9)<a class="headerlink" href="#equation-2712721e-0a06-49ac-8e06-c7cd461cae6b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-817ac763-5419-4509-809d-cc43b34ca6fc">
+<span class="eqno">(37.9)<a class="headerlink" href="#equation-817ac763-5419-4509-809d-cc43b34ca6fc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(x) = \int_{-\infty}^x p(z) dz, \qquad x \in \mathbb{R}, 
 \end{equation}\]</div>
 <p>for some integrable function <span class="math notranslate nohighlight">\(p : \mathbb{R} \to [0,\infty)\)</span> called the <strong>probability density function</strong> (PDF). Again, we can write <span class="math notranslate nohighlight">\(p_X(x)\)</span> where it is necessary to emphasize the role of <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <p>The <strong>joint probability density function</strong> of a random vector <span class="math notranslate nohighlight">\(\boldsymbol{X} = (X_1, \ldots, X_n)\)</span> of continuous variables is the function <span class="math notranslate nohighlight">\(p : \mathbb{R}^n \to [0,\infty)\)</span> given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-39bc6756-10b1-4821-a5e7-1a4541e8f219">
-<span class="eqno">(37.10)<a class="headerlink" href="#equation-39bc6756-10b1-4821-a5e7-1a4541e8f219" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9816b01c-6944-4be6-b684-c4d95924737d">
+<span class="eqno">(37.10)<a class="headerlink" href="#equation-9816b01c-6944-4be6-b684-c4d95924737d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(x_1, \ldots, x_n) = \int_{u_1=-\infty}^{x_1} \ldots \int_{u_n=-\infty}^{x_n} p(u_1, \ldots, u_n) du_1, \ldots, du_n. 
 \end{equation}\]</div>
 </section>
@@ -923,30 +928,30 @@ P(x_1, \ldots, x_n) = \int_{u_1=-\infty}^{x_1} \ldots \int_{u_n=-\infty}^{x_n} p
 <p>Following the above definition, there are some properties that all PDFs must have. Here we list some important ones using the simplest example of a single (continuous) random variable <span class="math notranslate nohighlight">\(X\)</span></p>
 <ol class="arabic">
 <li><p>The first one is positivity</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f69fc387-6c4d-43be-b94f-17fb2afc5591">
-<span class="eqno">(37.11)<a class="headerlink" href="#equation-f69fc387-6c4d-43be-b94f-17fb2afc5591" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c001b652-70be-4693-9703-5d21e0285da2">
+<span class="eqno">(37.11)<a class="headerlink" href="#equation-c001b652-70be-4693-9703-5d21e0285da2" title="Permalink to this equation">#</a></span>\[\begin{equation}
  0 \leq p(x).
  \end{equation}\]</div>
 <p>Naturally, it would be nonsensical for any of the values of the domain to occur with a probability density less than <span class="math notranslate nohighlight">\(0\)</span>.</p>
 </li>
 <li><p>Also, the PDF must be normalized. That is, all the probabilities must add up
 to one.  The probability of <em>anything</em> to happen is always unity. For a continuous PDF this condition is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4e26519b-aed8-4b9f-8e1a-22eea24c4705">
-<span class="eqno">(37.12)<a class="headerlink" href="#equation-4e26519b-aed8-4b9f-8e1a-22eea24c4705" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c99c72b3-922e-4dc8-90bf-2b17d1a5fa9e">
+<span class="eqno">(37.12)<a class="headerlink" href="#equation-c99c72b3-922e-4dc8-90bf-2b17d1a5fa9e" title="Permalink to this equation">#</a></span>\[\begin{equation}
  \int_{-\infty}^\infty p(x)\,dx =  1.
 \end{equation}\]</div>
 <p>The corresponding condition for a discrete PDF is <span class="math notranslate nohighlight">\(\sum_{i} p(x_i) =  1\)</span>.</p>
 </li>
 <li><p>The probability for <em>any</em> specific outcome <span class="math notranslate nohighlight">\(x\)</span> of a continuous variable <span class="math notranslate nohighlight">\(X\)</span> is zero</p>
-<div class="amsmath math notranslate nohighlight" id="equation-857fc226-ab86-40e1-96a1-4542ba249db6">
-<span class="eqno">(37.13)<a class="headerlink" href="#equation-857fc226-ab86-40e1-96a1-4542ba249db6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-192cc6ba-be62-4f10-95be-d436f313ba6a">
+<span class="eqno">(37.13)<a class="headerlink" href="#equation-192cc6ba-be62-4f10-95be-d436f313ba6a" title="Permalink to this equation">#</a></span>\[\begin{equation}
  \prob (X=x) =  0, \qquad \text{for all } x \in \mathbb{R},
 \end{equation}\]</div>
 <p>since probabilities will be computable from the integral measure <span class="math notranslate nohighlight">\(p(x) dx\)</span> and <span class="math notranslate nohighlight">\(\prob (X=x)\)</span> would correspond to <span class="math notranslate nohighlight">\(dx \to 0\)</span>.</p>
 </li>
 <li><p>Instead it makes more sense to discuss the probability for the outcome being within a domain. E.g., for the univariate case we can quantify</p>
-<div class="amsmath math notranslate nohighlight" id="equation-26102d11-7059-4047-90d4-eaec6cb541e4">
-<span class="eqno">(37.14)<a class="headerlink" href="#equation-26102d11-7059-4047-90d4-eaec6cb541e4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6a4b15d7-f742-4b77-a94f-d7cf9c24f9cd">
+<span class="eqno">(37.14)<a class="headerlink" href="#equation-6a4b15d7-f742-4b77-a94f-d7cf9c24f9cd" title="Permalink to this equation">#</a></span>\[\begin{equation}
  \prob (a \leq X \leq b) =  \int_a^b p(x) dx. 
 \end{equation}\]</div>
 <p>From which we can also note that PDFs are not dimensionless objects. We must have <span class="math notranslate nohighlight">\([p(x)] = [x]^{-1}\)</span> for the integral to produce a dimensionless probability.</p>
@@ -958,8 +963,8 @@ to one.  The probability of <em>anything</em> to happen is always unity. For a c
 <p class="admonition-title"><span class="caption-number">Property 37.1 </span> (Marginal density functions)</p>
 <section class="property-content" id="proof-content">
 <p>Given a joint density function <span class="math notranslate nohighlight">\(p(x,y)\)</span> of two random variables <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>, the (marginal) probability density function of <span class="math notranslate nohighlight">\(X\)</span> is obtained via marginalization</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9c9648bd-943b-41e1-9178-5eccccb46184">
-<span class="eqno">(37.15)<a class="headerlink" href="#equation-9c9648bd-943b-41e1-9178-5eccccb46184" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6718d344-355f-40cc-8485-6e443a0a0d39">
+<span class="eqno">(37.15)<a class="headerlink" href="#equation-6718d344-355f-40cc-8485-6e443a0a0d39" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(x) = \int_{-\infty}^\infty p(x,y) dy,
 \end{equation}\]</div>
 <p>and vice versa for <span class="math notranslate nohighlight">\(p(y)\)</span>.</p>
@@ -979,15 +984,15 @@ p(x,y) = p(x) p(y).
 <p class="admonition-title"><span class="caption-number">Definition 37.8 </span> (Conditional probability-distribution)</p>
 <section class="definition-content" id="proof-content">
 <p>The conditional distribution function of <span class="math notranslate nohighlight">\(Y\)</span> given <span class="math notranslate nohighlight">\(X=x\)</span> is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-71287523-8fd9-43ab-a190-75a9d40e2a78">
-<span class="eqno">(37.17)<a class="headerlink" href="#equation-71287523-8fd9-43ab-a190-75a9d40e2a78" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ab87219d-0729-47db-9dd4-895541d99c63">
+<span class="eqno">(37.17)<a class="headerlink" href="#equation-ab87219d-0729-47db-9dd4-895541d99c63" title="Permalink to this equation">#</a></span>\[\begin{equation}
   P_{Y \vert X}(y \vert x) = \int_{-\infty}^y \frac{p(x,y')}{p_X(x)} dy'
 \end{equation}\]</div>
 <p>for any <span class="math notranslate nohighlight">\(x\)</span> such that <span class="math notranslate nohighlight">\(p_X(x) &gt; 0\)</span>.</p>
 </section>
 </div><p>The integrand is then defined as the conditional PDF</p>
-<div class="amsmath math notranslate nohighlight" id="equation-95c1b243-9ad0-4257-92bf-641a67dfff8a">
-<span class="eqno">(37.18)<a class="headerlink" href="#equation-95c1b243-9ad0-4257-92bf-641a67dfff8a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f3226da6-a0f7-4601-ada3-e76d9cb680e9">
+<span class="eqno">(37.18)<a class="headerlink" href="#equation-f3226da6-a0f7-4601-ada3-e76d9cb680e9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p_{Y \vert X}(y \vert x) = \frac{p(x,y)}{p_X(x)} = \frac{p(x,y)}{\int_{-\infty}^{\infty} p(x,y) dy},
 \end{equation}\]</div>
 <p>for any <span class="math notranslate nohighlight">\(x\)</span> such that <span class="math notranslate nohighlight">\(p_X(x)&gt;0\)</span>.</p>
@@ -1004,20 +1009,20 @@ p_{Y \vert X}(y \vert x) = \frac{p(x,y)}{p_X(x)} = \frac{p(x,y)}{\int_{-\infty}^
 <p>Let <span class="math notranslate nohighlight">\(h(x)\)</span> be an arbitrary continuous function on the domain <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> of the continuous, random
 variable <span class="math notranslate nohighlight">\(X\)</span> whose PDF is <span class="math notranslate nohighlight">\(p(x)\)</span>. We define the <em>expectation value</em>
 of <span class="math notranslate nohighlight">\(h\)</span> with respect to <span class="math notranslate nohighlight">\(p\)</span> as follows</p>
-<div class="amsmath math notranslate nohighlight" id="equation-db91ab34-b7ec-4ac1-94a6-c6dcc24279eb">
-<span class="eqno">(37.19)<a class="headerlink" href="#equation-db91ab34-b7ec-4ac1-94a6-c6dcc24279eb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e55aa8d2-b3c7-4ad6-9302-ff062d3a227f">
+<span class="eqno">(37.19)<a class="headerlink" href="#equation-e55aa8d2-b3c7-4ad6-9302-ff062d3a227f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathbb{E}_p[h] = \int_{-\infty}^\infty \! h(x)p(x)\,dx .
 \end{equation}\]</div>
 <p>The corresponding definition for a discrete variable <span class="math notranslate nohighlight">\(X\)</span> is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1a7dc703-2a20-4b4b-9eee-5265c705113a">
-<span class="eqno">(37.20)<a class="headerlink" href="#equation-1a7dc703-2a20-4b4b-9eee-5265c705113a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-248a19d3-4de8-40ce-9b65-bb4ed67acbce">
+<span class="eqno">(37.20)<a class="headerlink" href="#equation-248a19d3-4de8-40ce-9b65-bb4ed67acbce" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathbb{E}_p[h] =  \sum_{i}\! h(x_i)p(x_i) .
 \end{equation}\]</div>
 </section>
 </div><p>Note that we usually drop the index <span class="math notranslate nohighlight">\(p\)</span> and just write <span class="math notranslate nohighlight">\(\mathbb{E}[h]\)</span>.</p>
 <p>A particularly useful class of expectation values are the <strong>moments</strong>. The <span class="math notranslate nohighlight">\(n\)</span>-th moment of the PDF <span class="math notranslate nohighlight">\(p(x)\)</span> is defined as follows</p>
-<div class="amsmath math notranslate nohighlight" id="equation-585a3790-d282-4df5-85cc-52da565ed0fb">
-<span class="eqno">(37.21)<a class="headerlink" href="#equation-585a3790-d282-4df5-85cc-52da565ed0fb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-035ee55e-7acd-4983-bebc-2c47cca638ef">
+<span class="eqno">(37.21)<a class="headerlink" href="#equation-035ee55e-7acd-4983-bebc-2c47cca638ef" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathbb{E}[X^n] = \int_{-\infty}^\infty \! x^n p(x)\,dx
 \end{equation}\]</div>
 <p>The zero-th moment <span class="math notranslate nohighlight">\(\mathbb{E}[1]\)</span> is just the normalization condition of
@@ -1028,8 +1033,8 @@ and is often denoted by the greek letter <span class="math notranslate nohighlig
 \mathbb{E}[X] \equiv \mu \equiv \int_{-\infty}^\infty x p(x)dx,
 \]</div>
 <p>for a continuous distribution and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1b7b1bb7-d5dc-41b2-ab83-e52d30c80e46">
-<span class="eqno">(37.23)<a class="headerlink" href="#equation-1b7b1bb7-d5dc-41b2-ab83-e52d30c80e46" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ad8d499e-f7dc-4cd8-ad94-ab2909f55f0d">
+<span class="eqno">(37.23)<a class="headerlink" href="#equation-ad8d499e-f7dc-4cd8-ad94-ab2909f55f0d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathbb{E}[X] \equiv \mu \equiv \sum_{i} x_i p(x_i),
 \end{equation}\]</div>
 <p>for a discrete distribution.</p>
@@ -1039,8 +1044,8 @@ PDF and is therefore sometimes called the expectation value of <span class="math
 <section id="central-moments-variance-and-covariance">
 <span id="sec-centralmoments"></span><h3>Central moments: Variance and Covariance<a class="headerlink" href="#central-moments-variance-and-covariance" title="Link to this heading">#</a></h3>
 <p>Another special case of expectation values is the set of <strong>central moments</strong>, with the <span class="math notranslate nohighlight">\(n\)</span>-th central moment defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-edaefbb5-cbb6-45ee-be38-407652eacc4e">
-<span class="eqno">(37.24)<a class="headerlink" href="#equation-edaefbb5-cbb6-45ee-be38-407652eacc4e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9219ab4e-a8bb-4df9-82ad-eb46dd531f66">
+<span class="eqno">(37.24)<a class="headerlink" href="#equation-9219ab4e-a8bb-4df9-82ad-eb46dd531f66" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right)^n \right] = \int_{-\infty}^\infty \! \left( x-\mathbb{E}[X] \right)^n p(x)\,dx .
 \end{equation}\]</div>
 <p>The zero-th and first central moments are both trivial; equal to <span class="math notranslate nohighlight">\(1\)</span> and
@@ -1049,14 +1054,14 @@ PDF and is therefore sometimes called the expectation value of <span class="math
 <p class="admonition-title"><span class="caption-number">Definition 37.10 </span> (Variance)</p>
 <section class="definition-content" id="proof-content">
 <p>The <strong>variance</strong>  of a random variable <span class="math notranslate nohighlight">\(X\)</span> is usually denoted <span class="math notranslate nohighlight">\(\sigma^2\)</span> or Var<span class="math notranslate nohighlight">\((X)\)</span> and is defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d782f2a5-bc91-44d0-8dca-85f7283b76c4">
-<span class="eqno">(37.25)<a class="headerlink" href="#equation-d782f2a5-bc91-44d0-8dca-85f7283b76c4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5edcec71-1c73-479f-9c70-a06854786137">
+<span class="eqno">(37.25)<a class="headerlink" href="#equation-5edcec71-1c73-479f-9c70-a06854786137" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \text{Var}(X) \equiv \sigma^2  \equiv \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right)^2 \right]
 \end{equation}\]</div>
 </section>
 </div><p>We note that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-88a58af3-7010-4aab-8e8f-72121ed8cf5d">
-<span class="eqno">(37.26)<a class="headerlink" href="#equation-88a58af3-7010-4aab-8e8f-72121ed8cf5d" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-9b006816-b02d-49df-8a7e-62e2b3ffcb01">
+<span class="eqno">(37.26)<a class="headerlink" href="#equation-9b006816-b02d-49df-8a7e-62e2b3ffcb01" title="Permalink to this equation">#</a></span>\[\begin{align}
 \sigma^2 &amp;= \int_{-\infty}^\infty (x-\mathbb{E}[X] )^2 p(x)dx\\
 &amp;=  \int_{-\infty}^\infty \left(x^2 - 2 x \mathbb{E}[X] +\mathbb{E}[X]^2\right)p(x)dx \\
 &amp; =  \mathbb{E}[X^2]  - 2 \mathbb{E}[X] \mathbb{E}[X]  + \mathbb{E}[X]^2 \\
@@ -1071,13 +1076,13 @@ qualitatively as the “spread” of <span class="math notranslate nohighlight">
 <p class="admonition-title"><span class="caption-number">Definition 37.11 </span> (Covariance and correlation)</p>
 <section class="definition-content" id="proof-content">
 <p>The <strong>covariance</strong>  of two random variables <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> is usually denoted <span class="math notranslate nohighlight">\(\sigma_{XY}^2\)</span> or <span class="math notranslate nohighlight">\(\text{Cov}(X,Y)\)</span> and is defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9ff8998e-37bf-4b32-996a-d65e32135661">
-<span class="eqno">(37.27)<a class="headerlink" href="#equation-9ff8998e-37bf-4b32-996a-d65e32135661" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-91f24328-11bb-4d50-9805-444cd9b6338b">
+<span class="eqno">(37.27)<a class="headerlink" href="#equation-91f24328-11bb-4d50-9805-444cd9b6338b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \text{Cov}(X,Y) \equiv \sigma_{XY}^2 \equiv \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right) \left( Y - \mathbb{E}[Y] \right)  \right].
 \end{equation}\]</div>
 <p>The <strong>correlation coefficient</strong> of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> is defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2a68e871-be93-443e-9c72-db21987a9dc7">
-<span class="eqno">(37.28)<a class="headerlink" href="#equation-2a68e871-be93-443e-9c72-db21987a9dc7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1b12ebdf-74b8-426c-b162-1fd69f6f92d6">
+<span class="eqno">(37.28)<a class="headerlink" href="#equation-1b12ebdf-74b8-426c-b162-1fd69f6f92d6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \rho_{XY} \equiv \frac{\text{Cov}(X,Y)}{\sqrt{\text{Var}(X)\text{Var}(Y)}},
 \end{equation}\]</div>
 <p>as long as the variances are non-zero.</p>
@@ -1092,14 +1097,14 @@ qualitatively as the “spread” of <span class="math notranslate nohighlight">
 <section id="the-uniform-distribution">
 <h3>The uniform distribution<a class="headerlink" href="#the-uniform-distribution" title="Link to this heading">#</a></h3>
 <p>The first one is the most basic PDF; namely the uniform distribution. This distribution is constant in a range <span class="math notranslate nohighlight">\([a,b]\)</span> and zero elsewhere. Thus, when a random variable <span class="math notranslate nohighlight">\(X\)</span> is uniformly distributed on <span class="math notranslate nohighlight">\([a,b]\)</span> we can write <span class="math notranslate nohighlight">\(X  \sim \mathcal{U}([a,b])\)</span> with</p>
-<div class="amsmath math notranslate nohighlight" id="equation-03619355-1af4-4ebb-adb2-fda07594844f">
-<span class="eqno">(37.29)<a class="headerlink" href="#equation-03619355-1af4-4ebb-adb2-fda07594844f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a78bdb58-e3fa-4281-8b93-0f44b380dfdb">
+<span class="eqno">(37.29)<a class="headerlink" href="#equation-a78bdb58-e3fa-4281-8b93-0f44b380dfdb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{U}\left( [a,b]\right) = \frac{1}{b-a}\theta(x-a)\theta(b-x).
 \label{eq:Statistics:unifromPDF}
 \end{equation}\]</div>
 <p>For <span class="math notranslate nohighlight">\(a=0\)</span> and <span class="math notranslate nohighlight">\(b=1\)</span> we have the standard uniform distribution</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fa4317f8-f5ae-4c1a-85a0-339cf08f3407">
-<span class="eqno">(37.30)<a class="headerlink" href="#equation-fa4317f8-f5ae-4c1a-85a0-339cf08f3407" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3fb3e16e-79bb-4882-84bb-530ff4f8c861">
+<span class="eqno">(37.30)<a class="headerlink" href="#equation-3fb3e16e-79bb-4882-84bb-530ff4f8c861" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{U}\left( [0,1]\right) = \left\{
 \begin{array}{ll}
 1 &amp; x \in [0,1],\\
@@ -1112,13 +1117,13 @@ qualitatively as the “spread” of <span class="math notranslate nohighlight">
 <section id="gaussian-distribution">
 <span id="sec-univariate-gaussian"></span><h3>Gaussian distribution<a class="headerlink" href="#gaussian-distribution" title="Link to this heading">#</a></h3>
 <p>The second one is the univariate Gaussian distribution (or normal distribution). A random variable <span class="math notranslate nohighlight">\(X \sim \mathcal{N}(\mu,\sigma^2)\)</span> is normally distributed with mean value <span class="math notranslate nohighlight">\(\mu\)</span> and standard deviation <span class="math notranslate nohighlight">\(\sigma\)</span> with</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a19f9b99-bcca-4886-8a1f-470339ca48ec">
-<span class="eqno">(37.31)<a class="headerlink" href="#equation-a19f9b99-bcca-4886-8a1f-470339ca48ec" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dd000218-d3b9-4947-aaac-afbf06123a03">
+<span class="eqno">(37.31)<a class="headerlink" href="#equation-dd000218-d3b9-4947-aaac-afbf06123a03" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{N}(\mu,\sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} \exp{(-\frac{(x-\mu)^2}{2\sigma^2})},
 \end{equation}\]</div>
 <p>the corresponding PDF. If <span class="math notranslate nohighlight">\(\mu=0\)</span> and <span class="math notranslate nohighlight">\(\sigma=1\)</span>, it is called the <strong>standard normal distribution</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-a99dec9e-c927-4f59-acc8-c016115399ad">
-<span class="eqno">(37.32)<a class="headerlink" href="#equation-a99dec9e-c927-4f59-acc8-c016115399ad" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e5867859-e3c6-4443-a04d-d658412095cc">
+<span class="eqno">(37.32)<a class="headerlink" href="#equation-e5867859-e3c6-4443-a04d-d658412095cc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{N}(0,1) = \frac{1}{\sqrt{2\pi}} \exp{(-\frac{x^2}{2})}.
 \end{equation}\]</div>
 <p>We sometimes denote distributions using a notation like <span class="math notranslate nohighlight">\(\mathcal{N}(x|\mu,\sigma^2)\)</span>. This should be understood as a variable <span class="math notranslate nohighlight">\(x\)</span> being normally distributed with mean <span class="math notranslate nohighlight">\(\mu\)</span> and variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>.</p>
@@ -1172,7 +1177,7 @@ The variance is 4.0
 The 68% credible interval is [-0.99,2.99]
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([-0.19181457,  1.19271965,  0.42714148,  3.167739  ,  2.46108559])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([-2.0956436 ,  2.5559202 ,  1.56767954,  0.17474959,  2.06031573])
 </pre></div>
 </div>
 </div>
@@ -1195,7 +1200,7 @@ The 68% credible interval is [-0.99,2.99]
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/0eb8b20a259eba8f0690695090547e3189044ed3b22a4778403a980d98cf6d06.png" src="../../../_images/0eb8b20a259eba8f0690695090547e3189044ed3b22a4778403a980d98cf6d06.png" />
+<img alt="../../../_images/f46705f0899ee411e7d65b138fd5a5cfbe2935b9ed9a7e219eb9de2ca835830c.png" src="../../../_images/f46705f0899ee411e7d65b138fd5a5cfbe2935b9ed9a7e219eb9de2ca835830c.png" />
 </div>
 </div>
 </section>
@@ -1299,23 +1304,23 @@ scipy.stats samples from N(0,1) with Generator(PCG64) and seed=42:
 <section id="credible-regions">
 <h3>Credible regions<a class="headerlink" href="#credible-regions" title="Link to this heading">#</a></h3>
 <p>The integration of the PDF over some domain translates into a probability. It is therefore possible to identify regions <span class="math notranslate nohighlight">\(\mathbb{D}_P\)</span> for which the integrated probability equals some desired value <span class="math notranslate nohighlight">\(P\)</span>, i.e.,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5f72ea62-66b2-45ae-bbc1-dd23b78ecdfd">
-<span class="eqno">(37.34)<a class="headerlink" href="#equation-5f72ea62-66b2-45ae-bbc1-dd23b78ecdfd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cab5ec5c-62f0-4b11-8416-f1beb69d15fb">
+<span class="eqno">(37.34)<a class="headerlink" href="#equation-cab5ec5c-62f0-4b11-8416-f1beb69d15fb" title="Permalink to this equation">#</a></span>\[\begin{equation}
   P = \int_{\mathbb{D}_P} p(x_1, x_2, \ldots) dx_1 dx_2 \ldots
 \end{equation}\]</div>
 <p>This allows to make statements such as: “There is a 50% probability that the parameters are found within the domain <span class="math notranslate nohighlight">\(\mathbb{D}_{0.5}\)</span>””. However, the identification of such a domain is not unique. Two popular choices are</p>
 <ol class="arabic">
 <li><p><strong>Highest-density regions</strong> (HDR)</p>
 <p>The HDR is the smallest possible domain that gives the desired probability mass. That is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9226134f-728c-46f4-abca-1b0230d73129">
-<span class="eqno">(37.35)<a class="headerlink" href="#equation-9226134f-728c-46f4-abca-1b0230d73129" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e9262b5c-3ca5-461d-a793-575bbdd3aba4">
+<span class="eqno">(37.35)<a class="headerlink" href="#equation-e9262b5c-3ca5-461d-a793-575bbdd3aba4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(\boldsymbol{x}) \geq p(\boldsymbol{y}), \quad \text{when } \boldsymbol{x} \in \mathbb{D}_P \text{ and } \boldsymbol{y} \notin \mathbb{D}_P.
 \end{equation}\]</div>
 </li>
 <li><p><strong>Equal-tailed interval</strong> (ETI)</p>
 <p>For a univariate PDF we can define an interval <span class="math notranslate nohighlight">\([a,b]\)</span> such that <span class="math notranslate nohighlight">\(\int_a^b p(x) dx = P\)</span> and the probability mass on either side (the tails) are equal. The end points of this ETI fulfil</p>
-<div class="amsmath math notranslate nohighlight" id="equation-eda4b804-7f64-477b-a89e-c2abb36ed80f">
-<span class="eqno">(37.36)<a class="headerlink" href="#equation-eda4b804-7f64-477b-a89e-c2abb36ed80f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cb4b6769-65b1-4404-8948-aeab1888064d">
+<span class="eqno">(37.36)<a class="headerlink" href="#equation-cb4b6769-65b1-4404-8948-aeab1888064d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(a) = 1-P(b) = \frac{1-P}{2}.
 \end{equation}\]</div>
 </li>
@@ -1395,12 +1400,12 @@ P(a) = 1-P(b) = \frac{1-P}{2}.
 <p class="expanded admonition-title">Hide code cell output</p>
 </summary>
 <div class="cell_output docutils container">
-<img alt="../../../_images/344480e748e9f51bffb3ba623693607f070943f96f201ad0831478506a1ec31c.png" src="../../../_images/344480e748e9f51bffb3ba623693607f070943f96f201ad0831478506a1ec31c.png" />
+<img alt="../../../_images/04fc2ecbe99a2a132caa5d4734289826955a2cac5a4169e1d9abc0e0d8b55274.png" src="../../../_images/04fc2ecbe99a2a132caa5d4734289826955a2cac5a4169e1d9abc0e0d8b55274.png" />
 </div>
 </details>
 </div>
 <figure class="align-default" id="fig-bivariate-cr">
-<img alt="../../../_images/344480e748e9f51bffb3ba623693607f070943f96f201ad0831478506a1ec31c.png" src="../../../_images/344480e748e9f51bffb3ba623693607f070943f96f201ad0831478506a1ec31c.png" />
+<img alt="../../../_images/04fc2ecbe99a2a132caa5d4734289826955a2cac5a4169e1d9abc0e0d8b55274.png" src="../../../_images/04fc2ecbe99a2a132caa5d4734289826955a2cac5a4169e1d9abc0e0d8b55274.png" />
 <figcaption>
 <p><span class="caption-number">Fig. 37.3 </span><span class="caption-text">A corner plot of a bivariate normal PDF. The 68% and 90% credible regions are indicated by level curves in the lower left panel. Note the anti-correlation between the two variables (the correlation coefficient is <span class="math notranslate nohighlight">\(\rho_{12}=-0.5\)</span>). The marginal distributions for <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(x_2\)</span> are shown in the diagonal panels with the dashed lines indicating the corresponding 68% credible intervals. Note that the marginal PDFs are univariate normal distributions.</span><a class="headerlink" href="#fig-bivariate-cr" title="Link to this image">#</a></p>
 </figcaption>
@@ -1693,21 +1698,21 @@ p_{Y|X}(y|x) = \frac{2/xy}{2 \ln x / x} = \frac{1}{y\ln x}, \quad \text{for } 1 
 The mean is 0.0
 The variance is inf
 The 68% credible interval is [-1.31,1.31]
-[ 1.35341175 -3.22701609  1.51207927 -2.78565534  0.52747324]
+[ 1.35879425 -0.57373956  0.09279524  2.20084094  0.59530485]
 =========
  Student-t distribution df=100
 =========
 The mean is 0.0
 The variance is 1.0
 The 68% credible interval is [-1.00,1.00]
-[ 0.42657627 -0.26785649 -0.14273248  0.76634682  0.25405028]
+[ 1.91279984 -0.05553403  0.27837532  0.44574703 -1.54692998]
 =========
  Normal distribution (sigma = 1.0)
 =========
 The mean is 0.0
 The variance is 1.0
 The 68% credible interval is [-0.99,0.99]
-[ 0.20877996  0.37624763  1.07328951 -0.46947421 -0.57698918]
+[-0.49799403 -0.9655594   0.38676897 -0.54753322  0.60061602]
 </pre></div>
 </div>
 <img alt="../../../_images/2340ff35871d9f8468a95e30b6823fba2aed7bdc97842797068dda4de31e4bb3.png" src="../../../_images/2340ff35871d9f8468a95e30b6823fba2aed7bdc97842797068dda4de31e4bb3.png" />

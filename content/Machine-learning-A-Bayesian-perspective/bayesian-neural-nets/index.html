@@ -83,6 +83,11 @@
     <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
     <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="29.4. Demo: Variational Inference and Bayesian Neural Networks" href="demo-variational-inference-and-bnn.html" />
@@ -745,47 +750,47 @@ document.write(`
 <section id="basic-neural-network">
 <h2><span class="section-number">29.1. </span>Basic neural network<a class="headerlink" href="#basic-neural-network" title="Link to this heading">#</a></h2>
 <p>We will consider a neuron with a vector of <span class="math notranslate nohighlight">\(I\)</span> input signals <span class="math notranslate nohighlight">\(\boldsymbol{x} = \left\{ \boldsymbol{x}^{(i)} \right\}_{i=1}^I\)</span>, and an output signal <span class="math notranslate nohighlight">\(y^{(i)}\)</span>, which is given by the non-linear function <span class="math notranslate nohighlight">\(y(z)\)</span> of the <em>activation</em></p>
-<div class="amsmath math notranslate nohighlight" id="equation-147249ef-6fd4-4d7e-9665-e47b1610c546">
-<span class="eqno">(29.1)<a class="headerlink" href="#equation-147249ef-6fd4-4d7e-9665-e47b1610c546" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ae412510-1dc7-4409-b745-0553908923ec">
+<span class="eqno">(29.1)<a class="headerlink" href="#equation-ae412510-1dc7-4409-b745-0553908923ec" title="Permalink to this equation">#</a></span>\[\begin{equation}
  z = w_0 +  \sum_{i=1}^I w_i x_i, 
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\boldsymbol{w} = \left\{ w_i \right\}_{i=1}^I\)</span> are the weights of the neuron and we have included a bias (<span class="math notranslate nohighlight">\(b \equiv w_0\)</span>).</p>
 <p>The training of the network implies feeding it with training data and finding the sets of weights and biases that minimizes a loss function that has been selected for that particular problem.
 Consider, e.g., a classification problem where the single output <span class="math notranslate nohighlight">\(y\)</span> of the final network layer is a real number <span class="math notranslate nohighlight">\(\in [0,1]\)</span> that indicates the (discrete) probability for input <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> belonging to either class <span class="math notranslate nohighlight">\(t=1\)</span> or <span class="math notranslate nohighlight">\(t=0\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0a3376c0-49c8-4ba4-a84d-956abd6881cb">
-<span class="eqno">(29.2)<a class="headerlink" href="#equation-0a3376c0-49c8-4ba4-a84d-956abd6881cb" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-0f1044ff-8a97-4d8e-b81f-3f1a93198f28">
+<span class="eqno">(29.2)<a class="headerlink" href="#equation-0f1044ff-8a97-4d8e-b81f-3f1a93198f28" title="Permalink to this equation">#</a></span>\[\begin{align}
 p_{t=1} \equiv p(t=1 | \boldsymbol{w},\boldsymbol{x}) &amp;= y \\
 p_{t=0} \equiv p(t=0 | \boldsymbol{w},\boldsymbol{x}) &amp;= 1-y,
 \end{align}\]</div>
 <p>A simple binary classifier can be trained by minimizing the loss function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fa0e1188-2a77-4e9d-8611-340dc68a4628">
-<span class="eqno">(29.3)<a class="headerlink" href="#equation-fa0e1188-2a77-4e9d-8611-340dc68a4628" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9cd5f2d9-b82a-47b9-8964-ea521e20ffd7">
+<span class="eqno">(29.3)<a class="headerlink" href="#equation-9cd5f2d9-b82a-47b9-8964-ea521e20ffd7" title="Permalink to this equation">#</a></span>\[\begin{equation}
  C_W(\boldsymbol{w}) = C(\boldsymbol{w}) +  \alpha E_W(\boldsymbol{w}), 
 \end{equation}\]</div>
 <p>made up of an error function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a774acc4-681e-4a40-abb5-9dba25a29ac3">
-<span class="eqno">(29.4)<a class="headerlink" href="#equation-a774acc4-681e-4a40-abb5-9dba25a29ac3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6391b13c-63b0-445f-8294-5ab2f15f6123">
+<span class="eqno">(29.4)<a class="headerlink" href="#equation-6391b13c-63b0-445f-8294-5ab2f15f6123" title="Permalink to this equation">#</a></span>\[\begin{equation}
  C(\boldsymbol{w}) = -\sum_n \left[ t^{(n)} \log ( y(\boldsymbol{x}^{(n)},\boldsymbol{w})) + (1 - t^{(n)}) \log (1 - y(\boldsymbol{x}^{(n)},\boldsymbol{w})) \right], 
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(t^{(n)}\)</span> is the training data, and the regularizer</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4a6f4259-f65f-496f-bfd0-81c13f5164a5">
-<span class="eqno">(29.5)<a class="headerlink" href="#equation-4a6f4259-f65f-496f-bfd0-81c13f5164a5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-886f4fc2-c6ac-4d13-98c1-04b3cb5c2099">
+<span class="eqno">(29.5)<a class="headerlink" href="#equation-886f4fc2-c6ac-4d13-98c1-04b3cb5c2099" title="Permalink to this equation">#</a></span>\[\begin{equation}
  E_W(\boldsymbol{w}) = \frac{1}{2} \sum_i w_i^2, 
 \end{equation}\]</div>
 <p>that is designed to avoid overfitting.
 The error function can be interpreted as minus the log likelihood, with the likelihood</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0fff8365-099f-47d9-a2c3-57521a59e3f2">
-<span class="eqno">(29.6)<a class="headerlink" href="#equation-0fff8365-099f-47d9-a2c3-57521a59e3f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3276ffd9-99f3-414e-b9d0-8ce0294ccf82">
+<span class="eqno">(29.6)<a class="headerlink" href="#equation-3276ffd9-99f3-414e-b9d0-8ce0294ccf82" title="Permalink to this equation">#</a></span>\[\begin{equation}
  p(\mathcal{D}|\boldsymbol{w}) \propto \exp\left[ - C(\boldsymbol{w}) \right]. 
 \end{equation}\]</div>
 <p>Similarly the regularizer can be interpreted in terms of a log prior probability distribution over the parameters. With the quadratic <span class="math notranslate nohighlight">\(E_W\)</span> given above, the corresponding prior distribution is a Gaussian with variance <span class="math notranslate nohighlight">\(\sigma_W^2 = 1/\alpha\)</span> and <span class="math notranslate nohighlight">\(1/Z_W = (\alpha/2\pi)^{K/2}\)</span>, where <span class="math notranslate nohighlight">\(K\)</span> is the number of parameters in <span class="math notranslate nohighlight">\(w\)</span>.</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fddf621b-a982-4bb9-84f6-3ad7f94d36dd">
-<span class="eqno">(29.7)<a class="headerlink" href="#equation-fddf621b-a982-4bb9-84f6-3ad7f94d36dd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ff4c73f7-fc2f-41db-b6b6-9dcd77fd5899">
+<span class="eqno">(29.7)<a class="headerlink" href="#equation-ff4c73f7-fc2f-41db-b6b6-9dcd77fd5899" title="Permalink to this equation">#</a></span>\[\begin{equation}
  p(\boldsymbol{w} | \alpha) = \frac{1}{Z_W(\alpha)} \exp \left[ -\alpha E_W \right]. 
 \end{equation}\]</div>
 <p>The objective function <span class="math notranslate nohighlight">\(C_W(w)\)</span> then corresponds to the inference of the parameters <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> given the data</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3659ecac-d340-42ce-9e44-ac094c28636a">
-<span class="eqno">(29.8)<a class="headerlink" href="#equation-3659ecac-d340-42ce-9e44-ac094c28636a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-31da6d79-1f2f-45fc-bb2e-ea3ae7d2c355">
+<span class="eqno">(29.8)<a class="headerlink" href="#equation-31da6d79-1f2f-45fc-bb2e-ea3ae7d2c355" title="Permalink to this equation">#</a></span>\[\begin{equation}
  p(\boldsymbol{w} | \mathcal{D}, \alpha) = \frac{p(D|\boldsymbol{w}) p(\boldsymbol{w}|\alpha)}{p(\mathcal{D}|\alpha)} = \frac{1}{Z_M} \exp [ -C_W(\boldsymbol{w}) ]. 
 \end{equation}\]</div>
 <p>We show the evolution of the probability distribution for a sequence of an increasing number of training data (<span class="math notranslate nohighlight">\(N\)</span>) in <a class="reference internal" href="#fig-scatter-joint-bnn-plot"><span class="std std-numref">Fig. 29.1</span></a>. The targets are either 0 or 1, as indicated by red and blue markers. The network parameters <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> that are found by minimizing <span class="math notranslate nohighlight">\(C_W(\boldsymbol{w})\)</span> can be interpreted as the most probable parameter vector <span class="math notranslate nohighlight">\(\boldsymbol{w}^*\)</span>.</p>
@@ -876,8 +881,8 @@ We will use <span class="math notranslate nohighlight">\(y\)</span> to denote th
 <li><p>if <span class="math notranslate nohighlight">\(q\)</span> is low we don’t care about <span class="math notranslate nohighlight">\(p\)</span> (because of the expectation).</p></li>
 </ul>
 <p>The divergence measure is not symmetric, i.e., <span class="math notranslate nohighlight">\(D_\mathrm{KL}(p||q) \neq D_\mathrm{KL}(q||p)\)</span>. In fact, it is possibly more natural to reverse the arguments and compute <span class="math notranslate nohighlight">\(D_\mathrm{KL}(p||q)\)</span>. However, we choose <span class="math notranslate nohighlight">\(\mathrm{KL}(q||p)\)</span> so that we can take expectations with respect to the known <span class="math notranslate nohighlight">\(q(\boldsymbol{w})\)</span> distribution. In addition, the minimization of this KL divergence will encourage the fit to concentrate on plausible parameters since</p>
-<div class="amsmath math notranslate nohighlight" id="equation-52c72826-b04c-4469-8f4c-33e407d01c33">
-<span class="eqno">(29.11)<a class="headerlink" href="#equation-52c72826-b04c-4469-8f4c-33e407d01c33" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-73fc40e5-5462-496e-ab51-6babd5e35916">
+<span class="eqno">(29.11)<a class="headerlink" href="#equation-73fc40e5-5462-496e-ab51-6babd5e35916" title="Permalink to this equation">#</a></span>\[\begin{equation}
 D_\mathrm{KL}(q||p) = \int d \boldsymbol{w} q(\boldsymbol{w}\lvert \boldsymbol{\theta}) \log \frac{q(\boldsymbol{w} \lvert \boldsymbol{\theta})}{p(\boldsymbol{w} \lvert \mathcal{D})} 
 = -\int d \boldsymbol{w} q(\boldsymbol{w}\lvert \boldsymbol{\theta}) \log \, p(\boldsymbol{w} \lvert \mathcal{D}) + \int d \boldsymbol{w} q(\boldsymbol{w}\lvert \boldsymbol{\theta}) \log \, q(\boldsymbol{w} \lvert \boldsymbol{\theta}).
 \end{equation}\]</div>
@@ -906,8 +911,8 @@ D_\mathrm{KL}(q||p) &amp;= \int d \boldsymbol{w} q(\boldsymbol{w}\lvert \boldsym
 \]</div>
 <p>Variational inference was originally inspired by work in statistical physics, and with that analogy, <span class="math notranslate nohighlight">\(-J_\mathrm{ELBO}(\boldsymbol{\theta})\)</span> is also called the <strong>variational free energy</strong> and sometimes denoted <span class="math notranslate nohighlight">\(\mathcal{F}(\mathcal{D},\boldsymbol{\theta})\)</span>.</p>
 <p>The task at hand is therefore to find the set of parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}^*\)</span> that maximizes <span class="math notranslate nohighlight">\(J_\mathrm{ELBO}(\boldsymbol{\theta})\)</span>. The hardest term to evaluate is obviously the expectation of the log-likelihood</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6f0c68d4-2c3b-409e-986b-01d231a69657">
-<span class="eqno">(29.13)<a class="headerlink" href="#equation-6f0c68d4-2c3b-409e-986b-01d231a69657" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b2f2a7d6-7538-415c-b032-f80ce4ad0ae6">
+<span class="eqno">(29.13)<a class="headerlink" href="#equation-b2f2a7d6-7538-415c-b032-f80ce4ad0ae6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \mathbb{E}_{q} \left[ \log \, p(\mathcal{D} \lvert \boldsymbol{w}) \right]
 = \sum_{i=1}^N \mathbb{E}_{q} \left[ \log \, p( y^{(i)} \lvert \boldsymbol{x}^{(i)}, \boldsymbol{w}) \right].

@@ -83,6 +83,11 @@
     <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
     <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="20. Markov Chain Monte Carlo in practice" href="../mcmc-in-practice/index.html" />
@@ -722,8 +727,8 @@ document.write(`
 <p>How can we collect random samples from an arbitrary probability distribution <span class="math notranslate nohighlight">\(p(\pars)\)</span>? In particular, how can we perform this task when we might not even have a closed form expression for the PDF? It is common in Bayesian inference that we find ourselves in the situation that we can evaluate <span class="math notranslate nohighlight">\(p(\pars)\)</span> at any position <span class="math notranslate nohighlight">\(\pars\)</span>, but we don’t know beforehand if it will be large or small.</p>
 <p>We will now show that it is possible to construct a Markov chain that has <span class="math notranslate nohighlight">\(p(\pars)\)</span> as its stationary distribution. Once this chain has converged it will provide us with samples from <span class="math notranslate nohighlight">\(p(\pars)\)</span>.</p>
 <p>As we have learned, the evolution of positions is described by the transition density <span class="math notranslate nohighlight">\(T\)</span>. The generalization to continuous variables of the stationary-chain equilibrium described in Eq. <a class="reference internal" href="sec-markov-chains.html#equation-eq-markovchains-discrete-equlibrium">(19.16)</a> is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bea47048-791e-4c59-abb2-b7fc4bcfd2bc">
-<span class="eqno">(19.24)<a class="headerlink" href="#equation-bea47048-791e-4c59-abb2-b7fc4bcfd2bc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6077edbf-6add-477d-b921-8aa5dccfe28a">
+<span class="eqno">(19.24)<a class="headerlink" href="#equation-6077edbf-6add-477d-b921-8aa5dccfe28a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(\pars) = \int_{\Omega'} p(\pars')T(\pars',\pars) d\pars'.
 \end{equation}\]</div>
 <p>This equilibrium condition can be replaced with the more stringent <strong>detailed-balance</strong> condition</p>
@@ -732,24 +737,24 @@ p(\pars) = \int_{\Omega'} p(\pars')T(\pars',\pars) d\pars'.
 p(\pars)T(\pars,\pars') = p(\pars') T(\pars',\pars),
 \]</div>
 <p>which can be understood from the integral relation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c2a7938f-b441-490d-8678-69ae076c2f9f">
-<span class="eqno">(19.26)<a class="headerlink" href="#equation-c2a7938f-b441-490d-8678-69ae076c2f9f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4c8ec0ab-3682-4dc1-99cb-fe590847685e">
+<span class="eqno">(19.26)<a class="headerlink" href="#equation-4c8ec0ab-3682-4dc1-99cb-fe590847685e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \int d\pars' p(\pars)T(\pars,\pars') = \int d\pars' p(\pars') T(\pars',\pars),
 \end{equation}\]</div>
 <p>that describes the balance between the transitions of probability density out of <span class="math notranslate nohighlight">\(\pars\)</span> and into <span class="math notranslate nohighlight">\(\pars\)</span>. At equilibrium, these integrals must be equal.</p>
 <p>The trick to achieve this for a certain <span class="math notranslate nohighlight">\(p(\pars)\)</span> is to write <span class="math notranslate nohighlight">\(T\)</span> as a product of a simple step proposal function <span class="math notranslate nohighlight">\(S(\pars,\pars')\)</span>, that provides probability densities for steps in <span class="math notranslate nohighlight">\(\pars\)</span>-space, and a function <span class="math notranslate nohighlight">\(A(\pars,\pars')\)</span> that we will call the <strong>acceptance probability</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-661273a2-b37e-4e83-aae5-552e5db80804">
-<span class="eqno">(19.27)<a class="headerlink" href="#equation-661273a2-b37e-4e83-aae5-552e5db80804" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f1051f92-04bd-4ec7-aa41-ff48d1761712">
+<span class="eqno">(19.27)<a class="headerlink" href="#equation-f1051f92-04bd-4ec7-aa41-ff48d1761712" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T(\pars,\pars') = A(\pars,\pars') S(\pars,\pars').
 \end{equation}\]</div>
 <p>The step proposal function can be almost anything, but a key property is that it should be easy to draw a sample from it. The probability for proposing a new position <span class="math notranslate nohighlight">\(\pars'\)</span> will depend on the current position <span class="math notranslate nohighlight">\(\pars\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-91d6763e-8790-4c64-b6dd-28964f96b855">
-<span class="eqno">(19.28)<a class="headerlink" href="#equation-91d6763e-8790-4c64-b6dd-28964f96b855" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a2fad0a8-1144-4bbc-b023-0b913b4440f3">
+<span class="eqno">(19.28)<a class="headerlink" href="#equation-a2fad0a8-1144-4bbc-b023-0b913b4440f3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\text{proposing $\pars'$}}{\text{current position}=\pars} = S(\pars,\pars')
 \end{equation}\]</div>
 <p>For example, assuming that <span class="math notranslate nohighlight">\(\pars\)</span> is a vector in a <span class="math notranslate nohighlight">\(D\)</span>-dimensional parameter space we can take <span class="math notranslate nohighlight">\(S(\pars,\pars')\)</span> to be a uniform distribution within a <span class="math notranslate nohighlight">\(D\)</span>-dimensional hypercube with side length <span class="math notranslate nohighlight">\(\Delta\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-fdee966e-1076-4a78-ad44-fb83e555af08">
-<span class="eqno">(19.29)<a class="headerlink" href="#equation-fdee966e-1076-4a78-ad44-fb83e555af08" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cf293794-c7d8-47f5-95eb-570beaa4f0f1">
+<span class="eqno">(19.29)<a class="headerlink" href="#equation-cf293794-c7d8-47f5-95eb-570beaa4f0f1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 S(\pars,\pars') = \left\{ 
 \begin{array}{ll}
 \frac{1}{\Delta^D} &amp; \text{if $\left| \pars'_i - \pars_i \right| \leq \frac{\Delta}{2}$ for all $i \in \{1, \ldots, D\}$} \\
@@ -760,13 +765,13 @@ S(\pars,\pars') = \left\{
 <p>Alternatively we can use a multivariate Gaussian distribution with a mean that corresponds to the current position <span class="math notranslate nohighlight">\(\pars\)</span> and a covariance matrix that we can specify.</p>
 <p>The probability of actually accepting the proposed step from <span class="math notranslate nohighlight">\(\pars\)</span> to <span class="math notranslate nohighlight">\(\pars'\)</span> will then be given by <span class="math notranslate nohighlight">\(0 \leq A(\pars,\pars') \leq 1\)</span>.</p>
 <p>The detailed balance condition <a class="reference internal" href="#equation-eq-mcmc-detailed-balance">(19.25)</a> can be fulfilled by placing the following condition on the acceptance probability</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0562b06d-15e5-4028-be7c-12eeaac57bb2">
-<span class="eqno">(19.30)<a class="headerlink" href="#equation-0562b06d-15e5-4028-be7c-12eeaac57bb2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-313eb884-adad-4eec-a758-c9434c0daca2">
+<span class="eqno">(19.30)<a class="headerlink" href="#equation-313eb884-adad-4eec-a758-c9434c0daca2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{A(\pars,\pars')}{A(\pars',\pars)} = \frac{p(\pars')S(\pars',\pars)}{p(\pars)S(\pars,\pars')}.
 \end{equation}\]</div>
 <p>The expression for <span class="math notranslate nohighlight">\(A\)</span> that fulfils this condition is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b7cdc778-c2b7-44ae-b330-07895dc1a4cb">
-<span class="eqno">(19.31)<a class="headerlink" href="#equation-b7cdc778-c2b7-44ae-b330-07895dc1a4cb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dd380e12-d609-4ca4-9efd-3aec1af8814d">
+<span class="eqno">(19.31)<a class="headerlink" href="#equation-dd380e12-d609-4ca4-9efd-3aec1af8814d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 A(\pars,\pars') = \text{min} \left( \frac{p(\pars')S(\pars',\pars)}{p(\pars)S(\pars,\pars')},1\right),
 \end{equation}\]</div>
 <p>and holds the probability by which we decide whether to accept the proposed position <span class="math notranslate nohighlight">\(\pars'\)</span>, or remain in the old one <span class="math notranslate nohighlight">\(\pars\)</span>. The ratio that appears in the acceptance probability is called the Metropolis-Hastings ratio and will here be denoted <span class="math notranslate nohighlight">\(r\)</span>. We note that it gets further simplified for symmetric proposal functions (for which it is sometimes referred to as the Metropolis ratio)</p>

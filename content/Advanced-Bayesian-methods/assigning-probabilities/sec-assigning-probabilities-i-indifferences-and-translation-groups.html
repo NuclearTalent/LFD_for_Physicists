@@ -83,6 +83,11 @@
     <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
     <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="11.2. 📥 Demo: Prior PDFs for straight lines" href="demo-straight_lines.html" />
@@ -742,16 +747,16 @@ document.write(`
 <section id="location-invariance">
 <h2>Location invariance<a class="headerlink" href="#location-invariance" title="Link to this heading">#</a></h2>
 <p>Indifference to a constant shift <span class="math notranslate nohighlight">\(x_0\)</span> for a location parameter <span class="math notranslate nohighlight">\(x\)</span> implies that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b19b7e7e-82a7-42b7-ad2f-0a03a01de4f3">
-<span class="eqno">(11.1)<a class="headerlink" href="#equation-b19b7e7e-82a7-42b7-ad2f-0a03a01de4f3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e51580e4-c56f-4d62-b557-626af8671c1c">
+<span class="eqno">(11.1)<a class="headerlink" href="#equation-e51580e4-c56f-4d62-b557-626af8671c1c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(x|I) dx \approx p(x+ x_0|I) d(x+x_0) =  p(x+ x_0|I) dx,
 
 \end{equation}\]</div>
 <p>in the allowed range.</p>
 <p>Location invariance implies that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dc8a086f-5f02-4931-8164-433e0f414f85">
-<span class="eqno">(11.2)<a class="headerlink" href="#equation-dc8a086f-5f02-4931-8164-433e0f414f85" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2f886f70-77f8-4e0a-a917-1361b29eae55">
+<span class="eqno">(11.2)<a class="headerlink" href="#equation-2f886f70-77f8-4e0a-a917-1361b29eae55" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(x|I) =  p(x+ x_0|I) \quad \Rightarrow \quad p(x|I) = \mathrm{constant}.
 
@@ -765,8 +770,8 @@ p(x|I) =  p(x+ x_0|I) \quad \Rightarrow \quad p(x|I) = \mathrm{constant}.
 <section id="scale-invariance">
 <h2>Scale invariance<a class="headerlink" href="#scale-invariance" title="Link to this heading">#</a></h2>
 <p>Indifference to a re-scaling <span class="math notranslate nohighlight">\(\lambda\)</span> of a scale parameter <span class="math notranslate nohighlight">\(x\)</span> implies that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-40bc12b9-bd95-4ed5-b022-334d23787308">
-<span class="eqno">(11.3)<a class="headerlink" href="#equation-40bc12b9-bd95-4ed5-b022-334d23787308" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dd3b70dd-b824-41b4-b61f-09d9d6dd646b">
+<span class="eqno">(11.3)<a class="headerlink" href="#equation-dd3b70dd-b824-41b4-b61f-09d9d6dd646b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(x|I) dx \approx p(\lambda x|I) d(\lambda x) =  \lambda p(\lambda x|I) dx,
 
@@ -774,8 +779,8 @@ p(x|I) dx \approx p(\lambda x|I) d(\lambda x) =  \lambda p(\lambda x|I) dx,
 <p>in the allowed range.</p>
 <!-- !split -->
 <p>Invariance under re-scaling implies that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-20286e8b-3bb3-4f7c-a29e-9f294d834008">
-<span class="eqno">(11.4)<a class="headerlink" href="#equation-20286e8b-3bb3-4f7c-a29e-9f294d834008" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1c257ac0-b134-403e-a89d-a4eee87b4ec8">
+<span class="eqno">(11.4)<a class="headerlink" href="#equation-1c257ac0-b134-403e-a89d-a4eee87b4ec8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(x|I) = \lambda p(\lambda x|I) \quad \Rightarrow \quad p(x|I) \propto 1/x.
 
@@ -816,8 +821,8 @@ p(x|I) = \lambda p(\lambda x|I) \quad \Rightarrow \quad p(x|I) \propto 1/x.
 <section id="example-straight-line-model">
 <h3>Example: Straight-line model<a class="headerlink" href="#example-straight-line-model" title="Link to this heading">#</a></h3>
 <p>Consider the theoretical model</p>
-<div class="amsmath math notranslate nohighlight" id="equation-804517e3-d222-4582-bdcb-d4ee11dbcead">
-<span class="eqno">(11.5)<a class="headerlink" href="#equation-804517e3-d222-4582-bdcb-d4ee11dbcead" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5bf3d417-f789-4341-acb5-b6a201416e55">
+<span class="eqno">(11.5)<a class="headerlink" href="#equation-5bf3d417-f789-4341-acb5-b6a201416e55" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 y_\mathrm{th}(x) = \theta_1  x  + \theta_0.
 
@@ -839,8 +844,8 @@ y_\mathrm{th}(x) = \theta_1  x  + \theta_0.
 <li><p>In fact, by symmetry indifference we could as well have written the linear model as <span class="math notranslate nohighlight">\(x_\mathrm{th}(y) = \theta_1'  y  + \theta_0'\)</span></p></li>
 <li><p>We would then equate the probability elements for the two models</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-198f4983-eeac-44fe-abc0-fca6eaba52d1">
-<span class="eqno">(11.6)<a class="headerlink" href="#equation-198f4983-eeac-44fe-abc0-fca6eaba52d1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-37dd32c4-b48c-4a8a-8135-abd9feeab303">
+<span class="eqno">(11.6)<a class="headerlink" href="#equation-37dd32c4-b48c-4a8a-8135-abd9feeab303" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(\theta_0, \theta_1 | I) d\theta_0 d\theta_1 = q(\theta_0', \theta_1' | I) d\theta_0' d\theta_1'.
 
@@ -850,15 +855,15 @@ p(\theta_0, \theta_1 | I) d\theta_0 d\theta_1 = q(\theta_0', \theta_1' | I) d\th
 </ul>
 <!-- !split -->
 <p>This change of variables implies that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-244893d0-9e77-466c-b603-3d2b885fb539">
-<span class="eqno">(11.7)<a class="headerlink" href="#equation-244893d0-9e77-466c-b603-3d2b885fb539" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b8a64f4c-e27d-43dc-9087-6f60fdec23e9">
+<span class="eqno">(11.7)<a class="headerlink" href="#equation-b8a64f4c-e27d-43dc-9087-6f60fdec23e9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 q(\theta_0', \theta_1' | I) = p(\theta_0, \theta_1 | I) \left| \frac{d\theta_0 d\theta_1}{d\theta_0' d\theta_1'} \right|,
 
 \end{equation}\]</div>
 <p>where the (absolute value of the) determinant of the Jacobian is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-92ae85a6-5807-4334-9fa3-156a24feb2a5">
-<span class="eqno">(11.8)<a class="headerlink" href="#equation-92ae85a6-5807-4334-9fa3-156a24feb2a5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4a239412-863b-48b4-a144-60dcb2fe904a">
+<span class="eqno">(11.8)<a class="headerlink" href="#equation-4a239412-863b-48b4-a144-60dcb2fe904a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \left| \frac{d\theta_0 d\theta_1}{d\theta_0' d\theta_1'} \right| 
 = \mathrm{abs} \left( 
@@ -875,8 +880,8 @@ q(\theta_0', \theta_1' | I) = p(\theta_0, \theta_1 | I) \left| \frac{d\theta_0 d
 <li><p>In summary we find that <span class="math notranslate nohighlight">\(\theta_1^3 p(\theta_0, \theta_1 | I) = p(-\theta_1^{-1}\theta_0, \theta_1^{-1}|I).\)</span></p></li>
 <li><p>This functional equation is satisfied by</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-e71c4914-0877-4f9f-90ca-27ad765da3c5">
-<span class="eqno">(11.9)<a class="headerlink" href="#equation-e71c4914-0877-4f9f-90ca-27ad765da3c5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-991f56bd-da84-4945-8ddb-7a1d9c30bd29">
+<span class="eqno">(11.9)<a class="headerlink" href="#equation-991f56bd-da84-4945-8ddb-7a1d9c30bd29" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 p(\theta_0, \theta_1 | I) \propto \frac{1}{\left( 1 + \theta_1^2 \right)^{3/2}}.
 
@@ -917,12 +922,12 @@ p(\theta_0, \theta_1 | I) \propto \frac{1}{\left( 1 + \theta_1^2 \right)^{3/2}}.
 <p class="expanded admonition-title">Hide code cell output</p>
 </summary>
 <div class="cell_output docutils container">
-<img alt="../../../_images/c7094037da80f7ce236467316d9efd525aa7934091142bb743c0179b427e1f5e.png" src="../../../_images/c7094037da80f7ce236467316d9efd525aa7934091142bb743c0179b427e1f5e.png" />
+<img alt="../../../_images/456477cc31b275d5a7ffa7056e7994b93fad2e462e15ff4451bf5e61a266ed19.png" src="../../../_images/456477cc31b275d5a7ffa7056e7994b93fad2e462e15ff4451bf5e61a266ed19.png" />
 </div>
 </details>
 </div>
 <figure class="align-default" id="fig-slopesamples">
-<img alt="../../../_images/c7094037da80f7ce236467316d9efd525aa7934091142bb743c0179b427e1f5e.png" src="../../../_images/c7094037da80f7ce236467316d9efd525aa7934091142bb743c0179b427e1f5e.png" />
+<img alt="../../../_images/456477cc31b275d5a7ffa7056e7994b93fad2e462e15ff4451bf5e61a266ed19.png" src="../../../_images/456477cc31b275d5a7ffa7056e7994b93fad2e462e15ff4451bf5e61a266ed19.png" />
 <figcaption>
 <p><span class="caption-number">Fig. 11.1 </span><span class="caption-text">100 samples of straight lines with fixed intercept equal to 0 and slopes sampled from three different prior pdfs. Note in particular the  prior preference for large slopes that results from using a uniform pdf.</span><a class="headerlink" href="#fig-slopesamples" title="Link to this image">#</a></p>
 </figcaption>

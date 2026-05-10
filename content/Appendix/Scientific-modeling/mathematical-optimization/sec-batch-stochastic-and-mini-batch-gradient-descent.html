@@ -83,6 +83,11 @@
     <script src="../../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
     <script src="../../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="41.3. Adaptive gradient descent algorithms" href="sec-adaptive-gradient-descent-algorithms.html" />
@@ -709,8 +714,8 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="batch-stochastic-and-mini-batch-gradient-descent">
 <h1><span class="section-number">41.2. </span>Batch, stochastic and mini-batch gradient descent<a class="headerlink" href="#batch-stochastic-and-mini-batch-gradient-descent" title="Link to this heading">#</a></h1>
 <p>The use of the full data set in the cost function for every parameter update would correspond to <em>batch gradient descent</em> (BGD). The gradient of the cost function then has the following generic form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a2777b8a-39a2-43a6-a13e-04170835f058">
-<span class="eqno">(41.3)<a class="headerlink" href="#equation-a2777b8a-39a2-43a6-a13e-04170835f058" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ca98fdf1-b3f6-4d77-b4db-203a4566e34d">
+<span class="eqno">(41.3)<a class="headerlink" href="#equation-ca98fdf1-b3f6-4d77-b4db-203a4566e34d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \boldsymbol{\nabla} C_n \equiv \left. \boldsymbol{\nabla}_{\pars} C(\pars) \right|_{\pars=\pars_n}
 = \sum_{i=1}^{N_d} \left. \boldsymbol{\nabla}_{\pars} C^{(i)}(\pars) \right|_{\pars=\pars_n},
 \end{equation}\]</div>
@@ -736,8 +741,8 @@ document.write(`
 </div>
 <p>where you should note the loop over all data instances for each epoch. To improve convergence and generalization to other data it is important that we shuffle the training data at every epoch.</p>
 <p>Finally, <em>mini-batch gradient descent</em> (MBGD) combines the best of the previous algorithms and performs an update for every mini-batch of data</p>
-<div class="amsmath math notranslate nohighlight" id="equation-01ecce38-65f0-41dd-89ce-904e1067ea6a">
-<span class="eqno">(41.4)<a class="headerlink" href="#equation-01ecce38-65f0-41dd-89ce-904e1067ea6a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-696d3552-cb5d-4f81-a5e8-e45286f89a12">
+<span class="eqno">(41.4)<a class="headerlink" href="#equation-696d3552-cb5d-4f81-a5e8-e45286f89a12" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pars \mapsto \pars - \eta \boldsymbol{\nabla} C_{i N_\mathrm{mb}:(i+1) N_\mathrm{mb}}(\pars),
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(N_\mathrm{mb}\)</span> is the mini-batch size. This way one can make use of highly optimized matrix optimizations for the reasonably sized mini-batch evaluations, and one usually finds much reduced variance of the parameter updates which can lead to more stable convergence. Mini-batch gradient descent is typically the algorithm of choice when training a neural network. The total number of parameter updates for MBGD is <span class="math notranslate nohighlight">\(N_\mathrm{epochs} \times N_d / N_{mb}\)</span>.</p>

@@ -14,6 +14,7 @@ by [Christian Forssén](https://www.chalmers.se/en/persons/f2bcf/), [Dick Furnst
 -- Douglas Adams, *The Hitchhiker's Guide to the Galaxy*
 ```
 
+
 (sec:AboutJB)=
 ## About this book
 

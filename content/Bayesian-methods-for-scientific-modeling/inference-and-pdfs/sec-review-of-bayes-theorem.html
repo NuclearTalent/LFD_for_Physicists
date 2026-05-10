@@ -83,6 +83,11 @@
     <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
     <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="4.6. Data, models, and predictions" href="sec-data-models-predictions.html" />
@@ -740,8 +745,8 @@ document.write(`
 <div class="proof property admonition" id="property:product_rule">
 <p class="admonition-title"><span class="caption-number">Property 4.1 </span> (Product rule)</p>
 <section class="property-content" id="proof-content">
-<div class="amsmath math notranslate nohighlight" id="equation-9c87ce37-5c3a-4e8c-b7a3-97b828066625">
-<span class="eqno">(4.9)<a class="headerlink" href="#equation-9c87ce37-5c3a-4e8c-b7a3-97b828066625" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c7bd29f9-3406-4e97-a0ef-152b21117c42">
+<span class="eqno">(4.9)<a class="headerlink" href="#equation-c7bd29f9-3406-4e97-a0ef-152b21117c42" title="Permalink to this equation">#</a></span>\[\begin{equation}
   \prob(A, B | I) =\prob(B|A, I) \prob(A|I)  = \prob(A|B,I)\prob(B|I)
 \end{equation}\]</div>
 <p>The left-hand side should be interpreted as the probability for propositions <span class="math notranslate nohighlight">\(A\)</span> AND <span class="math notranslate nohighlight">\(B\)</span> being true given that <span class="math notranslate nohighlight">\(I\)</span> is true.
@@ -750,8 +755,8 @@ The probabilities on the right hand side(s) are conditioned differently and the 
 </div><div class="proof property admonition" id="property:sum_rule">
 <p class="admonition-title"><span class="caption-number">Property 4.2 </span> (Sum rule)</p>
 <section class="property-content" id="proof-content">
-<div class="amsmath math notranslate nohighlight" id="equation-159ae6ea-5a58-45c1-9f7a-d486a2bb0f76">
-<span class="eqno">(4.10)<a class="headerlink" href="#equation-159ae6ea-5a58-45c1-9f7a-d486a2bb0f76" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-245735d1-0c65-47f8-8717-6a0d9191cf7a">
+<span class="eqno">(4.10)<a class="headerlink" href="#equation-245735d1-0c65-47f8-8717-6a0d9191cf7a" title="Permalink to this equation">#</a></span>\[\begin{equation}
   \prob(A + B | I) = \prob(A | I) + \prob(B | I) - \prob(A, B | I)
 \end{equation}\]</div>
 <p>The left-hand side should be interpreted as the probability for proposition <span class="math notranslate nohighlight">\(A\)</span> OR <span class="math notranslate nohighlight">\(B\)</span> being true given that <span class="math notranslate nohighlight">\(I\)</span> is true.
@@ -764,8 +769,8 @@ If <span class="math notranslate nohighlight">\(A\)</span> and <span class="math
 <div class="proof property admonition" id="property:bayes_rule">
 <p class="admonition-title"><span class="caption-number">Property 4.3 </span> (Bayes’ rule/theorem)</p>
 <section class="property-content" id="proof-content">
-<div class="amsmath math notranslate nohighlight" id="equation-70e3be4d-2844-47a2-ad5f-5b8dbc97a83b">
-<span class="eqno">(4.11)<a class="headerlink" href="#equation-70e3be4d-2844-47a2-ad5f-5b8dbc97a83b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-24587b96-c549-4e37-85bb-b389792171f0">
+<span class="eqno">(4.11)<a class="headerlink" href="#equation-24587b96-c549-4e37-85bb-b389792171f0" title="Permalink to this equation">#</a></span>\[\begin{equation}
   \prob(A|B,I) = \frac{\prob(B|A,I)\prob(A|I)}{\prob(B | I)}
  \end{equation}\]</div>
 <p>The left-hand side should be interpreted as the the probability that proposition <span class="math notranslate nohighlight">\(A\)</span> is true given that <span class="math notranslate nohighlight">\(B\)</span> AND <span class="math notranslate nohighlight">\(I\)</span> are true.  This equation tells us how we can reverse a conditional probability. More importantly it updates the probability for <span class="math notranslate nohighlight">\(A\)</span> being true as we learn more about <span class="math notranslate nohighlight">\(B\)</span>.</p>
@@ -793,13 +798,13 @@ If <span class="math notranslate nohighlight">\(A\)</span> and <span class="math
 <div class="admonition-normalization-and-marginalization admonition">
 <p class="admonition-title">Normalization and marginalization</p>
 <p>Given an exclusive and exhaustive list of hypotheses, <span class="math notranslate nohighlight">\(H_i\)</span>, we must have a normalization of the total probability</p>
-<div class="amsmath math notranslate nohighlight" id="equation-53081d99-134c-4f9f-89b8-2da90cbce4a2">
-<span class="eqno">(4.13)<a class="headerlink" href="#equation-53081d99-134c-4f9f-89b8-2da90cbce4a2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f90f75bf-0b44-4393-bfa1-60fe0b320cbc">
+<span class="eqno">(4.13)<a class="headerlink" href="#equation-f90f75bf-0b44-4393-bfa1-60fe0b320cbc" title="Permalink to this equation">#</a></span>\[\begin{equation}
   \sum_i \prob(H_i|I) = 1,
 \end{equation}\]</div>
 <p>which also leads to the marginalization property</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5984e758-84f3-44a3-93a9-416392267021">
-<span class="eqno">(4.14)<a class="headerlink" href="#equation-5984e758-84f3-44a3-93a9-416392267021" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-304b52e3-4d4b-4d2d-9934-fa476308792f">
+<span class="eqno">(4.14)<a class="headerlink" href="#equation-304b52e3-4d4b-4d2d-9934-fa476308792f" title="Permalink to this equation">#</a></span>\[\begin{equation}
   \prob(A|I) = \sum_i \prob(H_i|A,I) \prob(A|I) = \sum_i \prob(A,H_i|I),
 \end{equation}\]</div>
 <p>where we used the product rule in the second step.</p>
@@ -812,13 +817,13 @@ If <span class="math notranslate nohighlight">\(A\)</span> and <span class="math
 <div class="admonition-normalization-and-marginalization-in-the-continuum-limit admonition">
 <p class="admonition-title">Normalization and marginalization in the continuum limit</p>
 <p>The normalization for a continuous, conditional PDF is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f3baa5d1-d11d-41cd-ba2e-a7601cda0ad4">
-<span class="eqno">(4.15)<a class="headerlink" href="#equation-f3baa5d1-d11d-41cd-ba2e-a7601cda0ad4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ab659c3c-2722-4ee4-948f-38ff163ea2ac">
+<span class="eqno">(4.15)<a class="headerlink" href="#equation-ab659c3c-2722-4ee4-948f-38ff163ea2ac" title="Permalink to this equation">#</a></span>\[\begin{equation}
   \int dx\, p(x|I) = 1,
 \end{equation}\]</div>
 <p>while the marginalization property corresponds to</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c31ff56d-9c1b-4fd4-ae6a-18d85fd37422">
-<span class="eqno">(4.16)<a class="headerlink" href="#equation-c31ff56d-9c1b-4fd4-ae6a-18d85fd37422" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7e0a11e9-8f7b-409e-9052-835daf1832e8">
+<span class="eqno">(4.16)<a class="headerlink" href="#equation-7e0a11e9-8f7b-409e-9052-835daf1832e8" title="Permalink to this equation">#</a></span>\[\begin{equation}
   p(y|I) = \int dx\, p(x,y|I).
 \end{equation}\]</div>
 </div>
@@ -861,8 +866,8 @@ p(p_H|I) = \left\{ \begin{array}{ll}
 <p>We will get back later to the choice of prior and its effect on the analysis in <a class="reference internal" href="../updating-via-bayes-rule/index.html#sec-updatingbayes"><span class="std std-numref">Section 6</span></a>
 .</p>
 <p>This prior state of knowledge, or ignorance, is modified by the data through the likelihood function <span class="math notranslate nohighlight">\(p(D|p_H,I)\)</span>. It is a measure of the chance that we would have obtained the data that we actually observed, if the value of the bias-weighting was given (as known). If, in the conditioning information <span class="math notranslate nohighlight">\(I\)</span>, we assume that the flips of the coin were independent events, so that the outcome of one did not influence that of another, then the probability of obtaining the data “H heads in N tosses” is given by the binomial distribution (we leave a formal definition of this to a statistics textbook)</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b128e41d-8908-4597-8e64-29b12724a3cd">
-<span class="eqno">(4.19)<a class="headerlink" href="#equation-b128e41d-8908-4597-8e64-29b12724a3cd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f06af667-d4db-4e25-b74c-885d0678d190">
+<span class="eqno">(4.19)<a class="headerlink" href="#equation-f06af667-d4db-4e25-b74c-885d0678d190" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(D|p_H,I) \propto p_H^H (1-p_H)^{N-H}.
 \end{equation}\]</div>
 <p>It seems reasonable because <span class="math notranslate nohighlight">\(p_H\)</span> is the chance of obtaining a head on any flip, and there were <span class="math notranslate nohighlight">\(H\)</span> of them, and <span class="math notranslate nohighlight">\(1-p_H\)</span> is the corresponding probability for a tail, of which there were <span class="math notranslate nohighlight">\(N-H\)</span>. We note that this binomial distribution also contains a normalization factor, but we will ignore it since it does not depend explicitly on <span class="math notranslate nohighlight">\(p_H\)</span>, the quantity of interest. It will be absorbed by the normalization condition Eq. <a class="reference internal" href="#equation-eq-coin-posterior-norm">(4.17)</a>.</p>
