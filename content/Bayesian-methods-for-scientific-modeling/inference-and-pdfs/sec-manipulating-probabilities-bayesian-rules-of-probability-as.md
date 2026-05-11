@@ -36,14 +36,11 @@ _marginalization_
       \cprob{x}{I} = \sum_j \cprob{x, y_j}{I} 
 \end{align}
 
-with the second equality being the generalization of marginalization
-to the context of variables $x$ and $y$ that can take on a
-continuous set of values, rather
-than just a discrete set of outcomes $\{x_i\}$ and $\{y_j\}$. 
+which shows how to obtain a "marginal" probability for the outcome of one variable by summing the joint probability for $x$ and $y$ over all possible outcomes $\{y_j\}$ of the second variable (which is not of interest).
 
  We will use marginalization a lot! Note that the marginalization
  takes place in the presence of the conditional I, i.e., all
- probabilities involved are ``given the information I''. The given
+ probabilities involved are "given the information I". The given
  information is held fixed, while the sum of all possibilities is
  constructed. 
 
@@ -54,7 +51,7 @@ general. It's ok to use this as a mnemonic though.
 :::
 
 :::{note}
-A rule from probability says $\prob(A \cup B) = \prob(A) + \prob(B) - \prob(A \cap B)$. (That is, to calculate the probability of the union of $A$ and $B$ we need to subtract the probability of the intersection from the sum of probabilities.) This may seem to contradict our marginalization rule. The difference is that if $A$ and $B$ are *exclusive*, as we assume, then $\prob(A \cap B) = 0$.
+A rule from probability says $\prob(A \cup B) = \prob(A) + \prob(B) - \prob(A \cap B)$. (That is, to calculate the probability of the union of $A$ and $B$ we need to subtract the probability of the intersection from the sum of probabilities.) This may seem to contradict our marginalization rule. However, if $A$ and $B$ are *exclusive* (as we assume) then $\prob(A \cap B) = 0$.
 :::
 
 ## Product rule
@@ -70,14 +67,14 @@ In words we say that the probability of both $x$ and $y$ occurring is
 the probability that $x$ occurs, given that $y$ has occurred, times
 the probability that $y$ occurs. 
 
-Note, once again, that the given information I is held fixed, i.e., it
+Note, once again, that the given information $I$ is held fixed, i.e., it
 if present on the left-hand side it appears in both probabilities on
 the right-hand side. 
 
 If $x$ and $y$ are *mutually independent*, then $\cprob{x}{y,I} = \cprob{x}{I}$ and {eq}`eq:joint_prob` reduces to 
 
 $$
-\cprob{x,y}{I} = \cprob{x}{I} \times \cprob{y}{I}
+\cprob{x,y}{I} = \cprob{x}{I}  \cprob{y}{I}
 $$ (eq:conditional_independence)
 
 This is a rule you are probably (but we hesitate to quantify our
@@ -107,8 +104,8 @@ Equating this to the expression in {eq}`eq:joint_prob` yields **Bayes' Rule** (o
 \cprob{x}{y,I} = \frac{\cprob{y}{x,I} \cprob{x}{I}}{\cprob{y}{I}}
 \end{equation}
 
-Bayes' theorem tells us how to reverse the conditional: $\cprob{x}{y}
-\Rightarrow \cprob{y}{x}$. The first thing to realize is that these two
+Bayes' theorem tells us how to reverse the conditional: $\cprob{y}{x}
+\Rightarrow \cprob{x}{y}$. The first thing to realize is that these two
 probabilities are not the same thing.
 
 ::::{admonition} Checkpoint question
