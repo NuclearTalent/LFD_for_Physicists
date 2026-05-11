@@ -15,7 +15,7 @@ Warning: there are multiple notations in the literature for expectation values a
 In Appendix A there are further details on {ref}`sec:Statistics`, which includes {ref}`sec:ExpectationValuesAndMoments` and {ref}`sec:CentralMoments`.
 
 We also address the question: *Is a continuous PDF determined by its moments?*
-and consider the effective number of samples when the data being sampled is correlated. For independent (and hence uncorrelated) samples, we expect new information with each sample. But this is not the case if there are strong correlations between samples! 
+and consider the effective number of samples when the sampling process implies correlation. For independent (and hence uncorrelated) samples, we expect new information with each sample. But this is not the case if there are strong correlations between samples! 
 
 ## Summary of expectation values and moments
 
@@ -26,7 +26,7 @@ $$
   \mathbb{E}_p[h] = \int_{-\infty}^\infty \! h(x)p(x)\,dx .
 $$
 
-The $p$ subscript is usually omitted. *Moments* correspond to $h(x) = x^n$, with $n=0$ giving 1 (this is the normalization condition) and the mean $\mu$ by $n=1$:
+The $p$ subscript is often omitted if it is clear which distribution is being considered. *Moments* correspond to $h(x) = x^n$. The zeroth moment (with $n=0$) is always equal to one since it is the normalization condition of the PDF. The first moment ($n=1$) gives the mean, which is often denoted $\mu$:
 
 $$
 \mathbb{E}[X] \equiv \mu =  \sum_{i}\! x_ip(x_i) \quad\Longrightarrow\quad
@@ -35,7 +35,7 @@ $$
 
 where we have also indicated two other common notations for the mean.
 
-The variance and covariance are moments with respect to the mean for one and two random variables:
+The variance and covariance are (central) moments with respect to the mean for one and two random variables:
 
 $$\begin{align}
 \text{Var}(X) &\equiv \sigma_{X}^2  \equiv \mathbb{E}\left[ \left( X - \mathbb{E}[X] \right)^2 \right] \\
@@ -43,6 +43,7 @@ $$\begin{align}
 \end{align}$$
 
 The standard deviation $\sigma$ is simply the square root of the variance $\sigma^2$. 
+
 The **correlation coefficient** of $X$ and $Y$ (for non-zero variances) is 
 
 $$
@@ -181,7 +182,7 @@ Here are some ways to find $p(x)$ given a set of moments $\{m_k\}$:
      \beta = (1-\mu) \left(\frac{\mu(1-\mu)}{\sigma^2} - 1\right).
    $$  
 
-1. We can use a maximum entropy reconstruction. We a finite number of known moments, we choose among distributions that reproduce the moments the one with the largest entropy. See {numref}`sec:MaxEnt` to learn about the principle of maximum entropy and there is a demo notebook in {numref}`demo:maximum-entropy-for-reconstructing-a-function-from-its-moments` illustrating how to do a maximum entropy reconstruction from moments.
+1. We can use a maximum entropy reconstruction. With a finite number of known moments, we choose among distributions that reproduce these moments the one with the largest entropy. See {numref}`sec:MaxEnt` to learn about the principle of maximum entropy and there is a demo notebook in {numref}`demo:maximum-entropy-for-reconstructing-a-function-from-its-moments` illustrating how to do a maximum entropy reconstruction from moments.
 
 1. We can try to invert from a *moment-generating function* or a *characteristic function*. 
    If $X$ is a random number with distribution $p_X(x)$, then the moment-generating function $M_X(t)$ and characteristic function $\phi_X(t)$ are for $t\in\mathbb{R}$:
@@ -242,11 +243,12 @@ $$
   \yvec \sim \mathcal{N}(\mu_0 \boldsymbol{1_n}, \Sigma) ,
 $$
 
-where $\Sigma$ is an $n\times n$ covariance matrix and $\boldsymbol{1_n}$ is a $n$-dimensional vector of ones.
-Let us consider first the limits of uncorrelated and fully correlated Gaussians. 
+where $\boldsymbol{1_n}$ is a $n$-dimensional vector of ones and $\Sigma$ is an $n\times n$ covariance matrix with all diagonal elements equal to $\sigma_0^2$.
 
-If we repeatedly draw $y_1$ and $y_2$ from the uncorrelated distribution, the joint distribution on a corner plot is 2-dimensional (in particular, the contours are circular). With $n$ draws, the joint distribution is $n$ dimensional (and the contours for the marginalized 2-dimensional plots are all circular). 
-But the same analysis with the fully correlated distribution would yield a straight line for the $n=2$ case; that is to say, 1-dimensional. Further, it is 1-dimensional for any $n$.
+Let us consider two limits of this distribution: (i) the uncorrelated one with all off-diagonal elements of $\Sigma$ equal to zero and (ii) the fully correlated one with all covariances equal to $\sigma_0^2$. The covariance matrix of case (ii) is singular but this will not be a concern for our argument.
+
+If we repeatedly draw $y_1$ and $y_2$ from the uncorrelated distribution, the joint distribution on a corner plot is 2-dimensional (in particular, the contours are circular). With $n$ draws, the joint distribution is $n$-dimensional (and the contours for the marginalized 2-dimensional plots are all circular). 
+But the same analysis with the fully correlated distribution would yield a straight line for the $n=2$ case; that is to say all samples can be found in a single dimension. Further, it remains 1-dimensional for any $n$.
 We can interpret this as meaning the effective number of draws or samples is $n$ in the uncorrelated case and 1 in the correlated case.
 
 Consider the average value of $y_1, y_2, \ldots, y_n$ and the variance of that average. For convenience, define $z$ as
@@ -263,8 +265,8 @@ $$
 $$
 
 Now define $\widetilde y_i = y_i - \mu_0$ and $\widetilde z = z - \mu_0$, so that these new random variables are all mean zero (this is for clarity, not necessity). 
-The variance of $\widetilde z$ is then the expectation value of $\widetilde z^2$, while $\langle y_i^2 \rangle = \sigma_0^2$. All of the covariances with $i\neq j$ are the same, which we will specify as $\langle y_i y_j \rangle = \sigma_0^2 \rho$, with $0 \leq \rho < 1$.
-Consider 
+The variance of $\widetilde y_i$ is equal to $\langle y_i^2 \rangle = \sigma_0^2$. 
+Consider now the variance of $\widetilde z$ which is equal to the expectation value of $\widetilde z^2$,
 
 $$
  \langle \widetilde z^2 \rangle = \frac{1}{n^2} (
@@ -272,7 +274,7 @@ $$
  ) 
 $$ (eq:variance_n_effective)
 
-for the two extremes of correlation. Since $\langle\widetilde y_i \widetilde y_j\rangle$ either is zero or equals $\sigma_0^2$, we find
+Since $\langle\widetilde y_i \widetilde y_j\rangle$ either is zero or equals $\sigma_0^2$ for the two extremes of correlation, we find
 
 $$\begin{align}
    &\text{uncorrelated}\  & \langle \widetilde z^2 \rangle &= \frac{1}{n^2}\cdot n\langle y_i^2 \rangle = \frac{\sigma_0^2}{n} , \\
@@ -295,7 +297,7 @@ $$
 \end{pmatrix} ,
 $$
 
-with $0 \leq \rho < 1$ (we assume only positive correlation here). So the two extremes just considered correspond to $\rho =0$ and $\rho = 1 - \epsilon$ (we introduce $\epsilon$ as a small positive number to be taken to zero at the end, needed because otherwise the matrix $M$ cannot be inverted).
+with $0 \leq \rho < 1$ (we assume only positive correlation here). So the two extremes just considered correspond to $\rho =0$ and $\rho = 1 - \epsilon$ (we introduce $\epsilon$ as a small positive number to be taken to zero at the end, needed because otherwise the covariance matrix $\Sigma$ cannot be inverted).
 Then the variance of $\widetilde z$ given $\yvec$ is
 
 $$
@@ -328,18 +330,22 @@ For $n=20$, $n_{\text{eff}}$ looks like:
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator, FixedLocator
 
 n = 20
 rho_values = np.linspace(0, 0.99, 100)
 
 n_eff = n / (1 + (n-1)*rho_values)
 
-plt.figure(figsize=(5,4))
-plt.plot(rho_values, n_eff)
-plt.xlabel(r"$\rho$")
-plt.ylabel(r"$n_\mathrm{eff}$")
-plt.title(f"Effective sample size vs correlation for n={n}")
-plt.ylim(0,20)
+fig, ax = plt.subplots(figsize=(5,4))
+ax.plot(rho_values, n_eff)
+ax.set_xlabel(r"$\rho$")
+ax.set_ylabel(r"$n_\mathrm{eff}$")
+ax.set_title(f"Effective sample size vs correlation for n={n}")
+ax.set_ylim(0, 20)
+ax.yaxis.set_major_locator(FixedLocator([0, 5, 10, 15, 20]))   # tick + label
+ax.yaxis.set_minor_locator(MultipleLocator(1))              # tick only, no label
+
 plt.grid(True)
 plt.show()
 ```

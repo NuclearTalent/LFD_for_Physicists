@@ -13,7 +13,7 @@ kernelspec:
 (sec:Inference:PDFs)=
 # Probability density functions
 
-The key mathematical entity used over and over again throughout this book will be the "probability density function", PDF for short. PDFs for continuous quantities are integrated to obtain probabilities. An example familiar to every physicist will be the probability density of a quantum-mechanical particle. Max Born somewhat belatedly decided to put a square on Schrodinger's wave function when interpreting the integral from $x=a$ to $x=b$ as the probability of measuring the particle to be between $a$ and $b$:
+The key mathematical entity used over and over again throughout this book will be the "probability density function", or just PDF for short. The PDF for continuous quantities can be integrated over a domain to obtain probabilities. An example familiar to every physicist will be the probability density of a quantum-mechanical particle. Max Born somewhat belatedly decided to put a square on Schrödinger's wave function when interpreting the integral from $x=a$ to $x=b$ as the probability of measuring the particle to be between $a$ and $b$:
 
 $$
    \prob(a \leq x \leq b) = \int_a^b |\psi(x)|^2\, dx
@@ -29,7 +29,7 @@ where $\p{x}$ is the PDF for the continuous variable $x$.
 
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
-What is the unit of $p(\xvec)$ (or $|\psi(\xvec)|^2$) in three dimensions (assuming $\xvec$ is a vector of length)?
+What is the unit of $p(\xvec)$ (or $|\psi(\xvec)|^2$) in three dimensions (assuming $\xvec$ is a position vector measured in units of length)?
 :::{admonition} Answer 
 :class: dropdown, my-answer 
 We can use the normalization equation (which is the sum rule):
@@ -46,15 +46,15 @@ which is dimensionless on the right side, so the unit of $p(\xvec)$ (or $|\psi(\
 
 We note that the case of a discrete random variable, e.g., the numbers
 that can be rolled on a die, mean that the PDF only is non-zero at a
-discrete set of numbers. In that case $\p{x}$ can be represented as
+discrete set of allowed outcomes. In that case $\p{x}$ can be represented as
 a sum of Dirac delta functions, and the resulting object is sometimes
-called a probability mass function. Thus the cases discussed above,
+called a probability mass function (PMF). Thus the cases discussed above,
 in which $\prob$ represented probability measured over a discrete set
-of outcomes, can be understood as special cases of pdfs.
+of outcomes, can be understood as special cases of PDFs.
 
-In fact, working this from the other end,  the sum and product rules
-to pdfs in just the same way as they do to probabilities. Therefore Bayes' theorem (or
-rule) can also be applied to relate the pdf of x given y, $\pdf{x}{y}$
+In fact, working this from the other end, the sum and product rules
+for PDFs look just the same way as they do for probabilities. Therefore Bayes' theorem (or
+rule) can also be applied to relate the PDF of $x$ given $y$, $\pdf{x}{y}$
 to the pdf of $y$ given $x$, $\pdf{y}{x}$.
 
 In Bayesian statistics there are PDFs (or PMFs if discrete) for
@@ -70,16 +70,16 @@ We will stick to the $\p{\cdot}$ notation here, but it's worth pointing out that
 
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
-What is the PDF $\p{x}$ if we know **definitely** that $x = x_0$ (i.e., fixed)?
+What is the PDF $\p{x}$ if we know **definitely** that $x = x_0$ (i.e., the outcome is fixed)?
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-$\p{x} = \delta(x-x_0)\quad$  [Note that $p(x)$ is normalized.]
+$\p{x} = \delta(x-x_0)\quad$  [Note that $\p(x)$ is normalized.]
 :::
 ::::
 
 
 
-## Joint PDFs, marginal PDFs, and an example of marginalization
+## Joint and marginal PDFs
 
 $\p{x_1, x_2}$ is the *joint* probability density of $x_1$ and $x_2$. In quantum mechanics the probability density $|\Psi(x_1, x_2)|^2$ to find particle 1 at $x_1$ and particle 2 at $x_2$ is a joint probability density.
 
@@ -92,7 +92,7 @@ $\int_{-\infty}^{+\infty} |\psi(x_1, x_2)|^2\, dx_2\ \ $ or, more generally, int
 :::
 ::::
 
-This is a specific example of the marginalization rule, now in the pdf
+This is a specific example of the marginalization rule, now in the PDF
 context, that we
 discussed the general form for probabilities above. The *marginal
 probability density* of $x_1$ is the result when we marginalize the
@@ -105,11 +105,11 @@ $$
 So, in our quantum mechanical example, it's the probability
 density we get when we just focus on particle 1, and don't care about
 particle 2. *Marginalizing* in the Bayesian context means
-``integrating out'' a parameter one is--at least temporarily--not
+"integrating out" a parameter one is--at least temporarily--not
 interested in, to leave the focus on the PDF of other parameters. This
 can be particularly useful if there are "nuisance" parameters in the
-statistical model that account for the impact of defects in the
-measuring apparatus, but ultimately one is interested in the physics
+statistical model that are just indirectly influencing the quantity of interest. A specific example could be a parameter that account for the impact of defects in the
+measuring apparatus, but ultimately one is interested in the physics that cab be 
 extracted with the imperfect apparatus. 
 
 :::{note}
@@ -148,16 +148,16 @@ As with discrete probabilities, there is a symmetry between the first and second
 If $\thetavec$ and $\alphavec$ are *mutually independent*, then $p(\thetavec | \alphavec,I) = p(\thetavec | I)$ and
 
 $$
-  p(\thetavec,\alphavec | I) = p(\thetavec|I) \times p(\alphavec | I) .
+  p(\thetavec,\alphavec | I) = p(\thetavec|I)  p(\alphavec | I) .
 $$
 
-Rearranging the 2nd equality in {eq}`eq:pdf_joint_prob` yields **Bayes' Rule** (or Theorem) just like in the discrete case:
+Rearranging the 2nd equality in {eq}`eq:pdf_joint_prob` yields **Bayes' rule** (or theorem) just like in the discrete case:
 
 $$
   p(\thetavec | \alphavec,I) = \frac{p(\alphavec|\thetavec,I) p(\thetavec|I)}{p(\alphavec | I)}
 $$
 
-Bayes' rule tells us how to reverse the conditional: $p(\thetavec|\alphavec) \rightarrow p(\alphavec|\thetavec)$.
+Bayes' rule tells us how to reverse the conditional: $p(\alphavec|\thetavec) \Rightarrow p(\thetavec|\alphavec)$.
 A typical application is when $\alphavec$ is a vector of data $\data$. Then Bayes' rule is
 
 $$
@@ -169,7 +169,7 @@ $$
  { \color{darkgreen}{ \underbrace{ \pdf{\data}{I} }_{\textrm{evidence}}} }
 $$
 
-Viewing the prior as the initial information we have about $\thetavec$ (i.e., before using the data $\data$), summarized as a probability density function, then Bayes' theorem tells us how to **update** that information after observing some data: this is the posterior PDF.  In {numref}`sec:UpdatingBayes` we will give some examples of how this plays out when tossing biased coins.
+Viewing the prior as the initial information we have about $\thetavec$ (i.e., before seeing the data $\data$), expressed as a PDF, then Bayes' theorem tells us how to **update** that information after observing some data: this is the posterior PDF.  In {numref}`sec:UpdatingBayes` we will give some examples of how this plays out when tossing biased coins.
 
 
 ## Visualizing PDFs
@@ -299,43 +299,34 @@ fig.tight_layout()
 
 ```
 
-The 68%/95% probability regions are shown in dark/light shading.  When applied to Bayesian posteriors, these are known as <em>credible intervals</em> or DoBs (degree of belief intervals) or Bayesian confidence intervals. The horizontal extent on the $x$-axis translates into the vertical extent of the error bar or error band for $x$.
+The 68%/95% probability regions are shown in dark/light shading.  When applied to Bayesian posteriors, these are known as <em>credible intervals</em> or DoBs (degree of belief intervals). One can also encounter the name Bayesian confidence intervals, but this use of the label "confidence interval" is not recommended. The horizontal extent on the $x$-axis translates into the vertical extent of the error bar or error band for $x$.
 The values of the mode, mean, median can be used as *point estimates* for the "probable" value of $x$.  
 
-These examples are just a taste of the full range of the standard distributions available in 
-the python package `scipy.stats`. 
-You can look at the code that generated the figures here ("Show code cell source") but it may 
-be worthwhile at this stage to jump ahead and explore using the demo notebook
-{ref}`demo:exploring-pdfs` to make a hands-on pass at getting familiar with PDFs and how to visualize them using `scipy.stats`. 
-You can also get a preview of the effects of finite *sampling*:
-because we can draw an arbitrary number of samples from the
-distributions defined in `scipy.stats`, we can see how the distributions
-build up as the number of samples increases, with decreasing
-fluctuations around the asymptotic distribution. 
+These examples are just a taste of a large range of standard distributions that are available in  the python package `scipy.stats`.  You can look at the code that generated the figures here ("Show code cell source") but it may be worthwhile at this stage to jump ahead and explore using the demo notebook {ref}`demo:exploring-pdfs` to make a hands-on pass at getting familiar with PDFs and how to visualize them using `scipy.stats`. 
+
+You can also get a preview of the effects of finite *sampling*. Since we can draw an arbitrary number of samples from the distributions defined in `scipy.stats`, we can see how the distributions build up as the number of samples increases, with decreasing fluctuations around the asymptotic distribution. 
 
 
 :::{note}
 See {ref}`sec:Statistics` in Appendix A for further details on PDFs. You can also consult the  `scipy.stats` manual page on [statistical functions](https://docs.scipy.org/doc/scipy/reference/stats.html).
 :::
 
-The diversity of distributions available there should make it clear
+The diversity of available distributions should make it clear
 that the "default" choice of a Gaussian distribution is just that: a
-default choice. In {ref}`sec:Gaussians` we will explore why this default
-choice is often the correct one. But often is not the same as all the
-time, and it is frequently the case that other distributions, such as
-the Student t, gives a better description of the way data is
-distributed.
+default choice. We will explore why this default
+choice is often the correct one in {ref}`sec:Gaussians`. But often is not the same as all the time, and it is frequently the case that another distribution gives a better description of the way data is distributed.
 
-:::{note}
-Trivia: "Student" was the pen name of the Head Brewer at Guinness --- a pioneer of small-sample experimental design (hence not necessarily Gaussian). His real name was William Sealy Gossett. 
+:::{admonition} Trivia: Who was "Student"?
+:class: note
+"Student" was the pen name of the Head Brewer at Guinness --- a pioneer of small-sample experimental design (hence not necessarily Gaussian). His real name was William Sealy Gosset.  "Statistics and Beer Day" is sometimes observed on his birthday, June 13, to celebrate his contributions.
 :::
 
 ::::{admonition} Confidence intervals
 :class: my-checkpoint
-*Bayesian confidence intervals: how are they defined?* 
+*Bayesian credible intervals: how are they defined?* 
 :::{admonition} Answer 
 :class: dropdown, my-answer
-**The Bayesian confidence or credible interval for a parameter with a one-dimenional PDF is defined for a given percentage, call it $\beta\%$. The interval is such that integrating over it one gets $\beta\%$ of the toal area under the PDF. This may not be uniquely defined if the PDF is multimodal or skewed.** 
+**The Bayesian credible interval for a parameter with a one-dimenional PDF is defined for a given percentage, call it $\beta\%$. The interval is such that integrating over it one gets $\beta\%$ of the total area under the PDF. The choice of interval is not unique. In particular, several reasonable intervals can be considered if the PDF is multimodal or skewed.** 
 :::
 ::::
 
