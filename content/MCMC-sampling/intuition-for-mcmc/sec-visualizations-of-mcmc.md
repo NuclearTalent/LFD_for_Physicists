@@ -42,24 +42,40 @@ We'll start with the random walk MH, which is the algorithm discussed in {numref
 </iframe>
 ``` 
 
+:::{admonition} Controls for the MCMC simulations
+:class: note
 Note the various `Simulation options`. For now, switch the `Target distribution` to `standard`. This distribution is a two-dimensional Gaussian (just the product of two one-dimensional Gaussians).
-Select `Close Controls` to avoid obscuring the simulation. Use `Open Controls` when you want to make a change.
- 
+Select `Close Controls` to avoid obscuring the simulation. Use `Open Controls` when you want to make a change to one of the settings.
+If you uncheck the `Autoplay` box, you can use the `Step` button to see the algorithm carried out one step at a time.
+Use the `Reset` button to clear the sampled points.
+:::
+
+When looking at the visualizations, remember the basic structure of the MH algorithm:
+1. Make a random proposal for new parameter values.
+1. Accept or reject the proposal based on a Metropolis criterion.
+
 ::::{admonition} Checkpoint question 
 :class: my-checkpoint
-Is the distribution correlated? How do you know from the simulation?
+Is the distribution correlated?  How do you know from the simulation?
 :::{admonition} Answer
 :class: dropdown, my-answer
 The distribution is uncorrelated. The accumulated joint posterior has horizontally oriented ellipses (circles if the scales are equal). They would be slanted if there were correlations.
 :::
 ::::
 
-When looking at the visualizations, remember the basic structure of the MH algorithm:
-1. Make a random proposal for new parameter values.
-1. Accept or reject the proposal based on a Metropolis criterion.
 
 Here are some comments and observations on the basic MH simulation:
 * An uncolored arrow indicates a proposal, which is accepted (green) or rejected (red).
+    ::::{admonition} Checkpoint question 
+    :class: my-checkpoint
+    What happens when a proposal is rejected? You can see the result by unchecking the `Autoplay` box and using the `Step` button. Look at the histogram as you press the button to get either a green or red arrow. 
+    :::
+    :::{admonition} Answer
+    :class: dropdown, my-answer
+    With a rejection, the point should be added to the existing set of samples. This means that
+    if the arrow is green (accepted proposal), then the histogram bin at the new point should go up by one. If the arrow is red (rejected proposal), then the histogram bin at the old point should go up by one (this is easy to see if you first `Reset` so there are not many points yet.)
+    :::
+    ::::
 * Notice that the direction and the length of the proposal arrow varies and are, in fact, chosen randomly from a distribution. The direction is sampled uniformly.
 * The MH MCMC seems to do ok on sampling such a simple distribution, as indicated by how well the projected posteriors get filled in.
 * But it is *diffusing*, i.e., a random walk, which is not so efficient. A more complicated shape can cause problems:
@@ -80,9 +96,10 @@ Here are some comments and observations on the basic MH simulation:
     * blue is one dimensional, green is two dimensional, ... , yellow is six dimensional.
     * Imagine yellow as a 6-dimensional *shell* $\Lra$ the *analog* is a two-dimensional donut.
     :::
-* Problems: we are constantly looking for the right step size, which is big enough to explore the space, but small enough to not get rejected too often.
-    * High dimensions is a big space! It is hard to stay in a region of high probability while also exploring enough of the full space (in a reasonable time).
-    * Try adjusting the proposal $\sigma$ (there is a Gaussian proposal with variance $\sigma^2$) $\Lra$ try this on donut: to get a reasonable rate of green arrows you need excellent step size tuning.
+
+**Problem:** we are constantly looking for the right step size, which is big enough to explore the space, but small enough to not get rejected too often.
+* High dimensions is a big space! It is hard to stay in a region of high probability while also exploring enough of the full space (in a reasonable time).
+* Try adjusting the proposal $\sigma$ (there is a Gaussian proposal with variance $\sigma^2$) $\Lra$ try this on donut: to get a reasonable rate of green arrows you need excellent step size tuning.
 
 ## Challenges in MCMC sampling
 
