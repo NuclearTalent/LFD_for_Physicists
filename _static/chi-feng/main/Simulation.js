@@ -191,6 +191,30 @@ function getUrlVars() {
   return vars;
 }
 
+function setupQuickControls(sim) {
+  var quickAutoplay = document.getElementById("quickAutoplay");
+  var quickStep = document.getElementById("quickStep");
+  var quickReset = document.getElementById("quickReset");
+
+  if (!quickAutoplay || !quickStep || !quickReset) {
+    return;
+  }
+
+  quickAutoplay.checked = sim.autoplay;
+
+  quickAutoplay.addEventListener("change", function () {
+    sim.autoplay = quickAutoplay.checked;
+  });
+
+  quickStep.addEventListener("click", function () {
+    sim.step();
+  });
+
+  quickReset.addEventListener("click", function () {
+    sim.reset();
+  });
+}
+
 window.onload = function () {
   viz = new Visualizer(
     document.getElementById("plotCanvas"),
@@ -201,8 +225,10 @@ window.onload = function () {
   sim.visualizer = viz;
   viz.simulation = sim;
 
-  var algorithm = MCMC.algorithmNames[0];
-  var target = MCMC.targetNames[0];
+  var algorithm =
+    window.DEFAULT_ALGORITHM && MCMC.algorithmNames.indexOf(window.DEFAULT_ALGORITHM) > -1
+      ? window.DEFAULT_ALGORITHM
+      : MCMC.algorithmNames[0];  var target = MCMC.targetNames[0];
   var seed = Math.seedrandom();
 
   function parseBool(value) {
@@ -271,7 +297,6 @@ window.onload = function () {
     .onChange(function (value) {
       sim.setTarget(value);
     });
-  f1.add(sim, "autoplay").name("Autoplay");
   f1.add(sim, "delay", 0, 1000)
     .name("Autoplay delay")
     .onChange(function (value) {
@@ -282,8 +307,6 @@ window.onload = function () {
       }
     });
   f1.add(sim, "tweeningDelay", 0, 200).name("Tweening delay");
-  f1.add(sim, "step").name("Step");
-  f1.add(sim, "reset").name("Reset");
   f1.open();
 
   var f2 = gui.addFolder("Visualization Options");
@@ -306,6 +329,7 @@ window.onload = function () {
   f3.add(sim.mcmc, "about").name("About this algorithm");
   f3.open();
 
+  setupQuickControls(sim);
   sim.animate();
 };
 

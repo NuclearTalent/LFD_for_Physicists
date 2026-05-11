@@ -69,7 +69,7 @@
     <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
     <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
     <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
-    <script src="../../../_static/chi-feng/main/Simulation.js?v=efcc9372"></script>
+    <script src="../../../_static/chi-feng/main/Simulation.js?v=78068d93"></script>
     <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
     <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
     <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
@@ -749,24 +749,41 @@ We’ll start with the random walk MH, which is the algorithm discussed in <a cl
     height="600"
     style="border: none;"
     scrolling="no">
-</iframe><p>Note the various <code class="docutils literal notranslate"><span class="pre">Simulation</span> <span class="pre">options</span></code>. For now, switch the <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">distribution</span></code> to <code class="docutils literal notranslate"><span class="pre">standard</span></code>. This distribution is a two-dimensional Gaussian (just the product of two one-dimensional Gaussians).
-Select <code class="docutils literal notranslate"><span class="pre">Close</span> <span class="pre">Controls</span></code> to avoid obscuring the simulation. Use <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Controls</span></code> when you want to make a change.</p>
-<div class="my-checkpoint admonition">
-<p class="admonition-title">Checkpoint question</p>
-<p>Is the distribution correlated? How do you know from the simulation?</p>
-<div class="dropdown my-answer admonition">
-<p class="admonition-title">Answer</p>
-<p>The distribution is uncorrelated. The accumulated joint posterior has horizontally oriented ellipses (circles if the scales are equal). They would be slanted if there were correlations.</p>
-</div>
+</iframe><div class="note admonition">
+<p class="admonition-title">Controls for the MCMC simulations</p>
+<p>Note the various <code class="docutils literal notranslate"><span class="pre">Simulation</span> <span class="pre">options</span></code>. For now, switch the <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">distribution</span></code> to <code class="docutils literal notranslate"><span class="pre">standard</span></code>. This distribution is a two-dimensional Gaussian (just the product of two one-dimensional Gaussians).
+Select <code class="docutils literal notranslate"><span class="pre">Close</span> <span class="pre">Controls</span></code> to avoid obscuring the simulation. Use <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Controls</span></code> when you want to make a change to one of the settings.
+If you uncheck the <code class="docutils literal notranslate"><span class="pre">Autoplay</span></code> box, you can use the <code class="docutils literal notranslate"><span class="pre">Step</span></code> button to see the algorithm carried out one step at a time.
+Use the <code class="docutils literal notranslate"><span class="pre">Reset</span></code> button to clear the sampled points.</p>
 </div>
 <p>When looking at the visualizations, remember the basic structure of the MH algorithm:</p>
 <ol class="arabic simple">
 <li><p>Make a random proposal for new parameter values.</p></li>
 <li><p>Accept or reject the proposal based on a Metropolis criterion.</p></li>
 </ol>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Is the distribution correlated?  How do you know from the simulation?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>The distribution is uncorrelated. The accumulated joint posterior has horizontally oriented ellipses (circles if the scales are equal). They would be slanted if there were correlations.</p>
+</div>
+</div>
 <p>Here are some comments and observations on the basic MH simulation:</p>
 <ul>
-<li><p>An uncolored arrow indicates a proposal, which is accepted (green) or rejected (red).</p></li>
+<li><p>An uncolored arrow indicates a proposal, which is accepted (green) or rejected (red).</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>What happens when a proposal is rejected? You can see the result by unchecking the <code class="docutils literal notranslate"><span class="pre">Autoplay</span></code> box and using the <code class="docutils literal notranslate"><span class="pre">Step</span></code> button. Look at the histogram as you press the button to get either a green or red arrow.</p>
+<div class="docutils">
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>With a rejection, the point should be added to the existing set of samples. This means that
+if the arrow is green (accepted proposal), then the histogram bin at the new point should go up by one. If the arrow is red (rejected proposal), then the histogram bin at the old point should go up by one (this is easy to see if you first <code class="docutils literal notranslate"><span class="pre">Reset</span></code> so there are not many points yet.)</p>
+</div>
+</div>
+</div>
+</li>
 <li><p>Notice that the direction and the length of the proposal arrow varies and are, in fact, chosen randomly from a distribution. The direction is sampled uniformly.</p></li>
 <li><p>The MH MCMC seems to do ok on sampling such a simple distribution, as indicated by how well the projected posteriors get filled in.</p></li>
 <li><p>But it is <em>diffusing</em>, i.e., a random walk, which is not so efficient. A more complicated shape can cause problems:</p>
@@ -791,12 +808,11 @@ Select <code class="docutils literal notranslate"><span class="pre">Close</span>
 </ul>
 </div>
 </li>
-<li><p>Problems: we are constantly looking for the right step size, which is big enough to explore the space, but small enough to not get rejected too often.</p>
+</ul>
+<p><strong>Problem:</strong> we are constantly looking for the right step size, which is big enough to explore the space, but small enough to not get rejected too often.</p>
 <ul class="simple">
 <li><p>High dimensions is a big space! It is hard to stay in a region of high probability while also exploring enough of the full space (in a reasonable time).</p></li>
 <li><p>Try adjusting the proposal <span class="math notranslate nohighlight">\(\sigma\)</span> (there is a Gaussian proposal with variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>) <span class="math notranslate nohighlight">\(\Lra\)</span> try this on donut: to get a reasonable rate of green arrows you need excellent step size tuning.</p></li>
-</ul>
-</li>
 </ul>
 </section>
 <section id="challenges-in-mcmc-sampling">
