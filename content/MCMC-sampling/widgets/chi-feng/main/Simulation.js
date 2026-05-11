@@ -330,6 +330,7 @@ window.onload = function () {
   f3.open();
 
   setupQuickControls(sim);
+  gui.close();
   sim.animate();
 };
 
