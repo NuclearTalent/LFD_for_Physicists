@@ -44,10 +44,11 @@ We'll start with the random walk MH, which is the algorithm discussed in {numref
 
 :::{admonition} Controls for the MCMC simulations
 :class: note
-Note the various `Simulation options`. For now, switch the `Target distribution` to `standard`. This distribution is a two-dimensional Gaussian (just the product of two one-dimensional Gaussians).
-Select `Close Controls` to avoid obscuring the simulation. Use `Open Controls` when you want to make a change to one of the settings.
 If you uncheck the `Autoplay` box, you can use the `Step` button to see the algorithm carried out one step at a time.
 Use the `Reset` button to clear the sampled points.
+Select `Open Controls` when you want to make a change to one of the settings. 
+Note the various `Simulation options` (and other options) when the controls are open. For now, switch the `Target distribution` to `standard`. This distribution is a two-dimensional Gaussian (just the product of two one-dimensional Gaussians).
+After making changes, use `Close Controls` to avoid obscuring the simulation.
 :::
 
 When looking at the visualizations, remember the basic structure of the MH algorithm:
@@ -56,7 +57,7 @@ When looking at the visualizations, remember the basic structure of the MH algor
 
 ::::{admonition} Checkpoint question 
 :class: my-checkpoint
-Is the distribution correlated?  How do you know from the simulation?
+Is the `standard` distribution correlated?  How do you know from the simulation?
 :::{admonition} Answer
 :class: dropdown, my-answer
 The distribution is uncorrelated. The accumulated joint posterior has horizontally oriented ellipses (circles if the scales are equal). They would be slanted if there were correlations.
