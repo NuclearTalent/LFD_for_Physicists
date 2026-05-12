@@ -759,13 +759,13 @@ In quantum mechanics, this corresponds to the probability to find particle 1 at 
 <li><p>“Marginalizing” = “integrating out” (eliminates from the posterior the “nuisance parameters” whose value you don’t care about, at least not at that moment).</p></li>
 </ul>
 </div>
-<p>In Bayesian statistics there are PDFs (or PMFs if discrete) for experimental <i>and</i> theoretical uncertainties, fit parameters, hyperparameters (what are those?), events (“Will it rain tomorrow?”), etc.  Even if <span class="math notranslate nohighlight">\(x\)</span> has the definite value <span class="math notranslate nohighlight">\(x_0\)</span>, we can use the PDF <span class="math notranslate nohighlight">\(p(x) = \delta(x-x_0)\)</span>.</p>
+<p>In Bayesian statistics there are PDFs (or PMFs if discrete) for experimental <i>and</i> theoretical uncertainties, model parameters, hyperparameters (what are those?), events (“Will it rain tomorrow?”), etc.  Even if <span class="math notranslate nohighlight">\(x\)</span> has the definite value <span class="math notranslate nohighlight">\(x_0\)</span>, we can represent this knowledge with a PDF <span class="math notranslate nohighlight">\(p(x) = \delta(x-x_0)\)</span>.</p>
 <div class="my-checkpoint admonition">
 <p class="admonition-title">Characteristics of PDFs</p>
 <p><em>What are the characteristics (e.g., symmetry, heavy tails, …) of different PDFs: normal, beta, student t, <span class="math notranslate nohighlight">\(\chi^2\)</span>, <span class="math notranslate nohighlight">\(\ldots\)</span></em></p>
 <div class="dropdown my-answer admonition">
 <p class="admonition-title">Answer</p>
-<p><strong>Check these yourself!</strong> Note that the answers will often depend on the parameter values for the distribution. A Student t distribution may have “heavy tails” (meaning more probability in the tails than a Gaussian would have) for some parameters but for others it approaches a normal distribution (so by definition no heavy tails).</p>
+<p><strong>Check these yourself!</strong> Note that the answers will often depend on the parameter values for the distribution. A Student t distribution may have “heavy tails” (meaning more probability in the tails than a Gaussian would have) for some parameter values but for others it approaches a normal distribution (so by definition no heavy tails).</p>
 </div>
 </div>
 <div class="my-checkpoint admonition">
@@ -773,7 +773,7 @@ In quantum mechanics, this corresponds to the probability to find particle 1 at 
 <p><em>What does sampling mean?</em></p>
 <div class="dropdown my-answer admonition">
 <p class="admonition-title">Answer</p>
-<p>To sample a given distribution is to draw values with probabilities given by the distribution. In Bayesian inference one is most often sampling a posterior distribution.</p>
+<p>To sample a given distribution is to draw values that represent it. The probability to draw a specific value is given by the distribution. In Bayesian inference one is most often sampling a posterior distribution.</p>
 </div>
 </div>
 <div class="my-checkpoint admonition">
@@ -781,7 +781,7 @@ In quantum mechanics, this corresponds to the probability to find particle 1 at 
 <p><em>How do you know if a distribution is correctly sampled?</em></p>
 <div class="dropdown my-answer admonition">
 <p class="admonition-title">Answer</p>
-<p>One way is to look at the (normalized)histogram. If correctly sampled, this should approximate the distribution and the approximation should improve with more samples.</p>
+<p>One way is to look at the (normalized) histogram. If correctly sampled, this should approximate the distribution and the approximation should improve with more samples.</p>
 </div>
 </div>
 </section>
@@ -809,79 +809,53 @@ In quantum mechanics, this corresponds to the probability to find particle 1 at 
                     \rho_{12}\sigma_1\sigma_2 &amp; \sigma_2^2}
         \quad\mbox{with}\ 0 &lt; \rho_{12}^2 &lt; 1            
 \end{split}\]</div>
-<p>and <span class="math notranslate nohighlight">\(\Sigma\)</span> is positive definite.
-The following two <em>corner plots</em> are for <span class="math notranslate nohighlight">\(\rho_{12} = 0\)</span> and <span class="math notranslate nohighlight">\(\rho_{12} = 0.7\)</span>.</p>
-<div class="cell tag_hide-input docutils container">
-<details class="admonition hide above-input">
-<summary aria-label="Toggle hidden content">
-<p class="collapsed admonition-title">Show code cell source</p>
-<p class="expanded admonition-title">Hide code cell source</p>
-</summary>
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">corner</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">plot_bivariate_gaussians</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span><span class="p">,</span> <span class="n">var1</span><span class="p">,</span> <span class="n">var2</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">100000</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generates and plots samples from a 2D correlated Gaussian distribution </span>
-<span class="sd">    (also known as a bivariate normal distribution).</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        mu1 (float): Mean of the first dimension.</span>
-<span class="sd">        mu2 (float): Mean of the second dimension.</span>
-<span class="sd">        var1 (float): Variance of the first dimension.</span>
-<span class="sd">        var2 (float): Variance of the second dimension.</span>
-<span class="sd">        rho (float): Correlation coefficient between the dimensions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Create the mean vector and covariance matrix</span>
-    <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span><span class="p">])</span>
-    <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-        <span class="p">[</span><span class="n">var1</span><span class="p">,</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var1</span> <span class="o">*</span> <span class="n">var2</span><span class="p">)],</span>
-        <span class="p">[</span><span class="n">rho</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var1</span> <span class="o">*</span> <span class="n">var2</span><span class="p">),</span> <span class="n">var2</span><span class="p">]</span>
-    <span class="p">])</span>
-
-    <span class="c1"># Generate samples from the multivariate normal distribution</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">samples</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Invalid covariance matrix. Ensure `var1` and `var2` are positive.&quot;</span><span class="p">)</span>
-        <span class="k">return</span>
-
-    <span class="c1"># Create the corner plot</span>
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$x_1$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$x_2$&#39;</span><span class="p">],</span> 
-                        <span class="n">quantiles</span><span class="o">=</span><span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">],</span> 
-                        <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-                        <span class="n">label_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">},</span>
-                        <span class="n">title_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">})</span>
-    <span class="c1"># Adjust the fonts for the tick labels</span>
-    <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">():</span>
-      <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-    
-    <span class="c1"># Update the title with the current parameters</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Bivariate Gaussian</span><span class="se">\n</span><span class="s2">$\mu$=[</span><span class="si">{</span><span class="n">mu1</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">mu2</span><span class="si">}</span><span class="s2">], $\Sigma_</span><span class="se">{{</span><span class="s2">11</span><span class="se">}}</span><span class="s2">$=</span><span class="si">{</span><span class="n">var1</span><span class="si">}</span><span class="s2">, $\Sigma_</span><span class="se">{{</span><span class="s2">22</span><span class="se">}}</span><span class="s2">$=</span><span class="si">{</span><span class="n">var2</span><span class="si">}</span><span class="s2">, $</span><span class="se">\\</span><span class="s2">rho_</span><span class="se">{{</span><span class="s2">12</span><span class="se">}}</span><span class="s2">$=</span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> 
-        <span class="n">y</span><span class="o">=</span><span class="mf">1.1</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="n">mu1</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">mu2</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">var1</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">var2</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">rho</span> <span class="o">=</span> <span class="mi">0</span>
-
-<span class="n">plot_bivariate_gaussians</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span><span class="p">,</span> <span class="n">var1</span><span class="p">,</span> <span class="n">var2</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
-
-<span class="n">rho</span> <span class="o">=</span> <span class="mf">0.7</span>
-<span class="n">plot_bivariate_gaussians</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span><span class="p">,</span> <span class="n">var1</span><span class="p">,</span> <span class="n">var2</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</details>
-<div class="cell_output docutils container">
-<img alt="../../../_images/c016512df4f617629556724b341086af221a2971e222caa5de0272fac816e8ed.png" src="../../../_images/c016512df4f617629556724b341086af221a2971e222caa5de0272fac816e8ed.png" />
-<img alt="../../../_images/c3d1fd6cdd9c2975f7007166e0a05712010f3da6ecae7e1c61bba229534d5932.png" src="../../../_images/c3d1fd6cdd9c2975f7007166e0a05712010f3da6ecae7e1c61bba229534d5932.png" />
-</div>
+<p>and <span class="math notranslate nohighlight">\(\Sigma\)</span> is positive definite.</p>
+<p><strong>Widget user interface features</strong>:</p>
+<ul class="simple">
+<li><p>Set the mean position <span class="math notranslate nohighlight">\((\mu_1, \mu_2)\)</span> and variances <span class="math notranslate nohighlight">\((\Sigma_{11}, \Sigma_{22})\)</span> with the sliders</p></li>
+<li><p>Set the correlation <span class="math notranslate nohighlight">\(\rho_{12}\)</span> with the slider. This controls the covariance <span class="math notranslate nohighlight">\(\Sigma_{12} = \rho_{12} \sqrt{ \Sigma_{11} \Sigma_{22}}\)</span>.</p></li>
+<li><p>Four presets are available.</p></li>
+<li><p>The corner plot shows samples from the bivariate PDF and histograms for the two marginal distributions. Control the number of samples with the slider.</p></li>
+<li><p>Dashed lines on the marginals mark the 16th, 50th, and 84th percentiles. This is equivalent to <span class="math notranslate nohighlight">\(\pm 1\sigma\)</span> for a one-dimensional Gaussian.</p></li>
+</ul>
+<iframe src="../../../_static/app_BivariateGaussian.html"
+    width="100%"
+    height="720"
+    style="border: none;"
+    scrolling="no">
+</iframe><p>The solid and dashed ellipses in the joint panel are iso-probability levels. These correspond to fixed values of the squared Mahalanobis distance</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta^2 = (\mathbf{x} - \boldsymbol{\mu})^\top \Sigma^{-1} (\mathbf{x} - \boldsymbol{\mu}).
+\]</div>
+<p>In the widget they are drawn at <span class="math notranslate nohighlight">\(\Delta = 1\)</span> and <span class="math notranslate nohighlight">\(\Delta = 2\)</span>. Their semi-axes are aligned with the eigenvectors of <span class="math notranslate nohighlight">\(\Sigma\)</span> and have lengths <span class="math notranslate nohighlight">\(\sqrt{\lambda_i}\)</span> (the “<span class="math notranslate nohighlight">\(1\sigma\)</span>” ellipse) and <span class="math notranslate nohighlight">\(2\sqrt{\lambda_i}\)</span> (the “<span class="math notranslate nohighlight">\(2\sigma\)</span>” ellipse), where <span class="math notranslate nohighlight">\(\lambda_i\)</span> are the eigenvalues of <span class="math notranslate nohighlight">\(\Sigma\)</span>.</p>
+<p><strong>A subtlety worth highlighting.</strong> In one dimension the <span class="math notranslate nohighlight">\(\pm 1\sigma\)</span> and <span class="math notranslate nohighlight">\(\pm 2\sigma\)</span> intervals contain 68.3% and 95.4% of the probability mass. In two dimensions, the corresponding <em>ellipses</em> contain considerably less, because <span class="math notranslate nohighlight">\(\Delta^2 \sim \chi^2_2\)</span> and</p>
+<div class="math notranslate nohighlight">
+\[
+\prob(\Delta^2 \le k^2) = 1 - e^{-k^2/2}.
+\]</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Ellipse</p></th>
+<th class="head"><p>Probability mass (2D)</p></th>
+<th class="head"><p>For comparison: 1D interval</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\Delta = 1\)</span> (“<span class="math notranslate nohighlight">\(1\sigma\)</span>”)</p></td>
+<td><p>39.3%</p></td>
+<td><p>68.3%</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\Delta = 2\)</span> (“<span class="math notranslate nohighlight">\(2\sigma\)</span>”)</p></td>
+<td><p>86.5%</p></td>
+<td><p>95.4%</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\Delta = 3\)</span> (“<span class="math notranslate nohighlight">\(3\sigma\)</span>”)</p></td>
+<td><p>98.9%</p></td>
+<td><p>99.7%</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="my-checkpoint admonition">
 <p class="admonition-title">Questions to consider:</p>
@@ -898,10 +872,10 @@ The following two <em>corner plots</em> are for <span class="math notranslate no
 </div>
 </li>
 <li><p><em>What is plotted in each part of the graph (called a “corner plot”)?</em></p></li>
-<li><p><em>What effect does changing <span class="math notranslate nohighlight">\(\mu_1\)</span> (<code class="docutils literal notranslate"><span class="pre">mu1</span></code>) or <span class="math notranslate nohighlight">\(\mu_2\)</span> (<code class="docutils literal notranslate"><span class="pre">mu2</span></code>) have?</em></p></li>
-<li><p><em>What effect does changing <span class="math notranslate nohighlight">\(\sigma_1\)</span> (<code class="docutils literal notranslate"><span class="pre">var1</span></code>) or <span class="math notranslate nohighlight">\(\sigma_2\)</span> (<code class="docutils literal notranslate"><span class="pre">var2</span></code>) have? What if the scales for <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(x_2\)</span> were the same?</em></p></li>
-<li><p><em>What happens if <span class="math notranslate nohighlight">\(\rho_{12}\)</span> (<code class="docutils literal notranslate"><span class="pre">rho</span></code>) is equal to <span class="math notranslate nohighlight">\(0\)</span> then <span class="math notranslate nohighlight">\(+0.5\)</span> then <span class="math notranslate nohighlight">\(-0.5\)</span>.</em></p></li>
-<li><p><em>What happens if <span class="math notranslate nohighlight">\(\rho_{12}\)</span> (<code class="docutils literal notranslate"><span class="pre">rho</span></code>) is <span class="math notranslate nohighlight">\(&gt;1\)</span> or <span class="math notranslate nohighlight">\(&lt; -1\)</span>? Explain what goes wrong.</em></p></li>
+<li><p><em>What effect does changing <span class="math notranslate nohighlight">\(\mu_1\)</span> or <span class="math notranslate nohighlight">\(\mu_2\)</span> have?</em></p></li>
+<li><p><em>What effect does changing <span class="math notranslate nohighlight">\(\Sigma_{11}\)</span> or <span class="math notranslate nohighlight">\(\Sigma_{22}\)</span> have? What if the scales for <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(x_2\)</span> were the same?</em></p></li>
+<li><p><em>What happens if <span class="math notranslate nohighlight">\(\rho_{12}\)</span> is equal to <span class="math notranslate nohighlight">\(0\)</span> then <span class="math notranslate nohighlight">\(+0.7\)</span> then <span class="math notranslate nohighlight">\(-0.7\)</span>.</em></p></li>
+<li><p><em>What would happen if you were allowed to set <span class="math notranslate nohighlight">\(|\rho_{12}| \leq 1\)</span>? Explain what goes wrong.</em></p></li>
 <li><p><em>So what characterizes independent (uncorrelated) variables versus positively correlated versus negatively correlated?</em></p></li>
 </ol>
 </div>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bivariate Gaussian explorer</title>
+<style>
+  :root {
+    --bg:        #fdfcf9;
+    --panel:    #ffffff;
+    --ink:      #1c1c1e;
+    --muted:    #6b6b6f;
+    --line:     #d8d6cf;
+    --accent:   #c47a52;       /* warm terracotta — used for both samples and histograms */
+    --accent-edge:#8b4a2a;      /* darker terracotta for histogram outlines */
+    --ellipse:   #1c1c1e;      /* same as ink — maximum contrast */
+    --ellipse-fill: rgba(28,28,30,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:        #1a1a1c;
+      --panel:    #232325;
+      --ink:      #e8e6df;
+      --muted:    #9a9893;
+      --line:     #3a3a3d;
+      --accent:   #d97757;
+      --accent-edge:#a8542f;
+      --ellipse:   #f4f1e8;
+      --ellipse-fill: rgba(244,241,232,0.08);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0.75rem;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Source Serif Pro", Georgia, serif;
+    line-height: 1.5;
+  }
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 0.85rem;
+    align-items: start;
+  }
+  @media (max-width: 720px) {
+    .wrap { grid-template-columns: 1fr; }
+  }
+  .plot-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.5rem;
+  }
+  canvas#plot {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .controls {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.6rem 0.75rem;
+    font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+  }
+  .controls h2 {
+    font-family: inherit;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--muted);
+    margin: 0 0 0.4rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .group { margin-bottom: 0.6rem; }
+  .group:last-of-type { margin-bottom: 0; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .slider {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .row label {
+    font-style: italic;
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: 13px;
+  }
+  .row .val {
+    font-family: "IBM Plex Mono", "Menlo", Consolas, monospace;
+    font-size: 10.5px;
+    color: var(--ink);
+    background: var(--bg);
+    padding: 0 4px;
+    border-radius: 2px;
+    border: 1px solid var(--line);
+    min-width: 38px;
+    text-align: right;
+  }
+  input[type=range] {
+    width: 100%;
+    accent-color: var(--accent);
+    margin: 0;
+    height: 14px;
+  }
+  .button-row {
+    display: flex;
+    gap: 4px;
+    margin-top: 0.4rem;
+  }
+  button {
+    flex: 1;
+    font-family: inherit;
+    font-size: 11px;
+    padding: 4px 6px;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  button:hover { background: var(--bg); border-color: var(--muted); }
+  button:active { transform: translateY(0.5px); }
+  .preset-row { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 0.35rem; }
+  .preset-row button { padding: 4px 3px; font-size: 10.5px; }
+  .matrix {
+    margin-top: 0.55rem;
+    padding-top: 0.45rem;
+    border-top: 1px solid var(--line);
+    font-family: "IBM Plex Mono", Menlo, monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .matrix .label { font-style: italic; font-family: "Iowan Old Style", Georgia, serif; font-size: 12px; color: var(--ink); }
+  .matrix .grid {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    gap: 1px 10px;
+    padding: 2px 8px;
+    border-left: 1px solid var(--ink);
+    border-right: 1px solid var(--ink);
+  }
+  .caption {
+    grid-column: 1 / -1;
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin: 0;
+    max-width: 70ch;
+  }
+  .caption code {
+    font-family: "IBM Plex Mono", Menlo, monospace;
+    font-size: 10.5px;
+    background: var(--panel);
+    padding: 0 3px;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="plot-card">
+    <canvas id="plot" width="1200" height="1200" aria-label="Corner plot of a bivariate Gaussian distribution"></canvas>
+  </div>
+
+  <aside class="controls">
+    <h2>Mean &amp; variance</h2>
+    <div class="group">
+      <div class="pair">
+        <div class="slider">
+          <div class="row"><label>&mu;<sub>1</sub></label><span class="val" id="mu1-val">0.00</span></div>
+          <input type="range" id="mu1" min="-3" max="3" step="0.05" value="0">
+        </div>
+        <div class="slider">
+          <div class="row"><label>&mu;<sub>2</sub></label><span class="val" id="mu2-val">0.00</span></div>
+          <input type="range" id="mu2" min="-3" max="3" step="0.05" value="0">
+        </div>
+        <div class="slider">
+          <div class="row"><label>&Sigma;<sub>11</sub></label><span class="val" id="v1-val">1.00</span></div>
+          <input type="range" id="v1" min="0.1" max="4" step="0.05" value="1">
+        </div>
+        <div class="slider">
+          <div class="row"><label>&Sigma;<sub>22</sub></label><span class="val" id="v2-val">1.00</span></div>
+          <input type="range" id="v2" min="0.1" max="4" step="0.05" value="1">
+        </div>
+      </div>
+    </div>
+
+    <h2>Correlation &amp; sample size</h2>
+    <div class="group">
+      <div class="slider">
+        <div class="row"><label>&rho;<sub>12</sub></label><span class="val" id="rho-val">0.00</span></div>
+        <input type="range" id="rho" min="-0.98" max="0.98" step="0.01" value="0">
+      </div>
+      <div class="slider" style="margin-top:0.4rem;">
+        <div class="row"><label>N</label><span class="val" id="n-val">5,000</span></div>
+        <input type="range" id="n" min="200" max="50000" step="200" value="5000">
+      </div>
+      <div class="button-row">
+        <button id="resample">Resample</button>
+        <button id="reset">Reset</button>
+      </div>
+    </div>
+
+    <h2>Presets</h2>
+    <div class="preset-row">
+      <button data-preset="indep">Independent</button>
+      <button data-preset="pos">&rho; = +0.7</button>
+      <button data-preset="neg">&rho; = &minus;0.7</button>
+      <button data-preset="elong">Elongated</button>
+    </div>
+
+    <div class="matrix">
+      <span class="label">&Sigma; =</span>
+      <div class="grid">
+        <span id="s11">1.00</span><span id="s12">0.00</span>
+        <span id="s21">0.00</span><span id="s22">1.00</span>
+      </div>
+    </div>
+  </aside>
+
+  <p class="caption">
+    Drag the sliders to change the bivariate normal's parameters. The diagonal panels show marginal histograms of <em>x</em><sub>1</sub> and <em>x</em><sub>2</sub>; the off-diagonal panel shows the joint scatter. Dashed lines mark the 16th, 50th, and 84th percentiles &mdash; equivalent to &plusmn;1&sigma; for a Gaussian. The 1&sigma; and 2&sigma; ellipses come from the eigendecomposition of <code>&Sigma;</code>.
+  </p>
+
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  // ---------- RNG (Box-Muller) ----------
+  function randn() {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  // ---------- Sampling ----------
+  // For bivariate normal with mean (m1,m2), variances (v1,v2), correlation rho:
+  //   x1 = m1 + sqrt(v1) * z1
+  //   x2 = m2 + sqrt(v2) * (rho * z1 + sqrt(1 - rho^2) * z2)
+  function sample(n, m1, m2, v1, v2, rho) {
+    const s1 = Math.sqrt(v1), s2 = Math.sqrt(v2);
+    const r2 = Math.sqrt(Math.max(0, 1 - rho * rho));
+    const x1 = new Float64Array(n);
+    const x2 = new Float64Array(n);
+    for (let i = 0; i < n; i++) {
+      const z1 = randn(), z2 = randn();
+      x1[i] = m1 + s1 * z1;
+      x2[i] = m2 + s2 * (rho * z1 + r2 * z2);
+    }
+    return { x1, x2 };
+  }
+
+  // ---------- Stats ----------
+  function quantiles(arr, qs) {
+    const a = Float64Array.from(arr).sort();
+    return qs.map(q => {
+      const i = q * (a.length - 1);
+      const lo = Math.floor(i), hi = Math.ceil(i);
+      return a[lo] + (a[hi] - a[lo]) * (i - lo);
+    });
+  }
+
+  function histogram(arr, lo, hi, bins) {
+    const counts = new Int32Array(bins);
+    const w = (hi - lo) / bins;
+    for (let i = 0; i < arr.length; i++) {
+      const k = Math.floor((arr[i] - lo) / w);
+      if (k >= 0 && k < bins) counts[k]++;
+    }
+    return { counts, w };
+  }
+
+  // ---------- Drawing ----------
+  const canvas = document.getElementById("plot");
+  const ctx = canvas.getContext("2d");
+
+  // Style values are pulled from CSS for dark/light parity.
+  function css(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  function fitDPR() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const w = Math.max(600, Math.floor(rect.width));
+    canvas.width  = Math.floor(w * dpr);
+    canvas.height = Math.floor(w * dpr);
+    canvas.style.height = w + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return w;
+  }
+
+  function draw(state) {
+    const size = fitDPR();
+    const W = size, H = size;
+
+    const ink = css("--ink");
+    const muted = css("--muted");
+    const line = css("--line");
+    const panel = css("--panel");
+    const accent = css("--accent");
+    const accentEdge = css("--accent-edge");
+    const ellipseColor = css("--ellipse");
+    const ellipseFill = css("--ellipse-fill");
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Layout: 2x2 grid. Upper-right is hidden. Diagonals are marginals, lower-left is scatter.
+    const padL = Math.round(W * 0.085);
+    const padR = Math.round(W * 0.03);
+    const padT = Math.round(W * 0.04);
+    const padB = Math.round(W * 0.085);
+    const gap  = Math.round(W * 0.012);
+    const inner = W - padL - padR;
+    const cell = (inner - gap) / 2;
+
+    // Decide axis ranges that comfortably contain the data (use 4σ around the mean from the params,
+    // and clip to the observed data range so the axes don't whip around with tiny samples).
+    const { m1, m2, v1, v2 } = state;
+    const halfRange1 = 4 * Math.sqrt(Math.max(v1, v2));
+    const halfRange2 = halfRange1;
+    const xLo = Math.min(m1, m2) - halfRange1;
+    const xHi = Math.max(m1, m2) + halfRange1;
+    // Use shared range so panels align; this is the standard corner convention only if vars are similar.
+    // For clarity, use independent ranges per axis instead:
+    const r1 = 4 * Math.sqrt(v1), r2 = 4 * Math.sqrt(v2);
+    const x1Lo = m1 - r1, x1Hi = m1 + r1;
+    const x2Lo = m2 - r2, x2Hi = m2 + r2;
+
+    // Cell rects
+    // (col, row) with row 0 = top
+    // top-left (0,0): marginal of x1
+    // bottom-left (0,1): joint scatter (x1 horiz, x2 vert)
+    // bottom-right (1,1): marginal of x2 (rotated)
+    const cells = {
+      topLeft:    { x: padL,             y: padT,           w: cell, h: cell },
+      bottomLeft: { x: padL,             y: padT + cell + gap, w: cell, h: cell },
+      bottomRight:{ x: padL + cell + gap, y: padT + cell + gap, w: cell, h: cell }
+    };
+
+    // ---- helpers: data <-> pixel
+    const sxFor = (xLo, xHi, rect) => (x) => rect.x + (x - xLo) / (xHi - xLo) * rect.w;
+    const syFor = (yLo, yHi, rect) => (y) => rect.y + rect.h - (y - yLo) / (yHi - yLo) * rect.h;
+
+    // ---- marginal x1 (top-left) ----
+    const sx_top = sxFor(x1Lo, x1Hi, cells.topLeft);
+    drawMarginal(cells.topLeft, state.x1, x1Lo, x1Hi, sx_top, /*horizontal=*/true);
+
+    // ---- joint scatter (bottom-left) ----
+    drawJoint(cells.bottomLeft, state, x1Lo, x1Hi, x2Lo, x2Hi);
+
+    // ---- marginal x2 (bottom-right), rotated ----
+    const sy_right = syFor(x2Lo, x2Hi, cells.bottomRight);
+    drawMarginal(cells.bottomRight, state.x2, x2Lo, x2Hi, sy_right, /*horizontal=*/false);
+
+    // ---- titles above the two marginals (summary statistics) ----
+    drawMarginalTitle(cells.topLeft, "x_1", state.x1);
+    drawMarginalTitle(cells.bottomRight, "x_2", state.x2);
+
+    // ---- axis labels on outer edges ----
+    drawAxisLabels(cells, x1Lo, x1Hi, x2Lo, x2Hi);
+
+    // helpers below ----------------------------------------------------------
+
+    function drawMarginal(rect, data, lo, hi, scale, horizontal) {
+      // border
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(rect.x + 0.5, rect.y + 0.5, rect.w - 1, rect.h - 1);
+
+      const bins = 40;
+      const { counts } = histogram(data, lo, hi, bins);
+      let maxC = 0;
+      for (let i = 0; i < bins; i++) if (counts[i] > maxC) maxC = counts[i];
+      if (maxC === 0) return;
+
+      ctx.fillStyle = accent;
+      ctx.strokeStyle = accentEdge;
+      ctx.lineWidth = 0.75;
+
+      const inset = 6; // leave room so bars don't touch top border
+      for (let i = 0; i < bins; i++) {
+        const t = counts[i] / maxC;
+        if (horizontal) {
+          const x0 = rect.x + (i / bins) * rect.w;
+          const x1 = rect.x + ((i + 1) / bins) * rect.w;
+          const barH = t * (rect.h - inset);
+          const y0 = rect.y + rect.h - barH;
+          ctx.fillRect(x0, y0, x1 - x0, barH);
+          ctx.strokeRect(x0 + 0.5, y0 + 0.5, x1 - x0 - 1, barH - 1);
+        } else {
+          const y0 = rect.y + rect.h - ((i + 1) / bins) * rect.h;
+          const y1 = rect.y + rect.h - (i / bins) * rect.h;
+          const barW = t * (rect.w - inset);
+          ctx.fillRect(rect.x, y0, barW, y1 - y0);
+          ctx.strokeRect(rect.x + 0.5, y0 + 0.5, barW - 1, y1 - y0 - 1);
+        }
+      }
+
+      // quantile lines (16, 50, 84)
+      const qs = quantiles(data, [0.16, 0.5, 0.84]);
+      ctx.strokeStyle = ink;
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1;
+      qs.forEach(q => {
+        ctx.beginPath();
+        if (horizontal) {
+          const x = scale(q);
+          ctx.moveTo(x, rect.y);
+          ctx.lineTo(x, rect.y + rect.h);
+        } else {
+          const y = scale(q);
+          ctx.moveTo(rect.x, y);
+          ctx.lineTo(rect.x + rect.w, y);
+        }
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+    }
+
+    function drawJoint(rect, st, xLo, xHi, yLo, yHi) {
+      // background border
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(rect.x + 0.5, rect.y + 0.5, rect.w - 1, rect.h - 1);
+
+      const sx = sxFor(xLo, xHi, rect);
+      const sy = syFor(yLo, yHi, rect);
+
+      // points — kept subtle so the ellipses can dominate visually
+      const n = st.x1.length;
+      const alpha = Math.max(0.025, Math.min(0.28, 90 / Math.sqrt(n)));
+      ctx.fillStyle = hexWithAlpha(accent, alpha);
+      const radius = n > 10000 ? 0.7 : (n > 3000 ? 0.85 : 1.0);
+      // clip to panel
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(rect.x, rect.y, rect.w, rect.h);
+      ctx.clip();
+      for (let i = 0; i < n; i++) {
+        const px = sx(st.x1[i]);
+        const py = sy(st.x2[i]);
+        ctx.beginPath();
+        ctx.arc(px, py, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // confidence ellipses from theoretical Σ (not sample) for stability
+      // Σ = [[v1, c],[c, v2]], c = rho*sqrt(v1*v2)
+      const { m1, m2, v1, v2, rho } = st;
+      const c = rho * Math.sqrt(v1 * v2);
+      const tr = v1 + v2;
+      const det = v1 * v2 - c * c;
+      const tmp = Math.sqrt(Math.max(0, (tr * tr) / 4 - det));
+      const lam1 = tr / 2 + tmp;
+      const lam2 = tr / 2 - tmp;
+      // eigenvector for lam1
+      let evx, evy;
+      if (Math.abs(c) > 1e-9) {
+        evx = lam1 - v2; evy = c;
+      } else {
+        // diagonal covariance
+        if (v1 >= v2) { evx = 1; evy = 0; } else { evx = 0; evy = 1; }
+      }
+      const elen = Math.hypot(evx, evy);
+      evx /= elen; evy /= elen;
+      const angle = Math.atan2(evy, evx);
+      const a1 = Math.sqrt(Math.max(0, lam1));
+      const b1 = Math.sqrt(Math.max(0, lam2));
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(rect.x, rect.y, rect.w, rect.h);
+      ctx.clip();
+      const cx = sx(m1), cy = sy(m2);
+      const xScale = rect.w / (xHi - xLo);
+      const yScale = rect.h / (yHi - yLo);
+
+      // Helper: build an ellipse path at k sigma without stroking/filling
+      function ellipsePath(k) {
+        ctx.beginPath();
+        for (let t = 0; t <= 360; t += 2) {
+          const r = t * Math.PI / 180;
+          const px0 = k * a1 * Math.cos(r);
+          const py0 = k * b1 * Math.sin(r);
+          const dx = px0 * Math.cos(angle) - py0 * Math.sin(angle);
+          const dy = px0 * Math.sin(angle) + py0 * Math.cos(angle);
+          const X = cx + dx * xScale;
+          const Y = cy - dy * yScale;
+          if (t === 0) ctx.moveTo(X, Y); else ctx.lineTo(X, Y);
+        }
+        ctx.closePath();
+      }
+
+      // 1σ filled region — subtle tint so the eye instantly groups "inside"
+      ellipsePath(1);
+      ctx.fillStyle = ellipseFill;
+      ctx.fill();
+
+      // 2σ ellipse — dashed, thick
+      ellipsePath(2);
+      ctx.strokeStyle = ellipseColor;
+      ctx.lineWidth = 2.0;
+      ctx.setLineDash([6, 4]);
+      ctx.stroke();
+
+      // 1σ ellipse — solid, thicker (this is the headline visual)
+      ellipsePath(1);
+      ctx.strokeStyle = ellipseColor;
+      ctx.lineWidth = 2.4;
+      ctx.setLineDash([]);
+      ctx.stroke();
+
+      // center marker
+      ctx.fillStyle = ellipseColor;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // tick marks on bottom and left axes
+      drawTicks(rect, xLo, xHi, yLo, yHi);
+    }
+
+    function drawTicks(rect, xLo, xHi, yLo, yHi) {
+      ctx.strokeStyle = ink;
+      ctx.fillStyle = ink;
+      ctx.lineWidth = 1;
+      ctx.font = `${Math.round(W * 0.0145)}px "IBM Plex Mono", Menlo, monospace`;
+
+      const xt = niceTicks(xLo, xHi, 5);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      xt.forEach(v => {
+        const x = rect.x + (v - xLo) / (xHi - xLo) * rect.w;
+        ctx.beginPath();
+        ctx.moveTo(x, rect.y + rect.h);
+        ctx.lineTo(x, rect.y + rect.h + 5);
+        ctx.stroke();
+        ctx.fillText(fmtTick(v), x, rect.y + rect.h + 7);
+      });
+
+      const yt = niceTicks(yLo, yHi, 5);
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      yt.forEach(v => {
+        const y = rect.y + rect.h - (v - yLo) / (yHi - yLo) * rect.h;
+        ctx.beginPath();
+        ctx.moveTo(rect.x - 5, y);
+        ctx.lineTo(rect.x, y);
+        ctx.stroke();
+        ctx.fillText(fmtTick(v), rect.x - 7, y);
+      });
+    }
+
+    function drawMarginalTitle(rect, name, data) {
+      const qs = quantiles(data, [0.16, 0.5, 0.84]);
+      const med = qs[1];
+      const lo = qs[1] - qs[0];
+      const hi = qs[2] - qs[1];
+      ctx.fillStyle = ink;
+      ctx.font = `italic ${Math.round(W * 0.016)}px "Iowan Old Style", "Palatino Linotype", Georgia, serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      const xC = rect.x + rect.w / 2;
+      const yT = rect.y - 6;
+      const nm = name.replace("_", "");
+      const sub = name.split("_")[1];
+      // Render "x₁ = 0.01⁺⁰·⁹⁹₋₁·⁰⁰" approximately
+      const txt = `${nm.replace(sub, "")}${subscript(sub)} = ${med.toFixed(2)}  +${hi.toFixed(2)} / −${lo.toFixed(2)}`;
+      ctx.fillText(txt, xC, yT);
+    }
+
+    function drawAxisLabels(cells, xLo, xHi, yLo, yHi) {
+      ctx.fillStyle = ink;
+      ctx.font = `italic ${Math.round(W * 0.022)}px "Iowan Old Style", "Palatino Linotype", Georgia, serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      const r = cells.bottomLeft;
+      ctx.fillText("x" + subscript("1"), r.x + r.w / 2, r.y + r.h + Math.round(W * 0.04));
+      ctx.save();
+      ctx.translate(r.x - Math.round(W * 0.052), r.y + r.h / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.textBaseline = "bottom";
+      ctx.fillText("x" + subscript("2"), 0, 0);
+      ctx.restore();
+      // x2 axis is on the right marginal too — add bottom-axis ticks for the right marginal
+      ctx.fillStyle = ink;
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = 1;
+      ctx.font = `${Math.round(W * 0.0145)}px "IBM Plex Mono", Menlo, monospace`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      // ticks on x-axis of bottom-right cell show x_2 values (since axis is "samples count vs x_2")
+      // Skip for cleanliness — the right panel doesn't need its own x ticks since it's a marginal.
+    }
+
+    function subscript(s) {
+      const map = {"0":"₀","1":"₁","2":"₂","3":"₃","4":"₄","5":"₅","6":"₆","7":"₇","8":"₈","9":"₉"};
+      return s.split("").map(c => map[c] || c).join("");
+    }
+  }
+
+  function niceTicks(lo, hi, target) {
+    const range = hi - lo;
+    const rough = range / target;
+    const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+    const norm = rough / mag;
+    let step;
+    if (norm < 1.5) step = 1 * mag;
+    else if (norm < 3) step = 2 * mag;
+    else if (norm < 7) step = 5 * mag;
+    else step = 10 * mag;
+    const out = [];
+    const start = Math.ceil(lo / step) * step;
+    for (let v = start; v <= hi + 1e-9; v += step) out.push(Math.round(v / step) * step);
+    return out;
+  }
+  function fmtTick(v) {
+    if (Math.abs(v) < 1e-9) return "0";
+    if (Math.abs(v) >= 100 || Math.abs(v) < 0.01) return v.toExponential(1);
+    return (Math.round(v * 100) / 100).toString();
+  }
+  function hexWithAlpha(hex, a) {
+    // Accept "#rrggbb" or rgb()
+    if (hex.startsWith("#")) {
+      const r = parseInt(hex.slice(1,3),16);
+      const g = parseInt(hex.slice(3,5),16);
+      const b = parseInt(hex.slice(5,7),16);
+      return `rgba(${r},${g},${b},${a})`;
+    }
+    return hex;
+  }
+
+  // ---------- State & wiring ----------
+  const state = {
+    m1: 0, m2: 0, v1: 1, v2: 1, rho: 0,
+    n: 5000,
+    x1: null, x2: null
+  };
+
+  function regenerate() {
+    const s = sample(state.n, state.m1, state.m2, state.v1, state.v2, state.rho);
+    state.x1 = s.x1;
+    state.x2 = s.x2;
+  }
+
+  function refresh() {
+    document.getElementById("mu1-val").textContent = state.m1.toFixed(2);
+    document.getElementById("mu2-val").textContent = state.m2.toFixed(2);
+    document.getElementById("v1-val").textContent  = state.v1.toFixed(2);
+    document.getElementById("v2-val").textContent  = state.v2.toFixed(2);
+    document.getElementById("rho-val").textContent = state.rho.toFixed(2);
+    document.getElementById("n-val").textContent   = state.n.toLocaleString();
+    const c = state.rho * Math.sqrt(state.v1 * state.v2);
+    document.getElementById("s11").textContent = state.v1.toFixed(2);
+    document.getElementById("s12").textContent = c.toFixed(2);
+    document.getElementById("s21").textContent = c.toFixed(2);
+    document.getElementById("s22").textContent = state.v2.toFixed(2);
+    draw(state);
+  }
+
+  function bindSlider(id, key, decimals) {
+    const el = document.getElementById(id);
+    el.addEventListener("input", () => {
+      state[key] = parseFloat(el.value);
+      regenerate();
+      refresh();
+    });
+  }
+  bindSlider("mu1", "m1");
+  bindSlider("mu2", "m2");
+  bindSlider("v1", "v1");
+  bindSlider("v2", "v2");
+  bindSlider("rho", "rho");
+
+  document.getElementById("n").addEventListener("input", (e) => {
+    state.n = parseInt(e.target.value, 10);
+    regenerate();
+    refresh();
+  });
+  document.getElementById("resample").addEventListener("click", () => {
+    regenerate();
+    refresh();
+  });
+  document.getElementById("reset").addEventListener("click", () => {
+    setParams(0, 0, 1, 1, 0);
+  });
+
+  document.querySelectorAll("[data-preset]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const p = btn.getAttribute("data-preset");
+      if (p === "indep") setParams(0, 0, 1, 1, 0);
+      else if (p === "pos") setParams(0, 0, 1, 1, 0.7);
+      else if (p === "neg") setParams(0, 0, 1, 1, -0.7);
+      else if (p === "elong") setParams(0, 0, 2.5, 0.4, 0.6);
+    });
+  });
+
+  function setParams(m1, m2, v1, v2, rho) {
+    state.m1 = m1; state.m2 = m2; state.v1 = v1; state.v2 = v2; state.rho = rho;
+    document.getElementById("mu1").value = m1;
+    document.getElementById("mu2").value = m2;
+    document.getElementById("v1").value  = v1;
+    document.getElementById("v2").value  = v2;
+    document.getElementById("rho").value = rho;
+    regenerate();
+    refresh();
+  }
+
+  // initial
+  regenerate();
+  refresh();
+
+  // Redraw on resize / color-scheme change
+  let rTimer = null;
+  window.addEventListener("resize", () => {
+    if (rTimer) cancelAnimationFrame(rTimer);
+    rTimer = requestAnimationFrame(() => draw(state));
+  });
+  if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => draw(state));
+  }
+})();
+</script>
+
+</body>
+</html>

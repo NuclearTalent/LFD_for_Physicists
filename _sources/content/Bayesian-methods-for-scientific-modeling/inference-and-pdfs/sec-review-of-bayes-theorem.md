@@ -22,7 +22,7 @@ Andrey Kolmogorov's axioms of probability form the standard theoretical framewor
 	\prob(A, B | I) =\prob(B|A, I) \prob(A|I)  = \prob(A|B,I)\prob(B|I)
   \end{equation}
   
-  The left-hand side should be interpreted as the probability for propositions $A$ AND $B$ being true given that $I$ is true.
+  The left-hand side should be interpreted as the joint probability for propositions $A$ AND $B$ being true given that $I$ is true.
   The probabilities on the right hand side(s) are conditioned differently and the second equality follows from the symmetry of the AND operation.
   ```
 
@@ -46,12 +46,12 @@ From the product rule we obtain Bayes' theorem
 	\prob(A|B,I) = \frac{\prob(B|A,I)\prob(A|I)}{\prob(B | I)}
    \end{equation}
   
-  The left-hand side should be interpreted as the the probability that proposition $A$ is true given that $B$ AND $I$ are true.  This equation tells us how we can reverse a conditional probability. More importantly it updates the probability for $A$ being true as we learn more about $B$.
+  The left-hand side should be interpreted as the the probability that proposition $A$ is true given that $B$ AND $I$ are true.  This equation tells us how we can inverse a conditional probability. More importantly it updates the probability for $A$ being true as we learn more about $B$.
   ```
 
 Although Bayes' rule is a straightforward rewrite of the product rule, its importance cannot be understated. Indeed, since this is a rule for probabilities it is applicable in all scientific analyses that follow from Kolmogorov's axioms and it tells us how we should learn from data or react to new evidence or how new information should change our views. It is however not a rule (or theorem) that is unique to Bayesian inference.
 
-The importance of this theorem for data analysis becomes apparent if we replace $A$ and $B$ by a proposed hypothesis $H$ and data $\data$ such that it becomes
+The importance of this theorem for data analysis becomes apparent if we replace $A$ and $B$ by a proposed scientific hypothesis $H$ and observed data $\data$ such that it becomes
 
 $$
 \prob(H|\data,I) = \frac{\prob(\data|H,I)\prob(H|I)}{\prob(\data | I)}.
