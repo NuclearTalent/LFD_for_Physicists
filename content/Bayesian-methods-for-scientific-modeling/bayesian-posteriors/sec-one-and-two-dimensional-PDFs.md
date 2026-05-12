@@ -46,7 +46,7 @@ In quantum mechanics, this corresponds to the probability to find particle 1 at 
 * "Marginalizing" = "integrating out" (eliminates from the posterior the "nuisance parameters" whose value you don't care about, at least not at that moment). 
 ```
 
-In Bayesian statistics there are PDFs (or PMFs if discrete) for experimental <i>and</i> theoretical uncertainties, fit parameters, hyperparameters (what are those?), events ("Will it rain tomorrow?"), etc.  Even if $x$ has the definite value $x_0$, we can use the PDF $p(x) = \delta(x-x_0)$. 
+In Bayesian statistics there are PDFs (or PMFs if discrete) for experimental <i>and</i> theoretical uncertainties, model parameters, hyperparameters (what are those?), events ("Will it rain tomorrow?"), etc.  Even if $x$ has the definite value $x_0$, we can represent this knowledge with a PDF $p(x) = \delta(x-x_0)$. 
 
 
 ::::{admonition} Characteristics of PDFs
@@ -54,7 +54,7 @@ In Bayesian statistics there are PDFs (or PMFs if discrete) for experimental <i>
 *What are the characteristics (e.g., symmetry, heavy tails, ...) of different PDFs: normal, beta, student t, $\chi^2$, $\ldots$* 
 :::{admonition} Answer 
 :class: dropdown, my-answer
-**Check these yourself!** Note that the answers will often depend on the parameter values for the distribution. A Student t distribution may have "heavy tails" (meaning more probability in the tails than a Gaussian would have) for some parameters but for others it approaches a normal distribution (so by definition no heavy tails).
+**Check these yourself!** Note that the answers will often depend on the parameter values for the distribution. A Student t distribution may have "heavy tails" (meaning more probability in the tails than a Gaussian would have) for some parameter values but for others it approaches a normal distribution (so by definition no heavy tails).
 :::
 ::::
 
@@ -64,7 +64,7 @@ In Bayesian statistics there are PDFs (or PMFs if discrete) for experimental <i>
 *What does sampling mean?* 
 :::{admonition} Answer 
 :class: dropdown, my-answer
-To sample a given distribution is to draw values with probabilities given by the distribution. In Bayesian inference one is most often sampling a posterior distribution. 
+To sample a given distribution is to draw values that represent it. The probability to draw a specific value is given by the distribution. In Bayesian inference one is most often sampling a posterior distribution. 
 :::
 ::::
 
@@ -73,7 +73,7 @@ To sample a given distribution is to draw values with probabilities given by the
 *How do you know if a distribution is correctly sampled?* 
 :::{admonition} Answer 
 :class: dropdown, my-answer
-One way is to look at the (normalized)histogram. If correctly sampled, this should approximate the distribution and the approximation should improve with more samples.
+One way is to look at the (normalized) histogram. If correctly sampled, this should approximate the distribution and the approximation should improve with more samples.
 :::
 ::::
 
@@ -107,69 +107,44 @@ $$
 $$
 
 and $\Sigma$ is positive definite.
-The following two *corner plots* are for $\rho_{12} = 0$ and $\rho_{12} = 0.7$.
+
+**Widget user interface features**:
+   * Set the mean position $(\mu_1, \mu_2)$ and variances $(\Sigma_{11}, \Sigma_{22})$ with the sliders
+   * Set the correlation $\rho_{12}$ with the slider. This controls the covariance $\Sigma_{12} = \rho_{12} \sqrt{ \Sigma_{11} \Sigma_{22}}$.
+   * Four presets are available.
+   * The corner plot shows samples from the bivariate PDF and histograms for the two marginal distributions. Control the number of samples with the slider.
+   * Dashed lines on the marginals mark the 16th, 50th, and 84th percentiles. This is equivalent to $\pm 1\sigma$ for a one-dimensional Gaussian.
 
 
-```{code-cell}
-:tags: [hide-input]
-import numpy as np
-import matplotlib.pyplot as plt
-import corner
-
-def plot_bivariate_gaussians(mu1, mu2, var1, var2, rho, samples=100000):
-    """
-    Generates and plots samples from a 2D correlated Gaussian distribution 
-    (also known as a bivariate normal distribution).
-    
-    Args:
-        mu1 (float): Mean of the first dimension.
-        mu2 (float): Mean of the second dimension.
-        var1 (float): Variance of the first dimension.
-        var2 (float): Variance of the second dimension.
-        rho (float): Correlation coefficient between the dimensions.
-    """
-    # Create the mean vector and covariance matrix
-    mean = np.array([mu1, mu2])
-    cov = np.array([
-        [var1, rho * np.sqrt(var1 * var2)],
-        [rho * np.sqrt(var1 * var2), var2]
-    ])
-
-    # Generate samples from the multivariate normal distribution
-    try:
-        samples = np.random.multivariate_normal(mean, cov, size=samples)
-    except np.linalg.LinAlgError:
-        print("Invalid covariance matrix. Ensure `var1` and `var2` are positive.")
-        return
-
-    # Create the corner plot
-    fig = corner.corner(samples, labels=[r'$x_1$', r'$x_2$'], 
-                        quantiles=[0.16, 0.5, 0.84], 
-                        show_titles=True, 
-                        label_kwargs={"fontsize": 14},
-                        title_kwargs={"fontsize": 14})
-    # Adjust the fonts for the tick labels
-    for ax in fig.get_axes():
-      ax.tick_params(axis='both', labelsize=14)
-    
-    # Update the title with the current parameters
-    fig.suptitle(
-        f"Bivariate Gaussian\n$\mu$=[{mu1}, {mu2}], $\Sigma_{{11}}$={var1}, $\Sigma_{{22}}$={var2}, $\\rho_{{12}}$={rho}", 
-        y=1.1)
-    plt.show()
-
-mu1 = 0
-mu2 = 0
-var1 = 1
-var2 = 1
-rho = 0
-
-plot_bivariate_gaussians(mu1, mu2, var1, var2, rho)
-
-rho = 0.7
-plot_bivariate_gaussians(mu1, mu2, var1, var2, rho)
-
+```{raw} html
+<iframe src="../../../_static/app_BivariateGaussian.html"
+    width="100%"
+    height="720"
+    style="border: none;"
+    scrolling="no">
+</iframe>
 ```
+
+The solid and dashed ellipses in the joint panel are iso-probability levels. These correspond to fixed values of the squared Mahalanobis distance
+ 
+$$
+\Delta^2 = (\mathbf{x} - \boldsymbol{\mu})^\top \Sigma^{-1} (\mathbf{x} - \boldsymbol{\mu}).
+$$
+ 
+In the widget they are drawn at $\Delta = 1$ and $\Delta = 2$. Their semi-axes are aligned with the eigenvectors of $\Sigma$ and have lengths $\sqrt{\lambda_i}$ (the "$1\sigma$" ellipse) and $2\sqrt{\lambda_i}$ (the "$2\sigma$" ellipse), where $\lambda_i$ are the eigenvalues of $\Sigma$.
+ 
+**A subtlety worth highlighting.** In one dimension the $\pm 1\sigma$ and $\pm 2\sigma$ intervals contain 68.3% and 95.4% of the probability mass. In two dimensions, the corresponding *ellipses* contain considerably less, because $\Delta^2 \sim \chi^2_2$ and
+ 
+$$
+\prob(\Delta^2 \le k^2) = 1 - e^{-k^2/2}.
+$$
+ 
+| Ellipse | Probability mass (2D) | For comparison: 1D interval |
+|---|---|---|
+| $\Delta = 1$ ("$1\sigma$")   | 39.3% | 68.3% |
+| $\Delta = 2$ ("$2\sigma$")   | 86.5% | 95.4% |
+| $\Delta = 3$ ("$3\sigma$")   | 98.9% | 99.7% |
+ 
 
 ::::{admonition} Questions to consider:
 :class: my-checkpoint
@@ -182,10 +157,10 @@ plot_bivariate_gaussians(mu1, mu2, var1, var2, rho)
    * the covariance matrix is invertible.
    :::
 1. *What is plotted in each part of the graph (called a "corner plot")?*
-1. *What effect does changing $\mu_1$ (`mu1`) or $\mu_2$ (`mu2`) have?* 
-1. *What effect does changing $\sigma_1$ (`var1`) or $\sigma_2$ (`var2`) have? What if the scales for $x_1$ and $x_2$ were the same?*
-1. *What happens if $\rho_{12}$ (`rho`) is equal to $0$ then $+0.5$ then $-0.5$.*
-1. *What happens if $\rho_{12}$ (`rho`) is $>1$ or $< -1$? Explain what goes wrong.*
+1. *What effect does changing $\mu_1$ or $\mu_2$ have?* 
+1. *What effect does changing $\Sigma_{11}$ or $\Sigma_{22}$ have? What if the scales for $x_1$ and $x_2$ were the same?*
+1. *What happens if $\rho_{12}$ is equal to $0$ then $+0.7$ then $-0.7$.*
+1. *What would happen if you were allowed to set $|\rho_{12}| \leq 1$? Explain what goes wrong.*
 1. *So what characterizes independent (uncorrelated) variables versus positively correlated versus negatively correlated?* 
 
 
