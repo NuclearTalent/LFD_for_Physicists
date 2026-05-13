@@ -32,19 +32,19 @@ The rule of thumb is generally that $\chi^2/\text{dof} \gg 1$ means a poor fit a
 *Where does this come from and under what conditions is it a statistically valid thing to analyze fit models this way?*
 (Note that in contrast to the Bayesian evidence, we are not assessing the model in general, but a particular fit to the model identified by $\hat\pars$.)
 
-Underlying this use of $\chi^2$/dof is a particular, familiar statistical model
+Underlying this use of $\chi^2$/dof is a special case of the familiar statistical model
 
 $$
     y_{\text{expt}} = y_{\text{th}} + \delta y_{\text{expt}} + \delta y_{\text{th}}
 $$
 
-in which the theory is $y_{\text{th},i} = f(x_i;\hat\pars)$, the experimental error is  *independent* Gaussian distributed noise with mean zero and standard deviation $\sigma_i$, that is $\delta y_{\text{expt}} \sim \mathcal{N}(0,\Sigma)$ with $\Sigma_{ij} = \sigma_i^2 \delta_{ij}$, and $\delta y_{\text{th}}$ is neglected (i.e., no model discrepancy is included). The prior is (usually implicitly) taken to be uniform, so
+in which the theory is $y_{\text{th},i} = f(x_i;\hat\pars)$, the experimental error is  *independent* Gaussian distributed noise with mean zero and standard deviation $\sigma_i$, that is $\delta y_{\text{expt}} \sim \mathcal{N}(0,\Sigma)$ with $\Sigma_{ij} = \sigma_i^2 \delta_{ij}$, and $\delta y_{\text{th}}$ is neglected (i.e., no model discrepancy is included). As a consequence
 
 $$
      y_{\text{expt}} \sim \mathcal{N}\bigl(f(x_i;\hat\pars), \Sigma\bigr) .
 $$ 
 
-The likelihood (and the posterior, with a uniform prior) is then proportional to $e^{-\chi^2(\hat\pars)/2}$.
+The likelihood (and the posterior, with an implicitly assumed uniform prior) is then proportional to $e^{-\chi^2(\hat\pars)/2}$.
 
 According to this model, each term in $\chi^2$ before being squared is a draw from a *standard* normal distribution. In this context, "standard" means that the distribution has mean zero and variance 1. This is exactly what happens when we take as the random variables $\bigl(y_i - f(x_i;\hat\pars)\bigr)/\sigma_i$.
 But the sum of the squares of $k$ *independent* standard normal random variables has a known distribution, called the $\chi^2$ distribution with $k$ degrees of freedom. 
@@ -60,7 +60,7 @@ If there are 1000 data points, then $\sigma \approx 0.045$, so $0.91 \leq \chi^2
 
 What can go wrong? Lots! See
 ["Do's and Don'ts of reduced chi-squared"](https://arxiv.org/pdf/1012.3754.pdf) for a thorough discussion. But we've made assumptions that might not hold: that the data is Gaussian distributed and independent, that the data is dominated by experimental and not theoretical errors, and that the constraints from fitting are linearly independent. We've also assumed a lot of data and 
-we've ignored informative (or, more precisely, non-uniform priors) priors.
+we've ignored informative (or, more precisely, non-uniform) priors.
 
 ### Test the sum of normal variables squared
 
@@ -148,7 +148,7 @@ Higgs boson (and for many other particle physics experiments) it is
 "5 sigma''. *How do you think we convert this statement to a
 probability?* [Hint: refer to a Gaussian distribution.]
 One minus the resulting probability is called the $p$-value. We will
-denote it $p_{\rm crit}$. There is nothing
+denote it $p_\mathrm{crit}$. There is nothing
 God-given about it. It is a standard (like "beyond a reasonable
 doubt") that has been agreed upon in a research community for
 determining that something is (likely) going on. 
