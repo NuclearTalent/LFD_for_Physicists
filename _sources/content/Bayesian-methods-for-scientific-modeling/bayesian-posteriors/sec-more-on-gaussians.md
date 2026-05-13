@@ -10,7 +10,7 @@ assume Gaussian distributions. So this seems like a good place
 to pause and consider why Gaussian distributions are such a common
 choice.
 It turns out there are several reasons why one might choose a Gaussian
-to describe a probability distribution. Here are two.
+to describe a probability distribution. Here we present two (we encounter a third one in {ref}`sec:MaxEnt`)
 
 ## The Gaussian is to statistics what the harmonic oscillator is to mechanics
 
@@ -28,16 +28,15 @@ for a while hereafter.)
 We find this point, which we'll denote by $x_0$, using calculus:
 
 $$
-  \left.\frac{dp}{dx}\right|_{x_0} = 0
+  \left.\frac{dp}{dx}\right|_{x=x_0} = 0
   \quad \mbox{with} \quad
-    \left.\frac{d^2p}{dx^2}\right|_{x_0} < 0 \ \text{(maximum)}.
+    \left.\frac{d^2p}{dx^2}\right|_{x=x_0} < 0 \ \text{(maximum)}.
 $$
 
 To characterize the posterior $p(x)$, we look nearby. We want to know
 how sharp this maximum is: is $p(x)$ sharply peaked around $x=x_0$ or
 is the maximum kind-of shallow? To work this out we'll do a Taylor
-expansion around $x=x_0$. 
-$p(x)$ itself
+expansion around $x=x_0$. The PDF $p(x)$ itself
 varies very rapidly, but since $p(x)$ is positive definite we can
 Taylor expand $\log p$ instead. (See the box below on "$p$ or $\log p$?" for a strict mathematical
 reason why it's problematic for our purposes to directly Taylor expand $p(x)$ around its
@@ -45,24 +44,24 @@ maximum.)
 
 
 $$
- \Longrightarrow\ L(x) \equiv \log p(x|D,I) = 
-   L(x_0) + \left.\frac{dL}{dx}\right|_{x_0 = 0}(x-x_0)
-   + \frac{1}{2} \left.\frac{d^2L}{dx^2}\right|_{x_0 = 0}(x-x_0)^2 + \cdots
+ \Longrightarrow\ L(x) \equiv \log p(x) = 
+   L(x_0) + \left.\frac{dL}{dx}\right|_{x = x_0}(x-x_0)
+   + \frac{1}{2} \left.\frac{d^2L}{dx^2}\right|_{x = x_0}(x-x_0)^2 + \cdots
 $$
 
-Note that $\left.\frac{dL}{dx}\right|_{x_0 = 0}=0$, because $L(x_0)$ is a maximum if $p(x_0)$ is, and  $\left.\frac{d^2L}{dx^2}\right|_{x_0 = 0} < 0$.
+Note that $\left.\frac{dL}{dx}\right|_{x = x_0}=0$, because $L(x_0)$ is a maximum if $p(x_0)$ is, and  $\left.\frac{d^2L}{dx^2}\right|_{x = x_0} < 0$.
 If we can neglect higher-order terms, then when we re-exponentiate,
 
 $$
-  p(x| D,I) \approx A\, e^{\frac{1}{2}\left.\frac{d^2L}{dx^2}\right|_{x_0 = 0}(x-x_0)^2} ,
+  p(x) \approx A\, e^{\frac{1}{2}\left.\frac{d^2L}{dx^2}\right|_{x = x_0}(x-x_0)^2} ,
 $$
 
-with $A$ a normalization factor. So in this general circumstance we get a Gaussian distribution. Comparing to
+with $A$ a normalization factor that originates in the $L(x_0)$ term. So in this general circumstance we get a Gaussian distribution. Comparing to
 
 $$
-  p(x|D,I) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/\sigma^2}
+  p(x) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/\sigma^2}
   \quad\Longrightarrow\quad
-  \mu = x_0, \ \sigma = \left(-\left.\frac{d^2L}{dx^2}\right|_{x_0}\right)^{-1/2},
+  \mu = x_0, \ \sigma = \left(-\left.\frac{d^2L}{dx^2}\right|_{x=x_0}\right)^{-1/2},
 $$
 
 where we see the importance of the second derivative being negative.
@@ -71,7 +70,7 @@ We usually characterize the distribution by $x_0 \pm \sigma$ (e.g., with a point
 But for a Bayesian, the full posterior $p(x|D,I)$ for all $x$ is the general result, and $x = x_0 \pm \sigma$ may be only an approximate characterization.
 
 :::{admonition} To think about ...
-What if $p(x|D,I)$ is asymmetric? What if it is multimodal?
+What if $p(x)$ is asymmetric? What if it is multimodal?
 :::
 
 
@@ -81,7 +80,7 @@ What would go wrong if we directly expanded the PDF? Well, if we do
 that we get:
 
 $$
-  p(x) \approx p(x_0) + \frac{1}{2}\left.\frac{d^2p}{dx^2}\right|_{x_0}(x-x_0)^2
+  p(x) \approx p(x_0) + \frac{1}{2}\left.\frac{d^2p}{dx^2}\right|_{x=x_0}(x-x_0)^2
  \ \overset{x\pm\rightarrow\infty}{\longrightarrow} -\infty,
 $$
 
@@ -99,7 +98,7 @@ A PDF must be normalizable and positive definite, so this approximation violates
 
 ## The Central Limit Theorem
 
-Another reason a Gaussian PDF emerges in many calculations is because
+Another reason a Gaussian PDF emerges in many situations is because
 the Central Limit Theorem (CLT) states that the sum of random variables drawn
 from all (or almost all) probability
 distributions will eventually produce Gaussians if the number of samples in

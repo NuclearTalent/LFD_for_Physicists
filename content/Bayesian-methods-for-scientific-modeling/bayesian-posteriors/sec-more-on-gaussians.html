@@ -739,7 +739,7 @@ assume Gaussian distributions. So this seems like a good place
 to pause and consider why Gaussian distributions are such a common
 choice.
 It turns out there are several reasons why one might choose a Gaussian
-to describe a probability distribution. Here are two.</p>
+to describe a probability distribution. Here we present two (we encounter a third one in <a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/sec-assigning-probabilities-ii-the-principle-of-maximum-entropy.html#sec-maxent"><span class="std std-ref">The principle of maximum entropy</span></a>)</p>
 </section>
 <section id="the-gaussian-is-to-statistics-what-the-harmonic-oscillator-is-to-mechanics">
 <h2>The Gaussian is to statistics what the harmonic oscillator is to mechanics<a class="headerlink" href="#the-gaussian-is-to-statistics-what-the-harmonic-oscillator-is-to-mechanics" title="Link to this heading">#</a></h2>
@@ -753,44 +753,43 @@ for a while hereafter.)</p>
 <p>We find this point, which we’ll denote by <span class="math notranslate nohighlight">\(x_0\)</span>, using calculus:</p>
 <div class="math notranslate nohighlight">
 \[
-  \left.\frac{dp}{dx}\right|_{x_0} = 0
+  \left.\frac{dp}{dx}\right|_{x=x_0} = 0
   \quad \mbox{with} \quad
-    \left.\frac{d^2p}{dx^2}\right|_{x_0} &lt; 0 \ \text{(maximum)}.
+    \left.\frac{d^2p}{dx^2}\right|_{x=x_0} &lt; 0 \ \text{(maximum)}.
 \]</div>
 <p>To characterize the posterior <span class="math notranslate nohighlight">\(p(x)\)</span>, we look nearby. We want to know
 how sharp this maximum is: is <span class="math notranslate nohighlight">\(p(x)\)</span> sharply peaked around <span class="math notranslate nohighlight">\(x=x_0\)</span> or
 is the maximum kind-of shallow? To work this out we’ll do a Taylor
-expansion around <span class="math notranslate nohighlight">\(x=x_0\)</span>.
-<span class="math notranslate nohighlight">\(p(x)\)</span> itself
+expansion around <span class="math notranslate nohighlight">\(x=x_0\)</span>. The PDF <span class="math notranslate nohighlight">\(p(x)\)</span> itself
 varies very rapidly, but since <span class="math notranslate nohighlight">\(p(x)\)</span> is positive definite we can
 Taylor expand <span class="math notranslate nohighlight">\(\log p\)</span> instead. (See the box below on “<span class="math notranslate nohighlight">\(p\)</span> or <span class="math notranslate nohighlight">\(\log p\)</span>?” for a strict mathematical
 reason why it’s problematic for our purposes to directly Taylor expand <span class="math notranslate nohighlight">\(p(x)\)</span> around its
 maximum.)</p>
 <div class="math notranslate nohighlight">
 \[
- \Longrightarrow\ L(x) \equiv \log p(x|D,I) = 
-   L(x_0) + \left.\frac{dL}{dx}\right|_{x_0 = 0}(x-x_0)
-   + \frac{1}{2} \left.\frac{d^2L}{dx^2}\right|_{x_0 = 0}(x-x_0)^2 + \cdots
+ \Longrightarrow\ L(x) \equiv \log p(x) = 
+   L(x_0) + \left.\frac{dL}{dx}\right|_{x = x_0}(x-x_0)
+   + \frac{1}{2} \left.\frac{d^2L}{dx^2}\right|_{x = x_0}(x-x_0)^2 + \cdots
 \]</div>
-<p>Note that <span class="math notranslate nohighlight">\(\left.\frac{dL}{dx}\right|_{x_0 = 0}=0\)</span>, because <span class="math notranslate nohighlight">\(L(x_0)\)</span> is a maximum if <span class="math notranslate nohighlight">\(p(x_0)\)</span> is, and  <span class="math notranslate nohighlight">\(\left.\frac{d^2L}{dx^2}\right|_{x_0 = 0} &lt; 0\)</span>.
+<p>Note that <span class="math notranslate nohighlight">\(\left.\frac{dL}{dx}\right|_{x = x_0}=0\)</span>, because <span class="math notranslate nohighlight">\(L(x_0)\)</span> is a maximum if <span class="math notranslate nohighlight">\(p(x_0)\)</span> is, and  <span class="math notranslate nohighlight">\(\left.\frac{d^2L}{dx^2}\right|_{x = x_0} &lt; 0\)</span>.
 If we can neglect higher-order terms, then when we re-exponentiate,</p>
 <div class="math notranslate nohighlight">
 \[
-  p(x| D,I) \approx A\, e^{\frac{1}{2}\left.\frac{d^2L}{dx^2}\right|_{x_0 = 0}(x-x_0)^2} ,
+  p(x) \approx A\, e^{\frac{1}{2}\left.\frac{d^2L}{dx^2}\right|_{x = x_0}(x-x_0)^2} ,
 \]</div>
-<p>with <span class="math notranslate nohighlight">\(A\)</span> a normalization factor. So in this general circumstance we get a Gaussian distribution. Comparing to</p>
+<p>with <span class="math notranslate nohighlight">\(A\)</span> a normalization factor that originates in the <span class="math notranslate nohighlight">\(L(x_0)\)</span> term. So in this general circumstance we get a Gaussian distribution. Comparing to</p>
 <div class="math notranslate nohighlight">
 \[
-  p(x|D,I) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/\sigma^2}
+  p(x) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/\sigma^2}
   \quad\Longrightarrow\quad
-  \mu = x_0, \ \sigma = \left(-\left.\frac{d^2L}{dx^2}\right|_{x_0}\right)^{-1/2},
+  \mu = x_0, \ \sigma = \left(-\left.\frac{d^2L}{dx^2}\right|_{x=x_0}\right)^{-1/2},
 \]</div>
 <p>where we see the importance of the second derivative being negative.</p>
 <p>We usually characterize the distribution by <span class="math notranslate nohighlight">\(x_0 \pm \sigma\)</span> (e.g., with a point and symmetric error bars if this is data noise), because <em>if</em> it is a Gaussian this is <em>sufficient</em> to tell us the entire distribution. E.g., <span class="math notranslate nohighlight">\(n\)</span> standard deviations is <span class="math notranslate nohighlight">\(n\times \sigma\)</span>.
 But for a Bayesian, the full posterior <span class="math notranslate nohighlight">\(p(x|D,I)\)</span> for all <span class="math notranslate nohighlight">\(x\)</span> is the general result, and <span class="math notranslate nohighlight">\(x = x_0 \pm \sigma\)</span> may be only an approximate characterization.</p>
 <div class="admonition-to-think-about admonition">
 <p class="admonition-title">To think about …</p>
-<p>What if <span class="math notranslate nohighlight">\(p(x|D,I)\)</span> is asymmetric? What if it is multimodal?</p>
+<p>What if <span class="math notranslate nohighlight">\(p(x)\)</span> is asymmetric? What if it is multimodal?</p>
 </div>
 <div class="admonition-p-or-log-p admonition">
 <p class="admonition-title"><span class="math notranslate nohighlight">\(p\)</span> or <span class="math notranslate nohighlight">\(\log p\)</span>?</p>
@@ -799,7 +798,7 @@ What would go wrong if we directly expanded the PDF? Well, if we do
 that we get:</p>
 <div class="math notranslate nohighlight">
 \[
-  p(x) \approx p(x_0) + \frac{1}{2}\left.\frac{d^2p}{dx^2}\right|_{x_0}(x-x_0)^2
+  p(x) \approx p(x_0) + \frac{1}{2}\left.\frac{d^2p}{dx^2}\right|_{x=x_0}(x-x_0)^2
  \ \overset{x\pm\rightarrow\infty}{\longrightarrow} -\infty,
 \]</div>
 <p>i.e., we get something that diverges as <span class="math notranslate nohighlight">\(x\)</span> tends to either plus or
@@ -811,7 +810,7 @@ minus infinity.</p>
 </section>
 <section id="the-central-limit-theorem">
 <h2>The Central Limit Theorem<a class="headerlink" href="#the-central-limit-theorem" title="Link to this heading">#</a></h2>
-<p>Another reason a Gaussian PDF emerges in many calculations is because
+<p>Another reason a Gaussian PDF emerges in many situations is because
 the Central Limit Theorem (CLT) states that the sum of random variables drawn
 from all (or almost all) probability
 distributions will eventually produce Gaussians if the number of samples in

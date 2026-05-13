@@ -748,17 +748,17 @@ document.write(`
 <p>The rule of thumb is generally that <span class="math notranslate nohighlight">\(\chi^2/\text{dof} \gg 1\)</span> means a poor fit and <span class="math notranslate nohighlight">\(\chi^2/\text{dof} &lt; 1\)</span> indicates overfitting.
 <em>Where does this come from and under what conditions is it a statistically valid thing to analyze fit models this way?</em>
 (Note that in contrast to the Bayesian evidence, we are not assessing the model in general, but a particular fit to the model identified by <span class="math notranslate nohighlight">\(\hat\pars\)</span>.)</p>
-<p>Underlying this use of <span class="math notranslate nohighlight">\(\chi^2\)</span>/dof is a particular, familiar statistical model</p>
+<p>Underlying this use of <span class="math notranslate nohighlight">\(\chi^2\)</span>/dof is a special case of the familiar statistical model</p>
 <div class="math notranslate nohighlight">
 \[
     y_{\text{expt}} = y_{\text{th}} + \delta y_{\text{expt}} + \delta y_{\text{th}}
 \]</div>
-<p>in which the theory is <span class="math notranslate nohighlight">\(y_{\text{th},i} = f(x_i;\hat\pars)\)</span>, the experimental error is  <em>independent</em> Gaussian distributed noise with mean zero and standard deviation <span class="math notranslate nohighlight">\(\sigma_i\)</span>, that is <span class="math notranslate nohighlight">\(\delta y_{\text{expt}} \sim \mathcal{N}(0,\Sigma)\)</span> with <span class="math notranslate nohighlight">\(\Sigma_{ij} = \sigma_i^2 \delta_{ij}\)</span>, and <span class="math notranslate nohighlight">\(\delta y_{\text{th}}\)</span> is neglected (i.e., no model discrepancy is included). The prior is (usually implicitly) taken to be uniform, so</p>
+<p>in which the theory is <span class="math notranslate nohighlight">\(y_{\text{th},i} = f(x_i;\hat\pars)\)</span>, the experimental error is  <em>independent</em> Gaussian distributed noise with mean zero and standard deviation <span class="math notranslate nohighlight">\(\sigma_i\)</span>, that is <span class="math notranslate nohighlight">\(\delta y_{\text{expt}} \sim \mathcal{N}(0,\Sigma)\)</span> with <span class="math notranslate nohighlight">\(\Sigma_{ij} = \sigma_i^2 \delta_{ij}\)</span>, and <span class="math notranslate nohighlight">\(\delta y_{\text{th}}\)</span> is neglected (i.e., no model discrepancy is included). As a consequence</p>
 <div class="math notranslate nohighlight">
 \[
      y_{\text{expt}} \sim \mathcal{N}\bigl(f(x_i;\hat\pars), \Sigma\bigr) .
 \]</div>
-<p>The likelihood (and the posterior, with a uniform prior) is then proportional to <span class="math notranslate nohighlight">\(e^{-\chi^2(\hat\pars)/2}\)</span>.</p>
+<p>The likelihood (and the posterior, with an implicitly assumed uniform prior) is then proportional to <span class="math notranslate nohighlight">\(e^{-\chi^2(\hat\pars)/2}\)</span>.</p>
 <p>According to this model, each term in <span class="math notranslate nohighlight">\(\chi^2\)</span> before being squared is a draw from a <em>standard</em> normal distribution. In this context, “standard” means that the distribution has mean zero and variance 1. This is exactly what happens when we take as the random variables <span class="math notranslate nohighlight">\(\bigl(y_i - f(x_i;\hat\pars)\bigr)/\sigma_i\)</span>.
 But the sum of the squares of <span class="math notranslate nohighlight">\(k\)</span> <em>independent</em> standard normal random variables has a known distribution, called the <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution with <span class="math notranslate nohighlight">\(k\)</span> degrees of freedom.
 So the sum of the normalized residuals squared should be distributed (if you generated many sets of them) as a <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution. How many degrees of freedom? This should be the number of independent pieces of information. But we have found the fitted parameters <span class="math notranslate nohighlight">\(\hat\pars\)</span> by minimizing <span class="math notranslate nohighlight">\(\chi^2\)</span>, i.e., by setting <span class="math notranslate nohighlight">\(\partial \chi^2(\pars)/\partial \theta_j\)</span> for <span class="math notranslate nohighlight">\(j = 1,\ldots,N_{\text{fit parameters}}\)</span>, which means <span class="math notranslate nohighlight">\(N_{\text{fit parameters}}\)</span> constraints. Therefore the number of dofs is given by <span class="math notranslate nohighlight">\(\nu = N_{\text{data}} - N_{\text{fit parameters}}\)</span>.</p>
@@ -770,7 +770,7 @@ If there are 1000 data points, then <span class="math notranslate nohighlight">\
 <strong>So in making the comparison of <span class="math notranslate nohighlight">\(\chi^2/\nu\)</span> to one, be sure to take into account the width of the distribution, i.e., consider <span class="math notranslate nohighlight">\(\pm \sqrt{2/\nu}\)</span> roughly.</strong> For a small number of data points, do a better analysis!</p>
 <p>What can go wrong? Lots! See
 <a class="reference external" href="https://arxiv.org/pdf/1012.3754.pdf">“Do’s and Don’ts of reduced chi-squared”</a> for a thorough discussion. But we’ve made assumptions that might not hold: that the data is Gaussian distributed and independent, that the data is dominated by experimental and not theoretical errors, and that the constraints from fitting are linearly independent. We’ve also assumed a lot of data and
-we’ve ignored informative (or, more precisely, non-uniform priors) priors.</p>
+we’ve ignored informative (or, more precisely, non-uniform) priors.</p>
 <section id="test-the-sum-of-normal-variables-squared">
 <h3>Test the sum of normal variables squared<a class="headerlink" href="#test-the-sum-of-normal-variables-squared" title="Link to this heading">#</a></h3>
 <p>The <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution is supposed to result from the sum of the squares of Gaussian random variables. Here we test it numerically for two values of the degrees of freedom (dof). (You can try other cases by copying the code into a Jupyter notebook.) The Gaussian (normal) random variables are drawn from a standard normal distribution, i.e., with mean <span class="math notranslate nohighlight">\(\mu = 0\)</span> and <span class="math notranslate nohighlight">\(\sigma = 1\)</span>.</p>
@@ -846,8 +846,8 @@ we’ve ignored informative (or, more precisely, non-uniform priors) priors.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../../_images/ea14cdfec74396821be90d08789f89a18a777db2e4fdeaab1e4eeaa799551b14.png" src="../../../_images/ea14cdfec74396821be90d08789f89a18a777db2e4fdeaab1e4eeaa799551b14.png" />
-<img alt="../../../_images/fb81609ec282dc1c522dfccad2e680636b99be89dc036c3f80ca2cb561352fcd.png" src="../../../_images/fb81609ec282dc1c522dfccad2e680636b99be89dc036c3f80ca2cb561352fcd.png" />
+<img alt="../../../_images/aa38d31f8623fa873ef268e2cbf6a3b80026f9e178dbe470147c35462ddb3f82.png" src="../../../_images/aa38d31f8623fa873ef268e2cbf6a3b80026f9e178dbe470147c35462ddb3f82.png" />
+<img alt="../../../_images/5b14b2c3119f7c06166d43bc5a307452fbd773bc7edd9028b8a1192e82726b23.png" src="../../../_images/5b14b2c3119f7c06166d43bc5a307452fbd773bc7edd9028b8a1192e82726b23.png" />
 </div>
 </div>
 <p>Check whether the distributions (which are of <span class="math notranslate nohighlight">\(\chi^2/\nu\)</span>) are consistent with the statement above that the mean of a <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution with <span class="math notranslate nohighlight">\(k = \nu\)</span> dofs is <span class="math notranslate nohighlight">\(\nu\)</span>, with variance <span class="math notranslate nohighlight">\(2\nu\)</span>.</p>
@@ -866,7 +866,7 @@ Higgs boson (and for many other particle physics experiments) it is
 “5 sigma’’. <em>How do you think we convert this statement to a
 probability?</em> [Hint: refer to a Gaussian distribution.]
 One minus the resulting probability is called the <span class="math notranslate nohighlight">\(p\)</span>-value. We will
-denote it <span class="math notranslate nohighlight">\(p_{\rm crit}\)</span>. There is nothing
+denote it <span class="math notranslate nohighlight">\(p_\mathrm{crit}\)</span>. There is nothing
 God-given about it. It is a standard (like “beyond a reasonable
 doubt”) that has been agreed upon in a research community for
 determining that something is (likely) going on.</p>

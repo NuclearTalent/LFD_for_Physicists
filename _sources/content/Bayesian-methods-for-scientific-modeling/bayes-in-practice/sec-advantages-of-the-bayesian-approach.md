@@ -16,7 +16,7 @@ jupytext:
 -- Devinderjit Sivia 
 ```
 
-The Bayesian approach offers a number of distinct advantages in scientific applications. Some of them are listed below. In this chapter we introduce in particular the multiple ways of inference with parametric models. 
+The Bayesian approach offers a number of distinct advantages in scientific applications. Some of them are listed below. In this chapter we introduce multiple ways of inference with parametric models. 
 
 ```{admonition} How the Bayesian approach helps in science
 1. Provides an elegantly simple and rational approach for answering any scientific question for a given state of information. The procedure is well-defined:
@@ -53,7 +53,7 @@ Did the Leprechaun drink your wine, or is there a simpler explanation that does 
 ## Inference with parametric models
 
 Inductive inference with parametric models is a very important tool in the natural sciences.
-* Consider $N$ different models $M_i$ ($i = 1, \ldots, N$), each with a parameter vector $\pars_i$. The number of parameters (length of $\pars_i$) might be different for different models. Each of them implies a sampling distribution for possible data
+* Consider $N$ different models $M_i$ ($i = 1, \ldots, N$), each with a parameter vector $\pars_i$. The number of parameters ($d_i$ = length of $\pars_i$) might be different for different models. Each of them implies a sampling distribution for possible data
 
 * Consider a scientific model $M$ with a parameter vector $\pars$. Together with error models this implies a statistical model that gives a sampling distribution for possible data
 
@@ -61,7 +61,7 @@ Inductive inference with parametric models is a very important tool in the natur
 p(\data|{\pars}, M)
 \end{equation}
 
-* The likelihood function is the pdf of the actual, observed data ($\data_\mathrm{obs}$) given a set of parameters $\boldsymbol{\theta}$:
+* The likelihood function is the PDF of the actual, observed data ($\data_\mathrm{obs}$) given a set of parameters $\boldsymbol{\theta}$:
 
 \begin{equation}
 {\mathcal{L}}_i (\pars) \equiv p(\data_\mathrm{obs}|\pars, M)
@@ -82,7 +82,7 @@ With these ingredients, several types of scientific inquiry can be addressed usi
 :width: 400px
 :align: center
 
-Joint pdf for the masses of two black holes merging obtained from the data analysis of a gravitational wave signal. This representation of a joint pdf is known as a corner plot. 
+Joint pdf for the masses of two black holes merging obtained from the data analysis of a gravitational wave signal. This representation of a joint PDF is known as a corner plot. 
 ```
 ````
 
@@ -96,7 +96,7 @@ Joint pdf for the masses of two black holes merging obtained from the data analy
 :width: 400px
 :align: center
 
-Posterior predictive distributions (ppds) for a toy effective field theory (a truncated Taylor expansion) given data with errors as shown, compared to the true underlying function. The two ppds correspond to including or not including correlations. 
+Posterior predictive distributions (PPDs) for a toy effective field theory (a truncated Taylor expansion) given data with errors as shown, compared to the true underlying function. The two PPDs (green and blue bands) correspond to including or not including correlations. 
 ```
 ````
 
