@@ -66,28 +66,28 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/MCMC-sampling/details-of-mcmc/sec-markov-chains';</script>
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
-    <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
-    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
     <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
     <script src="../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
-    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
+    <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
     <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
-    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
-    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
-    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
-    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
-    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
-    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
-    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
-    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
-    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
     <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
     <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
-    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
     <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
-    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
     <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="19.5. Derivation of the Metropolis-Hastings algorithm" href="sec-derivation-of-the-metropolis-hastings-algorithm.html" />
@@ -739,14 +739,14 @@ document.write(`
 <p class="admonition-title"><span class="caption-number">Definition 19.2 </span> (Markov chains)</p>
 <section class="definition-content" id="proof-content">
 <p>The stochastic process <span class="math notranslate nohighlight">\(X\)</span> is a Markov chain if it has the <strong>Markov property</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-5f4430f9-497f-43a6-8a1e-09f8e7962400">
-<span class="eqno">(19.6)<a class="headerlink" href="#equation-5f4430f9-497f-43a6-8a1e-09f8e7962400" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bf681604-d6e2-4145-a941-ebf6eced4a71">
+<span class="eqno">(19.6)<a class="headerlink" href="#equation-bf681604-d6e2-4145-a941-ebf6eced4a71" title="Permalink to this equation">#</a></span>\[\begin{equation}
   \prob_{X_n \vert X_0, X_1,\ldots, X_{n-1}}\left( i_n \vert i_0, i_1,\ldots, i_{n-1} \right)
   = \prob_{X_n \vert X_{n-1}}\left( i_n \vert i_{n-1} \right)
 \end{equation}\]</div>
 <p>for a countable (discrete) sample space. For continuous variables we formulate this property using conditional distribution functions</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c5556605-7fe5-41ee-b49b-c5c874caeb8b">
-<span class="eqno">(19.7)<a class="headerlink" href="#equation-c5556605-7fe5-41ee-b49b-c5c874caeb8b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-330c6c85-63ae-4813-88c1-9b9dcc3750e7">
+<span class="eqno">(19.7)<a class="headerlink" href="#equation-330c6c85-63ae-4813-88c1-9b9dcc3750e7" title="Permalink to this equation">#</a></span>\[\begin{equation}
   P_{X_n \vert X_0, X_1, \ldots, X_{n-1}} \left( x_n \vert  x_0, x_1, \ldots, x_{n-1} \right)
   = P_{X_n \vert X_{n-1}} \left( x_n \vert x_{n-1} \right)
 \end{equation}\]</div>
@@ -756,8 +756,8 @@ document.write(`
 <div><p>Conditional on the present, the future of a Markov chain does not depend on the past.</p>
 </div></blockquote>
 <p>An observer of a Markov process would only have to measure the one-step conditional probability distributions</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4548463c-ced6-4d83-ac10-30509bbdb3e5">
-<span class="eqno">(19.8)<a class="headerlink" href="#equation-4548463c-ced6-4d83-ac10-30509bbdb3e5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6467e07b-51e5-40f9-a59a-e77e7774cdd8">
+<span class="eqno">(19.8)<a class="headerlink" href="#equation-6467e07b-51e5-40f9-a59a-e77e7774cdd8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{gathered}
 P_{X_0}(x_0), \\
 P_{X_1 \vert X_0}(x_1 | x_0), \\
@@ -770,8 +770,8 @@ P_{X_n \vert X_{n-1}}(x_n | x_{n-1}),
 <section id="stationary-processes">
 <h2>Stationary processes<a class="headerlink" href="#stationary-processes" title="Link to this heading">#</a></h2>
 <p>An important subset of Markov processes are <strong>stationary</strong> which implies that the conditional probability distribution does not depend on the position in time. In combination with the Markov property, this can be viewed as a process with very <em>short-term memory</em> and <em>no sense of time</em>. An observer of a stationary Markov process only needs to measure</p>
-<div class="amsmath math notranslate nohighlight" id="equation-286c7552-8ad5-49f4-ae7c-d0add9efe30b">
-<span class="eqno">(19.9)<a class="headerlink" href="#equation-286c7552-8ad5-49f4-ae7c-d0add9efe30b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5a822ac8-3eb9-41c1-b1f4-176bd33b9b3b">
+<span class="eqno">(19.9)<a class="headerlink" href="#equation-5a822ac8-3eb9-41c1-b1f4-176bd33b9b3b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{gathered}
 P_{X_0}(x_0), \\
 P_{X_n \vert X_{n-1}}(x_n | x_{n-1}),
@@ -782,16 +782,16 @@ P_{X_n \vert X_{n-1}}(x_n | x_{n-1}),
 <p class="admonition-title"><span class="caption-number">Definition 19.3 </span> (Stationary processes)</p>
 <section class="definition-content" id="proof-content">
 <p>Given a countable (discrete) sample space <span class="math notranslate nohighlight">\(S\)</span>, the Markov chain <span class="math notranslate nohighlight">\(X\)</span> is stationary if</p>
-<div class="amsmath math notranslate nohighlight" id="equation-feb47d64-eecc-4094-b5e4-00b9183ef7d9">
-<span class="eqno">(19.10)<a class="headerlink" href="#equation-feb47d64-eecc-4094-b5e4-00b9183ef7d9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b317ff94-11a8-42ce-8147-41ec0d3c94a7">
+<span class="eqno">(19.10)<a class="headerlink" href="#equation-b317ff94-11a8-42ce-8147-41ec0d3c94a7" title="Permalink to this equation">#</a></span>\[\begin{equation}
   \prob_{X_{n+1} \vert X_n} \left(  j \vert  i \right)
   = \prob_{X_1 \vert X_0} \left( j \vert  i \right)
   \equiv T(i,j)
 \end{equation}\]</div>
 <p>for all <span class="math notranslate nohighlight">\(n,i,j\)</span>. Here we have also introduced the (stationary) <strong>transition density</strong> <span class="math notranslate nohighlight">\(T\)</span>, which here becomes an <span class="math notranslate nohighlight">\(|S| \times |S|\)</span> matrix with elements <span class="math notranslate nohighlight">\(T(i,j)\)</span>.</p>
 <p>For continuous variables we use (conditional) distribution functions and we introduce the continuous transition density</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e82dd138-0b24-4e25-a42e-7164ae5e3262">
-<span class="eqno">(19.11)<a class="headerlink" href="#equation-e82dd138-0b24-4e25-a42e-7164ae5e3262" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6eed7942-93d1-4986-84f9-80a3f6173362">
+<span class="eqno">(19.11)<a class="headerlink" href="#equation-6eed7942-93d1-4986-84f9-80a3f6173362" title="Permalink to this equation">#</a></span>\[\begin{equation}
   P_{ X_{n+1} \vert X_n} \left( x_j \vert x_i \right)
   = P_{X_1 \vert X_0} \left( x_j \vert x_i \right)
   \equiv T\left( x_i, x_j \right).
@@ -822,8 +822,8 @@ P_{X_n \vert X_{n-1}}(x_n | x_{n-1}),
 <section class="example-content" id="proof-content">
 <p>Let us construct a simpe Markov process using again the abstract python class <a class="reference external" href="https://github.com/NuclearTalent/LFD_for_Physicists/blob/main/content/MCMC-sampling/assets/StochasticProcess/StochasticProcess.py"><code class="docutils literal notranslate"><span class="pre">StochasticProcess</span></code></a>).</p>
 <p>We initialize the chain with a uniform random variable <span class="math notranslate nohighlight">\(p_{X_0}(x_0) = \mathcal{U}\left( [0,1] \right)\)</span> and update it using the conditional probability density function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-eafde73c-2685-4e6e-a737-c02a15d364ac">
-<span class="eqno">(19.12)<a class="headerlink" href="#equation-eafde73c-2685-4e6e-a737-c02a15d364ac" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-252acf11-71d2-45af-a14a-75e8d521930e">
+<span class="eqno">(19.12)<a class="headerlink" href="#equation-252acf11-71d2-45af-a14a-75e8d521930e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p_{ X_{n+1} \vert X_n} \left( x_j \vert x_i \right) = \mathcal{U}\left( \left[ \frac{x_i}{2} ,\frac{x_i+1}{2} \right] \right).
 \end{equation}\]</div>
 <p>The simulations in <a class="reference internal" href="#fig-example-markovprocessexample-runs-fig"><span class="std std-numref">Fig. 19.2</span></a> and <a class="reference internal" href="#fig-example-markovprocessexample-corner-fig"><span class="std std-numref">Fig. 19.3</span></a> includes two relevant visualizations:</p>
@@ -1202,31 +1202,31 @@ T_Y(i,j) = \prob_{Y_{n+1 \vert Y_n}}(j \vert i) = \frac{\pi_j}{\pi_i} T_X(j,i).
 <p class="admonition-title"><span class="caption-number">Remark 19.1 </span> (The Metropolis design for obtaining a discrete limiting distribution)</p>
 <section class="remark-content" id="proof-content">
 <p>We want to design a stationary Markov chain that has a desired distribution <span class="math notranslate nohighlight">\(\pi\)</span> as its limiting distribution. To achieve this, we construct the transition matrix in a product form. Its non-diagonal elements are</p>
-<div class="amsmath math notranslate nohighlight" id="equation-de272cb1-ff0f-47dd-b4e8-52309f81bc0c">
-<span class="eqno">(19.19)<a class="headerlink" href="#equation-de272cb1-ff0f-47dd-b4e8-52309f81bc0c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8e7c4fc1-6b57-4046-9a52-f7273b7257f7">
+<span class="eqno">(19.19)<a class="headerlink" href="#equation-8e7c4fc1-6b57-4046-9a52-f7273b7257f7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T(i,j) = A(i,j) S(i,j), \quad \text{for } i \neq j,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(S\)</span> is a (discrete) step proposal matrix and <span class="math notranslate nohighlight">\(A\)</span> contains acceptance probabilities. Formally, the elements of these matrices should be interpreted as probabilities</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e38d5aad-6858-49dd-bcdb-51f853d82aa3">
-<span class="eqno">(19.20)<a class="headerlink" href="#equation-e38d5aad-6858-49dd-bcdb-51f853d82aa3" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-3ee95668-f83f-4368-8083-7735a4aa43b6">
+<span class="eqno">(19.20)<a class="headerlink" href="#equation-3ee95668-f83f-4368-8083-7735a4aa43b6" title="Permalink to this equation">#</a></span>\[\begin{align}
 S(i,j) &amp;= \cprob{\text{proposing next position } j}{\text{current position is } i}, \\
 A(i,j) &amp;= \cprob{\text{accepting new position } j}{\text{current position is } i},
 \end{align}\]</div>
 <p>where we think of outcomes of subsequent random variables as positions in the sample space. Note how the probability of a transition from <span class="math notranslate nohighlight">\(i\)</span> to <span class="math notranslate nohighlight">\(j\)</span>, given by <span class="math notranslate nohighlight">\(T(i,j)\)</span>, is then the product of these two independent (proposal and acceptance) probabilities.</p>
 <p>Constraining <span class="math notranslate nohighlight">\(T\)</span> to fulfill detailed balance <a class="reference internal" href="#equation-eq-markovchains-detailed-balance">(19.18)</a> we can guarantee that <span class="math notranslate nohighlight">\(\pi\)</span> is a stationary distribution. That is, we require</p>
-<div class="amsmath math notranslate nohighlight" id="equation-116dcf4b-d990-4310-88ea-c9d4f0c5c2ed">
-<span class="eqno">(19.21)<a class="headerlink" href="#equation-116dcf4b-d990-4310-88ea-c9d4f0c5c2ed" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-40a25e27-24c5-455f-ae23-89a09e22b21b">
+<span class="eqno">(19.21)<a class="headerlink" href="#equation-40a25e27-24c5-455f-ae23-89a09e22b21b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pi_i S(i,j) A(i,j) = \pi_j S(j,i) A(j,i).
 \end{equation}\]</div>
 <p>This condition is fulfilled for any stochastic matrix <span class="math notranslate nohighlight">\(S\)</span> (impying non-negative entries and row sums equal to one) if one sets the acceptance probability</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d7cc4701-2a27-4776-9393-eb5a0866e466">
-<span class="eqno">(19.22)<a class="headerlink" href="#equation-d7cc4701-2a27-4776-9393-eb5a0866e466" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-96d4fb10-6d87-4064-b4ee-f245a226ded4">
+<span class="eqno">(19.22)<a class="headerlink" href="#equation-96d4fb10-6d87-4064-b4ee-f245a226ded4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 A(i,j) = \min\left(1, \frac{\pi_j}{\pi_i}\frac{S(j,i)}{S(i,j)} \right),
 \end{equation}\]</div>
 <p>where the second argument to the min-function is known as the <em>Metropolis ratio</em>.</p>
 <p>Finally, the diagonal entries of the transition matrix are</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1947ff15-4495-49ec-aaec-068a30e5bdf5">
-<span class="eqno">(19.23)<a class="headerlink" href="#equation-1947ff15-4495-49ec-aaec-068a30e5bdf5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-944c9c74-cc02-40de-9d7a-0840da6618e5">
+<span class="eqno">(19.23)<a class="headerlink" href="#equation-944c9c74-cc02-40de-9d7a-0840da6618e5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T(i,i) = S(i,i) + \sum_{j \neq i} S(i,j) \left( 1 - A(i,j)\right),
 \end{equation}\]</div>
 <p>which can be understood by the fact that transitions to the same position can be triggered by a proposed move (the first term; note that <span class="math notranslate nohighlight">\(A(i,i)=1\)</span>), or by a non-accepted, proposed move to any other position (the sum in the second term).</p>
