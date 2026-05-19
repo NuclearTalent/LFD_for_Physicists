@@ -277,27 +277,27 @@ Substituting into $p(X)$ and gathering together all pieces with $x_j$ dependence
 
 $$ 
  p(X) = \frac{1}{2\pi} \int_{-\infty}^{\infty} d\omega
-    \, e^{i\omega X} \prod_{j=1}^n \left[\int_{-\infty}^{\infty} dx_j\, e^{i\omega x_j / \sqrt{n}} p(x_j) \right] . 
+    \, e^{i\omega X} \prod_{j=1}^n \left[\int_{-\infty}^{\infty} dx_j\, e^{-i\omega x_j / \sqrt{n}} p(x_j) \right] . 
 $$ 
 
 Observe that the terms in []s have factorized into a product of independent integrals and they are all the same (just different labels for the integration variables).
-Now we Taylor expand $e^{i\omega x_j/\sqrt{n}}$, arguing that the Fourier integral is dominated by small $x$ as $n\rightarrow\infty$. (*When does this fail?*) We find:
+Now we Taylor expand $e^{-i\omega x_j/\sqrt{n}}$, arguing that the Fourier integral is dominated by small $x$ as $n\rightarrow\infty$. (*When does this fail?*) We find:
 
 $$
-  e^{i\omega x/\sqrt{n}} = 1 + \frac{i\omega x}{\sqrt{n}}
-    + \frac{(i\omega)^2 x^2}{2 n} + \mathcal{O}\left(\frac{\omega^3 x^3}{n^{3/2}}\right) .
+  e^{i\omega x/\sqrt{n}} = 1 - \frac{i\omega x}{\sqrt{n}}
+    + \frac{(i\omega)^2 x^2}{2 n} - \mathcal{O}\left(\frac{\omega^3 x^3}{n^{3/2}}\right) .
 $$
 
 Then, using that $p(x)$ is normalized (i.e., $\int_{-\infty}^{\infty} dx\, p(x) = 1$) and with the notation $\langle f(x) \rangle$ for the expectation value of $f(x)$, 
 
 $$
 \begin{align}
-\int_{-\infty}^{\infty} dx\, e^{i\omega x / \sqrt{n}}
+\int_{-\infty}^{\infty} dx\, e^{-i\omega x / \sqrt{n}}
 p(x)&=
 \int_{-\infty}^\infty dx\, p(x)
-\left[1 +\frac{ i \omega x}{\sqrt{n}} + \frac{(i \omega)^2 x^2}{2 n} + \ldots\right]\\
-&=1  + \frac{i \omega}{\sqrt{n}} \langle x \rangle  - \frac{\omega^2}{2
-n} \langle x^2 \rangle + \langle x^3 \rangle
+\left[1 -\frac{ i \omega x}{\sqrt{n}} + \frac{(i \omega)^2 x^2}{2 n} + \ldots\right]\\
+&=1  - \frac{i \omega}{\sqrt{n}} \langle x \rangle  - \frac{\omega^2}{2
+n} \langle x^2 \rangle + i \langle x^3 \rangle
 \frac{\omega^3}{n^{3/2}}\\
 &=1 - \frac{\omega^2 \sigma^2}{2 n} +
 \mathcal{O}\left(\frac{\omega^3}{n^{3/2}}\right) .
