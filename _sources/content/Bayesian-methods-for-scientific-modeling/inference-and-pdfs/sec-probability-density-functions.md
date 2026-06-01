@@ -302,7 +302,7 @@ fig.tight_layout()
 The 68%/95% probability regions are shown in dark/light shading.  When applied to Bayesian posteriors, these are known as <em>credible intervals</em> or DoBs (degree of belief intervals). One can also encounter the name Bayesian confidence intervals, but this use of the label "confidence interval" is not recommended. The horizontal extent on the $x$-axis translates into the vertical extent of the error bar or error band for $x$.
 The values of the mode, mean, median can be used as *point estimates* for the "probable" value of $x$.  
 
-These examples are just a taste of a large range of standard distributions that are available in  the python package `scipy.stats`.  You can look at the code that generated the figures here ("Show code cell source") but it may be worthwhile at this stage to jump ahead and explore using the demo notebook {ref}`demo:exploring-pdfs` to make a hands-on pass at getting familiar with PDFs and how to visualize them using `scipy.stats`. 
+These examples are just a taste of a large range of standard distributions that are available in  the python package `scipy.stats`.  You can look at the code that generated the figures here ("Show code cell source") but it may be worthwhile at this stage to jump ahead and explore using the exercise notebook {ref}`exercise:exploring-pdfs` to make a hands-on pass at getting familiar with PDFs and how to visualize them using `scipy.stats`. 
 
 You can also get a preview of the effects of finite *sampling*. Since we can draw an arbitrary number of samples from the distributions defined in `scipy.stats`, we can see how the distributions build up as the number of samples increases, with decreasing fluctuations around the asymptotic distribution. 
 
@@ -314,14 +314,14 @@ See {ref}`sec:Statistics` in Appendix A for further details on PDFs. You can als
 The diversity of available distributions should make it clear
 that the "default" choice of a Gaussian distribution is just that: a
 default choice. We will explore why this default
-choice is often the correct one in {ref}`sec:Gaussians`. But often is not the same as all the time, and it is frequently the case that another distribution gives a better description of the way data is distributed.
+choice is often the correct one in {ref}`sec:1dpdfs`. But often is not the same as all the time, and it is frequently the case that another distribution gives a better description of the way data is distributed.
 
 :::{admonition} Trivia: Who was "Student"?
 :class: note
 "Student" was the pen name of the Head Brewer at Guinness --- a pioneer of small-sample experimental design (hence not necessarily Gaussian). His real name was William Sealy Gosset.  "Statistics and Beer Day" is sometimes observed on his birthday, June 13, to celebrate his contributions.
 :::
 
-::::{admonition} Confidence intervals
+::::{admonition} Credible intervals
 :class: my-checkpoint
 *Bayesian credible intervals: how are they defined?* 
 :::{admonition} Answer 
