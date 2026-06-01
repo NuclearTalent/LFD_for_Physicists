@@ -123,7 +123,7 @@ $$
 $$
 
 Note that $\Sigma$ is symmetric and positive definite.
-See {numref}`sec:1and2dPDFs` for plotting what this looks like.
+See {numref}`sec:2dPDFs` for plotting what this looks like.
 
 :::
 
@@ -175,7 +175,7 @@ We can generalize this discussion to multi-dimensional PDFs with vector $\mathbf
 ```
 
 Here are some ways to find $p(x)$ given a set of moments $\{m_k\}$:
-1. If we know the PDF belongs to a particular parametric family, such as Gaussian or Beta (see {ref}`demo:exploring-pdfs`), then we can solve for the defining parameters if we know the appropriate moments. For the case of a Gaussian, we know it is defined by its mean $\mu$ and variance $\sigma^2$, so those are the only two moments we need. (In fact, we can determine the mean and variance even if we only know higher moments!) This is also true for the less familiar case of a Beta distribution that is specified by the shape parameters $\alpha, \beta > 0$ (see [Beta distribution](https://en.widipedia.org/wiki/Beta_distribution) on Wikipedia). If the variance satisfies $\sigma^2 < \mu(1-\mu)$, then
+1. If we know the PDF belongs to a particular parametric family, such as Gaussian or Beta (see {ref}`sec:1dPDFs`), then we can solve for the defining parameters if we know the appropriate moments. For the case of a Gaussian, we know it is defined by its mean $\mu$ and variance $\sigma^2$, so those are the only two moments we need. (In fact, we can determine the mean and variance even if we only know higher moments!) This is also true for the less familiar case of a Beta distribution that is specified by the shape parameters $\alpha, \beta > 0$ (see [Beta distribution](https://en.widipedia.org/wiki/Beta_distribution) on Wikipedia). If the variance satisfies $\sigma^2 < \mu(1-\mu)$, then
 
    $$
      \alpha = \mu \left(\frac{\mu(1-\mu)}{\sigma^2} - 1\right), \qquad

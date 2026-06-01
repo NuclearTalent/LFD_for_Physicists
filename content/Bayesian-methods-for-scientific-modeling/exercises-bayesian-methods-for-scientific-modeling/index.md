@@ -7,6 +7,8 @@ In this chapter we collect various exercises to build intuition or gain practice
 
 * {ref}`exercise:MedicalExample`. Practice on translating English statements into probability notation and then applying the Bayesian rules.
 
+* [](./exercise-exploring-PDFs.ipynb) has a series of tasks to play with plots of probability density functions (PDFs) using the scipy.stats and numpy libraries.
+
 * [](./exercise-gaussian-mean-and-variance.ipynb) takes a look at a simple parameter-estimation problem, namely estimating the mean and the variance of a normal distribution that is associated with a collection of random variables. The exercise develops a Bayesian approach to this problem and shows how it reduces to standard frequentist estimators for a particular choice of prior.
 
 * [](./exercise-radioactive-lighthouse-problem.ipynb) explores a variation on a classic problem from Gull, which entails identifying the location of a hidden radioactive source using a Bayesian approach.
@@ -22,4 +24,6 @@ The final exercises introduce the use of Markov Chain Monte Carlo (MCMC) samplin
 * [](./exercise-2d-radioactive-lighthouse-location-using-mcmc.ipynb) revisits [](./exercise-radioactive-lighthouse-problem.ipynb) with a more complex goal (identifying the location of the lighthouse in two dimensions) that is carried out using MCMC sampling.
 
 * [](./exercise-fitting-a-straight-line-ii.ipynb) extends the straight-line parameter estimation problem by considering marginalizing over nuisance parameters and error propagation while using MCMC sampling.
+
+* {ref}`exercise:GaussianLighthouseCompare` is a brief exercise highlighting the commonality of sampling problems using MCMC.
 

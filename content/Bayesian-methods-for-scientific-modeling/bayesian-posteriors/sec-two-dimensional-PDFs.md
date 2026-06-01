@@ -7,76 +7,8 @@ jupytext:
   name: python3
 ---
 
-(sec:1and2dPDFs)=
-# One- and two-dimensional PDFs
-
-\[Note: If there are questions in this section you can't answer right away, come back to them after playing with {ref}`demo:exploring-pdfs`.\]
-
-## To a Bayesian, everything is a PDF
-
-Physicists are used to dealing with PDFs as normalized wave functions squared.  For a one-dimensional particle, the probability density at $x$ is
-
- $$
- |\Psi(x)|^2 \Longrightarrow p(x) 
- $$
-
-The *probability* of finding $x$ in some interval $a \leq x \leq b$ is found by integration:
-   
- $$
- \mathbb{P}(a \leq x \leq b) = \int_a^b |\Psi(x)|^2 \; dx 
- $$
-
-Just as with "Lagrangian" vs. "Lagrangian density", physicists are not always careful when saying probability vs. probability density.
-
-Physicists are also used to multidimensional normalized PDFs as wave functions squared, e.g. probability density for particle 1 at $x_1$ and particle 2 at $x_2$:
-
- $$
- |\Psi(x_1, x_2)|^2 \Longrightarrow p(x_1,x_2) \equiv p(\textbf{x})  
-   \quad \mbox{with}\quad \textbf{x} 
- \equiv \{x_1,x_2\}
- $$
-
-(Note that you will find alternative notation in the physics and statistics literature for generic PDFs: $p(\textbf{x}) = P(\textbf{x}) = \textrm{pr}(\textbf{x}) = \textrm{prob}(\textbf{x}) = \ldots$ )
-
-```{admonition} Some other vocabulary and definitions to remember
-* $p(x_1,x_2)$ is the <em>joint probability density</em> of $x_1$ and $x_2$.
-* The <em>marginal probability density</em> of $x_1$ is: 
-$p(x_1) = \int\! p(x_1,x_2)\,dx_2$.
-In quantum mechanics, this corresponds to the probability to find particle 1 at $x_1$ and particle 2 anywhere; that is, $\int\! |\Psi(x_1,x_2)|^2 dx_2$ (integrated over the full domain of $x_2$, e.g., 0 to $\infty$).
-* "Marginalizing" = "integrating out" (eliminates from the posterior the "nuisance parameters" whose value you don't care about, at least not at that moment). 
-```
-
-In Bayesian statistics there are PDFs (or PMFs if discrete) for experimental <i>and</i> theoretical uncertainties, model parameters, hyperparameters (what are those?), events ("Will it rain tomorrow?"), etc.  Even if $x$ has the definite value $x_0$, we can represent this knowledge with a PDF $p(x) = \delta(x-x_0)$. 
-
-
-::::{admonition} Characteristics of PDFs
-:class: my-checkpoint
-*What are the characteristics (e.g., symmetry, heavy tails, ...) of different PDFs: normal, beta, student t, $\chi^2$, $\ldots$* 
-:::{admonition} Answer 
-:class: dropdown, my-answer
-**Check these yourself!** Note that the answers will often depend on the parameter values for the distribution. A Student t distribution may have "heavy tails" (meaning more probability in the tails than a Gaussian would have) for some parameter values but for others it approaches a normal distribution (so by definition no heavy tails).
-:::
-::::
-
-
-::::{admonition} Sampling
-:class: my-checkpoint
-*What does sampling mean?* 
-:::{admonition} Answer 
-:class: dropdown, my-answer
-To sample a given distribution is to draw values that represent it. The probability to draw a specific value is given by the distribution. In Bayesian inference one is most often sampling a posterior distribution. 
-:::
-::::
-
-::::{admonition} Verifying sampling
-:class: my-checkpoint
-*How do you know if a distribution is correctly sampled?* 
-:::{admonition} Answer 
-:class: dropdown, my-answer
-One way is to look at the (normalized) histogram. If correctly sampled, this should approximate the distribution and the approximation should improve with more samples.
-:::
-::::
-
+(sec:2dPDFs)=
+# Two-dimensional PDFs
 
 ## Visualizing correlated Gaussian distributions
 
@@ -87,7 +19,7 @@ $$
     e^{-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^\intercal\Sigma^{-1}(\boldsymbol{x}-\boldsymbol{\mu})}
 $$
 
-For the one dimensional case, it reduces to the familiar
+For the one-dimensional case, it reduces to the familiar
 
 $$
   p(x_1|\mu_1,\sigma_1) = \frac{1}{\sqrt{2\pi\sigma_1^2}}
@@ -133,7 +65,9 @@ $$
  
 In the widget they are drawn at $\Delta = 1$ and $\Delta = 2$. Their semi-axes are aligned with the eigenvectors of $\Sigma$ and have lengths $\sqrt{\lambda_i}$ (the "$1\sigma$" ellipse) and $2\sqrt{\lambda_i}$ (the "$2\sigma$" ellipse), where $\lambda_i$ are the eigenvalues of $\Sigma$.
  
-**A subtlety worth highlighting.** In one dimension the $\pm 1\sigma$ and $\pm 2\sigma$ intervals contain 68.3% and 95.4% of the probability mass. In two dimensions, the corresponding *ellipses* contain considerably less, because $\Delta^2 \sim \chi^2_2$ and
+:::{admonition} A subtlety worth highlighting
+:class: note
+In one dimension the $\pm 1\sigma$ and $\pm 2\sigma$ intervals contain 68.3% and 95.4% of the probability mass. In two dimensions, the corresponding *ellipses* contain considerably less, because $\Delta^2 \sim \chi^2_2$ and
  
 $$
 \prob(\Delta^2 \le k^2) = 1 - e^{-k^2/2}.
@@ -144,7 +78,7 @@ $$
 | $\Delta = 1$ ("$1\sigma$")   | 39.3% | 68.3% |
 | $\Delta = 2$ ("$2\sigma$")   | 86.5% | 95.4% |
 | $\Delta = 3$ ("$3\sigma$")   | 98.9% | 99.7% |
- 
+:::
 
 ::::{admonition} Questions to consider:
 :class: my-checkpoint
@@ -166,7 +100,7 @@ $$
 
 ::::
 
-
+<!--
 ## Follow-up on correlated posteriors
 
 The first Gaussian 2D PDF in the last section is characterized by elliptical contours of equal probability density whose major axes are aligned with the $x_1$ and $x_2$ axes. 
@@ -215,6 +149,7 @@ Yes!
 It means that the slope and intercept are *correlated*. Intuitively, if we want to maintain a good fit when we change the slope, we will need to change the intercept as well. They are not independent!
 :::
 ::::
+-->
 
 
 ## 2D PDF with a quadratic approximation
@@ -412,46 +347,3 @@ Comments on figures:
 * How should you design your experiments?
     * E.g., how should you bin data, how many counts are needed, what $(x_k)_{\text{max}}$, and so on.    
 -->
-
-## Compare Gaussian noise sampling to lighthouse analysis
-
-Here we observe that Gaussian noise sampling is carried out just like the radioactive lighthouse analysis from exercise notebook {ref}`exercise:radioactive-lighthouse-problem` (which we assume you have worked through). 
-Jump to the Bayesian approach in the exercise notebook {ref}`exercise:gaussian-noise-and-averages-ii`.
-The goal is to sample a posterior $p(\pars|D,I)$
-
-$$
-         p(\mu,\sigma | D, I) \leftrightarrow p(x_0,y_0|X,I)
-$$
-
-where $D$ on the left are the $x$ points and $D=X$ on the right are the $\{x_k\}$ where scintillation flashes are detected.
-
-What do we need? From Bayes' theorem, we need 
-
-$$\begin{align}
-      \text{likelihood:}& \quad p(D|\mu,\sigma,I) \leftrightarrow p(D|x_0,y_0,I) \\
-      \text{prior:}& \quad p(\mu,\sigma|I) \leftrightarrow p(x_0,y_0|I)
-\end{align}$$
-
-You are generalizing the functions for log PDFs and the plotting of posteriors that are in {ref}`exercise:radioactive-lighthouse-problem`.
-Note the functions for log-prior and log-likelihood in {ref}`exercise:gaussian-noise-and-averages-ii`. Here $\pars = [\mu,\sigma]$ is a vector of parameters; cf.  $\pars = [x_0,y_0]$.
-
-Let's step through the essential set up for `emcee`.
- * It is best to create an environment that will include `emcee` and `corner`. 
-   :::{hint} Nothing in the `emcee` sampling part needs to change!
-   ::: 
- * Basically we are doing 50 random walks in parallel to explore the posterior. Where the walkers end up will define our samples of $\mu,\sigma$
-   $\Longrightarrow$ the histogram *is* an approximation to the (unnormalized) joint posterior.
- * Plotting is also the same, once you change labels and `mu_true`, `sigma_true` to `x0_true`, `y0_true`. (And skip the `maxlike` part.)
-
-Maximum likelihood here is the frequentist estimate $\longrightarrow$ this is an optimization problem. And you can read off marginalized estimates for $\mu$ and $\sigma$.
-::::{admonition} Question
-Are $\mu$ and $\sigma$ correlated or uncorrelated?
-:::{admonition} Answer
-:class: dropdown 
-They are *uncorrelated* because the contour ellipses in the joint posterior have their major and minor axes parallel to the $\mu$ and $\sigma$ axes. Note that the fact that they look like circles is just an accident of the ranges chosen for the axes; if you changed the $\sigma$ axis range by a factor of two, the circle would become flattened.
-:::
-::::
-
-Bottom line: the two analyses are completely analogous.
-
-
