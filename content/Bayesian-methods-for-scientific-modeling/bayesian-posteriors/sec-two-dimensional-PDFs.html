@@ -741,8 +741,8 @@ document.write(`
 \]</div>
 <p>with <span class="math notranslate nohighlight">\(\Sigma = \sigma_1^2\)</span>.</p>
 <p>For the bivariate case (two dimensional),</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="math notranslate nohighlight" id="equation-eq-bivariate-case">
+<span class="eqno">(5.2)<a class="headerlink" href="#equation-eq-bivariate-case" title="Link to this equation">#</a></span>\[\begin{split}
   \boldsymbol{x} = \pmatrix{x_1\\ x_2} \quad\mbox{and}\quad
   \boldsymbol{\mu} = \pmatrix{\mu_1\\ \mu_2} \quad\mbox{and}\quad
   \Sigma = \pmatrix{\sigma_1^2 &amp; \rho_{12} \sigma_1\sigma_2 \\
@@ -875,8 +875,9 @@ It means that the slope and intercept are *correlated*. Intuitively, if we want 
 </section>
 <section id="d-pdf-with-a-quadratic-approximation">
 <h2>2D PDF with a quadratic approximation<a class="headerlink" href="#d-pdf-with-a-quadratic-approximation" title="Link to this heading">#</a></h2>
-<p>Consider a two-dimensional log likelihood <span class="math notranslate nohighlight">\(L(X,Y)\)</span>. We’ll analyze it in a quadratic approximation.
-First, find the mode <span class="math notranslate nohighlight">\(X_0\)</span>, <span class="math notranslate nohighlight">\(Y_0\)</span> (best estimate) by differentiating</p>
+<p>Consider a general two-dimensional log likelihood <span class="math notranslate nohighlight">\(L(X,Y)\)</span>. We’ll analyze it in a quadratic approximation.
+We base our discussion on Sivia section 3.3 <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id11" title="D. S. Sivia and J. Skilling. Data Analysis - A Bayesian Tutorial. Oxford Science Publications. Oxford University Press, 2nd edition, 2006.">SS06</a>]</span>.</p>
+<p>First, find the mode <span class="math notranslate nohighlight">\(X_0\)</span>, <span class="math notranslate nohighlight">\(Y_0\)</span> (which is the best estimate) by differentiating</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
  L(X,Y) &amp;= \log p(X,Y|\{\text{data}\}, I) \\
@@ -887,16 +888,16 @@ First, find the mode <span class="math notranslate nohighlight">\(X_0\)</span>, 
 <p>To check reliability, Taylor expand around <span class="math notranslate nohighlight">\(L(X_0,Y_0)\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
- L &amp;= L(X_0,Y_0) + \frac{1}{2}\Bigl[
+ L &amp;= L(X_0,Y_0) + \frac{1}{2}\biggl[
    \left.\frac{\partial^2L}{\partial X^2}\right|_{X_0,Y_0}(X-X_0)^2
   + \left.\frac{\partial^2L}{\partial Y^2}\right|_{X_0,Y_0}(Y-Y_0)^2 \\
   &amp; \qquad\qquad\qquad + 2 \left.\frac{\partial^2L}{\partial X\partial Y}\right|_{X_0,Y_0}(X-X_0)(Y-Y_0)
-   \Bigr] + \ldots \\
+   \biggr] + \ldots \\
    &amp;\equiv L(X_0, Y_0) + \frac{1}{2}Q + \ldots
 \end{align}\end{split}\]</div>
 <p>It makes sense to do this in (symmetric) matrix notation:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="math notranslate nohighlight" id="equation-eq-qmatrix">
+<span class="eqno">(5.3)<a class="headerlink" href="#equation-eq-qmatrix" title="Link to this equation">#</a></span>\[\begin{split}
   Q = 
   \begin{pmatrix} X-X_0 &amp; Y-Y_0 
   \end{pmatrix}
@@ -918,7 +919,7 @@ First, find the mode <span class="math notranslate nohighlight">\(X_0\)</span>, 
 \]</div>
 <a class="bg-primary reference internal image-reference" href="../../../_images/posterior_ellipse.png"><img alt="posterior ellipse" class="bg-primary align-center" src="../../../_images/posterior_ellipse.png" style="width: 400px;" />
 </a>
-<p>So in a quadratic approximation, the contour <span class="math notranslate nohighlight">\(Q=k\)</span> for some <span class="math notranslate nohighlight">\(k\)</span> is an ellipse centered at <span class="math notranslate nohighlight">\(X_0, Y_0\)</span> (as in the figure). The orientation and eccentricity are determined by <span class="math notranslate nohighlight">\(A\)</span>, <span class="math notranslate nohighlight">\(B\)</span>, and <span class="math notranslate nohighlight">\(C\)</span>.
+<p>So in a quadratic approximation, the contour <span class="math notranslate nohighlight">\(Q=k\)</span> for some <span class="math notranslate nohighlight">\(k\)</span> is an ellipse centered at <span class="math notranslate nohighlight">\(X_0, Y_0\)</span> (as in the figure). The orientation and eccentricity of the ellipse are determined by <span class="math notranslate nohighlight">\(A\)</span>, <span class="math notranslate nohighlight">\(B\)</span>, and <span class="math notranslate nohighlight">\(C\)</span>.
 The principal axes are found from the eigenvectors of the Hessian matrix <span class="math notranslate nohighlight">\(\begin{pmatrix} A &amp; C \\ C &amp; B  \end{pmatrix}\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -935,25 +936,41 @@ The principal axes are found from the eigenvectors of the Hessian matrix <span c
  x \\ y
 \end{pmatrix}
 \quad\Longrightarrow\quad
-\lambda_1,\lambda_2 &lt; 0 \ \mbox{so $(x_0,y_0)$ is a maximum}
+\lambda_1,\lambda_2 &lt; 0 \ \ \mbox{so $(X_0,Y_0)$ is a maximum}
 \end{split}\]</div>
-<p>If the major and minor axes of the ellipse are aligned with the <span class="math notranslate nohighlight">\(x\)</span>-axis and <span class="math notranslate nohighlight">\(y\)</span>-axis (so <span class="math notranslate nohighlight">\(C=0\)</span>), the analysis is simple: the eigenvalues are <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> and the error-bars for <span class="math notranslate nohighlight">\(X_0\)</span> and <span class="math notranslate nohighlight">\(Y_0\)</span> will be inversely proportional to the modulus of their square roots.
-What if the ellipse is skewed?
-See Sivia section 3.3 <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id11" title="D. S. Sivia and J. Skilling. Data Analysis - A Bayesian Tutorial. Oxford Science Publications. Oxford University Press, 2nd edition, 2006.">SS06</a>]</span> for a thorough treatment.</p>
-<!--
-Look at the correlation matrix
-
-$$
- \begin{pmatrix}
- \sigma_x^2 & \sigma^2_{xy} \\
- \sigma^2_{xy} & \sigma_y^2
- \end{pmatrix}
+<div class="note admonition">
+<p class="admonition-title">Conditions on <span class="math notranslate nohighlight">\(A\)</span>, <span class="math notranslate nohighlight">\(B\)</span>, <span class="math notranslate nohighlight">\(C\)</span></p>
+<p>The condition <span class="math notranslate nohighlight">\(\lambda_1,\lambda_2 &lt; 0\)</span> for the point <span class="math notranslate nohighlight">\((X_0,Y_0)\)</span> to be a maximum implies that we must have</p>
+<div class="math notranslate nohighlight">
+\[
+   A &lt; 0, \qquad B &lt; 0, \qquad AB &gt; C^2 .
+\]</div>
+</div>
+<p>If the major and minor axes of the ellipse are aligned with the <span class="math notranslate nohighlight">\(x\)</span>-axis and <span class="math notranslate nohighlight">\(y\)</span>-axis (so <span class="math notranslate nohighlight">\(C=0\)</span>), the analysis is simple: the eigenvalues are <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> and the error-bars (standard deviations) for <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> will be inversely proportional to the modulus of their square roots.
+What if the ellipse is skewed?</p>
+<p>If we compare <span class="math notranslate nohighlight">\(Q\)</span> in <a class="reference internal" href="#equation-eq-qmatrix">(5.3)</a> to the bivariate Gaussian exponent <a class="reference internal" href="#equation-eq-bivariate-case">(5.2)</a>, we can identify the covariance matrix <a class="reference internal" href="../inference-and-pdfs/sec-expectation-values-and-moments.html#equation-eq-covariance-sigma-xy">(4.7)</a> in terms of the inverse of <span class="math notranslate nohighlight">\(Q\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+ \Sigma_{XY} 
+  = 
+   \begin{pmatrix}
+    \sigma_X^2 &amp;  \sigma_{XY}^2 \\
+    \sigma_{XY}^2 &amp; \sigma_Y^2
+   \end{pmatrix}
  = - \begin{pmatrix}
-     A & C \\
-     C & B
-     \end{pmatrix}^{-1}
-$$
--->
+     A &amp; C \\
+     C &amp; B
+     \end{pmatrix}^{-1} 
+  = \frac{1}{AB - C^2}
+    \begin{pmatrix}
+      -B &amp; C \\
+      C  &amp; -A
+    \end{pmatrix}
+     ,
+\end{split}\]</div>
+<p>from which we can read off the variances and covariance in terms of <span class="math notranslate nohighlight">\(A\)</span>, <span class="math notranslate nohighlight">\(B\)</span>, <span class="math notranslate nohighlight">\(C\)</span>.
+When <span class="math notranslate nohighlight">\(C=0\)</span>, the covariance <span class="math notranslate nohighlight">\(\sigma_{XY} = 0\)</span> and the values of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> are uncorrelated.
+As <span class="math notranslate nohighlight">\(|C|\)</span> increases from zero, the ellipse becomes increasingly skewed and elongated; this corresponds to greater correlation (with <span class="math notranslate nohighlight">\(C&gt;0\)</span> correlated and <span class="math notranslate nohighlight">\(C&lt;0\)</span> anti-correlated).</p>
 <!--
 ## Sivia example on "signal on top of background"
 

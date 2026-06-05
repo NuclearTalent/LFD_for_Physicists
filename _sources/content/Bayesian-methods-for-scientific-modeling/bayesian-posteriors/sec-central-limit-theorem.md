@@ -152,12 +152,16 @@ $$\begin{align}
             p(X|x_1,\cdots,x_n)\,p(x_1)\cdots p(x_n) .     
 \end{align}$$
 
-:::{admonition} State the rule used to justify each step
-:class: dropdown 
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+State the rule used to justify each step.
+:::{admonition} Answer
+:class: dropdown, my-answer 
 1. marginalization
 1. product rule
 1. independence
 :::
+::::
 
 We might proceed by using a direct, normalized expression for $p(X|x_1,\cdots,x_n)$,
 ::::{admonition} Checkpoint question
@@ -553,11 +557,15 @@ $$ \begin{aligned}
 So the idea will be to take a distribution, do an FT with the frequency divided by $\sqrt{n}$, raise it to the $n^{\rm th}$ power, then do an inverse FT.  This should approach a Gaussian as $n$ gets large based on the proof we worked through.
 
 
-We'll use a uniform distribution again.
-The plots below on the right are the $n$ products of the Fourier-transformed distributions
+In the widget below
+we'll start with a uniform distribution again.
+(For better viewing, toggle the left table of contents with the three-line icon at the top left of the page.)
+The plot below on the right are the $n$ products of the Fourier-transformed distributions
 (so this is in the Fourier space) with the frequency divided by $\sqrt{n}$. 
 The plots on the left are the inverse Fourier transforms of the plots on the right.
+You can adjust $n$ with the slider.
 
+<!--
 ```{code-cell} python3
 :label: CLT-visualization-5
 :tags: [hide-input]
@@ -643,7 +651,18 @@ with plt.rc_context({
     
     fig.tight_layout()
 ```
+-->
 
 
+```{raw} html
+<iframe src="../../../_static/clt_characteristic_function_widget.html"
+    width="100%"
+    height="920"
+    style="border: none;"
+    scrolling="no">
+</iframe>
+```
 
 So we see that multiplying the original Fourier transform will rapidly kill off the tails and highlight the central part. The $n$ scalings enforce that the Gaussians in both the original and Fourier space have constant variances.
+
+Try some of the other distributions from the pull-down menu.

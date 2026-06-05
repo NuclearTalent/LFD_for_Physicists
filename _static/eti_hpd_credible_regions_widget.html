@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ETI vs HPD Credible Regions</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0; padding: 1.5rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f6f7f9; color: #222; line-height: 1.5;
+    }
+    main {
+      max-width: 1100px; margin: 0 auto; background: white;
+      border: 1px solid #ddd; border-radius: 12px; padding: 1.25rem;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    }
+    h1 { margin-top: 0; font-size: 1.6rem; }
+    .widget {
+      border: 1px solid #ddd; border-radius: 8px;
+      padding: 1rem; background: #fff;
+    }
+    .controls {
+      display: flex; align-items: center; gap: 0.9rem;
+      flex-wrap: wrap; margin-bottom: 0.75rem;
+    }
+    label {
+      display: inline-flex; align-items: center;
+      gap: 0.35rem; white-space: nowrap;
+    }
+    select, input, button { font: inherit; }
+    input[type="range"] { width: 180px; }
+    canvas {
+      width: 100%; max-width: 980px; height: 560px;
+      display: block; margin: 1rem auto 0;
+      border: 1px solid #eee; background: white;
+    }
+    .readout { font-weight: 600; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Equal-Tailed Intervals vs Highest Posterior Density Regions</h1>
+  <div id="eti_hpd_widget" class="widget">
+    <div class="controls">
+      <label>
+        distribution:
+        <select id="dist">
+          <option value="bimodal">Bimodal Gaussian mixture</option>
+          <option value="trimodal">Trimodal Gaussian mixture</option>
+          <option value="skewed">Skewed lognormal</option>
+          <option value="gamma">Gamma-like skewed posterior</option>
+          <option value="normal">Normal</option>
+          <option value="beta">Beta on [0, 1]</option>
+        </select>
+      </label>
+      <label>
+        credible level:
+        <input id="cred" type="range" min="50" max="99" step="1" value="90">
+        <span id="cred-value">90%</span>
+      </label>
+      <label><input id="show-eti" type="checkbox" checked> show ETI</label>
+      <label><input id="show-hpd" type="checkbox" checked> show HPD</label>
+    </div>
+    <div id="readout" class="readout"></div>
+    <canvas id="plot" width="980" height="560"
+      aria-label="Plot comparing equal-tailed intervals and highest posterior density regions"></canvas>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------------------------------------------------------------------------
+  // DOM handles
+  // ---------------------------------------------------------------------------
+
+  const root = document.getElementById("eti_hpd_widget");
+  const $ = (id) => root.querySelector("#" + id);
+  const canvas = $("plot");
+  const ctx = canvas.getContext("2d");
+
+  const SQRT2PI = Math.sqrt(2 * Math.PI);
+
+  // ---------------------------------------------------------------------------
+  // Probability density helpers
+  // ---------------------------------------------------------------------------
+
+  function normalPdf(x, mu, sigma) {
+    const z = (x - mu) / sigma;
+    return Math.exp(-0.5 * z * z) / (sigma * SQRT2PI);
+  }
+
+  function logGamma(z) {
+    const coeffs = [
+      676.5203681218851, -1259.1392167224028,
+      771.32342877765313, -176.61502916214059,
+      12.507343278686905, -0.13857109526572012,
+      9.9843695780195716e-6, 1.5056327351493116e-7
+    ];
+
+    if (z < 0.5) {
+      return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * z)) - logGamma(1 - z);
+    }
+
+    z -= 1;
+    let x = 0.99999999999980993;
+
+    for (let i = 0; i < coeffs.length; i++) {
+      x += coeffs[i] / (z + i + 1);
+    }
+
+    const t = z + coeffs.length - 0.5;
+    return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+  }
+
+  function betaPdf(x, a, b) {
+    if (x <= 0 || x >= 1) return 0;
+    return Math.exp(
+      (a - 1) * Math.log(x)
+      + (b - 1) * Math.log(1 - x)
+      + logGamma(a + b) - logGamma(a) - logGamma(b)
+    );
+  }
+
+  function gammaPdf(x, alpha, theta) {
+    if (x <= 0) return 0;
+    return Math.exp(
+      (alpha - 1) * Math.log(x)
+      - x / theta
+      - logGamma(alpha)
+      - alpha * Math.log(theta)
+    );
+  }
+
+  function logNormalPdf(x, mu, sigma) {
+    if (x <= 0) return 0;
+    const z = (Math.log(x) - mu) / sigma;
+    return Math.exp(-0.5 * z * z) / (x * sigma * SQRT2PI);
+  }
+
+  function makeGrid(xmin, xmax, n) {
+    return Array.from({ length: n }, (_, i) => xmin + (xmax - xmin) * i / (n - 1));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Test distributions
+  // ---------------------------------------------------------------------------
+
+  function makeDistribution(kind) {
+    if (kind === "bimodal") {
+      const xmin = -1, xmax = 10, x = makeGrid(xmin, xmax, 2400);
+      return {
+        label: "Bimodal Gaussian mixture",
+        xmin, xmax, x,
+        pdf: (t) => 0.45 * normalPdf(t, 2.0, 0.7) + 0.55 * normalPdf(t, 6.5, 1.1)
+      };
+    }
+
+    if (kind === "trimodal") {
+      const xmin = -5, xmax = 8, x = makeGrid(xmin, xmax, 2600);
+      return {
+        label: "Trimodal Gaussian mixture",
+        xmin, xmax, x,
+        pdf: (t) =>
+          0.30 * normalPdf(t, -2.3, 0.55)
+          + 0.35 * normalPdf(t, 1.0, 0.75)
+          + 0.35 * normalPdf(t, 4.7, 0.80)
+      };
+    }
+
+    if (kind === "skewed") {
+      const xmin = 0, xmax = 8, x = makeGrid(xmin, xmax, 2400);
+      return {
+        label: "Skewed lognormal",
+        xmin, xmax, x,
+        pdf: (t) => logNormalPdf(t, 0.35, 0.55)
+      };
+    }
+
+    if (kind === "gamma") {
+      const xmin = 0, xmax = 12, x = makeGrid(xmin, xmax, 2400);
+      return {
+        label: "Gamma-like skewed posterior",
+        xmin, xmax, x,
+        pdf: (t) => gammaPdf(t, 2.2, 1.1)
+      };
+    }
+
+    if (kind === "normal") {
+      const xmin = -5, xmax = 5, x = makeGrid(xmin, xmax, 2200);
+      return {
+        label: "Normal",
+        xmin, xmax, x,
+        pdf: (t) => normalPdf(t, 0, 1)
+      };
+    }
+
+    const xmin = -0.05, xmax = 1.05, x = makeGrid(xmin, xmax, 2200);
+    return {
+      label: "Beta(2, 7) on [0, 1]",
+      xmin, xmax, x,
+      pdf: (t) => betaPdf(t, 2, 7)
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // ETI and HPD calculations
+  // ---------------------------------------------------------------------------
+
+  function normalizeDensity(x, y) {
+    const dx = x[1] - x[0];
+    const area = y.reduce((sum, yi) => sum + yi, 0) * dx;
+    return y.map((yi) => yi / area);
+  }
+
+  function cumulativeDensity(x, y) {
+    const dx = x[1] - x[0];
+    const cdf = new Array(y.length);
+    let total = 0;
+
+    for (let i = 0; i < y.length; i++) {
+      total += y[i] * dx;
+      cdf[i] = total;
+    }
+
+    return cdf.map((ci) => ci / cdf[cdf.length - 1]);
+  }
+
+  function quantileFromCdf(x, cdf, p) {
+    const idx = cdf.findIndex((ci) => ci >= p);
+
+    if (idx <= 0) return x[0];
+    if (idx < 0) return x[x.length - 1];
+
+    const x0 = x[idx - 1], x1 = x[idx];
+    const c0 = cdf[idx - 1], c1 = cdf[idx];
+
+    if (Math.abs(c1 - c0) < 1e-14) return x1;
+
+    return x0 + (p - c0) * (x1 - x0) / (c1 - c0);
+  }
+
+  function equalTailedInterval(x, cdf, probability) {
+    const tail = (1 - probability) / 2;
+    return {
+      low: quantileFromCdf(x, cdf, tail),
+      high: quantileFromCdf(x, cdf, 1 - tail)
+    };
+  }
+
+  function hpdThreshold(x, y, probability) {
+    const dx = x[1] - x[0];
+    const sorted = [...y].sort((a, b) => b - a);
+    let cumulative = 0;
+
+    for (const yi of sorted) {
+      cumulative += yi * dx;
+      if (cumulative >= probability) return yi;
+    }
+
+    return 0;
+  }
+
+  function intervalSegmentsFromMask(x, mask) {
+    const segments = [];
+    let start = null;
+
+    for (let i = 0; i < mask.length; i++) {
+      if (mask[i] && start === null) start = i;
+
+      if ((!mask[i] || i === mask.length - 1) && start !== null) {
+        const end = mask[i] && i === mask.length - 1 ? i : i - 1;
+        segments.push({ low: x[start], high: x[end] });
+        start = null;
+      }
+    }
+
+    return segments;
+  }
+
+  function formatSegments(segments) {
+    return segments.map((seg) => `[${seg.low.toFixed(2)}, ${seg.high.toFixed(2)}]`).join(" ∪ ");
+  }
+
+  // ---------------------------------------------------------------------------
+  // Canvas plotting helpers
+  // ---------------------------------------------------------------------------
+
+  function drawAxes(panel, xmin, xmax, ymin, ymax) {
+    const X = (x) => panel.x + (x - xmin) / (xmax - xmin) * panel.w;
+    const Y = (y) => panel.y + panel.h - (y - ymin) / (ymax - ymin) * panel.h;
+
+    ctx.strokeStyle = "#222";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(panel.x, panel.y);
+    ctx.lineTo(panel.x, panel.y + panel.h);
+    ctx.lineTo(panel.x + panel.w, panel.y + panel.h);
+    ctx.stroke();
+
+    ctx.fillStyle = "#222";
+    ctx.font = "20px sans-serif";
+
+    for (let i = 0; i <= 6; i++) {
+      const x = xmin + (xmax - xmin) * i / 6;
+      ctx.beginPath();
+      ctx.moveTo(X(x), panel.y + panel.h);
+      ctx.lineTo(X(x), panel.y + panel.h + 5);
+      ctx.stroke();
+      ctx.fillText(x.toFixed(Math.abs(x) < 2 ? 2 : 1), X(x) - 16, panel.y + panel.h + 30);
+    }
+
+    for (let i = 0; i <= 5; i++) {
+      const y = ymax * i / 5;
+      ctx.beginPath();
+      ctx.moveTo(panel.x - 5, Y(y));
+      ctx.lineTo(panel.x, Y(y));
+      ctx.stroke();
+      ctx.fillText(y.toFixed(2), panel.x - 72, Y(y) + 6);
+    }
+
+    ctx.font = "22px sans-serif";
+    ctx.fillText("x", panel.x + panel.w / 2, panel.y + panel.h + 60);
+
+    ctx.save();
+    ctx.translate(panel.x - 82, panel.y + panel.h / 2 + 22);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText("density", 0, 0);
+    ctx.restore();
+
+    return { X, Y };
+  }
+
+  function drawCurve(x, y, X, Y) {
+    ctx.save();
+    ctx.strokeStyle = "#111";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+
+    x.forEach((xi, i) => {
+      const px = X(xi), py = Y(y[i]);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function fillRegion(x, y, mask, X, Y, color) {
+    ctx.save();
+    ctx.fillStyle = color;
+
+    let inRegion = false;
+
+    for (let i = 0; i < x.length; i++) {
+      if (mask[i] && !inRegion) {
+        inRegion = true;
+        ctx.beginPath();
+        ctx.moveTo(X(x[i]), Y(0));
+      }
+
+      if (mask[i]) {
+        ctx.lineTo(X(x[i]), Y(y[i]));
+      }
+
+      if ((!mask[i] || i === x.length - 1) && inRegion) {
+        const j = mask[i] && i === x.length - 1 ? i : i - 1;
+        ctx.lineTo(X(x[j]), Y(0));
+        ctx.closePath();
+        ctx.fill();
+        inRegion = false;
+      }
+    }
+
+    ctx.restore();
+  }
+
+  function drawVerticalLine(x, ymin, ymax, X, Y, color, dash = []) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.setLineDash(dash);
+    ctx.beginPath();
+    ctx.moveTo(X(x), Y(ymin));
+    ctx.lineTo(X(x), Y(ymax));
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawHorizontalLine(y, xmin, xmax, X, Y, color, dash = []) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash(dash);
+    ctx.beginPath();
+    ctx.moveTo(X(xmin), Y(y));
+    ctx.lineTo(X(xmax), Y(y));
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawLegend(panel, showEti, showHpd) {
+    const x = panel.x + panel.w - 330;
+    let y = panel.y + 30;
+    const rowHeight = 30;
+    const rows = 1 + (showEti ? 1 : 0) + (showHpd ? 2 : 0);
+    const width = 315;
+    const height = 20 + rows * rowHeight;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.18)";
+    ctx.fillRect(x - 12, y - 22, width, height);
+    ctx.strokeRect(x - 12, y - 22, width, height);
+
+    ctx.font = "18px sans-serif";
+
+    ctx.strokeStyle = "#111";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + 34, y);
+    ctx.stroke();
+    ctx.fillStyle = "#222";
+    ctx.fillText("PDF", x + 48, y + 6);
+    y += rowHeight;
+
+    if (showEti) {
+      ctx.fillStyle = "rgba(70, 120, 255, 0.35)";
+      ctx.fillRect(x, y - 10, 34, 18);
+      ctx.fillStyle = "#222";
+      ctx.fillText("equal-tailed interval", x + 48, y + 6);
+      y += rowHeight;
+    }
+
+    if (showHpd) {
+      ctx.fillStyle = "rgba(220, 70, 70, 0.35)";
+      ctx.fillRect(x, y - 10, 34, 18);
+      ctx.fillStyle = "#222";
+      ctx.fillText("HPD region", x + 48, y + 6);
+      y += rowHeight;
+
+      ctx.strokeStyle = "#cc4444";
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([3, 5]);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 34, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#222";
+      ctx.fillText("HPD threshold", x + 48, y + 6);
+    }
+
+    ctx.restore();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Main rendering
+  // ---------------------------------------------------------------------------
+
+  function draw() {
+    const kind = $("dist").value;
+    const probability = Number($("cred").value) / 100;
+    const percentLabel = `${Math.round(100 * probability)}%`;
+    const showEti = $("show-eti").checked;
+    const showHpd = $("show-hpd").checked;
+
+    $("cred-value").textContent = percentLabel;
+
+    const dist = makeDistribution(kind);
+    const x = dist.x;
+    const rawDensity = x.map(dist.pdf);
+    const density = normalizeDensity(x, rawDensity);
+    const cdf = cumulativeDensity(x, density);
+
+    const eti = equalTailedInterval(x, cdf, probability);
+    const etiMask = x.map((xi) => xi >= eti.low && xi <= eti.high);
+
+    const threshold = hpdThreshold(x, density, probability);
+    const hpdMask = density.map((yi) => yi >= threshold);
+    const hpdSegments = intervalSegmentsFromMask(x, hpdMask);
+
+    const ymax = Math.max(...density) * 1.25;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const panel = { x: 110, y: 70, w: 800, h: 360 };
+    const axes = drawAxes(panel, dist.xmin, dist.xmax, 0, ymax);
+
+    if (showEti) {
+      fillRegion(x, density, etiMask, axes.X, axes.Y, "rgba(70, 120, 255, 0.35)");
+      drawVerticalLine(eti.low, 0, ymax, axes.X, axes.Y, "#1f77b4", [8, 6]);
+      drawVerticalLine(eti.high, 0, ymax, axes.X, axes.Y, "#1f77b4", [8, 6]);
+    }
+
+    if (showHpd) {
+      fillRegion(x, density, hpdMask, axes.X, axes.Y, "rgba(220, 70, 70, 0.35)");
+      drawHorizontalLine(threshold, dist.xmin, dist.xmax, axes.X, axes.Y, "#cc4444", [3, 5]);
+    }
+
+    drawCurve(x, density, axes.X, axes.Y);
+
+    ctx.font = "26px sans-serif";
+    ctx.fillStyle = "#222";
+    ctx.fillText(`${percentLabel} ETI vs HPD: ${dist.label}`, panel.x + 8, panel.y - 26);
+
+    drawLegend(panel, showEti, showHpd);
+
+    $("readout").innerHTML =
+      `${percentLabel} ETI = [${eti.low.toFixed(2)}, ${eti.high.toFixed(2)}]; `
+      + `${percentLabel} HPD = ${formatSegments(hpdSegments)}; `
+      + `HPD density threshold = ${threshold.toFixed(4)}.`;
+  }
+
+  root.querySelectorAll("input, select").forEach((element) => {
+    element.addEventListener("input", draw);
+    element.addEventListener("change", draw);
+  });
+
+  draw();
+})();
+</script>
+</body>
+</html>

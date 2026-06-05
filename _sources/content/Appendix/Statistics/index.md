@@ -523,7 +523,7 @@ The values of the **mode**, **mean**, and **median** can all be used as point es
 Let us consider three example PDFs that illustrate some of the features of the different point estimates and the problems that might occur. 
 
 ```{code-cell} python3
-:tags: [hide-output]
+:tags: [hide-input]
 fig_point, axs = plt.subplots(nrows=1, ncols=3, sharey=True, **{"figsize":(10,4)})
 my_rvs = [stats.norm(loc=5,scale=4),stats.invgamma(1.5, loc=0.0, scale=5.0),stats.beta(0.95, 0.95, scale=10)]
 x = np.linspace(-5,30,10000)
@@ -548,6 +548,7 @@ for ax, my_rv in zip(axs,my_rvs):
 
 from myst_nb import glue
 glue("pointestimates_fig", fig_point, display=False)
+plt.close(fig_point)
 ```
 
 ```{glue:figure} pointestimates_fig
@@ -560,7 +561,7 @@ The mean, median and modes(s) for some exampls PDFs. For some PDFs, several or a
 Which point estimate do you consider most representative for the different PDFs?
 ```
 
-
+(sec:AppendixCredibleRegions)=
 ### Credible regions
 
 The integration of the PDF over some domain translates into a probability. It is therefore possible to identify regions $\mathbb{D}_P$ for which the integrated probability equals some desired value $P$, i.e.,
@@ -595,7 +596,7 @@ How would you describe a multimodal PDF using these metrics?
 Let us again consider the three example PDFs from above. 
 
 ```{code-cell} python3
-:tags: [hide-output]
+:tags: [hide-input]
 fig_CR, axs = plt.subplots(nrows=1, ncols=3, sharey=True, **{"figsize":(10,4)})
 for ax, my_rv in zip(axs,my_rvs):
     ax.plot(x, my_rv.pdf(x),
@@ -615,7 +616,9 @@ for ax, my_rv in zip(axs,my_rvs):
         ax.set_ylabel(r'$p(x)$');
     if not ax==axs[1]:
         ax.set_xlim(-5,15)
-    glue("credibleregions_fig", fig_CR, display=False)
+
+glue("credibleregions_fig", fig_CR, display=False)
+plt.close(fig_CR)
 ```
 
 ```{glue:figure} credibleregions_fig
