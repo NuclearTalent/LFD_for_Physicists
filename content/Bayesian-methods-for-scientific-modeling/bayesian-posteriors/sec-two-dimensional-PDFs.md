@@ -36,7 +36,7 @@ $$
   \Sigma = \pmatrix{\sigma_1^2 & \rho_{12} \sigma_1\sigma_2 \\
                     \rho_{12}\sigma_1\sigma_2 & \sigma_2^2}
         \quad\mbox{with}\ 0 < \rho_{12}^2 < 1            
-$$
+$$ (eq:bivariate_case)
 
 and $\Sigma$ is positive definite.
 
@@ -154,8 +154,10 @@ It means that the slope and intercept are *correlated*. Intuitively, if we want 
 
 ## 2D PDF with a quadratic approximation
 
-Consider a two-dimensional log likelihood $L(X,Y)$. We'll analyze it in a quadratic approximation.
-First, find the mode $X_0$, $Y_0$ (best estimate) by differentiating
+Consider a general two-dimensional log likelihood $L(X,Y)$. We'll analyze it in a quadratic approximation.
+We base our discussion on Sivia section 3.3 {cite}`Sivia2006`.
+
+First, find the mode $X_0$, $Y_0$ (which is the best estimate) by differentiating
 
 $$\begin{align}
  L(X,Y) &= \log p(X,Y|\{\text{data}\}, I) \\
@@ -167,11 +169,11 @@ $$\begin{align}
 To check reliability, Taylor expand around $L(X_0,Y_0)$:
 
 $$\begin{align}
- L &= L(X_0,Y_0) + \frac{1}{2}\Bigl[
+ L &= L(X_0,Y_0) + \frac{1}{2}\biggl[
    \left.\frac{\partial^2L}{\partial X^2}\right|_{X_0,Y_0}(X-X_0)^2
   + \left.\frac{\partial^2L}{\partial Y^2}\right|_{X_0,Y_0}(Y-Y_0)^2 \\
   & \qquad\qquad\qquad + 2 \left.\frac{\partial^2L}{\partial X\partial Y}\right|_{X_0,Y_0}(X-X_0)(Y-Y_0)
-   \Bigr] + \ldots \\
+   \biggr] + \ldots \\
    &\equiv L(X_0, Y_0) + \frac{1}{2}Q + \ldots
 \end{align}$$
 
@@ -187,7 +189,7 @@ $$
   \begin{pmatrix} X-X_0 \\
                   Y-Y_0 
   \end{pmatrix}
-$$
+$$  (eq:Qmatrix)
 
 $$
  \Longrightarrow
@@ -206,7 +208,7 @@ $$
 :align: center
 ```
 
-So in a quadratic approximation, the contour $Q=k$ for some $k$ is an ellipse centered at $X_0, Y_0$ (as in the figure). The orientation and eccentricity are determined by $A$, $B$, and $C$.
+So in a quadratic approximation, the contour $Q=k$ for some $k$ is an ellipse centered at $X_0, Y_0$ (as in the figure). The orientation and eccentricity of the ellipse are determined by $A$, $B$, and $C$.
 The principal axes are found from the eigenvectors of the Hessian matrix $\begin{pmatrix} A & C \\ C & B  \end{pmatrix}$:
 
 $$
@@ -223,27 +225,47 @@ $$
  x \\ y
 \end{pmatrix}
 \quad\Longrightarrow\quad
-\lambda_1,\lambda_2 < 0 \ \mbox{so $(x_0,y_0)$ is a maximum}
+\lambda_1,\lambda_2 < 0 \ \ \mbox{so $(X_0,Y_0)$ is a maximum}
 $$
 
-If the major and minor axes of the ellipse are aligned with the $x$-axis and $y$-axis (so $C=0$), the analysis is simple: the eigenvalues are $A$ and $B$ and the error-bars for $X_0$ and $Y_0$ will be inversely proportional to the modulus of their square roots.
+:::{admonition} Conditions on $A$, $B$, $C$
+:class: note
+The condition $\lambda_1,\lambda_2 < 0$ for the point $(X_0,Y_0)$ to be a maximum implies that we must have
+
+$$
+   A < 0, \qquad B < 0, \qquad AB > C^2 .
+$$
+:::
+
+If the major and minor axes of the ellipse are aligned with the $x$-axis and $y$-axis (so $C=0$), the analysis is simple: the eigenvalues are $A$ and $B$ and the error-bars (standard deviations) for $X$ and $Y$ will be inversely proportional to the modulus of their square roots.
 What if the ellipse is skewed?
-See Sivia section 3.3 {cite}`Sivia2006` for a thorough treatment.
 
-<!--
-Look at the correlation matrix
+
+If we compare $Q$ in {eq}`eq:Qmatrix` to the bivariate Gaussian exponent {eq}`eq:bivariate_case`, we can identify the covariance matrix {eq}`eq:covariance_Sigma_XY` in terms of the inverse of $Q$:
 
 $$
- \begin{pmatrix}
- \sigma_x^2 & \sigma^2_{xy} \\
- \sigma^2_{xy} & \sigma_y^2
- \end{pmatrix}
+ \Sigma_{XY} 
+  = 
+   \begin{pmatrix}
+    \sigma_X^2 &  \sigma_{XY}^2 \\
+    \sigma_{XY}^2 & \sigma_Y^2
+   \end{pmatrix}
  = - \begin{pmatrix}
      A & C \\
      C & B
-     \end{pmatrix}^{-1}
+     \end{pmatrix}^{-1} 
+  = \frac{1}{AB - C^2}
+    \begin{pmatrix}
+      -B & C \\
+      C  & -A
+    \end{pmatrix}
+     ,
 $$
--->
+
+from which we can read off the variances and covariance in terms of $A$, $B$, $C$.
+When $C=0$, the covariance $\sigma_{XY} = 0$ and the values of $X$ and $Y$ are uncorrelated.
+As $|C|$ increases from zero, the ellipse becomes increasingly skewed and elongated; this corresponds to greater correlation (with $C>0$ correlated and $C<0$ anti-correlated).
+
 
 <!--
 ## Sivia example on "signal on top of background"

@@ -54,12 +54,18 @@ The **covariance matrix** $\Sigma_{XY}$ is
 
 $$
  \Sigma_{XY} 
-  = \pmatrix{\sigma_X^2 &  \sigma_{XY}^2 \\
-                    \sigma_{XY}^2 & \sigma_Y^2}
-  = \pmatrix{\sigma_X^2 & \rho_{XY} \sigma_X\sigma_Y \\
-                    \rho_{XY}\sigma_X\sigma_Y & \sigma_Y^2}
+  = 
+   \begin{pmatrix}
+    \sigma_X^2 &  \sigma_{XY}^2 \\
+    \sigma_{XY}^2 & \sigma_Y^2
+   \end{pmatrix}
+  = 
+   \begin{pmatrix}
+      \sigma_X^2 & \rho_{XY} \sigma_X\sigma_Y \\
+      \rho_{XY}\sigma_X\sigma_Y & \sigma_Y^2
+    \end{pmatrix}
         \quad\mbox{with}\ 0 < \rho_{XY}^2 < 1  .          
-$$
+$$ (eq:covariance_Sigma_XY)
 
 
 ::::{admonition} Checkpoint question
@@ -92,12 +98,12 @@ are $\mu$ and $\sigma^2$, respectively.
 :class: dropdown, my-answer 
 Just do the integrals!
 
-$$\begin{align}
+$$\begin{aligned}
   \mu &= \int_{-\infty}^\infty \! x \frac{1}{\sigma\sqrt{2\pi}} \exp{\Bigl(-\frac{(x-\mu)^2}{2\sigma^2}\Bigr)}\,dx = \mu \quad\checkmark \\
   \sigma^2 &= \int_{-\infty}^\infty (x-\mu )^2 
   \frac{1}{\sigma\sqrt{2\pi}} \exp{\Bigl(-\frac{(x-\mu)^2}{2\sigma^2}\Bigr)} \,dx
   = \sigma^2 \quad\checkmark
-\end{align}$$
+\end{aligned}$$
 
 In doing these integrals, simplify by changing the integration variable to $x' = x-\mu$ and use that the distribution is normalized (integrates to one) and that integrals of odd integrands are zero.
 :::
@@ -106,7 +112,7 @@ In doing these integrals, simplify by changing the integration variable to $x' =
 
 :::{admonition} Covariance matrix for a bivariate (two-dimensional) normal distribution 
 
-With vector $\boldsymbol{x} = \pmatrix{x_1\\ x_2}$, the distribution is
+With vector $\boldsymbol{x} = \begin{pmatrix} x_1\\ x_2 \end{pmatrix}$, the distribution is
 
 $$
   p(\boldsymbol{x}|\boldsymbol{\mu},\Sigma) = \frac{1}{\sqrt{\det(2\pi\Sigma)}}
@@ -116,9 +122,11 @@ $$
 with mean and covariance matrix:
 
 $$
-  \boldsymbol{\mu} = \pmatrix{\mu_1\\ \mu_2} \quad\mbox{and}\quad
-  \Sigma = \pmatrix{\sigma_1^2 & \rho_{12} \sigma_1\sigma_2 \\
-                    \rho_{12}\sigma_1\sigma_2 & \sigma_2^2}
+  \boldsymbol{\mu} = \begin{pmatrix} \mu_1\\ \mu_2 \end{pmatrix} \quad\mbox{and}\quad
+  \Sigma = \begin{pmatrix}
+            \sigma_1^2 & \rho_{12} \sigma_1\sigma_2 \\
+            \rho_{12}\sigma_1\sigma_2 & \sigma_2^2
+           \end{pmatrix}
         \quad\mbox{with}\ 0 < \rho_{12}^2 < 1  .          
 $$
 

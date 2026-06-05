@@ -326,7 +326,7 @@ choice is often the correct one in {ref}`sec:1dpdfs`. But often is not the same 
 *Bayesian credible intervals: how are they defined?* 
 :::{admonition} Answer 
 :class: dropdown, my-answer
-**The Bayesian credible interval for a parameter with a one-dimenional PDF is defined for a given percentage, call it $\beta\%$. The interval is such that integrating over it one gets $\beta\%$ of the total area under the PDF. The choice of interval is not unique. In particular, several reasonable intervals can be considered if the PDF is multimodal or skewed.** 
+**The Bayesian credible interval for a parameter with a one-dimenional PDF is defined for a given percentage, call it $\beta\%$. The interval is such that integrating over it one gets $\beta\%$ of the total area under the PDF. The choice of interval is not unique. In particular, several reasonable intervals can be considered if the PDF is multimodal or skewed. See {ref}`sec:DefiningCredibleIntervals` for more on possible choices.** 
 :::
 ::::
 

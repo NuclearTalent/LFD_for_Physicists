@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CLT via Characteristic Functions</title>
+
+  <style>
+    :root {
+      color-scheme: light;
+    }
+
+    body {
+      margin: 0;
+      padding: 1.5rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f6f7f9;
+      color: #222;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.6rem;
+    }
+
+    .widget {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      background: #fff;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+    }
+
+    select,
+    input,
+    button {
+      font: inherit;
+    }
+
+    input[type="range"] {
+      width: 180px;
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 1080px;
+      height: 500px;
+      display: block;
+      margin: 1rem auto 0;
+      border: 1px solid #eee;
+      background: white;
+    }
+
+    .readout {
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    .math-var {
+      font-style: italic;
+      white-space: nowrap;
+      display: inline-block;
+    }
+
+    .math-sub {
+      font-size: 0.72em;
+      position: relative;
+      top: 0.28em;
+      line-height: 0;
+      font-style: normal;
+    }
+  </style>
+</head>
+
+<body>
+<main>
+  <h1>Central Limit Theorem via Characteristic Functions</h1>
+
+  <div id="clt_cf_widget" class="widget">
+    <div class="controls">
+      <label>
+        base distribution:
+        <select id="dist">
+          <option value="uniform">Uniform[-1, 1]</option>
+          <option value="rademacher">Rademacher ±1</option>
+          <option value="laplace">Laplace</option>
+          <option value="exponential">Centered exponential</option>
+          <option value="student-t">Student t, ν = 5</option>
+          <option value="normal">Normal</option>
+          <option value="bernoulli">Centered Bernoulli, p = 0.3</option>
+          <option value="beta">Centered Beta(2, 5)</option>
+          <option value="gamma">Centered Gamma(2, 1)</option>
+          <option value="triangular">Centered triangular</option>
+          <option value="cauchy">Cauchy</option>
+        </select>
+      </label>
+
+      <label>
+        <span class="math-var">n</span>:
+        <input id="n-slider" type="range" min="1" max="50" step="1" value="1">
+        <span id="n-value">1</span>
+      </label>
+
+      <label>
+        x range:
+        <input id="x-range" type="range" min="2" max="20" step="0.5" value="4">
+        <span id="x-range-value">4.0</span>
+      </label>
+
+      <label>
+        ω range:
+        <input id="omega-range" type="range" min="10" max="100" step="5" value="40">
+        <span id="omega-range-value">40</span>
+      </label>
+
+      <label>
+        <input id="show-base" type="checkbox" checked>
+        show base PDF/PMF
+      </label>
+
+      <label>
+        <input id="show-gaussian" type="checkbox" checked>
+        show CLT Gaussian
+      </label>
+    </div>
+
+    <div id="readout" class="readout"></div>
+
+    <canvas
+      id="plot"
+      width="1080"
+      height="500"
+      aria-label="Two plots: probability density of scaled sums and characteristic function">
+    </canvas>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------------------------------------------------------------------------
+  // DOM handles
+  // ---------------------------------------------------------------------------
+
+  const root = document.getElementById("clt_cf_widget");
+  const $ = (id) => root.querySelector("#" + id);
+  const canvas = $("plot");
+  const ctx = canvas.getContext("2d");
+
+  // ---------------------------------------------------------------------------
+  // Numerical constants and grid sizes
+  // ---------------------------------------------------------------------------
+
+  const SQRT2PI = Math.sqrt(2 * Math.PI);
+  const nX = 501;
+  const nOmega = 801;
+
+  // ---------------------------------------------------------------------------
+  // Basic math helpers
+  // ---------------------------------------------------------------------------
+
+  function makeLinearGrid(min, max, n) {
+    return Array.from({ length: n }, (_, i) =>
+      min + (max - min) * i / (n - 1)
+    );
+  }
+
+  function sinc(x) {
+    return Math.abs(x) < 1e-10 ? 1 : Math.sin(x) / x;
+  }
+
+  function normalPdf(x, sigma = 1) {
+    const z = x / sigma;
+    return Math.exp(-0.5 * z * z) / (sigma * SQRT2PI);
+  }
+
+  // Lanczos approximation to log Gamma.
+  function logGamma(z) {
+    const coeffs = [
+      676.5203681218851,
+      -1259.1392167224028,
+      771.32342877765313,
+      -176.61502916214059,
+      12.507343278686905,
+      -0.13857109526572012,
+      9.9843695780195716e-6,
+      1.5056327351493116e-7
+    ];
+
+    if (z < 0.5) {
+      return (
+        Math.log(Math.PI)
+        - Math.log(Math.sin(Math.PI * z))
+        - logGamma(1 - z)
+      );
+    }
+
+    z -= 1;
+    let x = 0.99999999999980993;
+
+    for (let i = 0; i < coeffs.length; i++) {
+      x += coeffs[i] / (z + i + 1);
+    }
+
+    const t = z + coeffs.length - 0.5;
+
+    return (
+      0.5 * Math.log(2 * Math.PI)
+      + (z + 0.5) * Math.log(t)
+      - t
+      + Math.log(x)
+    );
+  }
+
+  function studentTPdf(x, nu) {
+    return Math.exp(
+      logGamma((nu + 1) / 2)
+      - logGamma(nu / 2)
+      - 0.5 * Math.log(nu * Math.PI)
+      - ((nu + 1) / 2) * Math.log(1 + x * x / nu)
+    );
+  }
+
+  function betaPdf01(y, a, b) {
+    if (y <= 0 || y >= 1) return 0;
+
+    return Math.exp(
+      (a - 1) * Math.log(y)
+      + (b - 1) * Math.log(1 - y)
+      + logGamma(a + b)
+      - logGamma(a)
+      - logGamma(b)
+    );
+  }
+
+  function gammaPdfPositive(y, alpha, theta) {
+    if (y <= 0) return 0;
+
+    return Math.exp(
+      (alpha - 1) * Math.log(y)
+      - y / theta
+      - logGamma(alpha)
+      - alpha * Math.log(theta)
+    );
+  }
+
+  function cauchyPdf(x) {
+    return 1 / (Math.PI * (1 + x * x));
+  }
+
+  function trapezoid(ys, xs) {
+    let sum = 0;
+
+    for (let i = 0; i < ys.length - 1; i++) {
+      sum += 0.5 * (ys[i] + ys[i + 1]) * (xs[i + 1] - xs[i]);
+    }
+
+    return sum;
+  }
+
+  function inverseCosineFourierTransform(t, omegaValues, ftValues) {
+    const integrand = omegaValues.map((omega, i) =>
+      Math.cos(omega * t) * ftValues[i]
+    );
+
+    return trapezoid(integrand, omegaValues) / (2 * Math.PI);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Base distributions
+  // ---------------------------------------------------------------------------
+
+  function baseDistribution(kind) {
+    if (kind === "uniform") {
+      return {
+        label: "Uniform[-1, 1]",
+        variance: 1 / 3,
+        discrete: false,
+        pdf: (x) => (x >= -1 && x <= 1 ? 0.5 : 0),
+        cf: (omega) => sinc(omega)
+      };
+    }
+
+    if (kind === "rademacher") {
+      return {
+        label: "Rademacher ±1",
+        variance: 1,
+        discrete: true,
+        pdf: () => 0,
+        pmfPoints: [
+          { x: -1, y: 0.5 },
+          { x: 1, y: 0.5 }
+        ],
+        cf: (omega) => Math.cos(omega)
+      };
+    }
+
+    if (kind === "laplace") {
+      const b = 1 / Math.sqrt(2);
+
+      return {
+        label: "Laplace, Var = 1",
+        variance: 1,
+        discrete: false,
+        pdf: (x) => Math.exp(-Math.abs(x) / b) / (2 * b),
+        cf: (omega) => 1 / (1 + b * b * omega * omega)
+      };
+    }
+
+    if (kind === "exponential") {
+      return {
+        label: "Centered Exp(1), X = Y - 1",
+        variance: 1,
+        discrete: false,
+        pdf: (x) => (x >= -1 ? Math.exp(-(x + 1)) : 0),
+        cf: (omega) => {
+          const denominator = 1 + omega * omega;
+          const a = Math.cos(omega);
+          const b = -Math.sin(omega);
+          const c = 1 / denominator;
+          const d = omega / denominator;
+
+          return {
+            re: a * c - b * d,
+            im: a * d + b * c
+          };
+        }
+      };
+    }
+
+    if (kind === "student-t") {
+      const nu = 5;
+
+      return {
+        label: "Student t, ν = 5",
+        variance: nu / (nu - 2),
+        discrete: false,
+        pdf: (x) => studentTPdf(x, nu),
+        cfNumerical: true,
+        cfRange: [-55, 55]
+      };
+    }
+
+    if (kind === "normal") {
+      return {
+        label: "Normal, Var = 1",
+        variance: 1,
+        discrete: false,
+        pdf: (x) => normalPdf(x, 1),
+        cf: (omega) => Math.exp(-0.5 * omega * omega)
+      };
+    }
+
+    if (kind === "bernoulli") {
+      const p = 0.3;
+
+      return {
+        label: "Centered Bernoulli, p = 0.3",
+        variance: p * (1 - p),
+        discrete: true,
+        pdf: () => 0,
+        pmfPoints: [
+          { x: -p, y: 1 - p },
+          { x: 1 - p, y: p }
+        ],
+        cf: (omega) => {
+          const x0 = -p;
+          const x1 = 1 - p;
+
+          return {
+            re: (1 - p) * Math.cos(omega * x0) + p * Math.cos(omega * x1),
+            im: (1 - p) * Math.sin(omega * x0) + p * Math.sin(omega * x1)
+          };
+        }
+      };
+    }
+
+    if (kind === "beta") {
+      const a = 2;
+      const b = 5;
+      const mean = a / (a + b);
+      const variance = a * b / ((a + b) * (a + b) * (a + b + 1));
+
+      return {
+        label: "Centered Beta(2, 5)",
+        variance,
+        discrete: false,
+        pdf: (x) => betaPdf01(x + mean, a, b),
+        cfNumerical: true,
+        cfRange: [-mean, 1 - mean]
+      };
+    }
+
+    if (kind === "gamma") {
+      const alpha = 2;
+      const theta = 1;
+      const mean = alpha * theta;
+
+      return {
+        label: "Centered Gamma(2, 1)",
+        variance: alpha * theta * theta,
+        discrete: false,
+        pdf: (x) => gammaPdfPositive(x + mean, alpha, theta),
+        cf: (omega) => {
+          // exp(-i omega mean) * (1 - i theta omega)^(-alpha)
+          const radius = Math.sqrt(1 + theta * theta * omega * omega);
+          const angle = Math.atan(theta * omega);
+          const magnitude = Math.pow(radius, -alpha);
+          const phase = alpha * angle - omega * mean;
+
+          return {
+            re: magnitude * Math.cos(phase),
+            im: magnitude * Math.sin(phase)
+          };
+        }
+      };
+    }
+
+    if (kind === "triangular") {
+      return {
+        label: "Triangular on [-1, 1]",
+        variance: 1 / 6,
+        discrete: false,
+        pdf: (x) => (Math.abs(x) <= 1 ? 1 - Math.abs(x) : 0),
+        cf: (omega) => sinc(omega / 2) * sinc(omega / 2)
+      };
+    }
+
+    if (kind === "cauchy") {
+      return {
+        label: "Cauchy, infinite variance",
+        variance: NaN,
+        discrete: false,
+        pdf: (x) => cauchyPdf(x),
+        cf: (omega) => Math.exp(-Math.abs(omega)),
+        infiniteVariance: true
+      };
+    }
+
+    throw new Error(`Unknown distribution: ${kind}`);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Characteristic functions for scaled sums
+  // ---------------------------------------------------------------------------
+
+  function complexPower(z, n) {
+    const radius = Math.hypot(z.re, z.im);
+    const angle = Math.atan2(z.im, z.re);
+    const radiusToN = Math.pow(radius, n);
+
+    return {
+      re: radiusToN * Math.cos(n * angle),
+      im: radiusToN * Math.sin(n * angle)
+    };
+  }
+
+  const cfCache = new Map();
+
+  function numericalBaseCharacteristicFunction(kind, pdf, omega, xmin, xmax) {
+    const key = `${kind}:${omega.toFixed(5)}:${xmin}:${xmax}`;
+
+    if (cfCache.has(key)) {
+      return cfCache.get(key);
+    }
+
+    const m = 1000;
+    const dx = (xmax - xmin) / (m - 1);
+
+    let sum = 0;
+
+    for (let i = 0; i < m; i++) {
+      const x = xmin + i * dx;
+      const weight = (i === 0 || i === m - 1) ? 0.5 : 1;
+      sum += weight * Math.cos(omega * x) * pdf(x);
+    }
+
+    const value = sum * dx;
+    cfCache.set(key, value);
+
+    return value;
+  }
+
+  function scaledSumCharacteristicFunction(kind, n, omega) {
+    const info = baseDistribution(kind);
+    const scaledOmega = omega / Math.sqrt(n);
+
+    if (info.cfNumerical) {
+      const range = info.cfRange || [-55, 55];
+      const baseCf = numericalBaseCharacteristicFunction(
+        kind,
+        info.pdf,
+        scaledOmega,
+        range[0],
+        range[1]
+      );
+
+      return Math.pow(Math.max(baseCf, 0), n);
+    }
+
+    const baseCf = info.cf(scaledOmega);
+
+    if (typeof baseCf === "number") {
+      return Math.pow(baseCf, n);
+    }
+
+    return complexPower(baseCf, n).re;
+  }
+
+  function scaledDensityAndCharacteristicFunction(kind, n, xValues, omegaValues) {
+    const ftValues = omegaValues.map((omega) =>
+      scaledSumCharacteristicFunction(kind, n, omega)
+    );
+
+    const pdfValues = xValues.map((x) =>
+      Math.max(0, inverseCosineFourierTransform(x, omegaValues, ftValues))
+    );
+
+    return {
+      ftValues,
+      pdfValues
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Canvas plotting utilities
+  // ---------------------------------------------------------------------------
+
+  function drawLine(points, X, Y, color, width = 2.5, dash = []) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.setLineDash(dash);
+    ctx.beginPath();
+
+    points.forEach((point, i) => {
+      const px = X(point.x);
+      const py = Y(point.y);
+
+      if (i === 0) {
+        ctx.moveTo(px, py);
+      } else {
+        ctx.lineTo(px, py);
+      }
+    });
+
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawAxes(panel, xmin, xmax, ymin, ymax, xlabel, ylabel, title) {
+    const X = (x) => panel.x + (x - xmin) / (xmax - xmin) * panel.w;
+    const Y = (y) => panel.y + panel.h - (y - ymin) / (ymax - ymin) * panel.h;
+
+    ctx.strokeStyle = "#222";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(panel.x, panel.y);
+    ctx.lineTo(panel.x, panel.y + panel.h);
+    ctx.lineTo(panel.x + panel.w, panel.y + panel.h);
+    ctx.stroke();
+
+    ctx.fillStyle = "#222";
+    ctx.font = "18px sans-serif";
+
+    for (let i = 0; i <= 4; i++) {
+      const x = xmin + (xmax - xmin) * i / 4;
+
+      ctx.beginPath();
+      ctx.moveTo(X(x), panel.y + panel.h);
+      ctx.lineTo(X(x), panel.y + panel.h + 5);
+      ctx.stroke();
+
+      ctx.fillText(
+        x.toFixed(Math.abs(x) < 2 ? 1 : 0),
+        X(x) - 12,
+        panel.y + panel.h + 25
+      );
+    }
+
+    for (let i = 0; i <= 4; i++) {
+      const y = ymin + (ymax - ymin) * i / 4;
+
+      ctx.beginPath();
+      ctx.moveTo(panel.x - 5, Y(y));
+      ctx.lineTo(panel.x, Y(y));
+      ctx.stroke();
+
+      ctx.fillText(y.toFixed(2), panel.x - 55, Y(y) + 6);
+    }
+
+    ctx.font = "20px sans-serif";
+    ctx.fillText(xlabel, panel.x + panel.w / 2 - 8, panel.y + panel.h + 52);
+
+    ctx.save();
+    ctx.translate(panel.x - 70, panel.y + panel.h / 2 + 20);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText(ylabel, 0, 0);
+    ctx.restore();
+
+    ctx.font = "22px sans-serif";
+    ctx.fillText(title, panel.x + 8, panel.y - 14);
+
+    return { X, Y };
+  }
+
+  function drawDiscreteBaseDistribution(info, X, Y) {
+    if (!info.pmfPoints) return;
+
+    ctx.save();
+    ctx.strokeStyle = "#555";
+    ctx.fillStyle = "#555";
+    ctx.lineWidth = 3;
+
+    for (const point of info.pmfPoints) {
+      ctx.beginPath();
+      ctx.moveTo(X(point.x), Y(0));
+      ctx.lineTo(X(point.x), Y(point.y));
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(X(point.x), Y(point.y), 5, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  function drawLeftLegend(panel, showGaussian, showBase) {
+    const x = panel.x + 18;
+    let y = panel.y + 28;
+
+    const rowHeight = 28;
+    const rows = 1 + (showGaussian ? 1 : 0) + (showBase ? 1 : 0);
+    const width = 205;
+    const height = 18 + rows * rowHeight;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.18)";
+    ctx.lineWidth = 1;
+    ctx.fillRect(x - 12, y - 22, width, height);
+    ctx.strokeRect(x - 12, y - 22, width, height);
+
+    ctx.font = "18px sans-serif";
+
+    ctx.strokeStyle = "#1f77b4";
+    ctx.lineWidth = 3;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + 30, y);
+    ctx.stroke();
+    ctx.fillStyle = "#222";
+    ctx.fillText("scaled sum", x + 40, y + 6);
+    y += rowHeight;
+
+    if (showGaussian) {
+      ctx.strokeStyle = "#d62728";
+      ctx.setLineDash([8, 6]);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 30, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#222";
+      ctx.fillText("CLT Gaussian", x + 40, y + 6);
+      y += rowHeight;
+    }
+
+    if (showBase) {
+      ctx.strokeStyle = "#555";
+      ctx.setLineDash([3, 5]);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 30, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#222";
+      ctx.fillText("base", x + 40, y + 6);
+    }
+
+    ctx.restore();
+  }
+
+  // ---------------------------------------------------------------------------
+  // UI state and main rendering
+  // ---------------------------------------------------------------------------
+
+  function getState() {
+    const xRange = Number($("x-range").value);
+    const omegaRange = Number($("omega-range").value);
+
+    return {
+      kind: $("dist").value,
+      n: Number($("n-slider").value),
+      xMin: -xRange,
+      xMax: xRange,
+      omegaMin: -omegaRange,
+      omegaMax: omegaRange,
+      showBase: $("show-base").checked,
+      showGaussian: $("show-gaussian").checked
+    };
+  }
+
+  function updateReadouts(state) {
+    $("n-value").textContent = state.n;
+    $("x-range-value").textContent = Math.abs(state.xMax).toFixed(1);
+    $("omega-range-value").textContent = Math.abs(state.omegaMax).toFixed(0);
+  }
+
+  function draw() {
+    const state = getState();
+    updateReadouts(state);
+
+    const info = baseDistribution(state.kind);
+    const sigma = Math.sqrt(info.variance);
+
+    // The key refactor: the x and omega grids are rebuilt from the current UI
+    // state on every draw, so the axis controls, inverse transform, and plots
+    // are all using the same ranges.
+    const xValues = makeLinearGrid(state.xMin, state.xMax, nX);
+    const omegaValues = makeLinearGrid(state.omegaMin, state.omegaMax, nOmega);
+
+    const result = scaledDensityAndCharacteristicFunction(
+      state.kind,
+      state.n,
+      xValues,
+      omegaValues
+    );
+
+    const pdfValues = result.pdfValues;
+    const ftValues = result.ftValues;
+
+    const gaussianValues = Number.isFinite(sigma)
+      ? xValues.map((x) => normalPdf(x, sigma))
+      : xValues.map(() => 0);
+
+    const basePdfValues = xValues.map((x) => (info.pdf ? info.pdf(x) : 0));
+
+    let pdfYmax = Math.max(...pdfValues, ...gaussianValues);
+
+    if (state.showBase && !info.discrete) {
+      pdfYmax = Math.max(pdfYmax, ...basePdfValues);
+    }
+
+    if (state.showBase && info.discrete && info.pmfPoints) {
+      pdfYmax = Math.max(pdfYmax, ...info.pmfPoints.map((point) => point.y));
+    }
+
+    pdfYmax = Math.max(pdfYmax * 1.2, 0.1);
+
+    let ftYmin = Math.min(...ftValues, -0.1);
+    let ftYmax = Math.max(...ftValues, 1.05);
+
+    ftYmin = Math.max(-0.6, ftYmin * 1.15);
+    ftYmax = Math.min(1.15, ftYmax * 1.1);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const leftPanel = { x: 95, y: 65, w: 425, h: 335 };
+    const rightPanel = { x: 625, y: 65, w: 390, h: 335 };
+
+    const leftAxes = drawAxes(
+      leftPanel,
+      state.xMin,
+      state.xMax,
+      0,
+      pdfYmax,
+      "x",
+      "density",
+      `PDF of scaled sum, n = ${state.n}`
+    );
+
+    const rightAxes = drawAxes(
+      rightPanel,
+      state.omegaMin,
+      state.omegaMax,
+      ftYmin,
+      ftYmax,
+      "ω",
+      "characteristic function",
+      `FT / characteristic function, n = ${state.n}`
+    );
+
+    // Zero line on the characteristic-function panel.
+    ctx.save();
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.25)";
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(rightAxes.X(state.omegaMin), rightAxes.Y(0));
+    ctx.lineTo(rightAxes.X(state.omegaMax), rightAxes.Y(0));
+    ctx.stroke();
+    ctx.restore();
+
+    drawLine(
+      xValues.map((x, i) => ({ x, y: pdfValues[i] })),
+      leftAxes.X,
+      leftAxes.Y,
+      "#1f77b4",
+      3
+    );
+
+    if (state.showGaussian && Number.isFinite(sigma)) {
+      drawLine(
+        xValues.map((x, i) => ({ x, y: gaussianValues[i] })),
+        leftAxes.X,
+        leftAxes.Y,
+        "#d62728",
+        3,
+        [8, 6]
+      );
+    }
+
+    if (state.showBase) {
+      if (info.discrete) {
+        drawDiscreteBaseDistribution(info, leftAxes.X, leftAxes.Y);
+      } else {
+        drawLine(
+          xValues.map((x, i) => ({ x, y: basePdfValues[i] })),
+          leftAxes.X,
+          leftAxes.Y,
+          "#555",
+          2.3,
+          [3, 5]
+        );
+      }
+    }
+
+    drawLine(
+      omegaValues.map((omega, i) => ({ x: omega, y: ftValues[i] })),
+      rightAxes.X,
+      rightAxes.Y,
+      "#1f77b4",
+      3
+    );
+
+    drawLeftLegend(
+      leftPanel,
+      state.showGaussian && Number.isFinite(sigma),
+      state.showBase
+    );
+
+    const varianceText = Number.isFinite(info.variance)
+      ? `variance = ${info.variance.toFixed(3)}`
+      : "variance is infinite/undefined";
+
+    const cltText = info.infiniteVariance
+      ? "The finite-variance CLT does not apply; this is a counterexample."
+      : "The limiting Gaussian has the same variance as the base distribution.";
+
+    $("readout").innerHTML =
+      `${info.label}; ${varianceText}. `
+      + `The plotted sum is `
+      + `(X<sub>1</sub> + ⋯ + X<sub>n</sub>)/√n. `
+      + cltText;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Event bindings
+  // ---------------------------------------------------------------------------
+
+  root.querySelectorAll("input, select").forEach((element) => {
+    element.addEventListener("input", draw);
+    element.addEventListener("change", draw);
+  });
+
+  draw();
+})();
+</script>
+</body>
+</html>
