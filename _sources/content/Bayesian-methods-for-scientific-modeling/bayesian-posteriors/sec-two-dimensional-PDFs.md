@@ -31,11 +31,13 @@ with $\Sigma = \sigma_1^2$.
 For the bivariate case (two dimensional), 
 
 $$
-  \boldsymbol{x} = \pmatrix{x_1\\ x_2} \quad\mbox{and}\quad
-  \boldsymbol{\mu} = \pmatrix{\mu_1\\ \mu_2} \quad\mbox{and}\quad
-  \Sigma = \pmatrix{\sigma_1^2 & \rho_{12} \sigma_1\sigma_2 \\
-                    \rho_{12}\sigma_1\sigma_2 & \sigma_2^2}
-        \quad\mbox{with}\ 0 < \rho_{12}^2 < 1            
+  \boldsymbol{x} = \begin{pmatrix} x_1\\ x_2 \end{pmatrix} \quad\mbox{and}\quad
+  \boldsymbol{\mu} = \begin{pmatrix} \mu_1\\ \mu_2 \end{pmatrix} \quad\mbox{and}\quad
+  \Sigma = \begin{pmatrix}
+             \sigma_1^2 & \rho_{12} \sigma_1\sigma_2 \\
+             \rho_{12}\sigma_1\sigma_2 & \sigma_2^2
+           \end{pmatrix}
+        \quad\mbox{with }\ 0 < \rho_{12}^2 < 1            
 $$ (eq:bivariate_case)
 
 and $\Sigma$ is positive definite.

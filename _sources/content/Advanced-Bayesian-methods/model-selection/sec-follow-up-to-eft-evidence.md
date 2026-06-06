@@ -143,23 +143,30 @@ where
 
 $$
  Y - A\thetavec = 
- \underbrace{\pmatrix{y_1 \\ y_2 \\ \vdots \\ y_N}}_{N\times 1}
+ \underbrace{\begin{pmatrix}
+              y_1 \\ y_2 \\ \vdots \\ y_N
+             \end{pmatrix}}_{N\times 1}
   -
-  \underbrace{\pmatrix{1 & x_1 & x_1^2 & \cdots & x_1^k \\ 
+  \underbrace{\begin{pmatrix}
+               1 & x_1 & x_1^2 & \cdots & x_1^k \\ 
                1 & x_2 & x_2^2 & \cdots & x_2^k \\ 
                \vdots & \vdots & \ddots & \vdots & \vdots \\ 
-               1 & x_N & x_N^2 & \cdots & x_N^k}}_{N\times (k+1)}
-  \underbrace{\pmatrix{a_0 \\ a_1 \\ a_2 \\ \vdots \\ a_k}}_{(k+1)\times 1}
+               1 & x_N & x_N^2 & \cdots & x_N^k
+              \end{pmatrix}}_{N\times (k+1)}
+  \underbrace{\begin{pmatrix}
+               a_0 \\ a_1 \\ a_2 \\ \vdots \\ a_k
+              \end{pmatrix}}_{(k+1)\times 1}
 $$ 
 
 and
 
 $$ 
- \Sigma = \underbrace{\pmatrix{\sigma_{1}^2 & \rho_{12}\sigma_{1}\sigma_{y_2} & \cdots & \rho_{1N}\sigma_{1}\sigma_{N} \\
- & \sigma_{2}^2 & \cdots & \cdots \\ 
- & & \ddots & \cdots \\
- & & & \sigma_{N}^2 
- }}_{N\times N} .
+ \Sigma = \underbrace{\begin{pmatrix}
+                       \sigma_{1}^2 & \rho_{12}\sigma_{1}\sigma_{y_2} & \cdots & \rho_{1N}\sigma_{1}\sigma_{N} \\
+                       & \sigma_{2}^2 & \cdots & \cdots \\ 
+                       & & \ddots & \cdots \\
+                       & & & \sigma_{N}^2 
+                      \end{pmatrix}}_{N\times N} .
 $$
 
 Then from before we have $\chi^2_{\text{MLE}}$ when
