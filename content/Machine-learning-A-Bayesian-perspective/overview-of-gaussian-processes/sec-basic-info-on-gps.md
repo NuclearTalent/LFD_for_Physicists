@@ -72,9 +72,11 @@ $$
 For the bivariate case:
 
 $$
-  \muvec = \pmatrix{\mu_x\\ \mu_y} \quad\mbox{and}\quad
-  \Sigma = \pmatrix{\sigma_x^2 & \rho \sigma_x\sigma_y \\
-                    \rho\sigma_x\sigma_y & \sigma_y^2}
+  \muvec = \begin{pmatrix} \mu_x\\ \mu_y \end{pmatrix} \quad\mbox{and}\quad
+  \Sigma = \begin{pmatrix}
+             \sigma_x^2 & \rho \sigma_x\sigma_y \\
+             \rho\sigma_x\sigma_y & \sigma_y^2
+           \end{pmatrix}
         \quad\mbox{with}\ 0 \leq \rho^2 < 1 ,           
 $$
 
@@ -91,7 +93,7 @@ $$
 Compare this to
 
 $$
-  \Sigma = \sigma^2 \pmatrix{1 & \rho \\ \rho & 1} .
+  \Sigma = \sigma^2 \begin{pmatrix} 1 & \rho \\ \rho & 1 \end{pmatrix} .
 $$
 
 The diagonals have $x_1 = x_2$ while $\rho = e^{-(x_1-x_2)^2/2\ell^2}$. 
@@ -116,10 +118,12 @@ There are corresponding vectors $\mvec_t$ and $\mvec_e$ and covariance matrices.
 The *definition* of a GP says the joint distribution of $\fvec_t$, $\fvec_e$ is
 
 $$
- \pmatrix{\fvec_t \\ \fvec_e} | \xvec,\thetavec
- \sim \mathcal{N}\biggl[\pmatrix{m_t \\ m_e}, 
-             \pmatrix{ K_{tt} & K_{te} \\
-                       K_{et} & K_{ee}}
+ \begin{pmatrix} \fvec_t \\ \fvec_e \end{pmatrix} | \xvec,\thetavec
+ \sim \mathcal{N}\biggl[\begin{pmatrix} m_t \\ m_e \end{pmatrix}, 
+             \begin{pmatrix}
+               K_{tt} & K_{te} \\
+               K_{et} & K_{ee}
+             \end{pmatrix}
             \biggr] , 
 $$ 
     
@@ -211,15 +215,21 @@ We will also take the mean to be zero to avoid clutter.
 Then
 
 $$
-  \pmatrix{f_t\\ f_e} \sim \mathcal{N}\Bigl[\pmatrix{0\\ 0}, \pmatrix{\Sigma_{tt} & \Sigma_{te} \\
-                \Sigma_{et} & \Sigma_{ee}} \Bigr] ,
+  \begin{pmatrix} f_t\\ f_e \end{pmatrix} \sim 
+  \mathcal{N}\biggl[\begin{pmatrix} 0\\ 0 \end{pmatrix}, 
+             \begin{pmatrix}
+                \Sigma_{tt} & \Sigma_{te} \\
+                \Sigma_{et} & \Sigma_{ee}
+             \end{pmatrix} \biggr] ,
 $$
 
 where
 
 $$
-  \Sigmavec = \pmatrix{\sigma_t^2 & \rho\sigma_t\sigma_e \\
-                       \rho\sigma_t\sigma_e & \sigma_e^2} .
+  \Sigmavec = \begin{pmatrix}
+                \sigma_t^2 & \rho\sigma_t\sigma_e \\
+                \rho\sigma_t\sigma_e & \sigma_e^2
+              \end{pmatrix} .
 $$
 
 The claim is that
@@ -233,21 +243,30 @@ Try it explicitly:
     
 $$
  p(f_e|f_t) = p(f_e,f_t)/p(f_e)
-  = \frac{\frac{1}{\sqrt{\det(2\pi\Sigmavec)}}e^{-(f_t \ f_e)\,\Sigmavec^{-1}\pmatrix{f_t \\ f_e}}}
+  = \frac{\frac{1}{\sqrt{\det(2\pi\Sigmavec)}}e^{-(f_t \ f_e)\,\Sigmavec^{-1}
+        \begin{pmatrix} f_t \\ f_e \end{pmatrix} }}
   {\frac{1}{\sqrt{2\pi\Sigma_{tt})}}e^{-f_t^2\Sigma_{tt}^{-1}}}
 $$
 
 All of the $\Sigma_{ij}$'s are just scalars now and $\Sigma_{te} = \Sigma_{et}$.
 
 $$
-  \Sigmavec^{-1} = \frac{1}{\det\Sigmavec}\pmatrix{\Sigma_{ee}& -\Sigma_{et} \\ -\Sigma_{te} & \Sigma_{tt}}
-  = \frac{1}{\Sigma_{tt}\Sigma_{ee}-\Sigma_{te}\Sigma_{et}}\pmatrix{\Sigma_{ee}& -\Sigma_{et} \\ -\Sigma_{te} & \Sigma_{tt}} ,
+  \Sigmavec^{-1} = \frac{1}{\det\Sigmavec}
+    \begin{pmatrix}
+       \Sigma_{ee}& -\Sigma_{et} \\ 
+       -\Sigma_{te} & \Sigma_{tt}
+    \end{pmatrix}
+  = \frac{1}{\Sigma_{tt}\Sigma_{ee}-\Sigma_{te}\Sigma_{et}}
+     \begin{pmatrix}
+       \Sigma_{ee}& -\Sigma_{et} \\ 
+       -\Sigma_{te} & \Sigma_{tt}
+     \end{pmatrix} ,
 $$
 
 which yields
 
 $$
-(f_t \ f_e)\,\Sigmavec^{-1}\pmatrix{f_t \\ f_e}
+(f_t \ f_e)\,\Sigmavec^{-1} \begin{pmatrix} f_t \\ f_e \end{pmatrix}
  = \frac{(-\Sigma_{ee}f_t^2 + 2\Sigma_{et}f_t f_e - \Sigma_{tt}f_e^2)}{\det\Sigmavec} .
 $$
 
