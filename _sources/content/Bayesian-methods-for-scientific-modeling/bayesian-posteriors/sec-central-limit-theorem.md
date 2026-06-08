@@ -45,6 +45,7 @@ If we denote Bin($n,p$) as the binomial distribution for $n$ trials with probabi
 :::{admonition} Answer
 :class: dropdown, my-answer
 If we add up $n$ random variables from Bin($1,p$), each with value 0 or 1, this is equivalent to a Bin($n,p$) random variable with the same number of successes. So we already have a sum of random variables built in and the CLT will apply. (In more detail: getting $k$ ones and $n-k$ zeros from the $n$ Bin($1,p$) draws will have probability $p^k$ times $(1-p)^{n-k}$ times the number of combinations $n\choose k$. This is the same as the binomial probability for $k$ successes.)
+:::
 ::::
 
 ## Moments of a PDF from a sum of random variables

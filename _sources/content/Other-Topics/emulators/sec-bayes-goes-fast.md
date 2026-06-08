@@ -8,7 +8,7 @@ jupytext:
 ---
 
 (sec:BayesFast)=
-# Bayes goes fast: Emulators
+# Bayes goes fast: Emulator overview
 
 ```{epigraph}
 > "Emulation is not rivalry. Emulation is the child of ambition; rivalry is the unlovable daughter of envy."
@@ -16,21 +16,54 @@ jupytext:
 -- Honore de Balzac
 ```
 
-## Reduced-basis methods
 
-Computational Bayesian methods, and many other applications, have a need for models that can be solved at different fidelities. High fidelity implies high precision, but also high computational cost. Low fidelity versions of the model are much faster to evaluate, but associated with a smaller precision. They are still very useful for model calibration and statistical studies. 
+## Emulators
 
-There is a vast theory of model-order reduction for scientific applications. See, e.g., Ref. {cite}`Melendez:2022kid` for an overview and many useful references. Let us broadly categorize them into two types:
+Being able to efficiently vary the parameters in high-fidelity models to enable design, control, optimization, inference, and uncertainty quantification is a general need across engineering and science fields.
+A common theme in these endeavors is that much of the information in high-fidelity models is superfluous. This can be exploited when tracing parametric dependencies by reducing the complexity through a so-called reduced order model, i.e., an emulator.
+The universe of model order reduction (MOR) methods is relatively mature but continues to expand, along with their applications.
+There remain tremendous opportunities for physicists to adapt and extend methods from the MOR literature.
+
+
+:::{figure} ../assets/MOR_Venn_diagram_6.png
+:height: 300px
+:name: fig-MOR_Venn_diagram
+
+Schematic classification of model order reduction emulators into data-driven methods, including Gaussian processes,  artificial neural networks, and dynamic mode decomposition; model-driven methods, including reduced-basis methods (RBMs); and hybrid methods. Eigenvector continuation (EC) approaches are a subset of RBM.
+
+:::
+
+
+
+## Reduced-Basis Methods
+
+Computational Bayesian methods, in particular, have a need for models that can be solved at different fidelities. High fidelity implies high precision, but also high computational cost. Low fidelity versions of the model are much faster to evaluate, but associated with a smaller precision. They are still very useful for model calibration and statistical studies. 
+
+There is a vast theory of model-order reduction for scientific applications. See, e.g., Ref. {cite}`Melendez:2022kid` for an overview and many useful references. Let us broadly categorize them into two types (see {numref}`fig-MOR_Venn_diagram`):
 
 ```{admonition} Model-order reduction
-**Date driven**: Non-intrusive approaches where the output of a high-fidelity model is interploated (or even dangerously extrapolated) without the need for detailed access to the model. Two examples are:
+:class: note
+
+**Date driven**: Non-intrusive approaches where the outputs of a high-fidelity model are interpolated (or even dangerously extrapolated) without the need for detailed access to the model or an understanding of the underlying model structure. Examples include:
 - Gaussian process regression models
 - Artificial neural networks
+- Dynamic mode decomposition
 
-**Model driven**: Intrusive approaches where reduced-order equations are derived from the high-fidelity equations. These methods require a deeper understanding of the model and respect the underlying structure. They often use projection and will be able to extrapolate. 
+
+**Model driven**: Intrusive approaches where reduced-order equations are derived from the full high-fidelity equations (often using projection), so they are physics-based. These methods require a deeper understanding of the model and respect the underlying structure, which often means they can extrapolate reliably. 
+Examples include the broad class of reduced-basis methods or RBMs. 
+
+**Hybrid**: Increasingly, there are hybrid approaches drawing from knowledge about the underlying physics problem and thereby combining both data- and model-driven aspects. An example are Parametric Matrix Models (see {numref}`sec:PMMs`).
+
+
 ```
 
-A large subset of model-driven approaches are known as **Reduced-Basis Methods** {cite}`Quarteroni2015`. We will mainly be concerned with **eigenvector continuation** {cite}`Frame:2017fah`.
+:::{admonition} Physics-informed data-driven method
+:class: note
+An example of a physics-informed data-driven method is to constrain the kernel for a Gaussian process emulator by where we know a priori that it will be more reliable.
+:::
+
+
 
 In general, we will use model-order reduction to emulate our model, that is we will replace the high-fidelity version $M(\pars)$ with a low-fidelity emulator $\tilde M(\pars)$ which is much faster to evaluate but hopefully acceptably accurate. We will need to keep track of the emulator uncertainty via quantification of $\var{M(\pars) - \tilde M(\pars)} \equiv \var{\delta \tilde M (\pars)}$. We will often neglect the parameter dependence such that 
 
@@ -40,77 +73,7 @@ $$ (eq:BayesFast:emulator-error)
 
 where $\var{\delta \tilde M} = \sigma_\mathrm{em}^2$.
 
-## Eigenvector continuation
+A large subset of model-driven approaches are known as **Reduced-Basis Methods (RBMs)** {cite}`Quarteroni2015`. We will mainly be concerned with the application of RBMs to quantum models, which was introduced to physics as **eigenvector continuation (EC)** {cite}`Frame:2017fah`.
+The introduction of emulators derived from EC was a game-changing development for Bayesian UQ in low-energy nuclear physics. 
 
-Here, we will specifically consider emulation based on eigenvector continuation as a type of reduced-order model. This method is very useful for applications where the computer model can be phrased as an eigenvalue problem. For example, consider the prediction of the eigenenergy of a quantum state such that $M(\pars) = E(\pars)$ is obtained by solving the Schrödinger equation
 
-$$
-H(\pars) | \psi(\pars) \rangle = E(\pars) | \psi(\pars) \rangle.
-$$ (eq:BayesFast:SE)
-
-This equation can be projected onto a suitable basis and thereby expressed as a matrix eigenvalue problem for which the eigenstate, $| \psi(\pars) \rangle$, becomes an eigenvector. In certain applications it might be that the dimension $N$ of this basis is very large. In quantum many-body simulations you might have $N \sim 10^9$ or even larger. 
-
-For a statistical analysis we must explore the consequences of varying the numerical values of $\pars$. In, e.g., MCMC sampling we might need many thousands (or much more) model evaluations and must therefore seek a way to mitigate the computational cost of solving for $E_\odot \equiv E(\pars_\odot)$ (and $| \psi_\odot \rangle \equiv | \psi(\pars_\odot) \rangle$) for any target parametrization $\pars_\odot$ of interest.
-
-The key insight of eigenvector continuation {cite}`Frame:2017fah` is that although an eigenvector resides in a linear space with enormous dimensions, the eigenvector trajectory generated by smooth changes of the Hamiltonian matrix is well approximated by a very low-dimensional manifold in many applications.
-
-We therefore start by constructing a basis of $n \ll N$ eigenvectors $\{ | \psi_i \rangle \}_{i=1}^n$ obtained from exact solutions of the Schrödinger equation at different model parametrizations $\{ \pars_i \}_{i=1}^n$. These solutions are known as *snapshots*. We then diagonalize the Schrödinger equation for the target parametrization $\pars_\odot$ in this (non-orthogonal) snapshot basis
-
-$$
-\tilde{H}(\pars_\odot) | \tilde\psi(\pars_\odot) \rangle = \tilde{E}(\pars_\odot) \tilde{N} | \tilde\psi(\pars_\odot) \rangle,
-$$ (eq:BayesFast:generalized-eigenvalue-problem)
-
-where the appearance of the norm matrix $\tilde{N}$ reveals that this is a generalized eigenvalue problem. We use a tilde to denote quantities that are expressed in the subspace basis $\{ | \psi_i \rangle \}_{i=1}^n$
-
-Let us introduce an $N \times n$ matrix $X$ with the snapshot eigenvectors in the columns 
-
-$$
-X = \begin{pmatrix}
-\bigg| & \bigg| & \cdots & \bigg| \\
-| \psi_1 \rangle & | \psi_2 \rangle & \cdots & | \psi_n \rangle \\
-\bigg| & \bigg| & \cdots & \bigg|
-\end{pmatrix},
-$$ (eq:BayesFast:X)
-
-such that the snapshot-projected trial wave functions become
-
-$$
-| \tilde\psi \rangle = \sum_{i=1}^n \beta_i | \psi_i \rangle = X \beta.
-$$ (eq:BayesFast:snapshot-projected-eigenvector)
-
-The snapshot-projected $n \times n$ matrices in Eq. {eq}`eq:BayesFast:generalized-eigenvalue-problem` become
-
-$$
-\begin{aligned}
-\tilde{H}(\pars_\odot) &= X^\dagger {H}(\pars_\odot) X \\
-\tilde{N} &= X^\dagger X
-\end{aligned}
-$$ (eq:BayesFast:snapshot-projected-matrices)
-
-It is usually enough with $n \ll N$ to have $\tilde{E}_\odot \approx E_\odot$ with a very high precision. Obviously it is significantly faster to solve an eigenvalue
-problem for $n = 10−100$ than $N \sim 10^9$.
-
-The solution of Eq. {eq}`eq:BayesFast:generalized-eigenvalue-problem` also gives a low-fidelity eigenvector $| \tilde\psi(\pars_\odot) \rangle = X \beta(\pars_\odot)$, where $\beta(\pars_\odot)$ is the eigenvector in the snapshot basis. From a variational viewpoint, the vector $\beta(\pars_\odot)$ renders the functional $S[X\beta]$ stationary under variations $| \delta \tilde\psi \rangle = X | \delta \tilde\beta \rangle$ and $E_\odot \lesssim \tilde E_\odot$.
-
-```{prf:example} Eigenvector continuation in ab initio nuclear theory
-:label: example:BayesFast:eigenvector-continuation
-In ab initio nuclear theory, based on $\chi$EFT interactions, we (often) have a Hamiltonian that can be written in terms of the low energy constants (LECs) $\pars$ as
-
-$$
-H(\pars) = T + V_0 + \sum_{i=1}^{N_\mathrm{LECs}} \para_i V_i,
-$$
-
-where $T$ is the kinetic energy, $V_0$ is the part of the interaction potential that has no dependence on the LECs, and the other terms can be written as a linear product of $\para_i$ and the parameter-independent $V_i$.
-
-This enables us to construct the elements of the subspace Hamiltonian matrix as
-
-$$
-\langle \psi_i \vert H(\pars_\odot) \vert \psi_j \rangle = \langle \psi_i \vert T + V_0 \vert \psi_j \rangle + \sum_{i=1}^{N_\mathrm{LECs}} \para_i \langle \psi_i \vert V_i \vert \psi_j \rangle,
-$$
-
-where $\langle \psi_i \vert T + V_0 \vert \psi_j \rangle$ and $\langle \psi_i \vert V_i \vert \psi_j \rangle$ are independent of $\pars$. As such they can be pre-computed and stored in the beginning (offline phase) making the subsequent computations for different $\pars_\odot$ very fast.
-
-See also Ref. {cite}`Drischler:2022ipa` for a review with examples, and Andreas Ekström's lectures at https://gitlab.com/cbarbieri/dtp2023 with applications also to nucleon-nucleon scattering.
-
-For non-linearities it should be possible to build linear approximations and empirical interpolants. The performance of such approximations, however, will be problem specific.
-```
