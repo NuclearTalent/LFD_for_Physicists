@@ -1,3 +1,12 @@
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+  name: python3
+---
+
 # Quick introduction to  `scipy.stats`
 The `scipy.stats` module contains a large number of probability distributions, summary and frequency statistics, correlation functions statistical tests, and more. If you google `scipy.stats`, you'll likely get the manual page as the first hit: [https://docs.scipy.org/doc/scipy/reference/stats.html](https://docs.scipy.org/doc/scipy/reference/stats.html). Here you'll find a long list of the continuous and discrete distributions that are available for creating random variables, followed (scroll way down) by different methods (functions) to extract properties of a distribution (called Summary statistics) and to perform many other statistical tasks.
 

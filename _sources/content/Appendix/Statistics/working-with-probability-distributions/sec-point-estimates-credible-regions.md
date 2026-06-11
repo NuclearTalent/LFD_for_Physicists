@@ -1,3 +1,12 @@
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+  name: python3
+---
+
 (sec:point_and_credibility)=
 # Point estimates and credible regions
 
@@ -11,6 +20,10 @@ Let us consider three example PDFs that illustrate some of the features of the d
 
 ```{code-cell} python3
 :tags: [hide-input]
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+import numpy as np
+
 fig_point, axs = plt.subplots(nrows=1, ncols=3, sharey=True, **{"figsize":(10,4)})
 my_rvs = [stats.norm(loc=5,scale=4),stats.invgamma(1.5, loc=0.0, scale=5.0),stats.beta(0.95, 0.95, scale=10)]
 x = np.linspace(-5,30,10000)
