@@ -1,3 +1,12 @@
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+  name: python3
+---
+
 # Exercises
 
 ```{exercise} Scipy.stats
@@ -49,6 +58,7 @@ See the code example in the hidden code block below.
 
 import scipy.stats as stats
 import matplotlib.pyplot as plt
+import numpy as np
 fig, ax = plt.subplots(1, 1)
 
 # Define a student-t distribution with location=0.0 and scale = 1.0

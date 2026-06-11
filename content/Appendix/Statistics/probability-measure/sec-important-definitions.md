@@ -1,3 +1,12 @@
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+  name: python3
+---
+
 # Important definitions
 
 The set of all possible outcomes of an experiment is known as the sample space and is here denoted by $S$. We can think of events $A$ as subsets of the sample space.
