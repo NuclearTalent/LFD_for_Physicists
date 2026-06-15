@@ -1,7 +1,7 @@
 (ch:PartIExercises)=
-# Exercises for Part I
+# Guided projects for Part I
 
-In this chapter we collect various exercises to build intuition or gain practice in the basics of Bayesian inference, including the rules of plausible inference, parameter estimation, and a first exposure to Monte Carlo sampling.
+In this chapter we collect various guided projects to build intuition or gain practice in the basics of Bayesian inference, including the rules of plausible inference, parameter estimation, and a first exposure to Monte Carlo sampling.
 
 * {ref}`exercise:CheckingSumProduct`. Practice applying the sum and product rules (and their consequences: marginalization, Bayes' theorem, conditional independence) using a simple and intuitive frequentist example. 
 
