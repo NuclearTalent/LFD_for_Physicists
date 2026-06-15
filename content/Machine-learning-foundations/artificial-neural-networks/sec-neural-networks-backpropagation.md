@@ -1,7 +1,5 @@
 (sec:NeuralNetBackProp)=
-# \*Neural networks: Backpropagation
-
-<div class="highlight-section">
+# Neural networks: Backpropagation
 
 As we have seen the final output of a feed-forward network can be expressed in terms of basic matrix-vector multiplications.
 The unknowwn quantities are our weights $w_{ij}$ and we need to find an algorithm for changing them so that our errors are as small as possible.
@@ -357,5 +355,3 @@ solution. This is known in the literature as
 In other cases, the opposite can happen, namely that the gradients grow bigger and
 bigger. The result is that many of the layers get large updates of the 
 weights and the learning algorithm diverges. This is the **exploding gradients problem**, which is mostly encountered in recurrent neural networks. More generally, deep neural networks suffer from unstable gradients, different layers may learn at widely different speeds.
-
-</div>

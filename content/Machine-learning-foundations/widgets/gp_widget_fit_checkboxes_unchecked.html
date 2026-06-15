@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gaussian Process Intuition Demo</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0;
+      padding: 1.5rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      background: #f6f7f9;
+      color: #222;
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    }
+    h1 { margin-top: 0; font-size: 1.6rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Gaussian Process Intuition Demo</h1>
+
+<div id="gp_demo_7b9c" class="gp-demo">
+  <style>
+    #gp_demo_7b9c {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: #fff;
+    }
+    #gp_demo_7b9c .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.65rem;
+    }
+    #gp_demo_7b9c .control-block {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0.75rem;
+      background: #fafafa;
+      margin-bottom: 0.75rem;
+    }
+    #gp_demo_7b9c label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+    }
+    #gp_demo_7b9c input[type="range"] { width: 135px; }
+    #gp_demo_7b9c button,
+    #gp_demo_7b9c select {
+      font: inherit;
+    }
+    #gp_demo_7b9c button {
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      background: #f7f7f7;
+      padding: 0.35rem 0.7rem;
+      cursor: pointer;
+    }
+    #gp_demo_7b9c button.primary { background: #e8eefc; }
+    #gp_demo_7b9c button.warning { background: #fff3dd; }
+    #gp_demo_7b9c button.success { background: #e7f5ea; }
+    #gp_demo_7b9c canvas {
+      width: 100%;
+      max-width: 960px;
+      height: 440px;
+      display: block;
+      margin: 1rem auto 0 auto;
+      border: 1px solid #eee;
+      background: white;
+      cursor: crosshair;
+    }
+    #gp_demo_7b9c .status {
+      margin-top: 0.75rem;
+      padding: 0.5rem 0.65rem;
+      border-radius: 6px;
+      background: #f7f7f7;
+      color: #333;
+      font-size: 0.95rem;
+    }
+    #gp_demo_7b9c .small { font-size: 0.92rem; color: #444; }
+    #gp_demo_7b9c .hidden { display: none; }
+    #gp_demo_7b9c .math-var { font-style: italic; white-space: nowrap; }
+    #gp_demo_7b9c .math-sub {
+      font-size: 0.72em;
+      position: relative;
+      top: 0.28em;
+      line-height: 0;
+      font-style: normal;
+    }
+  </style>
+
+  <p class="small">
+    Click in the plot to add training points. Use the controls to change the kernel,
+    hyperparameters, and whether the draws are from the prior or posterior.
+  </p>
+
+  <div class="control-block">
+    <div class="controls">
+      <label>Kernel
+        <select id="kernel">
+          <option>RBF (SE)</option>
+          <option>Matern ν=1.5</option>
+          <option>Matern ν=2.5</option>
+          <option>RationalQuadratic</option>
+          <option>Periodic (ExpSineSquared)</option>
+          <option>Linear (DotProduct)</option>
+        </select>
+      </label>
+      <label>ℓ <span class="small">(length scale)</span>
+        <input id="ell" type="range" min="0.05" max="20" step="0.01" value="1">
+        <span id="ellv">1.00</span>
+      </label>
+      <label><span class="math-var">σ<span class="math-sub">f</span></span> <span class="small">(signal std)</span>
+        <input id="sigmaf" type="range" min="0.05" max="10" step="0.01" value="1">
+        <span id="sigmafv">1.00</span>
+      </label>
+      <label><span class="math-var">σ<span class="math-sub">n</span></span> <span class="small">(noise std)</span>
+        <input id="sigman" type="range" min="0" max="2" step="0.001" value="0.1">
+        <span id="sigmanv">0.100</span>
+      </label>
+    </div>
+    <div class="controls">
+      <label id="alpha-wrap" class="hidden">α <span class="small">(RQ)</span>
+        <input id="alpha" type="range" min="0.05" max="10" step="0.01" value="1">
+        <span id="alphav">1.00</span>
+      </label>
+      <label id="period-wrap" class="hidden">Period
+        <input id="period" type="range" min="0.1" max="10" step="0.01" value="2">
+        <span id="periodv">2.00</span>
+      </label>
+      <label># samples
+        <input id="drawn" type="range" min="0" max="40" step="1" value="3">
+        <span id="drawnv">3</span>
+      </label>
+      <label><input id="posterior" type="checkbox" checked> Draw from posterior [prior]</label>
+      <label><input id="showmean" type="checkbox" checked> Show mean & bands</label>
+      <label><input id="opt-ell" type="checkbox"> fit ℓ</label>
+      <label><input id="opt-sigmaf" type="checkbox"> fit <span class="math-var">σ<span class="math-sub">f</span></span></label>
+      <label><input id="opt-sigman" type="checkbox"> fit <span class="math-var">σ<span class="math-sub">n</span></span></label>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="draw" class="primary">Draw samples</button>
+    <button id="clear" class="warning">Clear points</button>
+    <button id="reseed" class="success">Reseed RNG</button>
+  </div>
+
+  <canvas id="plot" width="960" height="440"
+          aria-label="Gaussian process prior and posterior plot"></canvas>
+  <div id="status" class="status">Ready.</div>
+
+  <script>
+  (function () {
+    const root = document.getElementById("gp_demo_7b9c");
+    const $ = (id) => root.querySelector("#" + id);
+
+    const XMIN = -5.0;
+    const XMAX = 5.0;
+    const YMIN = -3.5;
+    const YMAX = 3.5;
+    const NTEST = 180;
+    const XTEST = Array.from({ length: NTEST }, (_, i) =>
+      XMIN + (XMAX - XMIN) * i / (NTEST - 1)
+    );
+
+    let trainX = [];
+    let trainY = [];
+    let seed = Math.floor(Math.random() * 2147483647) || 1234567;
+
+    const state = {
+      kernel: "RBF (SE)",
+      ell: 1.0,
+      sigmaf: 1.0,
+      sigman: 0.1,
+      alpha: 1.0,
+      period: 2.0,
+      drawn: 3,
+      posterior: true,
+      showmean: true,
+      optEll: false,
+      optSigmaf: false,
+      optSigman: false,
+    };
+
+    let optimizationDirty = true;
+
+    function setStatus(msg) {
+      $("status").innerHTML = msg;
+    }
+
+    function random() {
+      seed = (seed * 48271) % 2147483647;
+      return (seed - 1) / 2147483646;
+    }
+
+    function normalRandom() {
+      const u1 = Math.max(random(), 1e-12);
+      const u2 = random();
+      return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    }
+
+    function dist(x, y) {
+      return Math.abs(x - y);
+    }
+
+    function kernelValue(x, y, params = state, includeNoise = false) {
+      const r = dist(x, y);
+      const sf2 = params.sigmaf * params.sigmaf;
+      const ell = Math.max(params.ell, 1e-9);
+      let val;
+
+      if (params.kernel === "RBF (SE)") {
+        val = sf2 * Math.exp(-0.5 * (r / ell) ** 2);
+      } else if (params.kernel === "Matern ν=1.5") {
+        const z = Math.sqrt(3) * r / ell;
+        val = sf2 * (1 + z) * Math.exp(-z);
+      } else if (params.kernel === "Matern ν=2.5") {
+        const z = Math.sqrt(5) * r / ell;
+        val = sf2 * (1 + z + z * z / 3) * Math.exp(-z);
+      } else if (params.kernel === "RationalQuadratic") {
+        const a = Math.max(params.alpha, 1e-9);
+        val = sf2 * (1 + r * r / (2 * a * ell * ell)) ** (-a);
+      } else if (params.kernel === "Periodic (ExpSineSquared)") {
+        const p = Math.max(params.period, 1e-9);
+        const s = Math.sin(Math.PI * r / p);
+        val = sf2 * Math.exp(-2 * s * s / (ell * ell));
+      } else if (params.kernel === "Linear (DotProduct)") {
+        val = sf2 * (x * y + ell * ell);
+      } else {
+        val = sf2 * Math.exp(-0.5 * (r / ell) ** 2);
+      }
+
+      if (includeNoise && x === y) {
+        val += params.sigman * params.sigman;
+      }
+      return val;
+    }
+
+    function zeros(n, m) {
+      return Array.from({ length: n }, () => Array(m).fill(0));
+    }
+
+    function covariance(xs, ys, params = state, includeNoise = false) {
+      const K = zeros(xs.length, ys.length);
+      for (let i = 0; i < xs.length; i++) {
+        for (let j = 0; j < ys.length; j++) {
+          K[i][j] = kernelValue(xs[i], ys[j], params, includeNoise && i === j);
+        }
+      }
+      return K;
+    }
+
+    function cholesky(A) {
+      const n = A.length;
+      const L = zeros(n, n);
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j <= i; j++) {
+          let sum = A[i][j];
+          for (let k = 0; k < j; k++) sum -= L[i][k] * L[j][k];
+          if (i === j) {
+            L[i][j] = Math.sqrt(Math.max(sum, 1e-12));
+          } else {
+            L[i][j] = sum / Math.max(L[j][j], 1e-12);
+          }
+        }
+      }
+      return L;
+    }
+
+    function solveLower(L, b) {
+      const n = L.length;
+      const isMatrix = Array.isArray(b[0]);
+      const cols = isMatrix ? b[0].length : 1;
+      const x = zeros(n, cols);
+      for (let i = 0; i < n; i++) {
+        for (let c = 0; c < cols; c++) {
+          let sum = isMatrix ? b[i][c] : b[i];
+          for (let k = 0; k < i; k++) sum -= L[i][k] * x[k][c];
+          x[i][c] = sum / Math.max(L[i][i], 1e-12);
+        }
+      }
+      return isMatrix ? x : x.map((row) => row[0]);
+    }
+
+    function solveUpperFromLower(L, b) {
+      const n = L.length;
+      const isMatrix = Array.isArray(b[0]);
+      const cols = isMatrix ? b[0].length : 1;
+      const x = zeros(n, cols);
+      for (let i = n - 1; i >= 0; i--) {
+        for (let c = 0; c < cols; c++) {
+          let sum = isMatrix ? b[i][c] : b[i];
+          for (let k = i + 1; k < n; k++) sum -= L[k][i] * x[k][c];
+          x[i][c] = sum / Math.max(L[i][i], 1e-12);
+        }
+      }
+      return isMatrix ? x : x.map((row) => row[0]);
+    }
+
+    function matVec(A, v) {
+      return A.map((row) => row.reduce((s, a, i) => s + a * v[i], 0));
+    }
+
+    function transpose(A) {
+      return A[0].map((_, c) => A.map((row) => row[c]));
+    }
+
+    function logDetFromCholesky(L) {
+      return 2 * L.reduce((s, row, i) => s + Math.log(Math.max(row[i], 1e-12)), 0);
+    }
+
+    function logMarginalLikelihood(params) {
+      const n = trainX.length;
+      if (n === 0) return 0;
+      try {
+        const K = covariance(trainX, trainX, params, true);
+        for (let i = 0; i < n; i++) K[i][i] += 1e-8;
+        const L = cholesky(K);
+        const z = solveLower(L, trainY);
+        const alpha = solveUpperFromLower(L, z);
+        const quad = trainY.reduce((s, y, i) => s + y * alpha[i], 0);
+        return -0.5 * quad - 0.5 * logDetFromCholesky(L) - 0.5 * n * Math.log(2 * Math.PI);
+      } catch (err) {
+        return -Infinity;
+      }
+    }
+
+    function hyperparameterGuardInfo(params) {
+      const n = trainX.length;
+      const rawLml = logMarginalLikelihood(params);
+
+      if (n < 2 || !isFinite(rawLml)) {
+        return {
+          rawLml,
+          penalty: 0,
+          objective: rawLml,
+          ranges: ""
+        };
+      }
+
+      const xs = [...trainX].sort((a, b) => a - b);
+      const xRange = Math.max(0.25, xs[xs.length - 1] - xs[0]);
+      const spacings = [];
+      for (let i = 1; i < xs.length; i++) {
+        const d = xs[i] - xs[i - 1];
+        if (d > 1e-8) spacings.push(d);
+      }
+      spacings.sort((a, b) => a - b);
+      const medianSpacing = spacings.length
+        ? spacings[Math.floor(spacings.length / 2)]
+        : xRange / Math.max(1, n - 1);
+
+      const meanY = trainY.reduce((s, y) => s + y, 0) / n;
+      const varY = trainY.reduce((s, y) => s + (y - meanY) * (y - meanY), 0) / n;
+      const yScale = Math.max(0.25, Math.min(3.5, Math.sqrt(varY) || 1.0));
+
+      const ellMin = Math.max(0.08, 0.45 * medianSpacing);
+      const ellMax = Math.min(8.0, Math.max(0.35, 1.5 * xRange));
+      const ellCenter = Math.min(ellMax, Math.max(ellMin, 0.45 * xRange));
+
+      const sigmafMin = Math.max(0.08, 0.25 * yScale);
+      const sigmafMax = Math.min(6.0, Math.max(0.8, 3.0 * yScale));
+      const sigmafCenter = Math.min(sigmafMax, Math.max(sigmafMin, yScale));
+
+      const noiseMin = n < 4 ? Math.max(0.02, 0.015 * yScale) : Math.max(0.004, 0.005 * yScale);
+      const noiseMax = Math.min(1.2, Math.max(0.08, 0.45 * yScale));
+      const noiseCenter = Math.min(noiseMax, Math.max(noiseMin, 0.08 * yScale));
+
+      function clamp(x, lo, hi) {
+        return Math.min(hi, Math.max(lo, x));
+      }
+
+      const ell = clamp(params.ell, ellMin, ellMax);
+      const sigmaf = clamp(params.sigmaf, sigmafMin, sigmafMax);
+      const sigman = clamp(params.sigman, noiseMin, noiseMax);
+
+      const logEll = Math.log(ell / ellCenter);
+      const logNoise = Math.log(sigman / noiseCenter);
+      const logSignal = Math.log(sigmaf / sigmafCenter);
+
+      const ellPenalty = state.optEll ? 0.9 * logEll * logEll : 0;
+      const noisePenalty = state.optSigman ? 0.45 * logNoise * logNoise : 0;
+      const signalPenalty = state.optSigmaf ? 0.35 * logSignal * logSignal : 0;
+      const penalty = ellPenalty + noisePenalty + signalPenalty;
+
+      return {
+        rawLml,
+        penalty,
+        objective: rawLml - penalty,
+        ranges:
+          `Ranges: ℓ [${ellMin.toFixed(2)}, ${ellMax.toFixed(2)}], ` +
+          `σ_f [${sigmafMin.toFixed(2)}, ${sigmafMax.toFixed(2)}], ` +
+          `σ_n [${noiseMin.toFixed(3)}, ${noiseMax.toFixed(3)}].`
+      };
+    }
+
+
+    function optimizeHyperparameters() {
+      if (!optimizationDirty || trainX.length === 0 || !state.posterior) return;
+
+      const activeNames = [];
+      if (state.optEll) activeNames.push("ell");
+      if (state.optSigmaf) activeNames.push("sigmaf");
+      if (state.optSigman) activeNames.push("sigman");
+
+      if (activeNames.length === 0) {
+        optimizationDirty = false;
+        setStatus("No hyperparameters selected for fitting.");
+        return;
+      }
+
+      const n = trainX.length;
+
+      if (n < 2) {
+        setStatus("Need at least two data points to optimize hyperparameters.");
+        optimizationDirty = false;
+        return;
+      }
+
+      const xs = [...trainX].sort((a, b) => a - b);
+      const xRange = Math.max(0.25, xs[xs.length - 1] - xs[0]);
+      const spacings = [];
+      for (let i = 1; i < xs.length; i++) {
+        const d = xs[i] - xs[i - 1];
+        if (d > 1e-8) spacings.push(d);
+      }
+      spacings.sort((a, b) => a - b);
+      const medianSpacing = spacings.length
+        ? spacings[Math.floor(spacings.length / 2)]
+        : xRange / Math.max(1, n - 1);
+
+      const meanY = trainY.reduce((s, y) => s + y, 0) / n;
+      const varY = trainY.reduce((s, y) => s + (y - meanY) * (y - meanY), 0) / n;
+      const yScale = Math.max(0.25, Math.min(3.5, Math.sqrt(varY) || 1.0));
+
+      const ellMin = Math.max(0.08, 0.45 * medianSpacing);
+      const ellMax = Math.min(8.0, Math.max(0.35, 1.5 * xRange));
+
+      const sigmafMin = Math.max(0.08, 0.25 * yScale);
+      const sigmafMax = Math.min(6.0, Math.max(0.8, 3.0 * yScale));
+
+      const noiseMin = n < 4 ? Math.max(0.02, 0.015 * yScale) : Math.max(0.004, 0.005 * yScale);
+      const noiseMax = Math.min(1.2, Math.max(0.08, 0.45 * yScale));
+
+      function logspace(lo, hi, count) {
+        const a = Math.log(lo);
+        const b = Math.log(hi);
+        return Array.from({ length: count }, (_, i) =>
+          Math.exp(a + (b - a) * i / Math.max(1, count - 1))
+        );
+      }
+
+      function clampParams(p) {
+        const q = { ...p };
+        q.ell = Math.min(ellMax, Math.max(ellMin, q.ell));
+        q.sigmaf = Math.min(sigmafMax, Math.max(sigmafMin, q.sigmaf));
+        q.sigman = Math.min(noiseMax, Math.max(noiseMin, q.sigman));
+        q.alpha = Math.min(8.0, Math.max(0.08, q.alpha));
+        q.period = Math.min(10.0, Math.max(0.2, q.period));
+        return q;
+      }
+
+      function guardedScore(p) {
+        const q = clampParams(p);
+        return hyperparameterGuardInfo(q).objective;
+      }
+
+      let best = clampParams({ ...state });
+      let bestScore = guardedScore(best);
+
+      const grids = {
+        ell: logspace(ellMin, ellMax, 24),
+        sigmaf: logspace(sigmafMin, sigmafMax, 20),
+        sigman: logspace(noiseMin, noiseMax, 18)
+      };
+
+      // Coordinate grid search over only the selected hyperparameters.
+      for (const name of activeNames) {
+        for (const value of grids[name]) {
+          const candidate = clampParams({ ...best, [name]: value });
+          const sc = guardedScore(candidate);
+          if (sc > bestScore) {
+            best = candidate;
+            bestScore = sc;
+          }
+        }
+      }
+
+      // A few cycles improve interactions among selected hyperparameters without
+      // creating an expensive full tensor-product search.
+      for (let cycle = 0; cycle < 4; cycle++) {
+        for (const name of activeNames) {
+          for (const value of grids[name]) {
+            const candidate = clampParams({ ...best, [name]: value });
+            const sc = guardedScore(candidate);
+            if (sc > bestScore) {
+              best = candidate;
+              bestScore = sc;
+            }
+          }
+        }
+      }
+
+      if (state.kernel === "RationalQuadratic") {
+        for (const alpha of logspace(0.08, 8.0, 18)) {
+          const candidate = clampParams({ ...best, alpha });
+          const sc = guardedScore(candidate);
+          if (sc > bestScore) {
+            best = candidate;
+            bestScore = sc;
+          }
+        }
+      }
+
+      if (state.kernel === "Periodic (ExpSineSquared)") {
+        for (const period of logspace(0.25, 10.0, 22)) {
+          const candidate = clampParams({ ...best, period });
+          const sc = guardedScore(candidate);
+          if (sc > bestScore) {
+            best = candidate;
+            bestScore = sc;
+          }
+        }
+      }
+
+      let step = 0.30;
+      for (let pass = 0; pass < 7; pass++) {
+        let improved = false;
+        const names = [...activeNames];
+        if (state.kernel === "RationalQuadratic") names.push("alpha");
+        if (state.kernel === "Periodic (ExpSineSquared)") names.push("period");
+
+        for (const name of names) {
+          for (const direction of [-1, 1]) {
+            const candidate = clampParams({
+              ...best,
+              [name]: best[name] * Math.exp(direction * step)
+            });
+            const sc = guardedScore(candidate);
+            if (sc > bestScore) {
+              best = candidate;
+              bestScore = sc;
+              improved = true;
+            }
+          }
+        }
+
+        if (!improved) step *= 0.5;
+      }
+
+      if (state.optEll) state.ell = best.ell;
+      if (state.optSigmaf) state.sigmaf = best.sigmaf;
+      if (state.optSigman) state.sigman = best.sigman;
+      state.alpha = best.alpha;
+      state.period = best.period;
+
+      $("ell").value = state.ell;
+      $("sigmaf").value = state.sigmaf;
+      $("sigman").value = state.sigman;
+      $("alpha").value = state.alpha;
+      $("period").value = state.period;
+
+      updateLabels();
+      optimizationDirty = false;
+
+      const info = hyperparameterGuardInfo(state);
+      const chosen = activeNames
+        .map((name) => name === "ell" ? "ℓ" : (name === "sigmaf" ? "σ_f" : "σ_n"))
+        .join(", ");
+      setStatus(
+        `Optimized ${chosen}. Guarded objective = ${info.objective.toFixed(3)}. ` +
+        `LML = ${info.rawLml.toFixed(3)}; penalty = ${info.penalty.toFixed(3)}. ` +
+        info.ranges
+      );
+    }
+
+    function posteriorStats() {
+      const n = trainX.length;
+      if (!(state.posterior && n > 0)) {
+        const K = covariance(XTEST, XTEST, state, false);
+        return {
+          mu: Array(NTEST).fill(0),
+          cov: K,
+          status: state.posterior
+            ? "No posterior fit: click in the plot to add data."
+            : "Drawing from the prior."
+        };
+      }
+
+      optimizeHyperparameters();
+      const K = covariance(trainX, trainX, state, true);
+      for (let i = 0; i < n; i++) K[i][i] += 1e-8;
+      const L = cholesky(K);
+      const z = solveLower(L, trainY);
+      const alpha = solveUpperFromLower(L, z);
+      const Ks = covariance(trainX, XTEST, state, false);
+      const KsT = transpose(Ks);
+      const mu = matVec(KsT, alpha);
+      const v = solveLower(L, Ks);
+      const Kss = covariance(XTEST, XTEST, state, false);
+      const cov = zeros(NTEST, NTEST);
+      for (let i = 0; i < NTEST; i++) {
+        for (let j = 0; j < NTEST; j++) {
+          let correction = 0;
+          for (let k = 0; k < n; k++) correction += v[k][i] * v[k][j];
+          cov[i][j] = Kss[i][j] - correction;
+        }
+      }
+      const info = hyperparameterGuardInfo(state);
+      return {
+        mu,
+        cov,
+        status:
+          `Fitted GP. LML = ${info.rawLml.toFixed(3)}; ` +
+          `guarded objective = ${info.objective.toFixed(3)}; ` +
+          `penalty = ${info.penalty.toFixed(3)}.`
+      };
+    }
+
+    function samplePaths(mu, cov, nPaths) {
+      if (nPaths <= 0) return [];
+      const K = cov.map((row, i) => row.map((v, j) => v + (i === j ? 1e-8 : 0)));
+      const L = cholesky(K);
+      const paths = [];
+      for (let p = 0; p < nPaths; p++) {
+        const z = Array.from({ length: NTEST }, normalRandom);
+        const y = Array(NTEST).fill(0);
+        for (let i = 0; i < NTEST; i++) {
+          let sum = 0;
+          for (let k = 0; k <= i; k++) sum += L[i][k] * z[k];
+          y[i] = mu[i] + sum;
+        }
+        paths.push(y);
+      }
+      return paths;
+    }
+
+    function updateLabels() {
+      $("ellv").textContent = state.ell.toFixed(2);
+      $("sigmafv").textContent = state.sigmaf.toFixed(2);
+      $("sigmanv").textContent = state.sigman.toFixed(3);
+      $("alphav").textContent = state.alpha.toFixed(2);
+      $("periodv").textContent = state.period.toFixed(2);
+      $("drawnv").textContent = state.drawn;
+      $("alpha-wrap").classList.toggle("hidden", state.kernel !== "RationalQuadratic");
+      $("period-wrap").classList.toggle("hidden", state.kernel !== "Periodic (ExpSineSquared)");
+    }
+
+    function drawTextSubscript(ctx, x, y, main, sub, suffix) {
+      ctx.font = "16px sans-serif";
+      ctx.fillText(main, x, y);
+      const width = ctx.measureText(main).width;
+      ctx.font = "11px sans-serif";
+      ctx.fillText(sub, x + width + 1, y + 5);
+      ctx.font = "16px sans-serif";
+      ctx.fillText(suffix, x + width + 11, y);
+    }
+
+    function draw() {
+      const canvas = $("plot");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const margin = { l: 60, r: 25, t: 25, b: 58 };
+      const W = canvas.width - margin.l - margin.r;
+      const H = canvas.height - margin.t - margin.b;
+      const X = (x) => margin.l + (x - XMIN) / (XMAX - XMIN) * W;
+      const Y = (y) => margin.t + (YMAX - y) / (YMAX - YMIN) * H;
+
+      const stats = posteriorStats();
+      const std = stats.cov.map((row, i) => Math.sqrt(Math.max(row[i], 0)));
+      const paths = samplePaths(stats.mu, stats.cov, state.drawn);
+
+      ctx.strokeStyle = "#222";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(margin.l, margin.t);
+      ctx.lineTo(margin.l, margin.t + H);
+      ctx.lineTo(margin.l + W, margin.t + H);
+      ctx.stroke();
+
+      ctx.fillStyle = "#222";
+      ctx.font = "14px sans-serif";
+      for (let x = -4; x <= 4; x += 2) {
+        ctx.fillText(String(x), X(x) - 5, margin.t + H + 20);
+        ctx.beginPath();
+        ctx.moveTo(X(x), margin.t + H);
+        ctx.lineTo(X(x), margin.t + H + 4);
+        ctx.stroke();
+      }
+      for (let y = -3; y <= 3; y += 1.5) {
+        ctx.fillText(String(y), margin.l - 34, Y(y) + 4);
+        ctx.beginPath();
+        ctx.moveTo(margin.l - 4, Y(y));
+        ctx.lineTo(margin.l, Y(y));
+        ctx.stroke();
+      }
+      ctx.font = "16px sans-serif";
+      ctx.fillText("x", margin.l + W / 2, canvas.height - 18);
+      ctx.save();
+      ctx.translate(18, margin.t + H / 2 + 18);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText("f(x)", 0, 0);
+      ctx.restore();
+
+      function drawBand(mult, color, alpha) {
+        if (!state.showmean) return;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        for (let i = 0; i < NTEST; i++) {
+          const yy = stats.mu[i] + mult * std[i];
+          const px = X(XTEST[i]);
+          const py = Y(Math.max(YMIN, Math.min(YMAX, yy)));
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        for (let i = NTEST - 1; i >= 0; i--) {
+          const yy = stats.mu[i] - mult * std[i];
+          ctx.lineTo(X(XTEST[i]), Y(Math.max(YMIN, Math.min(YMAX, yy))));
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      drawBand(1.96, "lightgray", 0.75);
+      drawBand(1.0, "gray", 0.45);
+
+      paths.forEach((path) => {
+        ctx.strokeStyle = "rgba(31, 119, 180, 0.42)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        path.forEach((y, i) => {
+          const px = X(XTEST[i]);
+          const py = Y(Math.max(YMIN, Math.min(YMAX, y)));
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        });
+        ctx.stroke();
+      });
+
+      if (state.showmean) {
+        ctx.strokeStyle = "rgba(214, 39, 40, 0.95)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        stats.mu.forEach((y, i) => {
+          const px = X(XTEST[i]);
+          const py = Y(Math.max(YMIN, Math.min(YMAX, y)));
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        });
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "#1f77b4";
+      trainX.forEach((x, i) => {
+        ctx.beginPath();
+        ctx.arc(X(x), Y(trainY[i]), 5, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+
+      ctx.fillStyle = "#222";
+      ctx.font = "15px sans-serif";
+      ctx.fillText("95% band", margin.l + W - 130, margin.t + 24);
+      ctx.fillText("68% band", margin.l + W - 130, margin.t + 48);
+      ctx.fillStyle = "lightgray";
+      ctx.fillRect(margin.l + W - 170, margin.t + 14, 28, 12);
+      ctx.fillStyle = "gray";
+      ctx.fillRect(margin.l + W - 170, margin.t + 38, 28, 12);
+      ctx.strokeStyle = "#d62728";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(margin.l + W - 172, margin.t + 70);
+      ctx.lineTo(margin.l + W - 142, margin.t + 70);
+      ctx.stroke();
+      ctx.fillStyle = "#222";
+      ctx.fillText("GP mean", margin.l + W - 130, margin.t + 75);
+
+      setStatus(`${stats.status} Training points: ${trainX.length}.`);
+    }
+
+    function plotCoordinates(event) {
+      const canvas = $("plot");
+      const rect = canvas.getBoundingClientRect();
+      const cx = (event.clientX - rect.left) * canvas.width / rect.width;
+      const cy = (event.clientY - rect.top) * canvas.height / rect.height;
+      const margin = { l: 60, r: 25, t: 25, b: 58 };
+      const W = canvas.width - margin.l - margin.r;
+      const H = canvas.height - margin.t - margin.b;
+      if (cx < margin.l || cx > margin.l + W || cy < margin.t || cy > margin.t + H) return null;
+      const x = XMIN + (cx - margin.l) / W * (XMAX - XMIN);
+      const y = YMAX - (cy - margin.t) / H * (YMAX - YMIN);
+      return { x, y };
+    }
+
+    $("plot").addEventListener("click", (event) => {
+      const pt = plotCoordinates(event);
+      if (!pt) return;
+      trainX.push(pt.x);
+      trainY.push(pt.y);
+      const order = trainX.map((x, i) => [x, trainY[i]]).sort((a, b) => a[0] - b[0]);
+      trainX = order.map((row) => row[0]);
+      trainY = order.map((row) => row[1]);
+      optimizationDirty = true;
+      draw();
+    });
+
+    function syncStateFromControls(event) {
+      const changedId = event && event.target ? event.target.id : "";
+
+      const oldKernel = state.kernel;
+
+      state.kernel = $("kernel").value;
+      state.ell = Number($("ell").value);
+      state.sigmaf = Number($("sigmaf").value);
+      state.sigman = Number($("sigman").value);
+      state.alpha = Number($("alpha").value);
+      state.period = Number($("period").value);
+      state.drawn = Number($("drawn").value);
+      state.posterior = $("posterior").checked;
+      state.showmean = $("showmean").checked;
+      state.optEll = $("opt-ell").checked;
+      state.optSigmaf = $("opt-sigmaf").checked;
+      state.optSigman = $("opt-sigman").checked;
+
+      // Re-optimize only when the model/data context changes or the optimizer
+      // is newly turned on. Manual hyperparameter slider moves should remain
+      // under user control and must not be immediately overwritten.
+      if (
+        changedId === "kernel" ||
+        changedId === "posterior" ||
+        changedId === "opt-ell" ||
+        changedId === "opt-sigmaf" ||
+        changedId === "opt-sigman" ||
+        state.kernel !== oldKernel
+      ) {
+        optimizationDirty = true;
+      }
+
+      updateLabels();
+      draw();
+    }
+
+    ["kernel", "ell", "sigmaf", "sigman", "alpha", "period", "drawn",
+     "posterior", "showmean", "opt-ell", "opt-sigmaf", "opt-sigman"].forEach((id) => {
+      $(id).addEventListener("input", syncStateFromControls);
+      $(id).addEventListener("change", syncStateFromControls);
+    });
+
+    $("draw").addEventListener("click", () => {
+      seed = Math.floor(Math.random() * 2147483647) || 1234567;
+      draw();
+    });
+
+    $("clear").addEventListener("click", () => {
+      trainX = [];
+      trainY = [];
+      optimizationDirty = true;
+      setStatus("Cleared.");
+      draw();
+    });
+
+    $("reseed").addEventListener("click", () => {
+      seed = Math.floor(Math.random() * 2147483647) || 1234567;
+      draw();
+    });
+
+    updateLabels();
+    draw();
+  })();
+  
+
+</script>
+</div>
+
+  </main>
+</body>
+</html>

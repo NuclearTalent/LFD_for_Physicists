@@ -8,7 +8,7 @@ jupytext:
 ---
 
 (sec:GaussianProcesses)=
-# More on Gaussian processes
+# More details on Gaussian processes
 
 ## Inference using Gaussian processes
 
@@ -462,5 +462,4 @@ p \left( t^{(N+1)} | \boldsymbol{t}_N \right) = \int d\boldsymbol{\alpha} p \lef
 $$ (eq:tN1marg)
 
 The optimization approach is absolutely dominating the literature on GP regression. The data likelihood is maximized with respect to the hyperparameters and the resulting covariance function is then used for regression. The second approach gives a better quantification of the uncertainties, but is more computationally demanding.
-
 
