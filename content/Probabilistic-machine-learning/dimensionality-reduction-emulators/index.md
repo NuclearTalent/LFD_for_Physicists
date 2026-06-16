@@ -1,5 +1,9 @@
-(sec:Emulators)=
-# Emulators
+(sec:DimensionalityReductionEmulators)=
+# Dimensionality reduction and emulators
+
+In this chapter we consider various aspects of dimensionality reduction of data.
+A key tool is SVD, which is "singular value decomposition", and its role in PCA, which is "principle component analysis".
+These are described in {ref}`sec:SVDandPCA`.
 
 The challenges of simulating physical phenomena are being addressed in many subfields with a wide range of accurate *high-fidelity* methods.
 However, when we need to change the parameters characterizing the problem, such as Hamiltonian coupling constants, it can become computationally prohibitive to repeat high-fidelity calculations many times and challenging to reliably extrapolate.

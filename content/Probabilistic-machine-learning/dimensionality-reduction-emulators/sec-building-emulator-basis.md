@@ -27,7 +27,7 @@ Figures from [Maldonado et al.](https://arxiv.org/abs/2504.06092) illustrating o
 
 ## POD approach
 
-{numref}`fig-Proper_Orthogonal_Decomposition` gives a schematic illustration of how POD is implemented using a singular value decomposition (SVD). See {numref}`sec:DimensionalityReduction` for details on SVDs and also the related Principle Component Analysis (PCA) approach to dimensional reduction.
+{numref}`fig-Proper_Orthogonal_Decomposition` gives a schematic illustration of how POD is implemented using a singular value decomposition (SVD). See {numref}`sec:SVDandPCA` for details on SVDs and also the related Principle Component Analysis (PCA) approach to dimensional reduction.
 
 :::{figure} ../assets/Proper_Orthogonal_Decomposition.png
 :height: 480px

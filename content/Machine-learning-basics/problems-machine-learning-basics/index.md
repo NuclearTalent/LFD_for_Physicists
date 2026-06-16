@@ -7,7 +7,7 @@ jupytext:
   name: python3
 ---
 
-(ch:PartVGuidedProjects)=
-# Guided projects for Part V
+(ch:PartIVProblems)=
+# Problems for Part IV
 
-In this chapter we collect various guided projects
+In this chapter we collect various problems.

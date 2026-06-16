@@ -1,7 +1,7 @@
 (sec:CNN)=
 # \*Convolutional Neural Networks
 
-<div class="highlight-section">
+<!--<div class="highlight-section">-->
 
 <!--{{ sub_extra_admonition }}-->
 
@@ -182,4 +182,4 @@ In summary:
 For more material on convolutional networks, we strongly recommend
 the slides of [CS231](http://cs231n.github.io/convolutional-networks/) which is taught at Stanford University. Furthermore, Michael Nielsen's book [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/index.html) is a very good read, in particular chapter 6 which deals with [CNNs](http://neuralnetworksanddeeplearning.com/chap6.html).
 
-</div>
+<!--</div>-->
