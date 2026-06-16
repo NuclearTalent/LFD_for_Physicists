@@ -1,0 +1,1190 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>26.2. Neural networks: Backpropagation &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=6bd7df4c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\rm th}", "yexp": "y_{\\rm exp}", "ym": "y_{\\rm m}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "vvec": "\\boldsymbol{v}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}", "ytrue": "y_{\\rm true}", "Amat": "\\boldsymbol{A}", "AmatT": "\\boldsymbol{A^\\top}", "Sigmamat": "\\boldsymbol{\\Sigma}", "Yvec": "\\boldsymbol{Y}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/Machine-learning-basics/artificial-neural-networks/sec-neural-networks-backpropagation';</script>
+    <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
+    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
+    <script src="../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
+    <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="26.3. Demo: Feed-forward neural network for a function in PyTorch" href="demo-ann-simple-function-using-pytorch.html" />
+    <link rel="prev" title="26.1. ANN details" href="sec-artificial-neural-networks.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../About.html">
+                    Learning from data for physicists
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Overview/invitation-to-inductive-inference/invitation.html">1. Invitation to inductive inference</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Overview/introduction/index.html">2. Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-physicist-s-perspective.html">2.1. Physicist’s perspective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-bayesian-workflow.html">2.2. Bayesian workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-machine-learning.html">2.3. Machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-virtues.html">2.4. Virtues</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/index.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/index.html">4. Inference and PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-statements.html">4.1. Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-manipulating-probabilities-bayesian-rules-of-probability-as.html">4.2. Manipulating probabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-probability-density-functions.html">4.3. Probability density functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-expectation-values-and-moments.html">4.4. Expectation values and moments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-review-of-bayes-theorem.html">4.5. Review of Bayes’ theorem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-data-models-predictions.html">4.6. Data, models, and predictions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-bayesian-epistemology.html">4.7. *Aside: Bayesian epistemology</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/index.html">5. More on PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-one-dimensional-PDFs.html">5.1. One-dimensional PDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-two-dimensional-PDFs.html">5.2. Two-dimensional PDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-bayesian-credible-intervals.html">5.3. Bayesian credible intervals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-central-limit-theorem.html">5.4. The Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/index.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-coin-tossing-frequentists-and-bayesians.html">6.1. Coin tossing: Frequentists and Bayesians</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/demo-bayesian-coin-tossing.html">6.2. Demo: Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/demo-widget-coin-tossing.html">6.3. Demo: Widgetized coin tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-take-aways-and-follow-up-questions-from-coin-flipping.html">6.4. Take-aways and follow-ups for coin flipping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-computing-the-posterior-analytically.html">6.5. Analytic coin-flipping posterior</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/index.html">7. Error propagation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-nuisance-parameters-and-marginalization.html">7.1. Nuisance parameters and marginalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-changing-variables.html">7.2. Changing variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-a-useful-approximation.html">7.3. A useful approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-solutions.html">7.4. Solutions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/index.html">8. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-advantages-of-the-bayesian-approach.html">8.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-bayesian-research-workflow.html">8.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-bayesian-linear-regression.html">8.3. Bayesian Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/demo-linear-regression-and-model-validation.html">8.4. Demo: Linear Regression and Model Validation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/index.html">9. Problems for Part I</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-checking-the-sum-and-product-rules.html">9.1. Checking the sum and product rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-standard-medical-example-using-bayes.html">9.2. Standard medical example using Bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-exploring-PDFs.html">9.3. Exploring PDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-gaussian-mean-and-variance.html">9.4. Gaussian noise and averages I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-radioactive-lighthouse-problem.html">9.5. Radioactive lighthouse problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-amplitude-of-a-signal-in-the-presence-of-background.html">9.6. Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-fitting-a-straight-line-i.html">9.7. Fitting a straight line I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-fitting-a-straight-line-ii.html">9.8. Fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-gaussian-noise-and-averages-ii.html">9.9. Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-2d-radioactive-lighthouse-location-using-mcmc.html">9.10. 2D radioactive lighthouse location using MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-comparing-noise-sampling-to-lighthouse-analysis.html">9.11. Comparing Gaussian noise sampling to lighthouse analysis</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Advanced-Bayesian-methods/index.html">10. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/index.html">11. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/sec-assigning-probabilities-i-indifferences-and-translation-groups.html">11.1. Indifferences and translation groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/demo-straight_lines.html">11.2. Demo: Alternative notebook with MCMC sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/sec-assigning-probabilities-ii-the-principle-of-maximum-entropy.html">11.3. The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/demo-maximum-entropy-for-reconstructing-a-function-from-its-moments.html">11.4. Demo: Maximum Entropy for reconstructing a function</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/index.html">12. Dealing with outliers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/sec-setup-linear-regression-outliers.html">12.1. Setup: linear regression with bad data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/sec-frequentist-methods-for-outliers.html">12.2. Frequentist methods to deal with outliers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/sec-bayesian-methods-for-outliers.html">12.3. Bayesian methods to deal with outliers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/demo-dealing-with-outliers.html">12.4. Demo: Illustrating approaches to outliers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/demo-student-t-distribution-from-gaussians.html">12.5. Demo: Student's t-distribution from Gaussians</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/bayes-goes-linear-history-matching/index.html">13. Bayes goes linear — History matching</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/bayes-goes-linear-history-matching/sec-bayes-linear-methods.html">13.1. Bayes linear methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/bayes-goes-linear-history-matching/sec-iterative-history-matching.html">13.2. Iterative history matching</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/index.html">14. Model selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-frequentist-hypothesis-testing.html">14.1. Frequentist hypothesis testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-bayesian-model-selection.html">14.2. Bayesian model selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-evidence-calculations.html">14.3. Evidence calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/demo-evidence-calculation-for-eft-expansions.html">14.4. Demo: Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-follow-up-to-eft-evidence.html">14.5. Follow-up to EFT evidence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-computing-the-bayesian-evidence.html">14.6. Computing the Bayesian evidence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-information-criteria.html">14.7. Information criteria</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/example-information-criteria-and-bayes-factors.html">14.8. Example: Information Criteria and Bayes factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/index.html">15. Discrepancy Models with GPs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-introduction-to-discrepancy-models.html">15.1. Introduction to discrepancy models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-koh-framework.html">15.2. The KOH and BOH frameworks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-the-ball-drop-model.html">15.3. The ball-drop model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/demo-ball-drop-experiment.html">15.4. Demo: Ball-drop experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-real-world-application-of-discrepancy-model.html">15.5. Example: Discrepancy models for relativistic heavy-ion collisions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/index.html">16. Model averaging and mixing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-bayesian-inference-in-the-multi-model-setting.html">16.1. Bayesian inference in the multi-model setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-bayesian-model-averaging.html">16.2. Bayesian model averaging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-bayesian-model-mixing.html">16.3. Bayesian model mixing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-a-tale-of-two-models.html">16.4. A tale of two models</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../MCMC-sampling/index.html">17. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/index.html">18. Intuition for MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-why-mcmc.html">18.1. Why MCMC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-the-metropolis-hastings-algorithm.html">18.2. The Metropolis–Hastings algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-visualizations-of-mcmc.html">18.3. Visualizations of MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/demo-sampling-of-a-poisson-distribution.html">18.4. Demo: Sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/demo-random-walk-and-sampling.html">18.5. Demo: Random walk and sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/index.html">19. Details of MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-stochastic-processes.html">19.1. Stochastic processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-example-random-walk.html">19.2. Example: Random walk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-special-case-gaussian-process.html">19.3. Special case: Gaussian process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-markov-chains.html">19.4. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-derivation-of-the-metropolis-hastings-algorithm.html">19.5. Derivation of the Metropolis–Hastings algorithm</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/index.html">20. MCMC in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-workflow-for-mcmc-sampling.html">20.1. Workflow for MCMC sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-diagnostics-for-mcmc-sampling.html">20.2. Diagnostics for MCMC sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/demo-mcmc-diagnostics.html">20.3. Demo: MCMC diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-best-practices-for-mcmc-sampling.html">20.4. Best practices for MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/index.html">21. Advanced sampling algorithms</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-ensemble-sampling.html">21.1. Ensemble sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-parallel-tempering.html">21.2. Parallel tempering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-hamiltonian-monte-carlo.html">21.3. Hamiltonian Monte Carlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-sampling-importance-resampling.html">21.4. Sampling / Importance resampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-slice-sampling.html">21.5. Slice sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-nested-sampling.html">21.6. Nested sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/index.html">22. State-of-the-art sampling implementations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/sec-overview-implementations.html">22.1. Overview: individual sampling libraries and full probabilistic packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/demo-multimodal-distributions-with-two-samplers.html">22.2. Demo: Multimodal distributions with the ptemcee and Zeus samplers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/demo-pocomc.html">22.3. Demo: pocoMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/sec-overview-intro-to-pymc.html">22.4. Overview: Intro to PyMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/demo-pymc-introduction.html">22.5. Demo: PyMC Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/demo-bilby.html">22.6. Demo: Bilby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/demo-comparing-samplers-for-a-simple-problem.html">22.7. Demo: Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning basics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">23. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../machine-learning-overview/index.html">24. Machine learning overview</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../machine-learning-overview/sec-types-of-machine-learning.html">24.1. Types of Machine Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../machine-learning-overview/sec-data-handling-machine-learning-and-ethical-aspects.html">24.2. Data handling, machine learning and ethical aspects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../machine-learning-overview/sec-model-validation.html">24.3. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../machine-learning-overview/sec-data-bias-and-fairness.html">24.4. Data bias and fairness in machine learning</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../logistic-regression/index.html">25. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../logistic-regression/sec-machine-learning-first-examples.html">25.5. Machine Learning: First Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logistic-regression/exercise-logreg-and-neural-networks.html">25.6. Exercise: Logistic Regression and Neural Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">26. Artificial neural networks (ANNs)</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="sec-artificial-neural-networks.html">26.1. Details of ANNs</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">26.2. Training an ANN: backpropagation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-ann-simple-function-using-pytorch.html">26.3. Demo: ANN for simple function using PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-mnist-classifier-in-pytorch.html">26.4. Demo: MNIST classifier demo in PyTorch</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../convolutional-neural-nets/index.html">27. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../convolutional-neural-nets/sec-what-is-a-convolutional-neural-network.html">27.6. Alternative: What is a convolutional neural network?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../convolutional-neural-nets/demo-image-recognition-with-cnn.html">27.7. Demo: Image recognition with Convolutional Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../convolutional-neural-nets/demo-cnn-pytorch.html">27.8. Demo: Pytorch version of the CNN demo notebook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo-mnist-classifier-in-pytorch-cnn-binder.html">27.9. Demo: Binder version of original MNIST classifier with CNN</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../problems-machine-learning-basics/index.html">28. Problems for Part IV</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Probabilistic machine learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Probabilistic-machine-learning/index.html">29. Overview of Part V </a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/index.html">30. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/demo-variational-inference-and-bnn.html">30.4. Demo: Variational Inference and Bayesian Neural Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/gaussian-processes/index.html">31. Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/gaussian-processes/demo-intuition-for-gaussian-processes.html">31.1. Demo: Intuition for Gaussian processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/gaussian-processes/sec-basic-info-on-gps.html">31.2. Basic info on GPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/gaussian-processes/sec-more-details-on-gps.html">31.3. More details on GPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/gaussian-processes/demo-gaussian-processes.html">31.4. Demo: Gaussian Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/gaussian-processes/sec-sklearn-demos.html">31.5. Demo: Scikit-Learn demo notebooks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/anns-in-the-large-width-limit/index.html">32. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/anns-in-the-large-width-limit/sec-sparsity.html">32.1. Sparsity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/anns-in-the-large-width-limit/sec-anns-at-large-width.html">32.2. Neural networks in the large width limit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/anns-in-the-large-width-limit/sec-annft-key-ideas.html">32.3. ANNFT key ideas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/anns-in-the-large-width-limit/sec-criticality-analysis.html">32.4. Criticality analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/anns-in-the-large-width-limit/sec-validating-ANNFT.html">32.5. Validating ANNFT training behaviors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/anns-in-the-large-width-limit/sec-expansion-parameter.html">32.6. Expansion parameter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/anns-in-the-large-width-limit/sec-critical-tuning.html">32.7. Critical tuning of hyperparameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/anns-in-the-large-width-limit/sec-summary-results.html">32.8. Summary of results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/anns-in-the-large-width-limit/sec-field-theory-formalism.html">32.9. Appendix: field theory formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/anns-in-the-large-width-limit/demo-distributions-of-randomly-initialized-anns.html">32.10. Demo: Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-optimization/index.html">33. Bayesian Optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-optimization/sec-overview-bayesian-optimization.html">33.1. Overview of Bayesian optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-optimization/sec-acquisition-functions.html">33.2. Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-optimization/sec-examples.html">33.3. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-optimization/sec-concluding-remarks.html">33.4. Concluding remarks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/dimensionality-reduction-emulators/index.html">34. Dimensionality reduction and emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/dimensionality-reduction-emulators/sec-svd-and-pca.html">34.1. SVD and PCA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/dimensionality-reduction-emulators/sec-bayes-goes-fast.html">34.2. Bayes goes fast: Emulator overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/dimensionality-reduction-emulators/sec-rbm-emulators.html">34.3. RBM emulators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/dimensionality-reduction-emulators/demo-rbm-ho-gp-example.html">34.4. Demo: RBM vs. HO expansion vs. GP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/dimensionality-reduction-emulators/sec-building-emulator-basis.html">34.5. Building an emulator basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/dimensionality-reduction-emulators/sec-pmm-emulators.html">34.6. PMM emulators</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/problems-probabilistic-machine-learning/index.html">35. Problems for Part V</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/problem-bayesian-neural-networks.html">35.1. Bayesian neural networks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/bibliography.html">36. Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/JB_tests.html">37. Guide to Jupyter Book markdown</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Statistics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Statistics/index.html">38. Notation and overview of statistics material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Statistics/probability-measure/index.html">39. The probability measure</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/probability-measure/sec-important-definitions.html">39.1. Important definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/probability-measure/sec-types-probability.html">39.2. Types of probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/probability-measure/sec-exercises.html">39.3. Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Statistics/working-with-probability-distributions/index.html">40. Working with probability distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/working-with-probability-distributions/sec-important-distributions.html">40.1. Important distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/working-with-probability-distributions/sec-scipy-stats.html">40.2. Quick introduction to  <code class="docutils literal notranslate"><span class="pre">scipy.stats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/working-with-probability-distributions/sec-point-estimates-credible-regions.html">40.3. Point estimates and credible regions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/working-with-probability-distributions/sec-exercises.html">40.4. Exercises</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Scientific-modeling/index.html">41. Overview of scientific modeling material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/index.html">42. Overview of modeling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-notation.html">42.1. Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-models-in-science.html">42.2. Models in science</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-parametric-versus-non-parametric-models.html">42.3. Parametric versus non-parametric models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-linear-versus-non-linear-models.html">42.4. Linear versus non-linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-regression-analysis-optimization-versus-inference.html">42.5. Regression analysis: optimization versus inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-exercises.html">42.6. Exercises</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-solutions.html">42.7. Solutions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/index.html">43. Linear models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-definition-of-linear-models.html">43.1. Definition of linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-regression-analysis-with-linear-models.html">43.2. Regression analysis with linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-ordinary-linear-regression-warmup.html">43.3. Ordinary linear regression: warmup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-ordinary-linear-regression-in-practice.html">43.4. Ordinary linear regression in practice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-solutions.html">43.5. Solutions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/index.html">44. Mathematical optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-gradient-descent-optimization.html">44.1. Gradient-descent optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-batch-stochastic-and-mini-batch-gradient-descent.html">44.2. Batch, stochastic and mini-batch gradient descent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-adaptive-gradient-descent-algorithms.html">44.3. Adaptive gradient descent algorithms</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Getting-started/index.html">45. Overview of Getting started material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/index.html">46. Setting up for interactive use of this Jupyter book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/sec-using-git.html">46.1. Using git for cloning the book repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/sec-using-conda.html">46.2. Setting up your Python enviroment</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Getting-started/jupyter-notebooks-and-python/index.html">47. Jupyter notebooks and Python</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/index.html">48. Guides on Jupyter notebooks and Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/jupyter-notebooks-and-python/exercise-jupyter-notebooks-and-python.html">48.1. Exercise: Jupyter notebooks and Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/exercise-python-lists-and-iterations.html">48.2. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/exercise-linear-algebra-operations-with-numpy.html">48.3. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/demo-reading-data-and-fitting.html">48.4. Demo: Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/demo-making-a-simple-widget-based-ui.html">48.5. Demo: Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/index.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_I_toy_model_of_EFT.html"> MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIa.html"> MP IIa: Model selection basics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Mini-projects/Mini-project_IIb_overview.html"> MP IIb: How many lines?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Mini-projects/model-selection_mini-project-IIb_How_many_lines_ptemcee.html">Mini-project IIb: How many lines are there?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIa_bayesian_optimization.html"> MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html"> MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_for_Physicists" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_for_Physicists/issues/new?title=Issue%20on%20page%20%2Fcontent/Machine-learning-basics/artificial-neural-networks/sec-neural-networks-backpropagation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/content/Machine-learning-basics/artificial-neural-networks/sec-neural-networks-backpropagation.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Neural networks: Backpropagation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deriving-the-back-propagation-code-for-a-multilayer-perceptron-model">Deriving the back propagation code for a multilayer perceptron model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions">Definitions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-and-the-chain-rule">Derivatives and the chain rule</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-the-cost-function">Derivative of the cost function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bringing-it-together-first-back-propagation-equation">Bringing it together, first back propagation equation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-in-terms-of-z-j-l">Derivatives in terms of <span class="math notranslate nohighlight">\(z_j^L\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-back-propagating-equation">Final back-propagating equation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-the-back-propagation-algorithm">Setting up the back-propagation algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-challenges">Learning challenges</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="neural-networks-backpropagation">
+<span id="sec-neuralnetbackprop"></span><h1><span class="section-number">26.2. </span>Neural networks: Backpropagation<a class="headerlink" href="#neural-networks-backpropagation" title="Link to this heading">#</a></h1>
+<p>As we have seen the final output of a feed-forward network can be expressed in terms of basic matrix-vector multiplications.
+The unknowwn quantities are our weights <span class="math notranslate nohighlight">\(w_{ij}\)</span> and we need to find an algorithm for changing them so that our errors are as small as possible.
+This leads us to the famous back propagation algorithm <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id33" title="David E. Rumelhart, Geoffrey E. Hinton, and Ronald J. Williams. Learning representations by back-propagating errors. Nature, 323(6088):533-536, October 1986. doi:10.1038/323533a0.">RumelhartHintonWilliams86</a>]</span>.</p>
+<section id="deriving-the-back-propagation-code-for-a-multilayer-perceptron-model">
+<h2>Deriving the back propagation code for a multilayer perceptron model<a class="headerlink" href="#deriving-the-back-propagation-code-for-a-multilayer-perceptron-model" title="Link to this heading">#</a></h2>
+<p>The questions we want to ask are how do changes in the biases and the
+weights in our network change the cost function and how can we use the
+final output to modify the weights?</p>
+<p>To derive these equations let us start with a plain regression problem
+and define our cost function as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-ea128163-9869-4ca7-95d8-8a0516d678e7">
+<span class="eqno">(26.13)<a class="headerlink" href="#equation-ea128163-9869-4ca7-95d8-8a0516d678e7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+{\cal C}(\boldsymbol{W})  =  \frac{1}{2}\sum_{i=1}^n\left(y_i - t_i\right)^2, 
+
+\end{equation}\]</div>
+<p>where the <span class="math notranslate nohighlight">\(t_i\)</span>s are our <span class="math notranslate nohighlight">\(n\)</span> targets (the values we want to
+reproduce), while the outputs of the network after having propagated
+all inputs <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> are given by <span class="math notranslate nohighlight">\(y_i\)</span>.  Other cost functions can also be considered.</p>
+<section id="definitions">
+<h3>Definitions<a class="headerlink" href="#definitions" title="Link to this heading">#</a></h3>
+<p>With our definition of the targets <span class="math notranslate nohighlight">\(\boldsymbol{t}\)</span>, the outputs of the
+network <span class="math notranslate nohighlight">\(\boldsymbol{y}\)</span> and the inputs <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> we
+define now the activation <span class="math notranslate nohighlight">\(z_j^l\)</span> of node/neuron/unit <span class="math notranslate nohighlight">\(j\)</span> of the
+<span class="math notranslate nohighlight">\(l\)</span>-th layer as a function of the bias, the weights which add up from
+the previous layer <span class="math notranslate nohighlight">\(l-1\)</span> and the forward passes/outputs
+<span class="math notranslate nohighlight">\(\boldsymbol{a}^{l-1}\)</span> from the previous layer as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-f7193f8e-9506-4b45-b754-cc464a82ef39">
+<span class="eqno">(26.14)<a class="headerlink" href="#equation-f7193f8e-9506-4b45-b754-cc464a82ef39" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+z_j^l = \sum_{i=1}^{M_{l-1}}w_{ij}^la_i^{l-1}+b_j^l,
+
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(b_j^l\)</span> are the biases from layer <span class="math notranslate nohighlight">\(l\)</span>.  Here <span class="math notranslate nohighlight">\(M_{l-1}\)</span>
+represents the total number of nodes/neurons/units of layer <span class="math notranslate nohighlight">\(l-1\)</span>.</p>
+<div class="tip admonition">
+<p class="admonition-title">Activation outputs</p>
+<p>In this derivation we will denote the output of neuron <span class="math notranslate nohighlight">\(j\)</span> in layer <span class="math notranslate nohighlight">\(l\)</span> as a_j^{l}. Collectively, all outputs from layer <span class="math notranslate nohighlight">\(l\)</span> corresponds to the vector <span class="math notranslate nohighlight">\(\boldsymbol{a}^l\)</span>.</p>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">Final outputs</p>
+<p>We will reserve the output notation <span class="math notranslate nohighlight">\(y\)</span> exclusively for the final layer such that an <span class="math notranslate nohighlight">\(L\)</span>-layer network has final output <span class="math notranslate nohighlight">\(\boldsymbol{y} \equiv \boldsymbol{a}^L\)</span>. Note that it is quite common to use a different activation function for the final outputs as compared with the inner layers.</p>
+</div>
+<p>We can rewrite this <em>(figure to be inserted)</em> in a more
+compact form as the matrix-vector products we discussed earlier,</p>
+<div class="amsmath math notranslate nohighlight" id="equation-40b4e0de-60e5-4b1f-a231-153a9c2af34b">
+<span class="eqno">(26.15)<a class="headerlink" href="#equation-40b4e0de-60e5-4b1f-a231-153a9c2af34b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\boldsymbol{z}^l = \left(\boldsymbol{W}^l\right)^T\boldsymbol{a}^{l-1}+\boldsymbol{b}^l.
+
+\end{equation}\]</div>
+<p>With the activation values <span class="math notranslate nohighlight">\(\boldsymbol{z}^l\)</span> we can in turn define the
+output of layer <span class="math notranslate nohighlight">\(l\)</span> as <span class="math notranslate nohighlight">\(\boldsymbol{a}^l = f(\boldsymbol{z}^l)\)</span> where <span class="math notranslate nohighlight">\(f\)</span> is our
+activation function. In the examples here we will use the sigmoid
+function discussed in the logistic regression lecture. We will also use the same activation function <span class="math notranslate nohighlight">\(f\)</span> for all layers
+and their nodes.  It means we have</p>
+<div class="amsmath math notranslate nohighlight" id="equation-f3936241-2395-4851-8c03-6ea1d48af6ee">
+<span class="eqno">(26.16)<a class="headerlink" href="#equation-f3936241-2395-4851-8c03-6ea1d48af6ee" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+a_j^l = f(z_j^l) = \frac{1}{1+\exp{-(z_j^l)}}.
+
+\end{equation}\]</div>
+</section>
+<section id="derivatives-and-the-chain-rule">
+<h3>Derivatives and the chain rule<a class="headerlink" href="#derivatives-and-the-chain-rule" title="Link to this heading">#</a></h3>
+<p>From the definition of the activation <span class="math notranslate nohighlight">\(z_j^l\)</span> we have</p>
+<div class="amsmath math notranslate nohighlight" id="equation-a17206cc-3f52-4747-ba17-6919f8bf7a06">
+<span class="eqno">(26.17)<a class="headerlink" href="#equation-a17206cc-3f52-4747-ba17-6919f8bf7a06" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\frac{\partial z_j^l}{\partial w_{ij}^l} = a_i^{l-1},
+
+\end{equation}\]</div>
+<p>and</p>
+<div class="amsmath math notranslate nohighlight" id="equation-9a5e171e-cae3-414d-9620-8a107dd3fc9a">
+<span class="eqno">(26.18)<a class="headerlink" href="#equation-9a5e171e-cae3-414d-9620-8a107dd3fc9a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\frac{\partial z_j^l}{\partial a_i^{l-1}} = w_{ji}^l. 
+
+\end{equation}\]</div>
+<p>With our definition of the activation function we have (note that this function depends only on <span class="math notranslate nohighlight">\(z_j^l\)</span>)</p>
+<div class="amsmath math notranslate nohighlight" id="equation-54a7ccbf-0243-4c1b-814a-6095d1c3cf69">
+<span class="eqno">(26.19)<a class="headerlink" href="#equation-54a7ccbf-0243-4c1b-814a-6095d1c3cf69" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\frac{\partial a_j^l}{\partial z_j^{l}} = a_j^l(1-a_j^l)=f(z_j^l) \left[ 1-f(z_j^l) \right]. 
+
+\end{equation}\]</div>
+</section>
+<section id="derivative-of-the-cost-function">
+<h3>Derivative of the cost function<a class="headerlink" href="#derivative-of-the-cost-function" title="Link to this heading">#</a></h3>
+<p>With these definitions we can now compute the derivative of the cost function in terms of the weights.</p>
+<p>Let us specialize to the output layer <span class="math notranslate nohighlight">\(l=L\)</span>. Our cost function is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-6458c538-cf67-463c-a1e6-c7eee33cfac9">
+<span class="eqno">(26.20)<a class="headerlink" href="#equation-6458c538-cf67-463c-a1e6-c7eee33cfac9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+{\cal C}(\boldsymbol{W^L})  =  \frac{1}{2}\sum_{i=1}^n\left(y_i - t_i\right)^2=\frac{1}{2}\sum_{i=1}^n\left(a_i^L - t_i\right)^2, 
+
+\end{equation}\]</div>
+<p>The derivative of this function with respect to the weights is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-b678e64c-9edb-4853-ae63-a2acd98703cc">
+<span class="eqno">(26.21)<a class="headerlink" href="#equation-b678e64c-9edb-4853-ae63-a2acd98703cc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \left(a_j^L - t_j\right)\frac{\partial a_j^L}{\partial w_{jk}^{L}}, 
+
+\end{equation}\]</div>
+<p>The last partial derivative can easily be computed and reads (by applying the chain rule)</p>
+<div class="amsmath math notranslate nohighlight" id="equation-99a54000-2704-42a8-b260-3b4fdebdcbf4">
+<span class="eqno">(26.22)<a class="headerlink" href="#equation-99a54000-2704-42a8-b260-3b4fdebdcbf4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\frac{\partial a_j^L}{\partial w_{jk}^{L}} = \frac{\partial a_j^L}{\partial z_{j}^{L}}\frac{\partial z_j^L}{\partial w_{jk}^{L}}=a_j^L(1-a_j^L)a_k^{L-1},  
+
+\end{equation}\]</div>
+</section>
+<section id="bringing-it-together-first-back-propagation-equation">
+<h3>Bringing it together, first back propagation equation<a class="headerlink" href="#bringing-it-together-first-back-propagation-equation" title="Link to this heading">#</a></h3>
+<p>We have thus</p>
+<div class="amsmath math notranslate nohighlight" id="equation-4abd8182-b125-4aaf-a812-c7a4cc6c19f0">
+<span class="eqno">(26.23)<a class="headerlink" href="#equation-4abd8182-b125-4aaf-a812-c7a4cc6c19f0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \left(a_j^L - t_j\right)a_j^L(1-a_j^L)a_k^{L-1}, 
+
+\end{equation}\]</div>
+<p>Defining</p>
+<div class="amsmath math notranslate nohighlight" id="equation-7202f3bd-9f71-4a88-a896-c3cf41575544">
+<span class="eqno">(26.24)<a class="headerlink" href="#equation-7202f3bd-9f71-4a88-a896-c3cf41575544" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\delta_j^L = a_j^L(1-a_j^L)\left(a_j^L - t_j\right) = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)},
+
+\end{equation}\]</div>
+<p>and using the Hadamard product of two vectors we can write this as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-b403d9d9-9c76-44ee-b31c-69dd66381ec0">
+<span class="eqno">(26.25)<a class="headerlink" href="#equation-b403d9d9-9c76-44ee-b31c-69dd66381ec0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\boldsymbol{\delta}^L = f'(\boldsymbol{z}^L)\circ\frac{\partial {\cal C}}{\partial (\boldsymbol{a}^L)}.
+
+\end{equation}\]</div>
+<p>This is an important expression. The second term on the right handside
+measures how fast the cost function is changing as a function of the <span class="math notranslate nohighlight">\(j\)</span>th
+output activation.  If, for example, the cost function doesn’t depend
+much on a particular output node <span class="math notranslate nohighlight">\(j\)</span>, then <span class="math notranslate nohighlight">\(\delta_j^L\)</span> will be small,
+which is what we would expect. The first term on the right, measures
+how fast the activation function <span class="math notranslate nohighlight">\(f\)</span> is changing at a given activation
+value <span class="math notranslate nohighlight">\(z_j^L\)</span>.</p>
+<p>Notice that everything in the above equations is easily computed.  In
+particular, we compute <span class="math notranslate nohighlight">\(z_j^L\)</span> while computing the behaviour of the
+network, and it is only a small additional overhead to compute
+<span class="math notranslate nohighlight">\(f'(z^L_j)\)</span>.  The exact form of the derivative with respect to the
+output depends on the form of the cost function.
+However, provided the cost function is known there should be little
+trouble in calculating</p>
+<div class="amsmath math notranslate nohighlight" id="equation-f25130a3-84a8-4f95-a529-2ec497e583d9">
+<span class="eqno">(26.26)<a class="headerlink" href="#equation-f25130a3-84a8-4f95-a529-2ec497e583d9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\frac{\partial {\cal C}}{\partial (a_j^L)}
+
+\end{equation}\]</div>
+<p>With the definition of <span class="math notranslate nohighlight">\(\delta_j^L\)</span> we have a more compact definition of the derivative of the cost function in terms of the weights, namely</p>
+<div class="amsmath math notranslate nohighlight" id="equation-399d188e-6ccd-4c1d-8c57-9747e2b580f1">
+<span class="eqno">(26.27)<a class="headerlink" href="#equation-399d188e-6ccd-4c1d-8c57-9747e2b580f1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \delta_j^La_k^{L-1}.
+
+\end{equation}\]</div>
+</section>
+<section id="derivatives-in-terms-of-z-j-l">
+<h3>Derivatives in terms of <span class="math notranslate nohighlight">\(z_j^L\)</span><a class="headerlink" href="#derivatives-in-terms-of-z-j-l" title="Link to this heading">#</a></h3>
+<p>It is also easy to see that our previous equation can be written as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-cbe1151a-0ceb-4365-ab5f-e181a341b432">
+<span class="eqno">(26.28)<a class="headerlink" href="#equation-cbe1151a-0ceb-4365-ab5f-e181a341b432" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\delta_j^L =\frac{\partial {\cal C}}{\partial z_j^L}= \frac{\partial {\cal C}}{\partial a_j^L}\frac{\partial a_j^L}{\partial z_j^L},
+
+\end{equation}\]</div>
+<p>which can also be interpreted as the partial derivative of the cost function with respect to the biases <span class="math notranslate nohighlight">\(b_j^L\)</span>, namely</p>
+<div class="amsmath math notranslate nohighlight" id="equation-fc222d2b-8a66-4b70-b5fc-ff01c5073b7a">
+<span class="eqno">(26.29)<a class="headerlink" href="#equation-fc222d2b-8a66-4b70-b5fc-ff01c5073b7a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\delta_j^L = \frac{\partial {\cal C}}{\partial b_j^L}\frac{\partial b_j^L}{\partial z_j^L}=\frac{\partial {\cal C}}{\partial b_j^L},
+
+\end{equation}\]</div>
+<p>That is, the error <span class="math notranslate nohighlight">\(\delta_j^L\)</span> is exactly equal to the rate of change of the cost function as a function of the bias.</p>
+<!-- !split -->
+<p>We have now three equations that are essential for the computations of the derivatives of the cost function at the output layer. These equations are needed to start the algorithm and they are</p>
+<p><em>The starting equations.</em></p>
+<div class="amsmath math notranslate nohighlight" id="equation-ffd9e596-dcad-40a5-ad56-dd98d9167089">
+<span class="eqno">(26.30)<a class="headerlink" href="#equation-ffd9e596-dcad-40a5-ad56-dd98d9167089" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \delta_j^La_k^{L-1},
+\end{equation}\]</div>
+<p>and</p>
+<div class="amsmath math notranslate nohighlight" id="equation-bfaafada-35d9-4e9a-bba4-2f2907533540">
+<span class="eqno">(26.31)<a class="headerlink" href="#equation-bfaafada-35d9-4e9a-bba4-2f2907533540" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\delta_j^L = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)},
+\end{equation}\]</div>
+<p>and</p>
+<div class="amsmath math notranslate nohighlight" id="equation-cc7ebbc7-89a8-4dd1-a60b-ca379422c6f9">
+<span class="eqno">(26.32)<a class="headerlink" href="#equation-cc7ebbc7-89a8-4dd1-a60b-ca379422c6f9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\delta_j^L = \frac{\partial {\cal C}}{\partial b_j^L},
+\end{equation}\]</div>
+<p>An interesting consequence of the above equations is that when the
+activation <span class="math notranslate nohighlight">\(a_k^{L-1}\)</span> is small, the gradient term, that is the
+derivative of the cost function with respect to the weights, will also
+tend to be small. We say then that the weight learns slowly, meaning
+that it changes slowly when we minimize the weights via say gradient
+descent. In this case we say the system learns slowly.</p>
+<p>Another interesting feature is that is when the activation function,
+represented by the sigmoid function here, is rather flat when we move towards
+its end values <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>. In these
+cases, the derivatives of the activation function will also be close
+to zero, meaning again that the gradients will be small and the
+network learns slowly again.</p>
+<p>We need a fourth equation and we are set. We are going to propagate
+backwards in order to determine the weights and biases. In order
+to do so we need to represent the error in the layer before the final
+one <span class="math notranslate nohighlight">\(L-1\)</span> in terms of the errors in the final output layer.</p>
+</section>
+<section id="final-back-propagating-equation">
+<h3>Final back-propagating equation<a class="headerlink" href="#final-back-propagating-equation" title="Link to this heading">#</a></h3>
+<p>We have that (replacing <span class="math notranslate nohighlight">\(L\)</span> with a general layer <span class="math notranslate nohighlight">\(l\)</span>)</p>
+<div class="amsmath math notranslate nohighlight" id="equation-47e16476-8a43-46f8-bb37-a948b62cd02d">
+<span class="eqno">(26.33)<a class="headerlink" href="#equation-47e16476-8a43-46f8-bb37-a948b62cd02d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\delta_j^l =\frac{\partial {\cal C}}{\partial z_j^l}.
+
+\end{equation}\]</div>
+<p>We want to express this in terms of the equations for layer <span class="math notranslate nohighlight">\(l+1\)</span>. Using the chain rule and summing over all <span class="math notranslate nohighlight">\(k\)</span> entries we have</p>
+<div class="amsmath math notranslate nohighlight" id="equation-40cbc53a-f8bc-43c1-a555-bb8cd1970703">
+<span class="eqno">(26.34)<a class="headerlink" href="#equation-40cbc53a-f8bc-43c1-a555-bb8cd1970703" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\delta_j^l =\sum_k \frac{\partial {\cal C}}{\partial z_k^{l+1}}\frac{\partial z_k^{l+1}}{\partial z_j^{l}}=\sum_k \delta_k^{l+1}\frac{\partial z_k^{l+1}}{\partial z_j^{l}},
+
+\end{equation}\]</div>
+<p>and recalling that</p>
+<div class="amsmath math notranslate nohighlight" id="equation-ea7217da-c700-46c8-9506-860f5784e97a">
+<span class="eqno">(26.35)<a class="headerlink" href="#equation-ea7217da-c700-46c8-9506-860f5784e97a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+z_j^{l+1} = \sum_{i=1}^{M_{l}}w_{ij}^{l+1}a_i^{l}+b_j^{l+1},
+
+\end{equation}\]</div>
+<p>with <span class="math notranslate nohighlight">\(M_l\)</span> being the number of nodes in layer <span class="math notranslate nohighlight">\(l\)</span>, we obtain</p>
+<div class="amsmath math notranslate nohighlight" id="equation-b182c16e-d846-4d15-ba24-a0719177b733">
+<span class="eqno">(26.36)<a class="headerlink" href="#equation-b182c16e-d846-4d15-ba24-a0719177b733" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\delta_j^l =\sum_k \delta_k^{l+1}w_{kj}^{l+1}f'(z_j^l),
+
+\end{equation}\]</div>
+<p>This is our final equation.</p>
+<p>We are now ready to set up the algorithm for back propagation and learning the weights and biases.</p>
+</section>
+</section>
+<section id="setting-up-the-back-propagation-algorithm">
+<h2>Setting up the back-propagation algorithm<a class="headerlink" href="#setting-up-the-back-propagation-algorithm" title="Link to this heading">#</a></h2>
+<p>The four equations  provide us with a way of computing the gradient of the cost function. Let us write this out in the form of an algorithm.</p>
+<p><em>Summary.</em></p>
+<ul class="simple">
+<li><p>First, we set up the input data <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> and the activations <span class="math notranslate nohighlight">\(\boldsymbol{z}_1\)</span> of the input layer and compute the activation function and the outputs <span class="math notranslate nohighlight">\(\boldsymbol{a}^1\)</span>.</p></li>
+<li><p>Secondly, perform the feed-forward until we reach the output layer. I.e., compute all activation functions and the pertinent outputs <span class="math notranslate nohighlight">\(\boldsymbol{a}^l\)</span> for <span class="math notranslate nohighlight">\(l=2,3,\dots,L\)</span>.</p></li>
+<li><p>Compute the ouput error <span class="math notranslate nohighlight">\(\boldsymbol{\delta}^L\)</span> by</p></li>
+</ul>
+<div class="amsmath math notranslate nohighlight" id="equation-e20449dd-54bf-4d40-b5bf-7d6fb40de21b">
+<span class="eqno">(26.37)<a class="headerlink" href="#equation-e20449dd-54bf-4d40-b5bf-7d6fb40de21b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\delta_j^L = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)}.
+
+\end{equation}\]</div>
+<ul class="simple">
+<li><p>Back-propagate the error for each <span class="math notranslate nohighlight">\(l=L-1,L-2,\dots,2\)</span> as</p></li>
+</ul>
+<div class="amsmath math notranslate nohighlight" id="equation-06bbe0b3-f4f0-45b3-bc8f-f1eb4b4af9ca">
+<span class="eqno">(26.38)<a class="headerlink" href="#equation-06bbe0b3-f4f0-45b3-bc8f-f1eb4b4af9ca" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+\delta_j^l = \sum_k \delta_k^{l+1}w_{kj}^{l+1}f'(z_j^l).
+
+\end{equation}\]</div>
+<ul class="simple">
+<li><p>Finally, update the weights and the biases using gradient descent for each <span class="math notranslate nohighlight">\(l=L-1,L-2,\dots,2\)</span> and update the weights and biases according to the rules</p></li>
+</ul>
+<div class="amsmath math notranslate nohighlight" id="equation-61906b33-bb27-4a29-9654-1041cba2b3b2">
+<span class="eqno">(26.39)<a class="headerlink" href="#equation-61906b33-bb27-4a29-9654-1041cba2b3b2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+w_{jk}^l\leftarrow  w_{jk}^l- \eta \delta_j^la_k^{l-1},
+
+\end{equation}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-94646c02-33e0-4d33-bf55-945474272753">
+<span class="eqno">(26.40)<a class="headerlink" href="#equation-94646c02-33e0-4d33-bf55-945474272753" title="Permalink to this equation">#</a></span>\[\begin{equation}
+
+b_j^l \leftarrow b_j^l-\eta \frac{\partial {\cal C}}{\partial b_j^l}=b_j^l-\eta \delta_j^l,
+
+\end{equation}\]</div>
+<p>The parameter <span class="math notranslate nohighlight">\(\eta\)</span> is the learning rate.
+Here it is convenient to use stochastic gradient descent with mini-batches and an outer loop that steps through multiple epochs of training.</p>
+</section>
+<section id="learning-challenges">
+<h2>Learning challenges<a class="headerlink" href="#learning-challenges" title="Link to this heading">#</a></h2>
+<p>The back-propagation algorithm works by going from
+the output layer to the input layer, propagating the error gradient. The learning algorithm uses these
+gradients to update each parameter with a Gradient Descent (GD) step.</p>
+<p>Unfortunately, the gradients often get smaller and smaller as the
+algorithm progresses down to the first hidden layers. As a result, the
+GD update step leaves the lower layer connection weights
+virtually unchanged, and training never converges to a good
+solution. This is known in the literature as
+<strong>the vanishing gradients problem</strong>.</p>
+<p>In other cases, the opposite can happen, namely that the gradients grow bigger and
+bigger. The result is that many of the layers get large updates of the
+weights and the learning algorithm diverges. This is the <strong>exploding gradients problem</strong>, which is mostly encountered in recurrent neural networks. More generally, deep neural networks suffer from unstable gradients, different layers may learn at widely different speeds.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/Machine-learning-basics/artificial-neural-networks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="sec-artificial-neural-networks.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">26.1. </span>ANN details</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="demo-ann-simple-function-using-pytorch.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">26.3. </span>Demo: Feed-forward neural network for a function in PyTorch</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deriving-the-back-propagation-code-for-a-multilayer-perceptron-model">Deriving the back propagation code for a multilayer perceptron model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions">Definitions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-and-the-chain-rule">Derivatives and the chain rule</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-the-cost-function">Derivative of the cost function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bringing-it-together-first-back-propagation-equation">Bringing it together, first back propagation equation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-in-terms-of-z-j-l">Derivatives in terms of <span class="math notranslate nohighlight">\(z_j^L\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-back-propagating-equation">Final back-propagating equation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-the-back-propagation-algorithm">Setting up the back-propagation algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-challenges">Learning challenges</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

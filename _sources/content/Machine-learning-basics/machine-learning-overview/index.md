@@ -1,0 +1,55 @@
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+  name: python3
+---
+(sec:MachineLearning)=
+# Machine learning: Overview 
+
+Machine learning is about learning from data using computer programs. The algorithms in these programs are constructed to process data to find patterns or to make predictions or recommend actions. The automatic aspect of this process opens a wide range of application areas for machine learning techniques and algorithms. In particular, machine learning is used in computer technology but there has also been a swift and amazing development in the last decades that impact domains in the natural sciences, humanities, social sciences, medicine, law, etc. Indeed, almost all possible disciplines are affected. The applications are incredibly many, from self-driving cars to solving high-dimensional differential equations or complicated quantum mechanical many-body problems. Machine learning is perceived by many as a *disruptive technology*, i.e., implying that it will change our society.  
+
+Statistics, data science and machine learning form important fields of research in modern science.  They describe how to learn and make predictions from data, as well as allowing us to find correlations between features in (large) data sets. Such big data sets now appear frequently in essentially all disciplines, from the traditional Science, Technology, Engineering and Mathematics (STEM) fields to Life Science, Law, Education research, the Humanities and the Social Sciences. Having a solid understanding of data analysis and machine learning is thus becoming central to scientific computing in many fields, and competences and skills within the fields of machine learning and scientific computing are nowadays strongly requested by many potential employers. 
+
+Machine learning is a subfield of computer science, and is closely related to computational statistics.  It evolved from the study of pattern recognition in artificial intelligence (AI) research, and has made contributions to AI tasks like computer vision, natural language processing and speech recognition. Many of the methods we will study are also  strongly rooted in basic mathematics and physics research. 
+
+Ideally, machine learning represents the science of giving computers the ability to learn without being explicitly programmed.  The idea is that there exist generic algorithms which can be used to find patterns in a broad class of data sets without having to write code specifically for each problem. The algorithm will build its own logic based on the data.  You should however always keep in mind that machines and algorithms are to a large extent developed by humans. The insights and knowledge we have about a specific system, play a central role when we develop a specific machine learning algorithm. 
+
+```{admonition} Three main ingredients of machine learning
+A machine learning model learns from available training data. Thus, one can usually identify three ingredients of basically any machine learning application:
+
+The data
+: The first, and often most important, ingredient is the data set. The data is usually split into *training, validation, and test sets*.
+
+The mathematical model 
+: The second ingredient is a model, which can be a function of some parameters. The complexity of the model can often be varied.
+
+The learning algorithm  
+: The final ingredient is the algorithm that is used for learning. A specific component of the *learning algorithm* is often a so-called *cost function*, which allows us to present an estimate on how good our model is in reproducing the data.
+
+We will encounter several examples (and variations) of these building blocks in the next few chapters.
+```  
+
+
+Machine learning is an extremely rich field, in spite of its young age. Increases in computational capabilities have been followed by developments of methods and techniques for analyzing and handling large date sets---relying heavily on statistics, computer science and mathematics, but also importing ideas from other disciplines such as physics. The field is rather new and developing rapidly. Popular software packages (many of them written in Python) are freely available at their respective GitHub sites and involve developer communities measured in the thousands or more. And the number of code developers and contributors keeps increasing.
+
+```{admonition} Python for machine learning
+Some very popular Python libraries for machine learning and probabilistic programming are
+
+- [Scikit-learn](http://scikit-learn.org/stable/),
+- [Tensorflow](https://www.tensorflow.org/), 
+- [Keras](https://keras.io/)
+- [PyMC](https://github.com/pymc-devs/pymc),
+- [PyTorch](http://pytorch.org/), 
+- [Edward](http://edwardlib.org/) 
+
+In addition, Python is an excellent programming language for prototype construction and for data visualization (with extensive galleries of existing examples).
+
+Still, it should be noted that Python is notoriously slow. Therefore, analysis codes tend to utilize compiled languages (C++,C,  Fortran) and possibly hardware acceleration for the heavy computations.
+```  
+
+Not all machine learning algorithms and methods can be given a rigorous mathematical justification, thereby opening up opportunities for experimenting, trial and error, and exciting new developments.  However, a solid command of linear algebra, multivariate analysis, probability theory, statistical data analysis, Bayesian inference, understanding errors and Monte Carlo methods are central elements in a proper understanding of machine learning applications.
+
+
