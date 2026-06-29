@@ -144,7 +144,7 @@ Mixed model equation of state (scaled pressure vs. scaled density) for symmetric
 :width: 550px
 :align: center
 
-Schematic signal with background from {ref}`exercise:amplitude-of-a-signal-in-the-presence-of-background`. The experimental design problem is how to best extract the signal properties from optimizing a function that gives the cost of experimental choices, such as the resolution of the detector and the number of counts recorded.
+Schematic signal with background from {ref}`problem:amplitude-of-a-signal-in-the-presence-of-background`. The experimental design problem is how to best extract the signal properties from optimizing a function that gives the cost of experimental choices, such as the resolution of the detector and the number of counts recorded.
 ```
 ````
   

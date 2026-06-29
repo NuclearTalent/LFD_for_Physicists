@@ -1,8 +1,8 @@
 (exercise:GaussianLighthouseCompare)=
 # Compare Gaussian noise sampling to lighthouse analysis
 
-Here we observe that Gaussian noise sampling is carried out just like the radioactive lighthouse analysis from exercise notebook {ref}`exercise:radioactive-lighthouse-problem` (which we assume you have worked through). 
-Jump to the Bayesian approach in the exercise notebook {ref}`exercise:gaussian-noise-and-averages-ii`.
+Here we observe that Gaussian noise sampling is carried out just like the radioactive lighthouse analysis from exercise notebook {ref}`problem:radioactive-lighthouse-problem` (which we assume you have worked through). 
+Jump to the Bayesian approach in the exercise notebook {ref}`problem:gaussian-noise-and-averages-ii`.
 The goal is to sample a posterior $p(\pars|D,I)$
 
 $$
@@ -18,8 +18,8 @@ $$\begin{align}
       \text{prior:}& \quad p(\mu,\sigma|I) \leftrightarrow p(x_0,y_0|I)
 \end{align}$$
 
-You are generalizing the functions for log PDFs and the plotting of posteriors that are in {ref}`exercise:radioactive-lighthouse-problem`.
-Note the functions for log-prior and log-likelihood in {ref}`exercise:gaussian-noise-and-averages-ii`. Here $\pars = [\mu,\sigma]$ is a vector of parameters; cf.  $\pars = [x_0,y_0]$.
+You are generalizing the functions for log PDFs and the plotting of posteriors that are in {ref}`problem:radioactive-lighthouse-problem`.
+Note the functions for log-prior and log-likelihood in {ref}`problem:gaussian-noise-and-averages-ii`. Here $\pars = [\mu,\sigma]$ is a vector of parameters; cf.  $\pars = [x_0,y_0]$.
 
 Let's step through the essential set up for `emcee`.
  * It is best to create an environment that will include `emcee` and `corner`. 
