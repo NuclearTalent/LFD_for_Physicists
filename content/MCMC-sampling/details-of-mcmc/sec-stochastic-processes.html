@@ -259,7 +259,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-advantages-of-the-bayesian-approach.html">8.1. Advantages of the Bayesian approach</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-bayesian-research-workflow.html">8.2. Bayesian research workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-bayesian-linear-regression.html">8.3. Bayesian Linear Regression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/demo-linear-regression-and-model-validation.html">8.4. Demo: Linear Regression and Model Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/demo-model-validation-bias-variance.html">8.4. Demo: The bias-variance trade-off</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/index.html">9. Exercises and problems for Part I</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -759,13 +759,13 @@ document.write(`
 <p class="admonition-title"><span class="caption-number">Example 19.1 </span> (An exponential growth model)</p>
 <section class="example-content" id="proof-content">
 <p>Consider a simple exponential growth model to describe a population of bacteria in a culture with a food source. In a deterministic model we assert that the population grows at a fixed rate <span class="math notranslate nohighlight">\(\lambda\)</span>. The growth rate is then proportional to the population size as described by the differential equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c7a894a8-11d6-4e39-a688-fc35a3b436b1">
-<span class="eqno">(19.1)<a class="headerlink" href="#equation-c7a894a8-11d6-4e39-a688-fc35a3b436b1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fb780260-28b9-451f-a364-fbf39a8935d5">
+<span class="eqno">(19.1)<a class="headerlink" href="#equation-fb780260-28b9-451f-a364-fbf39a8935d5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{dy}{dt} = \lambda y(t).
 \end{equation}\]</div>
 <p>With the initial population <span class="math notranslate nohighlight">\(y(0) = y_0\)</span>, this equation is solved by the exponential function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-730553ee-00c1-47ed-a77f-db5b2c1debc5">
-<span class="eqno">(19.2)<a class="headerlink" href="#equation-730553ee-00c1-47ed-a77f-db5b2c1debc5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-86234ecd-919c-4be7-be0f-a640ce949e2c">
+<span class="eqno">(19.2)<a class="headerlink" href="#equation-86234ecd-919c-4be7-be0f-a640ce949e2c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 y(t) = y_0 \exp(\lambda t),
 \end{equation} \]</div>
 <p>from which the population is precisely determined. For example, with <span class="math notranslate nohighlight">\(y_0 = 10\)</span> and <span class="math notranslate nohighlight">\(\lambda = 0.25\)</span> per minute we find that the population has almost doubled four times
@@ -858,15 +858,15 @@ after 11 minutes (since <span class="math notranslate nohighlight">\(y(11) = 15.
 <section id="definition-of-a-stochastic-process">
 <span id="sec-defstochasticprocess"></span><h2>Definition of a stochastic process<a class="headerlink" href="#definition-of-a-stochastic-process" title="Link to this heading">#</a></h2>
 <p>Using probability theory, a stochastic process <span class="math notranslate nohighlight">\(X\)</span> is a family</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8e4258ca-17f8-4db5-bdb6-4ca68a6c0fdb">
-<span class="eqno">(19.3)<a class="headerlink" href="#equation-8e4258ca-17f8-4db5-bdb6-4ca68a6c0fdb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-57cd0fb5-1c61-490e-9c07-36acb59b2865">
+<span class="eqno">(19.3)<a class="headerlink" href="#equation-57cd0fb5-1c61-490e-9c07-36acb59b2865" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \{X_t \; : \; t \in T\},
 \end{equation}\]</div>
 <p>of random variables <span class="math notranslate nohighlight">\(X_t\)</span> indexed by some set <span class="math notranslate nohighlight">\(T\)</span>. All the random variables take values in a common state space, <span class="math notranslate nohighlight">\(S\)</span>. The state space can be discrete or continuous. Although we might use discrete state spaces in some of the examples, one should realize that most examples in physics belong to the continuous type.</p>
 <p>Furthermore, the family is known as <strong>discrete process</strong> if the indices take discrete values <span class="math notranslate nohighlight">\(t \in \{0,1,2,\ldots\}\)</span>. This will in fact be the situation in the practical application of <strong>Markov chain Monte Carlo</strong> applications that we are aiming for. On the other hand, many physical stochastic processes are <strong>continuous</strong> and will have <span class="math notranslate nohighlight">\(T \in \mathbb{R}\)</span> or <span class="math notranslate nohighlight">\(t \in [0,\infty)\)</span>. In either case we think of a stochastic process as a family of variables that evolve as time passes, although in general <span class="math notranslate nohighlight">\(T\)</span> might be any kind of ordering index and is not restricted to physical time.</p>
 <p>Due to the randomness, different runs of the stochastic process will generate different sequences of outputs. An observer recording many such sequences generated from the same stochastic process would need to measure all the following conditional probabilities to fully describe the process:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a28e0f2f-7fcf-430e-8f5d-7a567a1f34df">
-<span class="eqno">(19.4)<a class="headerlink" href="#equation-a28e0f2f-7fcf-430e-8f5d-7a567a1f34df" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7c5f7988-3d3c-49d5-83c1-31a62df92d31">
+<span class="eqno">(19.4)<a class="headerlink" href="#equation-7c5f7988-3d3c-49d5-83c1-31a62df92d31" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{gathered}
 p_{X_0}(x_0), \\
 p_{X_1 \vert X_0}(x_1 | x_0), \\
