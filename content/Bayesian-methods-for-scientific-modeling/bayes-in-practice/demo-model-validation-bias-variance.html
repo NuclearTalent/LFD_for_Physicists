@@ -744,12 +744,12 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="the-bias-variance-trade-off">
 <span id="demo-biasvariancetradeoff"></span><h1><span class="section-number">8.4. </span>The bias-variance trade-off<a class="headerlink" href="#the-bias-variance-trade-off" title="Link to this heading">#</a></h1>
-<p>In the first three sections we’ll use a fixed example to illustrate overfitting and underfitting, the bias-variance trade-off, and ridge regression. (See <a class="reference internal" href="../../Machine-learning-basics/machine-learning-overview/sec-model-validation.html#sec-modelvalidation"><span class="std std-numref">Section 24.3</span></a> for more details on these concepts.)
+<p>In the first three sections we’ll use a fixed linear regression example to illustrate overfitting and underfitting, the bias-variance trade-off, and ridge regression. (See <a class="reference internal" href="../../Machine-learning-basics/machine-learning-overview/sec-model-validation.html#sec-modelvalidation"><span class="std std-numref">Section 24.3</span></a> for more details on these concepts.)
 Then in the final section you can play with a widget to explore all three!</p>
 <section id="overfitting-and-underfitting">
 <h2>Overfitting and underfitting<a class="headerlink" href="#overfitting-and-underfitting" title="Link to this heading">#</a></h2>
-<p>Let us consider some data generated from a cubic polynomial plus some random (Gaussian) noise. These are the blue dots (error bars not shown).
-We apply linear regression with three models: polynomials of order 1 (linear), order 3, and order 50.</p>
+<p>Let us consider some data generated from a cubic polynomial plus some random (Gaussian) noise. These are the blue dots in the figure below (error bars not shown).
+We apply linear regression with three models: polynomials of order 1, order 3, and order 50.</p>
 <div class="cell tag_hide-input docutils container">
 <details class="admonition hide above-input">
 <summary aria-label="Toggle hidden content">
@@ -836,8 +836,8 @@ order   1: rms parameter size =  3.0e-01
 </div>
 <p>Observations:</p>
 <ul class="simple">
-<li><p>Note how the high-degree polynomial produces a very wiggly curve that tries very hard to go through the training data. The model explodes near the edges where there is no more training data. This is <em>overfitting</em>.</p></li>
-<li><p>The first degree polynomial, on the other hand, fails to pick up some trends in the data that is clearly there. This is <em>underfitting</em>.</p></li>
+<li><p>Note how the high-degree polynomial produces a very wiggly curve that tries very hard to go through the training data. The model explodes near the edges where there is no more training data. This is <em>overfitting</em>. A symptom of overfitting is that the size of the fit parameters can get very large.</p></li>
+<li><p>The first degree polynomial, in contrast, fails to pick up some trends in the data that are clearly there (despite the noise). This is <em>underfitting</em>. The model is not complex enough.</p></li>
 </ul>
 <p>A concise definition of overfitting and underfitting (source unknown):</p>
 <blockquote>
@@ -847,7 +847,7 @@ order   1: rms parameter size =  3.0e-01
 <section id="bias-variance-trade-off">
 <h2>Bias-variance trade-off<a class="headerlink" href="#bias-variance-trade-off" title="Link to this heading">#</a></h2>
 <p>An underfit model has a <em>high bias</em>, which means that it gives a rather poor fit and the error (as a function of <span class="math notranslate nohighlight">\(x\)</span> here) will be rather large in average.
-An overfit model will depend sensitively on the data used for the fit. A different set of (random) data will give very different predictions. We therefore say that the model displays a <em>high variance</em>. While the overfit model usually reproduces training data very well (low bias), it does not generalize well and gives a poor reproduction of new data points.</p>
+An overfit model will depend sensitively on the data used for the fit. A different set of (random) data will give very different predictions if the model is overfit. We therefore say that the model displays a <em>high variance</em>. While the overfit model usually reproduces training data very well (low bias), it does not generalize well and gives a poor reproduction of new data points.</p>
 <div class="cell tag_hide-input docutils container">
 <details class="admonition hide above-input">
 <summary aria-label="Toggle hidden content">
@@ -912,7 +912,8 @@ An overfit model will depend sensitively on the data used for the fit. A differe
 </section>
 <section id="ridge-regression">
 <h2>Ridge regression<a class="headerlink" href="#ridge-regression" title="Link to this heading">#</a></h2>
-<p>Generally overfitting is characterized by large fit parameters, so we can attempt to avoid overfitting by <em>regularizing</em> the model parameters. Ridge assigns a penalty function that discourages overly large parameters.
+<p>Generally overfitting is characterized by large fit parameters, so we can attempt to avoid overfitting by <em>regularizing</em> the model parameters. Ridge regression assigns a penalty function that discourages overly large parameters.
+Larger <span class="math notranslate nohighlight">\(\lambda\)</span> in the figures below means a larger penalty.
 See <a class="reference internal" href="../../Machine-learning-basics/machine-learning-overview/sec-model-validation.html#sec-modelvalidation"><span class="std std-numref">Section 24.3</span></a> for further details.</p>
 <div class="cell tag_hide-input docutils container">
 <details class="admonition hide above-input">
@@ -986,7 +987,7 @@ Throughout, <span class="math notranslate nohighlight">\(f(x)\)</span> denotes t
 </li>
 <li><p>The blue shaded region indicates the underfitting side of the optimum;
 red shading indicates the overfitting side. The boundaries move as the simulation parameters change.</p></li>
-<li><p>The dashed vertical line indicates the polynomial degree with the smallest estimated prediction error. Changing sample size, observational noise, regularization, underlying function, may cause this optimum to move.</p></li>
+<li><p>The dashed vertical line indicates the polynomial degree with the smallest estimated prediction error. Changing sample size, observational noise, regularization or underlying function may cause this optimum to move.</p></li>
 </ul>
 </li>
 <li><p>The lower panel illustrates the statistical origin of bias and variance. It explains why those changes occur by displaying many fitted models obtained from different noisy training sets (a representative subset of all Repetitions is shown).
@@ -1004,12 +1005,12 @@ computed over all simulated training sets. Its deviation from the true function 
 <ul class="simple">
 <li><p>Click the three-horizontal-line-icon at top to expand widget display;</p></li>
 <li><p>select the true underlying function using the pulldown;</p></li>
-<li><p>data sliders select: noise level <span class="math notranslate nohighlight">\(\sigma\)</span> for the random samples; no. of noisy training samples for each simulated data set;</p></li>
+<li><p>data sliders select: no. of noisy training points for each simulated data set (<strong>samples</strong>); noise level <span class="math notranslate nohighlight">\(\sigma\)</span> for the random samples;</p></li>
 <li><p>the Repetitions slider determines how many independent training sets are generated.
-Each repetition samples a new noisy data set, fits every polynomial degree, predicts the function on a dense grid. These repeated simulations are averaged to estimate bias,
+Each repetition samples a new noisy data set, fits every polynomial degree, then predicts the function on a dense grid. These repeated simulations are averaged to estimate bias,
 variance, and expected prediction error. Increasing the number of repetitions produces smoother and more stable estimates.</p></li>
-<li><p>sliders to select settings for Bias-variance graph: maximum degree displayed; log, linear, or normalized y-scale; the “selected degree” for which the bias, variance, and total error is display;</p></li>
-<li><p>other sliders for true and fitted functions in lower graph: selected degree of the fitted polynomial; no. of samples; toggle bottom graph (“show fitted models”);</p></li>
+<li><p>sliders to select settings for the Bias-variance graph: maximum degree displayed; log, linear, or normalized y-scale; the “selected degree” for which the bias, variance, and total error is displayed;</p></li>
+<li><p>other sliders for true and fitted functions in lower graph: selected degree of the fitted polynomial; toggle bottom graph on and off (<strong>show fitted models</strong>);</p></li>
 <li><p>size of ridge regression parameter <span class="math notranslate nohighlight">\(\lambda\)</span> (larger means more regularization);</p></li>
 <li><p>press <strong>Resample simulation</strong> to generate new samples.</p></li>
 </ul>
@@ -1019,7 +1020,7 @@ variance, and expected prediction error. Increasing the number of repetitions pr
     style="border: none;"
     scrolling="no">
 </iframe><div class="my-checkpoint admonition">
-<p class="admonition-title">What happens when you increase the number of samples?</p>
+<p class="admonition-title">What happens when you increase the number of sampled training points?</p>
 <p>Increasing the number of samples generally …</p>
 <div class="dropdown my-answer admonition">
 <p class="admonition-title">Answer</p>
