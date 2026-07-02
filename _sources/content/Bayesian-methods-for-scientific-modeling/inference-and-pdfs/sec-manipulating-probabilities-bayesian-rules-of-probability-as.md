@@ -9,8 +9,8 @@ attention to them.
 
 A minimal set of rules for consistently keeping track of probabilities
 is provided by two basic rules of probability arithmetic. These are the sum
-and product rules. A proof that the Sum and Product rules follow in any consistent implementation of probabilistic reasoning is given by Cox {cite}`Cox:1961`.
-
+and product rules. These rules can be derived from Kolmogorov's axioms of probability,
+see [](introduction:definitions), which showed that probabilities can be incorporated into mathematics using the existing theory of measures. More generally, a proof that the Sum and Product rules follow in any consistent implementation of probabilistic reasoning is given by Cox {cite}`Cox:1961`. 
 
 ## Sum rule
 If the set $\{x_i\}$ is *exhaustive* and *exclusive*
@@ -27,31 +27,6 @@ there is no overlap between its members (they are orthogonal).
 
 :::{note}
 In {eq}`eq:discrete_sum_rule` we include $I$ (for "Information") generically as the quantities or statements that the probability of $x_i$ is contingent on. We use $I$ to avoid having to specify explicitly all the details, but we should remember that these probabilities (and probability densities introduced below) are always conditional on some information.
-:::
-
-The sum rule implies a key tool in the Bayesian's arsenal,
-_marginalization_ 
-
-\begin{align}
-      \cprob{x}{I} = \sum_j \cprob{x, y_j}{I} 
-\end{align}
-
-which shows how to obtain a "marginal" probability for the outcome of one variable by summing the joint probability for $x$ and $y$ over all possible outcomes $\{y_j\}$ of the second variable (which is not of interest).
-
- We will use marginalization a lot! Note that the marginalization
- takes place in the presence of the conditional I, i.e., all
- probabilities involved are "given the information I". The given
- information is held fixed, while the sum of all possibilities is
- constructed. 
-
-:::{warning}
-Although we alluded to the analogy between inserting a complete set
-of states and marginalization above this analogy breaks down in
-general. It's ok to use this as a mnemonic though.
-:::
-
-:::{note}
-A rule from probability says $\prob(A \cup B) = \prob(A) + \prob(B) - \prob(A \cap B)$. (That is, to calculate the probability of the union of $A$ and $B$ we need to subtract the probability of the intersection from the sum of probabilities.) This may seem to contradict our marginalization rule. However, if $A$ and $B$ are *exclusive* (as we assume) then $\prob(A \cap B) = 0$.
 :::
 
 ## Product rule
@@ -110,7 +85,7 @@ probabilities are not the same thing.
 
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
-Construct your own example of $\cprob{x}{y} \neq \cprob{y}{x}$
+Construct your own example of $\cprob{x}{y} \neq \cprob{y}{I}$
 :::{admonition} Possible answers 
 :class: dropdown, my-hint 
 The probability that there is a cloud in the sky given that it is
@@ -118,6 +93,60 @@ raining is not the same as the probability that it's raining given
 that there is a cloud in the sky. 
 :::
 ::::
+
+
+```{admonition} Ingredients of Bayes' theorem
+A typical use of Bayes' theorem is to update information on a hypothesis $y$ according to new data $x$ that we obtain. In that case the various terms in the theorem have formal names. 
+* The quantity on the far right, $\cprob{y}{I}$, is called the *prior* probability; it represents our state of knowledge (or ignorance) about the truth of the hypothesis $y$ before we have analysed the new data $x$.
+* This is modified by additional information on $y$ through $\cprob{x}{y,I}$, the *likelihood* function, that tells us how likely it is that we measure $x$, given that $y$ is true (and $I$ is true as well). 
+* The denominator $\cprob{x}{I}$ is called the *evidence*. It does not depend on the hypothesis and can be regarded as a normalization constant in many situations. 
+* Together, these yield the *posterior* probability, $\cprob{y}{x,I}$, representing ourupdated state of knowledge about the hypothesis $y$ in light of the information we had before, $I$, and the additional data $x$.
+
+In this sense, Bayes’ theorem is a mathematically rigorous statement of how probabilities should be updated in light of new information: the process of learning from data.
+```
+
+
+## The friends of Bayes' theorem
+
+```{admonition} Normalization and marginalization
+
+Given an exclusive and exhaustive list of hypotheses, $y_j$, we must have a normalization of the total probability
+
+\begin{equation}
+  \sum_j \cprob{y_j}{I} = 1,
+\end{equation}
+
+which also leads to the marginalization property
+
+
+\begin{align}
+      \cprob{x}{I} = \sum_j \cprob{y_j}{x,I} \cprob{x}{I}=\sum_j \cprob{x, y_j}{I} 
+\end{align}
+
+where we used the product rule in the second step.
+  ```
+
+This is a key tool in the Bayesian's article: the ability to obtain the  "marginal" probability for the outcome of one variable by summing the joint probability for $x$ and $y$ over all possible outcomes $\{y_j\}$ of the second variable. This second variable
+is not one we are interested in when computing the pdf $\cprob{x}{I}$, so we ``marginalize over it". 
+
+ We will use marginalization a lot! Note that the marginalization
+ takes place in the presence of the conditional I, i.e., all
+ probabilities involved are "given the information I". The given
+ information is held fixed, while the sum of all possibilities is
+ constructed.
+
+For example, let’s imagine that there are five candidates in a presidential election; then $H_1$ could be the proposition that the first candidate will win, and so on. The probability that $A$ is true, for example that unemployment will be lower in a year’s time (given all relevant information $I$, but irrespective of whoever becomes president) is given by $\sum_i \prob(A,H_i|I)$. The president is a nuisance variable who has been marginalized out of the calculation. 
+
+:::{warning}
+Although we alluded to the analogy between inserting a complete set
+of states and marginalization above this analogy breaks down in
+general. It's ok to use this as a mnemonic though.
+:::
+
+:::{note}
+A rule from probability says $\prob(A \cup B) = \prob(A) + \prob(B) - \prob(A \cap B)$. (That is, to calculate the probability of the union of $A$ and $B$ we need to subtract the probability of the intersection from the sum of probabilities.) This may seem to contradict our marginalization rule. However, if $A$ and $B$ are *exclusive* (as we assume) then $\prob(A \cap B) = 0$.
+:::
+
 
 
 ```{exercise} Practicing the sum and product rule with population characteristics

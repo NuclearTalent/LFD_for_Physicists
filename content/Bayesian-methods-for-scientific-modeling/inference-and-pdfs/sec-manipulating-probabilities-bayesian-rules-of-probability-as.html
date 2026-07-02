@@ -228,9 +228,8 @@
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">4.2. Manipulating probabilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec-probability-density-functions.html">4.3. Probability density functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec-expectation-values-and-moments.html">4.4. Expectation values and moments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-review-of-bayes-theorem.html">4.5. Review of Bayes’ theorem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-data-models-predictions.html">4.6. Data, models, and predictions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-bayesian-epistemology.html">4.7. *Aside: Bayesian epistemology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-data-models-predictions.html">4.5. Data, models, and predictions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-bayesian-epistemology.html">4.6. *Aside: Bayesian epistemology</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../bayesian-posteriors/index.html">5. More on PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -730,6 +729,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sum-rule">Sum rule</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#product-rule">Product rule</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-theorem">Bayes’ theorem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-friends-of-bayes-theorem">The friends of Bayes’ theorem</a></li>
 </ul>
             </nav>
         </div>
@@ -750,7 +750,8 @@ assignments are consistently capricious people may stop paying
 attention to them.</p>
 <p>A minimal set of rules for consistently keeping track of probabilities
 is provided by two basic rules of probability arithmetic. These are the sum
-and product rules. A proof that the Sum and Product rules follow in any consistent implementation of probabilistic reasoning is given by Cox <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id3" title="Richard Threlkeld Cox. The Algebra of Probable Inference. Johns Hopkins University Press, 1961.">Cox61</a>]</span>.</p>
+and product rules. These rules can be derived from Kolmogorov’s axioms of probability,
+see <a class="reference internal" href="../../Appendix/Statistics/probability-measure/sec-important-definitions.html#introduction-definitions"><span class="std std-ref">The probability measure</span></a>, which showed that probabilities can be incorporated into mathematics using the existing theory of measures. More generally, a proof that the Sum and Product rules follow in any consistent implementation of probabilistic reasoning is given by Cox <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id3" title="Richard Threlkeld Cox. The Algebra of Probable Inference. Johns Hopkins University Press, 1961.">Cox61</a>]</span>.</p>
 <section id="sum-rule">
 <h2>Sum rule<a class="headerlink" href="#sum-rule" title="Link to this heading">#</a></h2>
 <p>If the set <span class="math notranslate nohighlight">\(\{x_i\}\)</span> is <em>exhaustive</em> and <em>exclusive</em></p>
@@ -767,35 +768,13 @@ there is no overlap between its members (they are orthogonal).</p>
 <p class="admonition-title">Note</p>
 <p>In <a class="reference internal" href="#equation-eq-discrete-sum-rule">(4.1)</a> we include <span class="math notranslate nohighlight">\(I\)</span> (for “Information”) generically as the quantities or statements that the probability of <span class="math notranslate nohighlight">\(x_i\)</span> is contingent on. We use <span class="math notranslate nohighlight">\(I\)</span> to avoid having to specify explicitly all the details, but we should remember that these probabilities (and probability densities introduced below) are always conditional on some information.</p>
 </div>
-<p>The sum rule implies a key tool in the Bayesian’s arsenal,
-<em>marginalization</em></p>
-<div class="amsmath math notranslate nohighlight" id="equation-e63bf518-f49f-407d-9652-ef2309b4b103">
-<span class="eqno">(4.2)<a class="headerlink" href="#equation-e63bf518-f49f-407d-9652-ef2309b4b103" title="Permalink to this equation">#</a></span>\[\begin{align}
-      \cprob{x}{I} = \sum_j \cprob{x, y_j}{I} 
-\end{align}\]</div>
-<p>which shows how to obtain a “marginal” probability for the outcome of one variable by summing the joint probability for <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> over all possible outcomes <span class="math notranslate nohighlight">\(\{y_j\}\)</span> of the second variable (which is not of interest).</p>
-<p>We will use marginalization a lot! Note that the marginalization
-takes place in the presence of the conditional I, i.e., all
-probabilities involved are “given the information I”. The given
-information is held fixed, while the sum of all possibilities is
-constructed.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Although we alluded to the analogy between inserting a complete set
-of states and marginalization above this analogy breaks down in
-general. It’s ok to use this as a mnemonic though.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>A rule from probability says <span class="math notranslate nohighlight">\(\prob(A \cup B) = \prob(A) + \prob(B) - \prob(A \cap B)\)</span>. (That is, to calculate the probability of the union of <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> we need to subtract the probability of the intersection from the sum of probabilities.) This may seem to contradict our marginalization rule. However, if <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> are <em>exclusive</em> (as we assume) then <span class="math notranslate nohighlight">\(\prob(A \cap B) = 0\)</span>.</p>
-</div>
 </section>
 <section id="product-rule">
 <h2>Product rule<a class="headerlink" href="#product-rule" title="Link to this heading">#</a></h2>
 <p>The product rule tells us how to expand the joint probability of <span class="math notranslate nohighlight">\(x\)</span>
 and <span class="math notranslate nohighlight">\(y\)</span>, i.e.,</p>
 <div class="math notranslate nohighlight" id="equation-eq-joint-prob">
-<span class="eqno">(4.3)<a class="headerlink" href="#equation-eq-joint-prob" title="Link to this equation">#</a></span>\[  
+<span class="eqno">(4.2)<a class="headerlink" href="#equation-eq-joint-prob" title="Link to this equation">#</a></span>\[  
 \cprob{x,y}{I} = \cprob{x}{y, I} \cprob{y}{I} 
 \]</div>
 <p>In words we say that the probability of both <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> occurring is
@@ -804,13 +783,13 @@ the probability that <span class="math notranslate nohighlight">\(y\)</span> occ
 <p>Note, once again, that the given information <span class="math notranslate nohighlight">\(I\)</span> is held fixed, i.e., it
 if present on the left-hand side it appears in both probabilities on
 the right-hand side.</p>
-<p>If <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are <em>mutually independent</em>, then <span class="math notranslate nohighlight">\(\cprob{x}{y,I} = \cprob{x}{I}\)</span> and <a class="reference internal" href="#equation-eq-joint-prob">(4.3)</a> reduces to</p>
+<p>If <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are <em>mutually independent</em>, then <span class="math notranslate nohighlight">\(\cprob{x}{y,I} = \cprob{x}{I}\)</span> and <a class="reference internal" href="#equation-eq-joint-prob">(4.2)</a> reduces to</p>
 <div class="math notranslate nohighlight" id="equation-eq-conditional-independence">
-<span class="eqno">(4.4)<a class="headerlink" href="#equation-eq-conditional-independence" title="Link to this equation">#</a></span>\[
+<span class="eqno">(4.3)<a class="headerlink" href="#equation-eq-conditional-independence" title="Link to this equation">#</a></span>\[
 \cprob{x,y}{I} = \cprob{x}{I}  \cprob{y}{I}
 \]</div>
 <p>This is a rule you are probably (but we hesitate to quantify our
-belief) familiar with. Crucially, <a class="reference internal" href="#equation-eq-joint-prob">(4.3)</a> does <em>not</em>
+belief) familiar with. Crucially, <a class="reference internal" href="#equation-eq-joint-prob">(4.2)</a> does <em>not</em>
 rely on the independence of the events <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -821,16 +800,16 @@ Hence <span class="math notranslate nohighlight">\(\cprob{x}{y,I} = \cprob{x}{I}
 <section id="bayes-theorem">
 <h2>Bayes’ theorem<a class="headerlink" href="#bayes-theorem" title="Link to this heading">#</a></h2>
 <p>It is just a short step from the product rule to Bayes’
-theorem. Although we wrote <a class="reference internal" href="#equation-eq-joint-prob">(4.3)</a> so that the
+theorem. Although we wrote <a class="reference internal" href="#equation-eq-joint-prob">(4.2)</a> so that the
 <span class="math notranslate nohighlight">\(\cprob{x}{y,I}\)</span> appeared on the right-hand side there is no reason to
 privilege <span class="math notranslate nohighlight">\(x\)</span> over <span class="math notranslate nohighlight">\(y\)</span>. We could equally have written:</p>
 <div class="math notranslate nohighlight">
 \[  
 \cprob{x,y}{I} = \cprob{y}{x, I} \cprob{x}{I} 
 \]</div>
-<p>Equating this to the expression in <a class="reference internal" href="#equation-eq-joint-prob">(4.3)</a> yields <strong>Bayes’ Rule</strong> (or Theorem):</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5f934ebc-353e-44b1-930d-2c3f599f6526">
-<span class="eqno">(4.5)<a class="headerlink" href="#equation-5f934ebc-353e-44b1-930d-2c3f599f6526" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>Equating this to the expression in <a class="reference internal" href="#equation-eq-joint-prob">(4.2)</a> yields <strong>Bayes’ Rule</strong> (or Theorem):</p>
+<div class="amsmath math notranslate nohighlight" id="equation-98cf8e60-e4b3-4c44-af7d-39fcce85145d">
+<span class="eqno">(4.4)<a class="headerlink" href="#equation-98cf8e60-e4b3-4c44-af7d-39fcce85145d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \cprob{x}{y,I} = \frac{\cprob{y}{x,I} \cprob{x}{I}}{\cprob{y}{I}}
 \end{equation}\]</div>
 <p>Bayes’ theorem tells us how to reverse the conditional: <span class="math notranslate nohighlight">\(\cprob{y}{x}
@@ -838,13 +817,59 @@ privilege <span class="math notranslate nohighlight">\(x\)</span> over <span cla
 probabilities are not the same thing.</p>
 <div class="my-checkpoint admonition">
 <p class="admonition-title">Checkpoint question</p>
-<p>Construct your own example of <span class="math notranslate nohighlight">\(\cprob{x}{y} \neq \cprob{y}{x}\)</span></p>
+<p>Construct your own example of <span class="math notranslate nohighlight">\(\cprob{x}{y} \neq \cprob{y}{I}\)</span></p>
 <div class="dropdown my-hint admonition">
 <p class="admonition-title">Possible answers</p>
 <p>The probability that there is a cloud in the sky given that it is
 raining is not the same as the probability that it’s raining given
 that there is a cloud in the sky.</p>
 </div>
+</div>
+<div class="admonition-ingredients-of-bayes-theorem admonition">
+<p class="admonition-title">Ingredients of Bayes’ theorem</p>
+<p>A typical use of Bayes’ theorem is to update information on a hypothesis <span class="math notranslate nohighlight">\(y\)</span> according to new data <span class="math notranslate nohighlight">\(x\)</span> that we obtain. In that case the various terms in the theorem have formal names.</p>
+<ul class="simple">
+<li><p>The quantity on the far right, <span class="math notranslate nohighlight">\(\cprob{y}{I}\)</span>, is called the <em>prior</em> probability; it represents our state of knowledge (or ignorance) about the truth of the hypothesis <span class="math notranslate nohighlight">\(y\)</span> before we have analysed the new data <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+<li><p>This is modified by additional information on <span class="math notranslate nohighlight">\(y\)</span> through <span class="math notranslate nohighlight">\(\cprob{x}{y,I}\)</span>, the <em>likelihood</em> function, that tells us how likely it is that we measure <span class="math notranslate nohighlight">\(x\)</span>, given that <span class="math notranslate nohighlight">\(y\)</span> is true (and <span class="math notranslate nohighlight">\(I\)</span> is true as well).</p></li>
+<li><p>The denominator <span class="math notranslate nohighlight">\(\cprob{x}{I}\)</span> is called the <em>evidence</em>. It does not depend on the hypothesis and can be regarded as a normalization constant in many situations.</p></li>
+<li><p>Together, these yield the <em>posterior</em> probability, <span class="math notranslate nohighlight">\(\cprob{y}{x,I}\)</span>, representing ourupdated state of knowledge about the hypothesis <span class="math notranslate nohighlight">\(y\)</span> in light of the information we had before, <span class="math notranslate nohighlight">\(I\)</span>, and the additional data <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+</ul>
+<p>In this sense, Bayes’ theorem is a mathematically rigorous statement of how probabilities should be updated in light of new information: the process of learning from data.</p>
+</div>
+</section>
+<section id="the-friends-of-bayes-theorem">
+<h2>The friends of Bayes’ theorem<a class="headerlink" href="#the-friends-of-bayes-theorem" title="Link to this heading">#</a></h2>
+<div class="admonition-normalization-and-marginalization admonition">
+<p class="admonition-title">Normalization and marginalization</p>
+<p>Given an exclusive and exhaustive list of hypotheses, <span class="math notranslate nohighlight">\(y_j\)</span>, we must have a normalization of the total probability</p>
+<div class="amsmath math notranslate nohighlight" id="equation-e54e839a-0236-43e5-9e88-ea02d36a2c4e">
+<span class="eqno">(4.5)<a class="headerlink" href="#equation-e54e839a-0236-43e5-9e88-ea02d36a2c4e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+  \sum_j \cprob{y_j}{I} = 1,
+\end{equation}\]</div>
+<p>which also leads to the marginalization property</p>
+<div class="amsmath math notranslate nohighlight" id="equation-07989bb5-35d0-4c5e-8876-09f4cec94126">
+<span class="eqno">(4.6)<a class="headerlink" href="#equation-07989bb5-35d0-4c5e-8876-09f4cec94126" title="Permalink to this equation">#</a></span>\[\begin{align}
+      \cprob{x}{I} = \sum_j \cprob{y_j}{x,I} \cprob{x}{I}=\sum_j \cprob{x, y_j}{I} 
+\end{align}\]</div>
+<p>where we used the product rule in the second step.</p>
+</div>
+<p>This is a key tool in the Bayesian’s article: the ability to obtain the  “marginal” probability for the outcome of one variable by summing the joint probability for <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> over all possible outcomes <span class="math notranslate nohighlight">\(\{y_j\}\)</span> of the second variable. This second variable
+is not one we are interested in when computing the pdf <span class="math notranslate nohighlight">\(\cprob{x}{I}\)</span>, so we ``marginalize over it”.</p>
+<p>We will use marginalization a lot! Note that the marginalization
+takes place in the presence of the conditional I, i.e., all
+probabilities involved are “given the information I”. The given
+information is held fixed, while the sum of all possibilities is
+constructed.</p>
+<p>For example, let’s imagine that there are five candidates in a presidential election; then <span class="math notranslate nohighlight">\(H_1\)</span> could be the proposition that the first candidate will win, and so on. The probability that <span class="math notranslate nohighlight">\(A\)</span> is true, for example that unemployment will be lower in a year’s time (given all relevant information <span class="math notranslate nohighlight">\(I\)</span>, but irrespective of whoever becomes president) is given by <span class="math notranslate nohighlight">\(\sum_i \prob(A,H_i|I)\)</span>. The president is a nuisance variable who has been marginalized out of the calculation.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Although we alluded to the analogy between inserting a complete set
+of states and marginalization above this analogy breaks down in
+general. It’s ok to use this as a mnemonic though.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A rule from probability says <span class="math notranslate nohighlight">\(\prob(A \cup B) = \prob(A) + \prob(B) - \prob(A \cap B)\)</span>. (That is, to calculate the probability of the union of <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> we need to subtract the probability of the intersection from the sum of probabilities.) This may seem to contradict our marginalization rule. However, if <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> are <em>exclusive</em> (as we assume) then <span class="math notranslate nohighlight">\(\prob(A \cap B) = 0\)</span>.</p>
 </div>
 <div class="exercise admonition" id="exercise:Inferenceandpdfs:sumandproductrule">
 
@@ -936,6 +961,7 @@ you through applying the sum and product rules.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sum-rule">Sum rule</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#product-rule">Product rule</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-theorem">Bayes’ theorem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-friends-of-bayes-theorem">The friends of Bayes’ theorem</a></li>
 </ul>
   </nav></div>
 

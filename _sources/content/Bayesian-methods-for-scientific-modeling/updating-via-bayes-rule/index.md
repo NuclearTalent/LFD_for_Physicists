@@ -37,4 +37,4 @@ But we will apply Bayes' rule for updating in other contexts in this book. These
 * {ref}`sec:bayesian-optimization`
 * {ref}`sec:BNN`
 
-In this chapter we return to the prototypical coin-tossing experiment introduced in {ref}`sec:CoinExample` and look at the updating process in more detail.
+In this chapter we use a simple coin-tossing experiment to examine the updating process, its practice and its implications, in more detail.

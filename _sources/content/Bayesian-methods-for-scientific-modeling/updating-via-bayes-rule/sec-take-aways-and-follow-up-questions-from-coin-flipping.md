@@ -1,5 +1,12 @@
 # Take-aways and follow-up questions from coin flipping
 
+
+## A couple of key points from studying coin flipping
+
+* The core of the coin-flipping analysis is Bayes' rule, which dictates that the Bayesian posterior $p(p_H | D, I)$ is proportional to the product of the prior and the likelihood (which is given by a binomial distribution in this case).
+* Possible point estimates for the value of $p_H$ could be the maximum (also known as mode), mean, or median of this posterior PDF. 
+
+
 ## When do priors matter? When don't they matter?
 
 ::::{admonition} Interpreting priors
@@ -160,3 +167,12 @@ What would your standard be for deciding the coin was so unfair that you would w
 :::
 
 
+
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+The frequentist point estimate is $p_H^* = \frac{H}{N}$. It actually corresponds to one of the point estimates from the Bayesian analysis for a specific prior. Which point estimate and what prior?
+:::{admonition} Answer 
+:class: dropdown, my-answer 
+For a flat prior this is the mean, median, and mode of the posterior. 
+:::
+::::
