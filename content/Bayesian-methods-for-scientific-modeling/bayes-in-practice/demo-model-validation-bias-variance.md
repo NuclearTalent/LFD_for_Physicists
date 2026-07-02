@@ -221,7 +221,7 @@ $\hat f(x)$ denotes the function estimated from a single noisy training set. Rep
        $$
 
        which approximates the expected test mean-squared error. Its minimum identifies the best compromise between underfitting and overfitting.
-       If one instead measured prediction error on future noisy observations, an additional irreducible noise term $\sigma^2_{\text{noise}} would be added.
+       If one instead measured prediction error on future noisy observations, an additional irreducible noise term $\sigma^2_{\text{noise}}$ would be added.
     * The blue shaded region indicates the underfitting side of the optimum;
       red shading indicates the overfitting side. The boundaries move as the simulation parameters change.
     * The dashed vertical line indicates the polynomial degree with the smallest estimated prediction error. Changing sample size, observational noise, regularization or underlying function may cause this optimum to move.
