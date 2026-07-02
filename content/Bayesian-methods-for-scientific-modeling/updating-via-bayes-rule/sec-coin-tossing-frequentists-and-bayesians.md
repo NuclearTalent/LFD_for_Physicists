@@ -6,7 +6,7 @@ We are observing successive flips of a coin. There is a definite true
 probability of getting heads $(p_H)_{\text{true}}$, but we don't know
 what the value is, although we do know that it is between 0 and 1.
 
-So, is the coin fair? The frequentist approach to this problem is to set up a null hypothesis, i.e., the hypothesis that the coin is fair (meaning $p_H=0.5$), and then determine the probability that the observed data is generated given that that hypothesis holds. If the probability is a low number $p_H \ll 1$ then the null hypothesis can be rejected at a confidence of $1 - p_H$.
+So, is the coin fair? By fair, we mean that we would be prepared to lay an even 1 : 1 bet on the outcome of a flip being a head or a tail. The frequentist approach to this problem is to set up a null hypothesis, i.e., the hypothesis that the coin is fair (meaning $p_H=0.5$), and then determine the probability that the observed data is generated given that that hypothesis holds. If the probability is a low number $p_H \ll 1$ then the null hypothesis can be rejected at a confidence of $1 - p_H$.
 
 Thus, if the data is that the coin produces $H$ heads after $N$ tosses
 the frequentist wants to compute 

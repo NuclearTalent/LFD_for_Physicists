@@ -109,12 +109,16 @@ particle 2. *Marginalizing* in the Bayesian context means
 interested in, to leave the focus on the PDF of other parameters. This
 can be particularly useful if there are "nuisance" parameters in the
 statistical model that are just indirectly influencing the quantity of interest. A specific example could be a parameter that account for the impact of defects in the
-measuring apparatus, but ultimately one is interested in the physics that cab be 
-extracted with the imperfect apparatus. 
+measuring apparatus, but ultimately one is interested in the physics that can be 
+extracted with the imperfect apparatus.
+
+[]{prf:ref}`definition:probability-density-function` contains a summary of the properties of both one- and multi-dimensional pdfs. 
 
 :::{note}
-You may have noticed that we wrote $\p{x_1}$ and $\p{x_1, x_2}$ rather than $\pdf{x_1}{I}$ and $\pdf{x1,x2}{I}$, where "$I$" is information we know but do not specify explicitly. Our PDFs will always be contingent on *some* information, so we were really being sloppy by trying to be compact. (See {ref}`sec:continuum_limit` for more careful versions of these equations.)
+You may have noticed that we wrote $\p{x_1}$ and $\p{x_1, x_2}$ rather than $\pdf{x_1}{I}$ and $\pdf{x_1,x_2}{I}$, where "$I$" is information we know but do not specify explicitly. Our PDFs will always be contingent on *some* information, so we were really being sloppy by trying to be compact.
 :::
+
+
 
 ## Bayes' theorem applied to PDFs
 
