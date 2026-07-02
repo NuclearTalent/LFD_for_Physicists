@@ -217,13 +217,15 @@ $\hat f(x)$ denotes the function estimated from a single noisy training set. Rep
     *  The green curve is  
 
        $$
-          \text{Bias}^2 + \text{Variance} + \sigma^2_{\text{noise}},  
+          \text{Bias}^2 + \text{Variance} ,  
        $$
 
        which approximates the expected test mean-squared error. Its minimum identifies the best compromise between underfitting and overfitting.
+       If one instead measured prediction error on future noisy observations, an additional irreducible noise term $\sigma^2_{\text{noise}} would be added.
     * The blue shaded region indicates the underfitting side of the optimum;
       red shading indicates the overfitting side. The boundaries move as the simulation parameters change.
     * The dashed vertical line indicates the polynomial degree with the smallest estimated prediction error. Changing sample size, observational noise, regularization or underlying function may cause this optimum to move.
+
 
 
 * The lower panel illustrates the statistical origin of bias and variance. It explains why those changes occur by displaying many fitted models obtained from different noisy training sets (a representative subset of all Repetitions is shown).
