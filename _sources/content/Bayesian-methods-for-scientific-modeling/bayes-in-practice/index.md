@@ -7,6 +7,6 @@ In this chapter we finish Part I with some topics addressing aspects of Bayesian
 
 * {ref}`sec:BayesianWorkflow` gives a more detailed version of the workflow for principled Bayesian inference, including checklists.
 
-* {ref}`sec:BayesianLinearRegression` has a complete treatment of an important class of problems for Bayesian inference.
+* {ref}`sec:BayesianLinearRegression`, {ref}`sec:BLR-workflow`, and {ref}`sec:BLR-demo`, provide a complete treatment of an important class of problems for Bayesian inference: Bayesian Linear Regression (or BLR).
 
 * {ref}`demo:BiasVarianceTradeoff` provides an introduction to the bias-variance trade-off and how it relates to underfitting and overfitting in regression.

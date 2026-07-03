@@ -257,8 +257,10 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../bayes-in-practice/index.html">8. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../bayes-in-practice/sec-advantages-of-the-bayesian-approach.html">8.1. Advantages of the Bayesian approach</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bayes-in-practice/sec-bayesian-research-workflow.html">8.2. Bayesian research workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../bayes-in-practice/sec-bayesian-linear-regression.html">8.3. Bayesian Linear Regression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../bayes-in-practice/demo-model-validation-bias-variance.html">8.4. Demo: The bias-variance trade-off</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayes-in-practice/sec-blr-background.html">8.3. BLR-I: Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayes-in-practice/sec-blr-workflow.html">8.4. BLR-II: Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayes-in-practice/sec-blr-demo.html">8.5. BLR-III: Demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayes-in-practice/demo-model-validation-bias-variance.html">8.6. Demo: The bias-variance trade-off</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../exercises-bayesian-methods-for-scientific-modeling/index.html">9. Exercises and problems for Part I</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -733,13 +735,13 @@ document.write(`
 <p>For practical purposes, we are often satisfied to approximate PDFs with Gaussians. Within such limits there is an easier method that is often used for error propagation. Note, however, that there are instances when this method fails miserably as will be shown in the example further down.</p>
 <p>Suppose that we have summarized the PDFs <span class="math notranslate nohighlight">\(\pdf{x}{I}\)</span> and <span class="math notranslate nohighlight">\(\pdf{y}{I}\)</span> as two Gaussians with mean and standard deviation <span class="math notranslate nohighlight">\(x_0, \sigma_x\)</span> and <span class="math notranslate nohighlight">\(y_0, \sigma_y\)</span>, respectively. Assume further that these two variables are not correlated, i.e., <span class="math notranslate nohighlight">\(\pdf{x,y}{I} = \pdf{x}{I} \pdf{y}{I}\)</span>.</p>
 <p>Suppose now that we are interested in <span class="math notranslate nohighlight">\(Z=X-Y\)</span>. Intuitively, we might guess that the best estimate <span class="math notranslate nohighlight">\(z_0 = x_0 - y_0\)</span>, but the standard deviation <span class="math notranslate nohighlight">\(\sigma_z\)</span> requires some more thought. Differentiate the relation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b72a6e23-ca4c-48c9-b9a0-1d73b404d06c">
-<span class="eqno">(7.16)<a class="headerlink" href="#equation-b72a6e23-ca4c-48c9-b9a0-1d73b404d06c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1a43d90c-f8cf-4574-b01b-cf6d9611f6e8">
+<span class="eqno">(7.16)<a class="headerlink" href="#equation-1a43d90c-f8cf-4574-b01b-cf6d9611f6e8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \delta Z = \delta X - \delta Y.
 \end{equation}\]</div>
 <p>For error bars, we are interested in this relation around the optimum, i.e., <span class="math notranslate nohighlight">\(\delta X = X - x_0\)</span> and so on. Square both sides and integrate to get the expectation value</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8d710c5c-afdd-4474-a518-b470af74d70c">
-<span class="eqno">(7.17)<a class="headerlink" href="#equation-8d710c5c-afdd-4474-a518-b470af74d70c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d5474846-b643-4a1f-9c2d-d0fff2b1a9c3">
+<span class="eqno">(7.17)<a class="headerlink" href="#equation-d5474846-b643-4a1f-9c2d-d0fff2b1a9c3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \expect{\delta Z^2} = \expect{\delta X^2 + \delta Y^2 - 2 \delta X \delta Y}  = \expect{\delta X^2} + \expect {\delta Y^2} - 2 \expect{\delta X \delta Y},
 \end{equation}\]</div>
 <p>where we have employed the linear property for an integral over a sum of terms.</p>
@@ -749,27 +751,27 @@ document.write(`
 \expect{\delta X^2} = \sigma_x^2; \qquad \expect{\delta Y^2} = \sigma_y^2; \qquad \expect{\delta X \delta Y} = 0,
 \]</div>
 <p>and we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a39a7edb-acc6-4718-97a4-15df7438662d">
-<span class="eqno">(7.19)<a class="headerlink" href="#equation-a39a7edb-acc6-4718-97a4-15df7438662d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a5f2c1ae-66bf-4d31-b4f8-30c7df66c8a5">
+<span class="eqno">(7.19)<a class="headerlink" href="#equation-a5f2c1ae-66bf-4d31-b4f8-30c7df66c8a5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \sigma_z = \sqrt{ \expect{\delta Z^2} } = \sqrt{ \sigma_x^2 + \sigma_y^2 }.
 \end{equation}\]</div>
 <div class="proof example admonition" id="example:BayesianAdvantage:inferring-galactic-distances-revisited">
 <p class="admonition-title"><span class="caption-number">Example 7.3 </span> (Inferring galactic distances—revisited)</p>
 <section class="example-content" id="proof-content">
 <p>Consider, as a second example, the ratio of two parameters <span class="math notranslate nohighlight">\(Z = X/Y\)</span> that appeared in <a class="reference internal" href="sec-nuisance-parameters-and-marginalization.html#example:BayesianAdvantage:inferring-galactic-distances">Example 7.2</a> (in which we wanted to infer <span class="math notranslate nohighlight">\(x = v/H\)</span>). Differentiation gives</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8788736a-5f7a-41de-87a7-c2a730f12e7f">
-<span class="eqno">(7.20)<a class="headerlink" href="#equation-8788736a-5f7a-41de-87a7-c2a730f12e7f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d479296c-167f-4dfd-9aae-7fdea8ac4dfb">
+<span class="eqno">(7.20)<a class="headerlink" href="#equation-d479296c-167f-4dfd-9aae-7fdea8ac4dfb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \delta Z = \frac{Y \delta X - X \delta Y}{Y^2} \quad \Leftrightarrow \quad \frac{\delta Z}{Z} = \frac{\delta X}{X} - \frac{\delta Y}{Y}.
 \end{equation}\]</div>
 <p>Squaring both sides and taking the expectation values, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e59df3f5-7e0c-472a-b0db-645f18fc363e">
-<span class="eqno">(7.21)<a class="headerlink" href="#equation-e59df3f5-7e0c-472a-b0db-645f18fc363e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c93ec013-23b9-481f-aefa-30bdcdbda3d9">
+<span class="eqno">(7.21)<a class="headerlink" href="#equation-c93ec013-23b9-481f-aefa-30bdcdbda3d9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{\expect{\delta Z^2}}{z_0^2} = \frac{\expect{\delta X^2}}{x_0^2} + \frac{\expect{\delta Y^2}}{y_0^2} - 2 \frac{\expect{\delta X} \expect{\delta Y}}{x_0 y_0},
 \end{equation}\]</div>
 <p>where the <span class="math notranslate nohighlight">\(X\)</span>, <span class="math notranslate nohighlight">\(Y\)</span> and <span class="math notranslate nohighlight">\(Z\)</span> in the denominator have been replaced by the constants <span class="math notranslate nohighlight">\(x_0\)</span>, <span class="math notranslate nohighlight">\(y_0\)</span> and <span class="math notranslate nohighlight">\(z_0 = x_0 / y_0\)</span> because we are interested in deviations from the peak of the PDF.</p>
 <p>Finally, substituting the information for the PDFs of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> as summarized in Eq. <a class="reference internal" href="#equation-eq-stddev">(7.18)</a> we finally obtain the propagated error for the ratio</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3a9f83ae-1bf9-440b-91fb-a7da1711dfab">
-<span class="eqno">(7.22)<a class="headerlink" href="#equation-3a9f83ae-1bf9-440b-91fb-a7da1711dfab" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ee937113-aa20-415c-b8ea-a079d11c8a6c">
+<span class="eqno">(7.22)<a class="headerlink" href="#equation-ee937113-aa20-415c-b8ea-a079d11c8a6c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{\sigma_z}{z_0} = \sqrt{ \left( \frac{\sigma_x}{x_0} \right)^2 + \left( \frac{\sigma_y}{y_0} \right)^2}.
 \end{equation}\]</div>
 </section>
@@ -797,8 +799,8 @@ document.write(`
 <li><p>What is <span class="math notranslate nohighlight">\(f = f_0 \pm \sigma_f\)</span>?</p></li>
 </ul>
 <p>Obviously, we have that <span class="math notranslate nohighlight">\(f_0 = \sqrt{A_0}\)</span>. Differentiate the relation, square and take the expectation value</p>
-<div class="amsmath math notranslate nohighlight" id="equation-56b3d50c-ab36-43cf-8404-9337e4ef20f5">
-<span class="eqno">(7.23)<a class="headerlink" href="#equation-56b3d50c-ab36-43cf-8404-9337e4ef20f5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2e99d516-86c9-40a5-8b0c-771594120605">
+<span class="eqno">(7.23)<a class="headerlink" href="#equation-2e99d516-86c9-40a5-8b0c-771594120605" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \expect{\delta A^2} = 4 f_0^2 \expect{\delta f^2} \quad 
 \Leftrightarrow \quad 
 \sigma_f = \frac{\sigma_A}{2 \sqrt{A_0}},
@@ -811,14 +813,14 @@ document.write(`
 <li><p>The Gaussian approximation around the peak does not always work.</p></li>
 </ol>
 <p>Consider first the best fit of the signal peak. It implies that the likelihood can be approximated by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-761a926a-accb-41ac-877f-db900a9666b3">
-<span class="eqno">(7.24)<a class="headerlink" href="#equation-761a926a-accb-41ac-877f-db900a9666b3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d5fb0574-b360-481d-8aa0-25843f7631ea">
+<span class="eqno">(7.24)<a class="headerlink" href="#equation-d5fb0574-b360-481d-8aa0-25843f7631ea" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\data}{A,I} \propto \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right].
 \end{equation}\]</div>
 <p>However, the posterior for <span class="math notranslate nohighlight">\(A\)</span> is <span class="math notranslate nohighlight">\(\pdf{A}{{\data},I} \propto \pdf{\data}{A,I} \pdf{A}{I}\)</span> and we should use the fact that we know that <span class="math notranslate nohighlight">\(A \ge 0\)</span>.</p>
 <p>We will incorporate this information through a simple step-function prior</p>
-<div class="amsmath math notranslate nohighlight" id="equation-54615294-19ea-41c6-bffa-3533109fd0b8">
-<span class="eqno">(7.25)<a class="headerlink" href="#equation-54615294-19ea-41c6-bffa-3533109fd0b8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-93d560e7-2c1a-4005-bdc0-cb296509523d">
+<span class="eqno">(7.25)<a class="headerlink" href="#equation-93d560e7-2c1a-4005-bdc0-cb296509523d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{A}{I} = \left\{
 \begin{array}{ll}
 \frac{1}{A_\mathrm{max}}, &amp; 0 \le A \le A_\mathrm{max}, \\
@@ -828,13 +830,13 @@ document.write(`
 \end{equation}\]</div>
 <p>This implies that the posterior will be a truncated Gaussian, and its maximum will always be above zero.</p>
 <p>This also implies that we cannot use the Gaussian approximation. Instead we will do the proper calculation using the transformation <a class="reference internal" href="sec-changing-variables.html#equation-eq-bayesianadvantage-transformation">(7.13)</a></p>
-<div class="amsmath math notranslate nohighlight" id="equation-60bfc168-fe9f-4ff2-a908-eb94a228f812">
-<span class="eqno">(7.26)<a class="headerlink" href="#equation-60bfc168-fe9f-4ff2-a908-eb94a228f812" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ff9fcca3-a703-42c7-8d67-b4f7693fcb40">
+<span class="eqno">(7.26)<a class="headerlink" href="#equation-ff9fcca3-a703-42c7-8d67-b4f7693fcb40" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(f|{\data},I) = \pdf{A}{{\data},I} \left| \frac{dA}{df} \right| = 2 f \pdf{A}{{\data},I}
 \end{equation}\]</div>
 <p>In the end we find the proper Bayesian error propagation given by the PDF</p>
-<div class="amsmath math notranslate nohighlight" id="equation-29e7923a-1447-4d51-b697-ad760f6b81d1">
-<span class="eqno">(7.27)<a class="headerlink" href="#equation-29e7923a-1447-4d51-b697-ad760f6b81d1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6e03a146-821c-4e56-bcbb-b77e392070f2">
+<span class="eqno">(7.27)<a class="headerlink" href="#equation-6e03a146-821c-4e56-bcbb-b77e392070f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(f|{\data},I) \propto \left\{
 \begin{array}{ll}
 f \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right], &amp; 0 \le f \le \sqrt{A_\mathrm{max}}, \\
