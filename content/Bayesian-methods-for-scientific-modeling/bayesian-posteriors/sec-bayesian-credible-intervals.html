@@ -70,24 +70,24 @@
     <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
     <script src="../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
     <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
-    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
-    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
-    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
-    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
-    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
     <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
     <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
     <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
-    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
-    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
-    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
-    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
     <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
-    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="5.4. The Central Limit Theorem" href="sec-central-limit-theorem.html" />
@@ -728,7 +728,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-credible-intervals">Defining credible intervals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-credible-intervals">Defining credible intervals</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#try-a-couple-of-checkpoint-questions">Try a couple of checkpoint questions</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-credible-intervals-and-frequentist-confidence-intervals">Bayesian credible intervals and frequentist confidence intervals</a></li>
 </ul>
             </nav>
@@ -766,6 +769,7 @@ the ETI has 5% of the area above and below the blue vertical dashed lines. Note 
 <li><p>The slider lets you change the size of the credible interval.</p></li>
 <li><p>The pulldown menu gives a variety of choices for distributions.</p></li>
 </ul>
+<p><strong>To do:</strong> <em>Play with the widget and devise algorithms that can be coded in Python for determining the ETI and HPD regions for a given credible interval percentage.</em></p>
 <iframe src="../../../_static/eti_hpd_credible_regions_widget.html"
     width="100%"
     height="920"
@@ -827,6 +831,705 @@ plt.show()
 ```
 -->
 <p>See <a class="reference internal" href="../../Appendix/Statistics/working-with-probability-distributions/sec-point-estimates-credible-regions.html#sec-point-and-credibility"><span class="std std-numref">Section 40.3</span></a> for further discussion of credible regions.</p>
+<section id="try-a-couple-of-checkpoint-questions">
+<h3>Try a couple of checkpoint questions<a class="headerlink" href="#try-a-couple-of-checkpoint-questions" title="Link to this heading">#</a></h3>
+<p>The following two checkpoint questions show one-dimensional multi-modal PDFs. The smooth curves are approximated by discrete boxes, all of which have the same probability.
+Your task is to establish the intervals for 68% credible intervals using both the equal-tailed interval (ETI) and highest posterior density (HPD) conventions.
+You can do this by counting boxes.
+The box width is 0.25 so your intervals should be of the form (-3.25, 1.50).
+Note that you may have disconnected intervals.</p>
+<p>Because of the discrete size of the boxes, you won’t get precisely 68%. Choose your interval to be the closest to 68%, but on the higher side.
+There is code available that you can inspect to see how the intervals were calculated here and you can copy it to a Jupyter notebook to change the distributions.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">myst_nb</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rectangle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">quad</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>           <span class="c1"># Global default size</span>
+    <span class="s1">&#39;axes.titlesize&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>      <span class="c1"># Title of the individual plots</span>
+    <span class="s1">&#39;axes.labelsize&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>      <span class="c1"># x and y axis labels</span>
+    <span class="s1">&#39;xtick.labelsize&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>     <span class="c1"># x-axis tick labels</span>
+    <span class="s1">&#39;ytick.labelsize&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>     <span class="c1"># y-axis tick labels</span>
+    <span class="s1">&#39;legend.fontsize&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>     <span class="c1"># Legend font size</span>
+    <span class="s1">&#39;figure.titlesize&#39;</span><span class="p">:</span> <span class="mi">22</span>     <span class="c1"># Main figure super-title</span>
+<span class="p">})</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BoxHistogram</span><span class="p">:</span>
+    <span class="n">edges</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">counts</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">target_bin_probabilities</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">normalization_on_range</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_boxes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bin_width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">widths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">widths</span><span class="p">,</span> <span class="n">widths</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The bins must have equal widths.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">widths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">box_height</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Since each box has area 1/n_boxes,</span>
+
+<span class="sd">            bin_width * box_height = 1/n_boxes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_boxes</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_width</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bin_probabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_boxes</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">density_heights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_height</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">probability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected_bins</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Probability contained in a Boolean selection of whole bins.&quot;&quot;&quot;</span>
+        <span class="n">selected_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">selected_bins</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">selected_bins</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;selected_bins must contain one Boolean value per bin.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">[</span><span class="n">selected_bins</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_boxes</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">intervals_from_mask</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">selected_bins</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a Boolean bin mask into one or more intervals.</span>
+
+<span class="sd">        This is useful for highest-density regions, which may be disconnected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">selected_bins</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">intervals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">selected_bins</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+
+            <span class="n">j</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">while</span> <span class="p">(</span>
+                <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span>
+                <span class="ow">and</span> <span class="n">selected_bins</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="p">):</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+            <span class="p">)</span>
+
+            <span class="n">i</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">intervals</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">selected_bins</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pdf</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">intervals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot every equal-probability box separately.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        selected_bins</span>
+<span class="sd">            Boolean mask indicating which complete bars should be shaded.</span>
+
+<span class="sd">        pdf</span>
+<span class="sd">            Optional target PDF to overlay. It is normalized over the</span>
+<span class="sd">            displayed x range.</span>
+
+<span class="sd">        ax</span>
+<span class="sd">            Optional matplotlib axis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">selected_bins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">selected_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">selected_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">selected_bins</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_width</span>
+        <span class="n">dh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_height</span>
+
+        <span class="k">for</span> <span class="n">bin_index</span><span class="p">,</span> <span class="n">number_of_boxes</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">number_of_boxes</span><span class="p">)):</span>
+                <span class="n">rectangle</span> <span class="o">=</span> <span class="n">Rectangle</span><span class="p">(</span>
+                    <span class="n">xy</span><span class="o">=</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">bin_index</span><span class="p">],</span>
+                        <span class="n">level</span> <span class="o">*</span> <span class="n">dh</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="n">width</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span>
+                    <span class="n">height</span><span class="o">=</span><span class="n">dh</span><span class="p">,</span>
+                    <span class="n">facecolor</span><span class="o">=</span><span class="p">(</span>
+                        <span class="s2">&quot;C0&quot;</span>
+                        <span class="k">if</span> <span class="n">selected_bins</span><span class="p">[</span><span class="n">bin_index</span><span class="p">]</span>
+                        <span class="k">else</span> <span class="s2">&quot;white&quot;</span>
+                    <span class="p">),</span>
+                    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rectangle</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">ymax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density_heights</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">dh</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.08</span> <span class="o">*</span> <span class="n">ymax</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$x$&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;probability density&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+            <span class="n">title</span> <span class="ow">or</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_boxes</span><span class="si">}</span><span class="s2"> equal-probability boxes&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">intervals</span><span class="p">:</span>
+           <span class="n">answer_text</span> <span class="o">=</span> <span class="s2">&quot;intervals = </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">intervals</span><span class="p">)</span>
+           <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+              <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.97</span><span class="p">,</span>                      <span class="c1"># Coordinates (2% from left, 97% from bottom)</span>
+              <span class="n">answer_text</span><span class="p">,</span>     <span class="c1"># The text string</span>
+              <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>          <span class="c1"># Use axes coordinate system (0 to 1)</span>
+              <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span>         <span class="c1"># Align the top of the text to the coordinate</span>
+              <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;left&#39;</span>       <span class="c1"># Align the left of the text to the coordinate</span>
+           <span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pdf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x_plot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="mi">1200</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">y_plot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_plot</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Normalize the target curve on the displayed range.</span>
+            <span class="n">y_plot</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalization_on_range</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">x_plot</span><span class="p">,</span>
+                <span class="n">y_plot</span><span class="p">,</span>
+                <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;target density&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">ax</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_box_histogram</span><span class="p">(</span>
+    <span class="n">pdf</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">x_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">n_bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
+    <span class="n">n_boxes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoxHistogram</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Approximate a PDF using an integer number of equal-area boxes.</span>
+
+<span class="sd">    The target PDF is integrated over each equal-width bin. Integer</span>
+<span class="sd">    box counts are assigned by the largest-remainder method, so that</span>
+
+<span class="sd">        sum(counts) == n_boxes</span>
+
+<span class="sd">    exactly.</span>
+
+<span class="sd">    The PDF is renormalized over x_range.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">x_range</span>
+
+    <span class="k">if</span> <span class="n">xmax</span> <span class="o">&lt;=</span> <span class="n">xmin</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;x_range must satisfy xmax &gt; xmin.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n_bins</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">n_boxes</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_bins and n_boxes must be positive.&quot;</span><span class="p">)</span>
+
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">n_bins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Integrate the target density over each bin.</span>
+    <span class="n">bin_masses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">quad</span><span class="p">(</span>
+                <span class="n">pdf</span><span class="p">,</span>
+                <span class="n">edges</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">edges</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">limit</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bins</span><span class="p">)</span>
+        <span class="p">],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">bin_masses</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">1.0e-12</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;The supplied PDF is negative in at least one bin.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Remove insignificant negative roundoff.</span>
+    <span class="n">bin_masses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">bin_masses</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">normalization</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bin_masses</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">normalization</span><span class="p">)</span> <span class="ow">or</span> <span class="n">normalization</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;The PDF has no finite positive mass on x_range.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">bin_probabilities</span> <span class="o">=</span> <span class="n">bin_masses</span> <span class="o">/</span> <span class="n">normalization</span>
+
+    <span class="c1"># Desired, generally noninteger, box counts.</span>
+    <span class="n">raw_counts</span> <span class="o">=</span> <span class="n">n_boxes</span> <span class="o">*</span> <span class="n">bin_probabilities</span>
+
+    <span class="c1"># Begin by rounding down.</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">raw_counts</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># Distribute remaining boxes according to the largest</span>
+    <span class="c1"># fractional remainders.</span>
+    <span class="n">boxes_left</span> <span class="o">=</span> <span class="n">n_boxes</span> <span class="o">-</span> <span class="n">counts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">boxes_left</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">fractional_parts</span> <span class="o">=</span> <span class="n">raw_counts</span> <span class="o">-</span> <span class="n">counts</span>
+
+        <span class="n">recipients</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span>
+            <span class="n">fractional_parts</span>
+        <span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">boxes_left</span><span class="p">]</span>
+
+        <span class="n">counts</span><span class="p">[</span><span class="n">recipients</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">BoxHistogram</span><span class="p">(</span>
+        <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span>
+        <span class="n">counts</span><span class="o">=</span><span class="n">counts</span><span class="p">,</span>
+        <span class="n">target_bin_probabilities</span><span class="o">=</span><span class="n">bin_probabilities</span><span class="p">,</span>
+        <span class="n">normalization_on_range</span><span class="o">=</span><span class="n">normalization</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">equal_tailed_bins</span><span class="p">(</span>
+    <span class="n">hist</span><span class="p">:</span> <span class="n">BoxHistogram</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.68</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Equal-tailed interval, rounded outward to whole bins.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">level</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;level must be between zero and one.&quot;</span><span class="p">)</span>
+
+    <span class="n">tail_probability</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">level</span><span class="p">)</span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">hist</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span> <span class="o">/</span> <span class="n">hist</span><span class="o">.</span><span class="n">n_boxes</span>
+
+    <span class="n">first_bin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span>
+            <span class="n">cdf</span><span class="p">,</span>
+            <span class="n">tail_probability</span><span class="p">,</span>
+            <span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">last_bin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span>
+            <span class="n">cdf</span><span class="p">,</span>
+            <span class="mf">1.0</span> <span class="o">-</span> <span class="n">tail_probability</span><span class="p">,</span>
+            <span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">hist</span><span class="o">.</span><span class="n">n_bins</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">mask</span><span class="p">[</span><span class="n">first_bin</span><span class="p">:</span><span class="n">last_bin</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">mask</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">shortest_contiguous_bins</span><span class="p">(</span>
+    <span class="n">hist</span><span class="p">:</span> <span class="n">BoxHistogram</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.68</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Narrowest contiguous set of whole bins containing at least</span>
+<span class="sd">    the requested probability.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">level</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;level must be between zero and one.&quot;</span><span class="p">)</span>
+
+    <span class="n">boxes_required</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">level</span> <span class="o">*</span> <span class="n">hist</span><span class="o">.</span><span class="n">n_boxes</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">cumulative_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+        <span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">hist</span><span class="o">.</span><span class="n">counts</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="n">best_candidate</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">left</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hist</span><span class="o">.</span><span class="n">n_bins</span><span class="p">):</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">left</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="p">(</span>
+            <span class="n">right</span> <span class="o">&lt;=</span> <span class="n">hist</span><span class="o">.</span><span class="n">n_bins</span>
+            <span class="ow">and</span> <span class="n">cumulative_counts</span><span class="p">[</span><span class="n">right</span><span class="p">]</span>
+            <span class="o">-</span> <span class="n">cumulative_counts</span><span class="p">[</span><span class="n">left</span><span class="p">]</span>
+            <span class="o">&lt;</span> <span class="n">boxes_required</span>
+        <span class="p">):</span>
+            <span class="n">right</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">right</span> <span class="o">&gt;</span> <span class="n">hist</span><span class="o">.</span><span class="n">n_bins</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">width</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">right</span><span class="p">]</span> <span class="o">-</span> <span class="n">hist</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">left</span><span class="p">]</span>
+
+        <span class="n">excess_boxes</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">cumulative_counts</span><span class="p">[</span><span class="n">right</span><span class="p">]</span>
+            <span class="o">-</span> <span class="n">cumulative_counts</span><span class="p">[</span><span class="n">left</span><span class="p">]</span>
+            <span class="o">-</span> <span class="n">boxes_required</span>
+        <span class="p">)</span>
+
+        <span class="n">candidate</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">width</span><span class="p">,</span>
+            <span class="n">excess_boxes</span><span class="p">,</span>
+            <span class="n">left</span><span class="p">,</span>
+            <span class="n">right</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">best_candidate</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">candidate</span> <span class="o">&lt;</span> <span class="n">best_candidate</span>
+        <span class="p">):</span>
+            <span class="n">best_candidate</span> <span class="o">=</span> <span class="n">candidate</span>
+
+    <span class="k">if</span> <span class="n">best_candidate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;No contiguous interval could be constructed.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">best_candidate</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">hist</span><span class="o">.</span><span class="n">n_bins</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">mask</span><span class="p">[</span><span class="n">left</span><span class="p">:</span><span class="n">right</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">mask</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">highest_density_bins</span><span class="p">(</span>
+    <span class="n">hist</span><span class="p">:</span> <span class="n">BoxHistogram</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.68</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Highest-density set of whole bins.</span>
+
+<span class="sd">    Because the bins have equal widths, sorting by histogram</span>
+<span class="sd">    density is equivalent to sorting by the number of boxes</span>
+<span class="sd">    in each bar.</span>
+
+<span class="sd">    The resulting credible region may be disconnected.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">level</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;level must be between zero and one.&quot;</span><span class="p">)</span>
+
+    <span class="n">boxes_required</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">level</span> <span class="o">*</span> <span class="n">hist</span><span class="o">.</span><span class="n">n_boxes</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Tallest bars first.</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">hist</span><span class="o">.</span><span class="n">counts</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">hist</span><span class="o">.</span><span class="n">n_bins</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">accumulated_boxes</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">bin_index</span> <span class="ow">in</span> <span class="n">order</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">accumulated_boxes</span> <span class="o">&gt;=</span> <span class="n">boxes_required</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">hist</span><span class="o">.</span><span class="n">counts</span><span class="p">[</span><span class="n">bin_index</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">mask</span><span class="p">[</span><span class="n">bin_index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">accumulated_boxes</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hist</span><span class="o">.</span><span class="n">counts</span><span class="p">[</span><span class="n">bin_index</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">mask</span>
+
+
+
+
+<span class="c1">##################################################################</span>
+<span class="c1">#   Boxed pdf #1</span>
+<span class="c1">##################################################################</span>
+
+<span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.33</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">])</span>
+<span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">2.8</span><span class="p">])</span>
+<span class="c1">#standard_deviations = np.array([0.65, 0.35, 0.85])</span>
+<span class="n">standard_deviations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.80</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">target_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+        <span class="n">weights</span>
+        <span class="o">*</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">loc</span><span class="o">=</span><span class="n">means</span><span class="p">,</span>
+            <span class="n">scale</span><span class="o">=</span><span class="n">standard_deviations</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="n">hist</span> <span class="o">=</span> <span class="n">make_box_histogram</span><span class="p">(</span>
+    <span class="n">pdf</span><span class="o">=</span><span class="n">target_pdf</span><span class="p">,</span>
+    <span class="n">x_range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">),</span>
+    <span class="n">n_bins</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">n_boxes</span><span class="o">=</span><span class="mi">210</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pdf</span><span class="o">=</span><span class="n">target_pdf</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span>
+
+<span class="c1"># Save the rendered figure for insertion elsewhere.</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;cred-int-figure-1&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Avoid displaying the figure at the original code-cell location.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+<span class="c1">#print(&quot;Boxes in each bar:&quot;)</span>
+<span class="c1">#print(hist.counts)</span>
+<span class="c1">#print(f&quot;\nProbability per box = {1 / hist.n_boxes:.5f}&quot;)</span>
+
+<span class="n">level</span> <span class="o">=</span> <span class="mf">0.68</span>
+
+<span class="n">prescriptions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Equal-tailed&quot;</span><span class="p">:</span>
+        <span class="n">equal_tailed_bins</span><span class="p">(</span><span class="n">hist</span><span class="p">,</span> <span class="n">level</span><span class="p">),</span>
+
+   <span class="c1"># &quot;Shortest contiguous&quot;:</span>
+   <span class="c1">#     shortest_contiguous_bins(hist, level),</span>
+
+    <span class="s2">&quot;HPD&quot;</span><span class="p">:</span>
+        <span class="n">highest_density_bins</span><span class="p">(</span><span class="n">hist</span><span class="p">,</span> <span class="n">level</span><span class="p">),</span>
+<span class="p">}</span>
+
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="mi">2</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
+    <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">selected_bins</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+    <span class="n">axes</span><span class="p">,</span>
+    <span class="n">prescriptions</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+<span class="p">):</span>
+    <span class="n">enclosed_probability</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">probability</span><span class="p">(</span>
+        <span class="n">selected_bins</span>
+    <span class="p">)</span>
+
+    <span class="n">intervals</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">intervals_from_mask</span><span class="p">(</span>
+        <span class="n">selected_bins</span>
+    <span class="p">)</span>
+
+    <span class="n">hist</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">selected_bins</span><span class="o">=</span><span class="n">selected_bins</span><span class="p">,</span>
+        <span class="n">pdf</span><span class="o">=</span><span class="n">target_pdf</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;enclosed probability &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;= </span><span class="si">{</span><span class="n">enclosed_probability</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span>
+        <span class="n">intervals</span><span class="o">=</span><span class="n">intervals</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="c1">#    print(</span>
+<span class="c1">#        f&quot;{name:22s}: &quot;</span>
+<span class="c1">#        f&quot;{intervals}; &quot;</span>
+<span class="c1">#        f&quot;probability = {enclosed_probability:.3f}&quot;</span>
+<span class="c1">#    )</span>
+<span class="c1">#    answers = f&quot;{name:22s}: {intervals}; probability = {enclosed_probability:.3f}&quot;</span>
+<span class="c1">#    answers = f&quot;{name:22s}: {intervals}&quot;</span>
+<span class="c1">#    glue(&quot;cred-int-1ans&quot;, answers, display=False)</span>
+
+
+<span class="c1"># Save the rendered figure for insertion elsewhere.</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;cred-int-figure-1ans&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Avoid displaying the figure at the original code-cell location.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+<span class="c1">#plt.show()</span>
+
+
+<span class="c1">##################################################################</span>
+<span class="c1">#   Boxed pdf #2</span>
+<span class="c1">##################################################################</span>
+
+<span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.20</span><span class="p">,</span> <span class="mf">0.30</span><span class="p">,</span> <span class="mf">0.50</span><span class="p">])</span>
+<span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">])</span>
+<span class="n">standard_deviations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">target_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+        <span class="n">weights</span>
+        <span class="o">*</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">loc</span><span class="o">=</span><span class="n">means</span><span class="p">,</span>
+            <span class="n">scale</span><span class="o">=</span><span class="n">standard_deviations</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="n">hist</span> <span class="o">=</span> <span class="n">make_box_histogram</span><span class="p">(</span>
+    <span class="n">pdf</span><span class="o">=</span><span class="n">target_pdf</span><span class="p">,</span>
+    <span class="n">x_range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">),</span>
+    <span class="n">n_bins</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">n_boxes</span><span class="o">=</span><span class="mi">210</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pdf</span><span class="o">=</span><span class="n">target_pdf</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span>
+
+<span class="c1"># Save the rendered figure for insertion elsewhere.</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;cred-int-figure-2&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Avoid displaying the figure at the original code-cell location.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+<span class="c1">#print(&quot;Boxes in each bar:&quot;)</span>
+<span class="c1">#print(hist.counts)</span>
+<span class="c1">#print(f&quot;\nProbability per box = {1 / hist.n_boxes:.5f}&quot;)</span>
+
+<span class="n">level</span> <span class="o">=</span> <span class="mf">0.68</span>
+
+<span class="n">prescriptions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Equal-tailed&quot;</span><span class="p">:</span>
+        <span class="n">equal_tailed_bins</span><span class="p">(</span><span class="n">hist</span><span class="p">,</span> <span class="n">level</span><span class="p">),</span>
+
+   <span class="c1"># &quot;Shortest contiguous&quot;:</span>
+   <span class="c1">#     shortest_contiguous_bins(hist, level),</span>
+
+    <span class="s2">&quot;HPD&quot;</span><span class="p">:</span>
+        <span class="n">highest_density_bins</span><span class="p">(</span><span class="n">hist</span><span class="p">,</span> <span class="n">level</span><span class="p">),</span>
+<span class="p">}</span>
+
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="mi">2</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
+    <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">selected_bins</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+    <span class="n">axes</span><span class="p">,</span>
+    <span class="n">prescriptions</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+<span class="p">):</span>
+    <span class="n">enclosed_probability</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">probability</span><span class="p">(</span>
+        <span class="n">selected_bins</span>
+    <span class="p">)</span>
+
+    <span class="n">intervals</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">intervals_from_mask</span><span class="p">(</span>
+        <span class="n">selected_bins</span>
+    <span class="p">)</span>
+
+    <span class="n">hist</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">selected_bins</span><span class="o">=</span><span class="n">selected_bins</span><span class="p">,</span>
+        <span class="n">pdf</span><span class="o">=</span><span class="n">target_pdf</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;enclosed probability &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;= </span><span class="si">{</span><span class="n">enclosed_probability</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span>
+        <span class="n">intervals</span><span class="o">=</span><span class="n">intervals</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1">#print(</span>
+    <span class="c1">#    f&quot;{name:22s}: &quot;</span>
+    <span class="c1">#    f&quot;{intervals}; &quot;</span>
+    <span class="c1">#    f&quot;probability = {enclosed_probability:.3f}&quot;</span>
+    <span class="c1">#)</span>
+<span class="c1">#    answers = f&quot;{name:22s}: {intervals}; probability = {enclosed_probability:.3f}&quot;</span>
+<span class="c1">#    answers = f&quot;{name:22s}: {intervals}&quot;</span>
+<span class="c1">#    glue(&quot;cred-int-2ans&quot;, answers, display=False)</span>
+
+<span class="c1"># Save the rendered figure for insertion elsewhere.</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;cred-int-figure-2ans&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Avoid displaying the figure at the original code-cell location.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+<span class="c1">#plt.show()</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint Question</p>
+<figure class="align-center" id="fig-cred-int-2" style="width: 95%">
+<img alt="../../../_images/32c12ddc9b30d9994b823335530fae54455128cb86a9a082ec756af250bfead5.png" src="../../../_images/32c12ddc9b30d9994b823335530fae54455128cb86a9a082ec756af250bfead5.png" />
+</figure>
+<p>Identify the ETI and HPD credible intervals.</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<figure class="align-center" id="fig-cred-int-2ans" style="width: 95%">
+<img alt="../../../_images/b035b6118c82caae6741632a51efee1b70cfbed5ddf8b0bd1073ae64fcee4b59.png" src="../../../_images/b035b6118c82caae6741632a51efee1b70cfbed5ddf8b0bd1073ae64fcee4b59.png" />
+</figure>
+</div>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint Question</p>
+<figure class="align-center" id="fig-cred-int-1" style="width: 95%">
+<img alt="../../../_images/ca6c0daeb4dab1bc39f92e2a2cc94585c2ebf77503e75fe14d891606f71c1a41.png" src="../../../_images/ca6c0daeb4dab1bc39f92e2a2cc94585c2ebf77503e75fe14d891606f71c1a41.png" />
+</figure>
+<p>Identify the ETI and HPD credible intervals.</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<figure class="align-center" id="fig-cred-int-1ans" style="width: 95%">
+<img alt="../../../_images/a39ef1dcbaa9ec716305661604fc3de45bbdc647f90996de062e3f6063a18015.png" src="../../../_images/a39ef1dcbaa9ec716305661604fc3de45bbdc647f90996de062e3f6063a18015.png" />
+</figure>
+</div>
+</div>
+</section>
 </section>
 <section id="bayesian-credible-intervals-and-frequentist-confidence-intervals">
 <h2>Bayesian credible intervals and frequentist confidence intervals<a class="headerlink" href="#bayesian-credible-intervals-and-frequentist-confidence-intervals" title="Link to this heading">#</a></h2>
@@ -924,7 +1627,10 @@ that the true value of <span class="math notranslate nohighlight">\(\theta\)</sp
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-credible-intervals">Defining credible intervals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-credible-intervals">Defining credible intervals</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#try-a-couple-of-checkpoint-questions">Try a couple of checkpoint questions</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-credible-intervals-and-frequentist-confidence-intervals">Bayesian credible intervals and frequentist confidence intervals</a></li>
 </ul>
   </nav></div>

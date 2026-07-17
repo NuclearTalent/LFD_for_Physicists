@@ -70,24 +70,24 @@
     <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
     <script src="../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
     <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
-    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
-    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
-    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
-    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
-    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
     <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
     <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
     <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
-    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
-    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
-    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
-    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
     <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
-    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="25.6. Exercise: Logistic Regression and neural networks" href="exercise-logreg-and-neural-networks.html" />
@@ -784,15 +784,15 @@ document.write(`
 <li><p><span class="math notranslate nohighlight">\(\inputs_i=[x_{0,i}, x_{1,i}, \dots, x_{p-1,i}]\)</span>, with <span class="math notranslate nohighlight">\(x_{0,i} = 1 \, \forall i\)</span>.</p></li>
 </ul>
 <p>Following <a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/index.html#sec-linearmodels"><span class="std std-ref">Linear models</span></a> we will apply the linear machine learning model</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dd123e38-89cd-4d13-849c-80b487420619">
-<span class="eqno">(25.16)<a class="headerlink" href="#equation-dd123e38-89cd-4d13-849c-80b487420619" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ee5c28b3-ce00-4965-b856-875293120305">
+<span class="eqno">(25.16)<a class="headerlink" href="#equation-ee5c28b3-ce00-4965-b856-875293120305" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \MLmodel{\weights \, ; \, \inputs_i} = \inputs_i \cdot \weights,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\weights\)</span> is a <span class="math notranslate nohighlight">\(p \times 1\)</span> column vector of model parameters. These are known as weights in this context. We might also simplify the notation and write <span class="math notranslate nohighlight">\(\MLoutput_i = \MLmodel{\inputs_i}\)</span>.</p>
 <p>A machine learning regression analysis aims at finding the model parameters <span class="math notranslate nohighlight">\(\weights\)</span> such that a selected cost function is minimized. This optimization step  is the learning part of the model. The cost function is supposed to measure the performance of the model</p>
 <p>The <span class="math notranslate nohighlight">\(p\)</span> features for the <span class="math notranslate nohighlight">\(N\)</span> cases in the training data set are collected in the <span class="math notranslate nohighlight">\(N \times p\)</span> design matrix <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> such that we get the simple matrix form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9d93287b-4349-4706-b36b-c80d880c0da0">
-<span class="eqno">(25.17)<a class="headerlink" href="#equation-9d93287b-4349-4706-b36b-c80d880c0da0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d85b2b99-4199-47ad-92c0-4c3b3bb4d33a">
+<span class="eqno">(25.17)<a class="headerlink" href="#equation-d85b2b99-4199-47ad-92c0-4c3b3bb4d33a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \MLoutputs = \mathbf{X} \weights
 \end{equation}\]</div>
 <p>The most common metric to quantify the performance of the model is the mean-squared error (MSE)</p>
@@ -806,21 +806,21 @@ document.write(`
 C(\weights)=\frac{1}{N} \left(\outputs-\boldsymbol{X}\weights\right)^T\left(\outputs-\boldsymbol{X}\weights\right).
 \]</div>
 <p>In general, the minimization of the cost function is an optimization problem that must be approached with numerical techniques such as <em>gradient descent</em>. For linear regression, however, the learning can be achieved analytically. The minimum of Eq. <a class="reference internal" href="#equation-eq-mlexamples-mse-cost">(25.19)</a> is found by solving the normal equation, and if <span class="math notranslate nohighlight">\(\boldsymbol{X}^T\boldsymbol{X}\)</span> is invertible we have the optimal model parameters</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3076d434-df42-4b78-99ee-446a93793e7d">
-<span class="eqno">(25.20)<a class="headerlink" href="#equation-3076d434-df42-4b78-99ee-446a93793e7d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c5a3acf1-bbec-4f39-baa9-e18c89937d11">
+<span class="eqno">(25.20)<a class="headerlink" href="#equation-c5a3acf1-bbec-4f39-baa9-e18c89937d11" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \weights^* = \left(\boldsymbol{X}^T\boldsymbol{X}\right)^{-1}\boldsymbol{X}^T\outputs.
 \end{equation}\]</div>
 <section id="training-scores">
 <h3>Training scores<a class="headerlink" href="#training-scores" title="Link to this heading">#</a></h3>
 <p>The mean-squared error <a class="reference internal" href="#equation-eq-mlexamples-mse">(25.18)</a> is just one possible choice for the cost function. In general, such metrics are also known as <strong>training scores</strong>.</p>
 <p>Other choices are the <strong>mean absolute error</strong> (MAE), defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-77d5eae7-7dfe-42a2-8db3-9a7628638dfc">
-<span class="eqno">(25.21)<a class="headerlink" href="#equation-77d5eae7-7dfe-42a2-8db3-9a7628638dfc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bf70386d-d975-4a5f-a1b8-6fcb99c023b9">
+<span class="eqno">(25.21)<a class="headerlink" href="#equation-bf70386d-d975-4a5f-a1b8-6fcb99c023b9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathrm{MAE}(\weights) = \frac{1}{N} \sum_{i=1}^N \left| \output_{i} - \MLoutput_i \right|,
 \end{equation}\]</div>
 <p>and the <span class="math notranslate nohighlight">\(R2\)</span> score, also known as <em>coefficient of determination</em></p>
-<div class="amsmath math notranslate nohighlight" id="equation-c2c0c126-7c76-42d9-b0b9-c8c2c5c06464">
-<span class="eqno">(25.22)<a class="headerlink" href="#equation-c2c0c126-7c76-42d9-b0b9-c8c2c5c06464" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-71e70630-b144-4fd7-8222-b9704c160627">
+<span class="eqno">(25.22)<a class="headerlink" href="#equation-71e70630-b144-4fd7-8222-b9704c160627" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathrm{R2}(\weights) = 1 - \frac{\sum_{i=1}^N \left( \output_{i} - \MLoutput_{i} \right)^2}{\sum_{i=1}^N \left( \output_{i} - \bar{y} \right)^2},
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\bar{y} = \frac{1}{N} \sum_{i=1}^N \MLoutput_{i}\)</span> is the mean of the model predictions.</p>
@@ -925,8 +925,8 @@ C(\weights)=\frac{1}{N} \left(\outputs-\boldsymbol{X}\weights\right)^T\left(\out
 <section id="the-perceptron-classifier">
 <h3>The perceptron classifier<a class="headerlink" href="#the-perceptron-classifier" title="Link to this heading">#</a></h3>
 <p>We can achieve a mapping from the continuous output <span class="math notranslate nohighlight">\(z\)</span> of the linear regressor to a discrete one <span class="math notranslate nohighlight">\(\MLoutput \in \{ 0, 1 \}\)</span> using the <em>perceptron</em> model which is usually formulated using the sign function as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-05aeca5c-58b3-4c0c-8220-e6c7d6e0cd29">
-<span class="eqno">(25.23)<a class="headerlink" href="#equation-05aeca5c-58b3-4c0c-8220-e6c7d6e0cd29" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2edc39e8-dc20-4352-9b12-d66bb114824a">
+<span class="eqno">(25.23)<a class="headerlink" href="#equation-2edc39e8-dc20-4352-9b12-d66bb114824a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \MLoutput = \frac{\mathrm{sign}(z)+1}{2}.
 \end{equation}\]</div>
 <p>A binary classifier, providing a discrete output, can then be obtained accoring to the simple rule</p>
@@ -965,8 +965,8 @@ regression, the probability that input <span class="math notranslate nohighlight
 <section id="k-nearest-neighbors-classification">
 <h2><span class="math notranslate nohighlight">\(k\)</span> nearest neighbors classification<a class="headerlink" href="#k-nearest-neighbors-classification" title="Link to this heading">#</a></h2>
 <p>Nearest-neighbor methods use the closest observations in the training data <span class="math notranslate nohighlight">\(\trainingdata\)</span> to make a prediction. Usually, the definition of “closest” is usually the Euclidean distance in the input space, i.e., the length <span class="math notranslate nohighlight">\(\left| \testinputs - \inputs_i \right|\)</span>. Specifically, the <span class="math notranslate nohighlight">\(k\)</span> nearest neighbor prediction for a target would be given by the average</p>
-<div class="amsmath math notranslate nohighlight" id="equation-64e61d36-10de-4ab1-998a-4c9094b1683b">
-<span class="eqno">(25.25)<a class="headerlink" href="#equation-64e61d36-10de-4ab1-998a-4c9094b1683b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c0d81c50-436b-49f1-94a6-b21f5c8d8562">
+<span class="eqno">(25.25)<a class="headerlink" href="#equation-c0d81c50-436b-49f1-94a6-b21f5c8d8562" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde\output(\testinputs) = \frac{1}{k} \sum_{\inputs_i \in N_k(\testinputs)} \output_i,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\( N_k(\testinputs)\)</span> is the neighborhood of <span class="math notranslate nohighlight">\(\testinputs\)</span> defined by the <span class="math notranslate nohighlight">\(k\)</span> nearest points <span class="math notranslate nohighlight">\(\testinputs_i\)</span> in the training data set. Forced to make a hard decision we would use the majority vote and assign <span class="math notranslate nohighlight">\(\MLtestoutput = 1\)</span> if <span class="math notranslate nohighlight">\(\tilde\output(\testinputs) &gt; 0.5\)</span>, and <span class="math notranslate nohighlight">\(\MLtestoutput = 0\)</span> if <span class="math notranslate nohighlight">\(\tilde\output(\testinputs) \leq 0.5\)</span>.</p>
@@ -982,8 +982,8 @@ regression, the probability that input <span class="math notranslate nohighlight
 <p>The <span class="math notranslate nohighlight">\(k\)</span>-nearest neighbor classifier is an example of a method for which it becomes very important to normalize the input data. Imagine that one of the two inputs, <span class="math notranslate nohighlight">\(x_1\)</span>, varies in a range <span class="math notranslate nohighlight">\([100,1000]\)</span> whereas the other one, <span class="math notranslate nohighlight">\(x_2\)</span>, is limited to <span class="math notranslate nohighlight">\([0,1]\)</span>. It is then obvious that the Euclidean distance will be dominated by the distance in <span class="math notranslate nohighlight">\(x_1\)</span> and our model will be almost insensitive to <span class="math notranslate nohighlight">\(x_2\)</span>.</p>
 <p>We can solve this by normalizing the input parameters by some transformation and scaling. For example, we could consider instead <span class="math notranslate nohighlight">\((\tilde{x}_1, x_2)\)</span>, where <span class="math notranslate nohighlight">\(\tilde{x}_1 \equiv \frac{x_1 - 100}{1000}\)</span>. Now both parameters will be in the <span class="math notranslate nohighlight">\([0,1]\)</span> range and the method will work much better.</p>
 <p>Another common normalization scheme is known as standardization</p>
-<div class="amsmath math notranslate nohighlight" id="equation-68c7df71-38cc-40e3-831c-35faf68475c4">
-<span class="eqno">(25.26)<a class="headerlink" href="#equation-68c7df71-38cc-40e3-831c-35faf68475c4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cd905ccb-d3ce-42b1-93c1-ef186fc8e88b">
+<span class="eqno">(25.26)<a class="headerlink" href="#equation-cd905ccb-d3ce-42b1-93c1-ef186fc8e88b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{x}_i = \frac{x_i - \bar{x}_i}{\sigma_i},
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\bar{x}_i\)</span> and <span class="math notranslate nohighlight">\(\sigma_i\)</span> is the mean and the variance, respectively, for each input variable evaluated over the training datat set.</p>
