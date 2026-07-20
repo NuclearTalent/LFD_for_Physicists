@@ -32,14 +32,31 @@ It was introduced in lattice QCD by Duane et al. {cite}`Duane:1987de` and was or
 To establish some intuition about HMC, we return to the excellent set of [interactive demos by Chi Feng](https://chi-feng.github.io/mcmc-demo/), which are reproduced here.
 You could start with the HMC demo or refresh your memory first on MH sampling.
 
+:::{admonition} Controls for the MCMC simulations
+:class: note
+* The initial simulation uses MH sampling. To switch to HMC, select `Open Controls` and pull down the `Algorithm` menu and select `HamiltonianMC`.
+Note the `Algorithm Options`.
+* After making changes, use `Close Controls` to avoid obscuring the simulation.
+* For orientation, you might want to switch the `Target distribution` to `standard`. This distribution is a two-dimensional Gaussian (just the product of two one-dimensional Gaussians).
+* If you uncheck the `Autoplay` box, you can use the `Step` button to see the algorithm carried out one step at a time.
+* Use the `Reset` button to clear the sampled points.
+:::
+
+
+
+
 ```{raw} html
-<iframe src="../../../_static/chi-feng/index_new.html"
+<iframe src="../../../_static/chi-feng/app_RandomWalkMH.html"
     width="100%"
     height="600"
     style="border: none;"
     scrolling="no">
 </iframe>
 ``` 
+
+
+
+## Why HMC?
 
 Let's summarize the argument for abandoning Metropolis-Hasting (MH) sampling in favor of HMC.
 First recall the random walk MH:
@@ -55,7 +72,7 @@ Now treat the system as frictionless and "flick" the particle in a random direct
 See the snapshots from the simulation in the figures below. 
 The little gray arrow is the flick. After the particle travels some distance, there is a decision whether to accept; this is done as in MH.
 Most endpoints are within a high probability region, so a high percentage is accepted.
-Chains can get far from the starting point easily $\Lra$ efficient exploration of the full shape.
+Chains can get far from the starting point easily $\Lra$ efficient exploration of the full distribution.
 While more calculation along the path is needed, fewer samples are needed; this is typically a winning trade-off.
 Check the donut example: HMC works very well!
 
@@ -97,6 +114,14 @@ NUTS *adaptively* finds a good number of steps.
 In particular, it simulates in *both* directions to figure out when the path turns around (i.e., U-turns) and stops there.
 There are other adaptive features; see the [Stan documentation](https://mc-stan.org/docs/2_18/reference-manual/hmc-algorithm-parameters.html) or the conceptual introduction by Michael Betancourt {cite}`betancourt2018` for details.
 Note that NUTS still has trouble with multimodal targets $\Lra$ can explore each high probability area, but has trouble going between them.
+
+:::{admonition} Return to the MCMC simulations above
+:class: note
+* Turn `Autoplay` off and make multiple steps, noting how the HMC algorithm is realized.
+* To try out NUTS and compare to vanilla HMC, open the controls and select `NaiveNUTS` from the `Algorithms` pulldown menu.
+
+:::
+
 
 
 ## Implementation details
@@ -204,5 +229,5 @@ For successful application of HMC there are three hyperparameters that need to b
 
 The MontePython implementation of HMC, by Isak Svensson, was published in Ref. {cite}`Svensson:2021lzs` and is publicly available at: https://github.com/svisak/montepython.git
 
-More advanced versions, such as the No-U-Turn Samplers (NUTS) {cite}`hoffman2014no`, are also available and aims to simplify the process of tuning the hyperparameters.
+More advanced versions, such as the No-U-Turn Samplers (NUTS) {cite}`hoffman2014no`, are also available and aim to simplify the process of tuning the hyperparameters.
 

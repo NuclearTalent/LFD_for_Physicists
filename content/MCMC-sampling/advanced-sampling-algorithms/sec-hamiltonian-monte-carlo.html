@@ -729,6 +729,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-and-intuition-from-simulations">Overview and intuition from simulations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-hmc">Why HMC?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-details">Implementation details</a></li>
 </ul>
             </nav>
@@ -760,12 +761,26 @@ which is a Metropolis method that uses gradient information to reduce the random
 It was introduced in lattice QCD by Duane et al. <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id55" title="S. Duane, A. D. Kennedy, B. J. Pendleton, and D. Roweth. Hybrid Monte Carlo. Phys. Lett. B, 195:216–222, 1987. doi:10.1016/0370-2693(87)91197-X.">DKPR87</a>]</span> and was originally named Hybrid Monte Carlo as they were combining molecular dynamics with the Metropolis MCMC algorithm. A very good and detailed review of HMC is written by Radford Neal and is contained in the Handbook of Markov Chain Monte Carlo <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../../Backmatter/bibliography.html#id56" title="S. Brooks, A. Gelman, G. Jones, and X.L. Meng. Handbook of Markov Chain Monte Carlo. Chapman &amp; Hall/CRC Handbooks of Modern Statistical Methods. CRC Press, 2011. ISBN 9781420079425. URL: https://books.google.se/books?id=qfRsAIKZ4rIC.">BGJM11</a>]</span>.</p>
 <p>To establish some intuition about HMC, we return to the excellent set of <a class="reference external" href="https://chi-feng.github.io/mcmc-demo/">interactive demos by Chi Feng</a>, which are reproduced here.
 You could start with the HMC demo or refresh your memory first on MH sampling.</p>
-<iframe src="../../../_static/chi-feng/index_new.html"
+<div class="note admonition">
+<p class="admonition-title">Controls for the MCMC simulations</p>
+<ul class="simple">
+<li><p>The initial simulation uses MH sampling. To switch to HMC, select <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Controls</span></code> and pull down the <code class="docutils literal notranslate"><span class="pre">Algorithm</span></code> menu and select <code class="docutils literal notranslate"><span class="pre">HamiltonianMC</span></code>.
+Note the <code class="docutils literal notranslate"><span class="pre">Algorithm</span> <span class="pre">Options</span></code>.</p></li>
+<li><p>After making changes, use <code class="docutils literal notranslate"><span class="pre">Close</span> <span class="pre">Controls</span></code> to avoid obscuring the simulation.</p></li>
+<li><p>For orientation, you might want to switch the <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">distribution</span></code> to <code class="docutils literal notranslate"><span class="pre">standard</span></code>. This distribution is a two-dimensional Gaussian (just the product of two one-dimensional Gaussians).</p></li>
+<li><p>If you uncheck the <code class="docutils literal notranslate"><span class="pre">Autoplay</span></code> box, you can use the <code class="docutils literal notranslate"><span class="pre">Step</span></code> button to see the algorithm carried out one step at a time.</p></li>
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">Reset</span></code> button to clear the sampled points.</p></li>
+</ul>
+</div>
+<iframe src="../../../_static/chi-feng/app_RandomWalkMH.html"
     width="100%"
     height="600"
     style="border: none;"
     scrolling="no">
-</iframe><p>Let’s summarize the argument for abandoning Metropolis-Hasting (MH) sampling in favor of HMC.
+</iframe></section>
+<section id="why-hmc">
+<h2>Why HMC?<a class="headerlink" href="#why-hmc" title="Link to this heading">#</a></h2>
+<p>Let’s summarize the argument for abandoning Metropolis-Hasting (MH) sampling in favor of HMC.
 First recall the random walk MH:</p>
 <ol class="arabic simple">
 <li><p>Make a random proposal for new parameter values (a step in parameter space, indicated in the visualization by an arrow).</p></li>
@@ -779,7 +794,7 @@ Now treat the system as frictionless and “flick” the particle in a random di
 <p>See the snapshots from the simulation in the figures below.
 The little gray arrow is the flick. After the particle travels some distance, there is a decision whether to accept; this is done as in MH.
 Most endpoints are within a high probability region, so a high percentage is accepted.
-Chains can get far from the starting point easily <span class="math notranslate nohighlight">\(\Lra\)</span> efficient exploration of the full shape.
+Chains can get far from the starting point easily <span class="math notranslate nohighlight">\(\Lra\)</span> efficient exploration of the full distribution.
 While more calculation along the path is needed, fewer samples are needed; this is typically a winning trade-off.
 Check the donut example: HMC works very well!</p>
 <a class="bg-primary reference internal image-reference" href="../../../_images/HMC_demo_screenshot_1.png"><img alt="Screenshot from HMC demo" class="bg-primary align-center" src="../../../_images/HMC_demo_screenshot_1.png" style="width: 450px;" />
@@ -798,6 +813,13 @@ NUTS <em>adaptively</em> finds a good number of steps.
 In particular, it simulates in <em>both</em> directions to figure out when the path turns around (i.e., U-turns) and stops there.
 There are other adaptive features; see the <a class="reference external" href="https://mc-stan.org/docs/2_18/reference-manual/hmc-algorithm-parameters.html">Stan documentation</a> or the conceptual introduction by Michael Betancourt <span class="bibtex-citation" id="id3">[<a class="reference internal" href="../../Backmatter/bibliography.html#id8" title="Michael Betancourt. A conceptual introduction to hamiltonian monte carlo. 2018. URL: https://arxiv.org/abs/1701.02434, arXiv:1701.02434.">Bet18</a>]</span> for details.
 Note that NUTS still has trouble with multimodal targets <span class="math notranslate nohighlight">\(\Lra\)</span> can explore each high probability area, but has trouble going between them.</p>
+<div class="note admonition">
+<p class="admonition-title">Return to the MCMC simulations above</p>
+<ul class="simple">
+<li><p>Turn <code class="docutils literal notranslate"><span class="pre">Autoplay</span></code> off and make multiple steps, noting how the HMC algorithm is realized.</p></li>
+<li><p>To try out NUTS and compare to vanilla HMC, open the controls and select <code class="docutils literal notranslate"><span class="pre">NaiveNUTS</span></code> from the <code class="docutils literal notranslate"><span class="pre">Algorithms</span></code> pulldown menu.</p></li>
+</ul>
+</div>
 </section>
 <section id="implementation-details">
 <h2>Implementation details<a class="headerlink" href="#implementation-details" title="Link to this heading">#</a></h2>
@@ -818,8 +840,8 @@ H(\pos,\mom) = K(\mom) + U(\pos),
 \end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mass\)</span> is a user-defined mass matrix (positive definite and symmetric; typically diagonal as often proportional to the <span class="math notranslate nohighlight">\(d\)</span>-dimensional identity matrix) and where we use <span class="math notranslate nohighlight">\(\p{\pos}\)</span> to denote the PDF that we want to sample. It could for example be a posterior distribution for some model parameters.</p>
 <p>We can link <span class="math notranslate nohighlight">\(H(\pos,\mom)\)</span> to a probability distribution for <span class="math notranslate nohighlight">\((\pos,\mom)\)</span> using the canonical Boltzmann distribution</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9edc4510-c0f4-424e-8775-11743845f61c">
-<span class="eqno">(21.3)<a class="headerlink" href="#equation-9edc4510-c0f4-424e-8775-11743845f61c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2c9e0a8a-da7e-4a52-b8dd-ceee00806a98">
+<span class="eqno">(21.3)<a class="headerlink" href="#equation-2c9e0a8a-da7e-4a52-b8dd-ceee00806a98" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \p{\pos,\mom} = \frac{1}{Z} \exp\left( \frac{-H(\pos,\mom)}{T}\right),
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(Z\)</span> is the normalization and <span class="math notranslate nohighlight">\(T\)</span> is a temperature (here serving to render the exponents dimensionless). Let us set <span class="math notranslate nohighlight">\(T=1\)</span> and use the expressions <a class="reference internal" href="#equation-eq-advancedmcmc-kinetic-potential">(21.2)</a> to obtain the separable joint distribution</p>
@@ -888,7 +910,7 @@ Note that the probability distribution for <span class="math notranslate nohighl
 <li><p>The number of timesteps <span class="math notranslate nohighlight">\(L\)</span>.</p></li>
 </ol>
 <p>The MontePython implementation of HMC, by Isak Svensson, was published in Ref. <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../../Backmatter/bibliography.html#id57" title="Isak Svensson, Andreas Ekström, and Christian Forssén. Bayesian parameter estimation in chiral effective field theory using the Hamiltonian Monte Carlo method. Phys. Rev. C, 105(1):014004, 2022. arXiv:2110.04011, doi:10.1103/PhysRevC.105.014004.">SEkstromForssen22</a>]</span> and is publicly available at: <a class="github reference external" href="https://github.com/svisak/montepython.git">svisak/montepython.git</a></p>
-<p>More advanced versions, such as the No-U-Turn Samplers (NUTS) <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../../Backmatter/bibliography.html#id58" title="Matthew D Hoffman, Andrew Gelman, and others. The no-u-turn sampler: adaptively setting path lengths in hamiltonian monte carlo. J. Mach. Learn. Res., 15(1):1593–1623, 2014.">HG+14</a>]</span>, are also available and aims to simplify the process of tuning the hyperparameters.</p>
+<p>More advanced versions, such as the No-U-Turn Samplers (NUTS) <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../../Backmatter/bibliography.html#id58" title="Matthew D Hoffman, Andrew Gelman, and others. The no-u-turn sampler: adaptively setting path lengths in hamiltonian monte carlo. J. Mach. Learn. Res., 15(1):1593–1623, 2014.">HG+14</a>]</span>, are also available and aim to simplify the process of tuning the hyperparameters.</p>
 </section>
 </section>
 
@@ -957,6 +979,7 @@ Note that the probability distribution for <span class="math notranslate nohighl
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-and-intuition-from-simulations">Overview and intuition from simulations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-hmc">Why HMC?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-details">Implementation details</a></li>
 </ul>
   </nav></div>
