@@ -245,7 +245,7 @@ $$
  p(f_e|f_t) = p(f_e,f_t)/p(f_e)
   = \frac{\frac{1}{\sqrt{\det(2\pi\Sigmavec)}}e^{-(f_t \ f_e)\,\Sigmavec^{-1}
         \begin{pmatrix} f_t \\ f_e \end{pmatrix} }}
-  {\frac{1}{\sqrt{2\pi\Sigma_{tt})}}e^{-f_t^2\Sigma_{tt}^{-1}}}
+  {\frac{1}{\sqrt{2\pi\Sigma_{tt}}}e^{-f_t^2\Sigma_{tt}^{-1}}}
 $$
 
 All of the $\Sigma_{ij}$'s are just scalars now and $\Sigma_{te} = \Sigma_{et}$.
