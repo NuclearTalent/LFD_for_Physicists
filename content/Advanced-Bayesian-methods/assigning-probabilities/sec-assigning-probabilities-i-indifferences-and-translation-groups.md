@@ -162,7 +162,7 @@ p(\theta_0, \theta_1 | I) \propto \frac{1}{\left( 1 + \theta_1^2 \right)^{3/2}}.
 <!-- ![<p><em>100 samples of straight lines with fixed intercept equal to 0 and slopes sampled from three different pdfs. Note in particular the  prior preference for large slopes that results from using a uniform pdf.</em></p>](../assets/slope_priors.png) -->
 
 ```{code-cell} python3
-:tags: [hide-output]
+:tags: [hide-input]
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -186,6 +186,7 @@ for iax, (prior,slopes) in enumerate(priorSamplesSlope.items()):
 
 from myst_nb import glue
 glue("slopeSamples_fig", fig_slopeSamples, display=False)
+plt.close(fig_slopeSamples)
 ```
 
 ```{glue:figure} slopeSamples_fig
@@ -194,4 +195,87 @@ glue("slopeSamples_fig", fig_slopeSamples, display=False)
 100 samples of straight lines with fixed intercept equal to 0 and slopes sampled from three different prior pdfs. Note in particular the  prior preference for large slopes that results from using a uniform pdf.
 ```
 
+### Straight-line example with MCMC sampling
 
+We will define three different priors for the straight line model. Using always a flat prior U(-100,100) for the intercept, and a non-zero pdf range -100 <= slope <= 100.
+
+Let us create 1000 samples from each prior pdf and plot the resulting sample of straight lines.
+Since the intercept is uniformly distributed in all three prior alternatives, we will just consider straight lines with intercept 0 since it makes it easier to compare the distribution of slopes.
+
+```{code-cell} python3
+:tags: [hide-input]
+import numpy as np
+
+import scipy.stats as stats
+from scipy.stats import norm, uniform
+
+import matplotlib.pyplot as plt
+import emcee
+
+def log_flat_prior(theta):
+    theta = np.asarray(theta, dtype=object)
+    if np.all(np.abs(theta) < 100*np.ones_like(theta)):
+        return 0 # log(1)
+    else:
+        return -np.inf  # log(0)
+    
+def log_jeffreys_prior(theta):
+    if np.abs(theta[0]) < 100:
+        return -0.5 * np.log(theta[1] ** 2)
+    else:
+        return -np.inf  # log(0)    
+    
+def log_symmetric_prior(theta):
+    if np.abs(theta[0]) < 100:
+        return -1.5 * np.log(1 + theta[1] ** 2)
+    else:
+        return -np.inf  # log(0)
+
+def log_prior(th1,logp):
+    return logp([0,th1])
+
+ndim = 1  # number of parameters in the model
+nwalkers = 10  # number of MCMC walkers
+nburn = 1000  # "burn-in" period to let chains stabilize
+nsteps = 10000  # number of MCMC steps to take
+ncorr = 100 # just keep every ncorr sample
+
+# we'll start at random locations within the prior volume
+np.random.seed(2020)
+starting_guesses = 100 * np.random.rand(nwalkers,ndim)
+
+x = [-1,1]
+fig,axs = plt.subplots(1,3, figsize=(12,4), sharex=True, sharey=True)
+
+for ipr,logpr in enumerate([log_flat_prior,log_jeffreys_prior,log_symmetric_prior]):
+    np.random.seed(2020)
+    strprior = str(logpr).split()[1]
+    print(f"MCMC sampling of {strprior} using emcee with {nwalkers} walkers")
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, log_prior, args=[logpr])
+
+    # "burn-in" period; save final positions and then reset
+    state = sampler.run_mcmc(starting_guesses, nburn)
+    sampler.reset()
+
+    # sampling period
+    sampler.run_mcmc(None, nsteps)
+
+    print(f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction):.3f}",\
+        f" (in total {nwalkers*nsteps:.0f} steps)")
+
+    # discard burn-in points and flatten the walkers; the shape of samples is (nwalkers*nsteps, ndim)
+    samples = sampler.chain.reshape((-1, ndim))
+
+    # just keep every ncorr sample
+    samples_sparse = samples[::ncorr]
+    
+    for sample in samples_sparse:
+        axs[ipr].plot(x,x*sample,'k',alpha=0.1)
+        axs[ipr].set_title(strprior.split('_')[1]+' prior')
+    
+axs[0].set_xlim([0,1]);
+axs[0].set_ylim([0,1]);
+axs[0].set_xlabel(r'$x$');
+axs[0].set_ylabel(r'$y=\theta x$');
+#fig.savefig('slope_priors.png')
+```

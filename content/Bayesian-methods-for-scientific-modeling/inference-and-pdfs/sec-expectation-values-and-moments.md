@@ -190,7 +190,7 @@ Here are some ways to find $p(x)$ given a set of moments $\{m_k\}$:
      \beta = (1-\mu) \left(\frac{\mu(1-\mu)}{\sigma^2} - 1\right).
    $$  
 
-1. We can use a maximum entropy reconstruction. With a finite number of known moments, we choose among distributions that reproduce these moments the one with the largest entropy. See {numref}`sec:MaxEnt` to learn about the principle of maximum entropy and there is a demo notebook in {numref}`demo:maximum-entropy-for-reconstructing-a-function-from-its-moments` illustrating how to do a maximum entropy reconstruction from moments.
+1. We can use a maximum entropy reconstruction. With a finite number of known moments, we choose among distributions that reproduce these moments the one with the largest entropy. See {numref}`sec:MaxEnt` and {numref}`sec:maximum-entropy-for-reconstructing-a-function-from-its-moments` to learn about the principle of maximum entropy and how to do a maximum entropy reconstruction from moments.
 
 1. We can try to invert from a *moment-generating function* or a *characteristic function*. 
    If $X$ is a random number with distribution $p_X(x)$, then the moment-generating function $M_X(t)$ and characteristic function $\phi_X(t)$ are for $t\in\mathbb{R}$:
