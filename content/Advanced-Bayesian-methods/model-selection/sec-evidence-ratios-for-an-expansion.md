@@ -1,4 +1,15 @@
-# Follow-up to EFT evidence
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+  name: python3
+---
+(sec:evidence-ratios-expansion)=
+# Evidence ratios for an expansion
+
+## Evidence ratios in general
 
 Consider models $M_1$ and $M_2$, with the same dataset $D$.
 For the evidence $p(M_1|D,I)$ versus $p(M_2|D,I)$ there is no reference to a particular parameter set $\Lra$ it is a comparison between two models, not two fits.
@@ -24,6 +35,8 @@ $$ (eq:ratio_EFT)
 where we've made the usual application of the product rule in the marginalization integral in numerator and denominator.
 Note that the integration is over the *entire* parameter space.
 This is difficult numerically because likelihoods are usually peaked but can have long tails that contribute to the integral (cf. averaging over the likelihood vs. finding the peak).
+
+## The special case of expansions
 
 Consider the easiest example: $M_1 \rightarrow M_k$ and $M_2 \rightarrow M_{k+1}$, where $k$ is the order in an expansion.
 The question is then: *Is going to a higher-order favored by the given data?*

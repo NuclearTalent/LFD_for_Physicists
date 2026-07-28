@@ -1,3 +1,12 @@
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+  name: python3
+---
+(sec:EvidenceCalculations)=
 # Evidence calculations
 The actual computation of Bayesian evidences can be a challenging task. Recall that we often have knowledge of the posterior distribution only through sampling. In many cases, the simple Laplace method can be used to compute the evidence approximately, while in other cases we have to rely on special sampling algorithms such as nested sampling or parallel tempering with thermodynamic integration.
 
@@ -48,7 +57,7 @@ where there is a factor $2^{K/2}$ that comes from the extra factor $1/2$ multipl
 
 Note that the Laplace approximation is basis-dependent: if $\theta$ is transformed to a nonlinear function $u(\theta)$ and the density is transformed to $P(u) = P(\theta) |d\theta/du|$ then in general the approximate normalizing constants $Z_Q$ will be different. This can be viewed as a defect&mdash;since the true value $Z_P$ is basis-independent in this approximation&mdash;or an opportunity, because we can hunt for a choice of basis in which the Laplace approximation is most accurate.
 
-## Normalization of a multivariate Gaussian
+### Normalization of a multivariate Gaussian
 The fact that the normalizing constant of a Gaussian is given by 
 
 \begin{equation}
@@ -63,7 +72,7 @@ can be proved by making an orthogonal transformation into the basis $u$ in which
 
 The product of the eigenvalues $\lambda_i$ is the determinant of $\Sigma^{-1}$.
 
-## Correlations
+## Correlations in the Laplace approximation
 In the "fitting a straight-line" example you should find that the joint pdf for the slope and the intercept $[m, b]$ corresponds to a slanted ellipse. That result implies that the model parameters are (anti) **correlated**.
 
 * *Try to understand the correlation that you find in this example.*
@@ -165,4 +174,27 @@ What has been achieved by this change of variables?
 The joint pdf now factorizes, which implies that the transformed variables are independent.
 :::
 ::::
+
+## Computing the Bayesian evidence
+
+There are many possible challenges in calculating the evidence, including
+* The likelihood may be sharply peaked in the prior range, but could have long tails and significant contributions to the required integrals;
+* The likelihood could be multimodal;
+* The posterior may only be significant on thin "sheets" in parameter space (cf. visualization of sampling).
+
+Trotta {cite}`Trotta:2008qt` gives a summary of methods (which is somewhat out-of-date in places):
+1. Thermodynamic integration $\longrightarrow$ simulated annealing. The computational cost depends heavily on dimensionality of parameter space and on details of likelihood function.
+For example, cosmological applications require up to $10^7$ likelihood evaluations (100 times MCMC-based parameter estimation). A solution is to use parallel tempering (more to follow!).
+1. Nested sampling recasts multidimensional evidence integral into a one-dimensional integral, which is easy to evaluate numerically.
+Generall this takes $\sim 10^5$ likelihood evaluations.
+`multinest` and newer versions are more efficient still.
+1. Approximations to the Bayes factor:
+    * If models are nested: ask whether a new parameter is supported by data.
+    * Laplace approximation may be good but be careful of priors.
+    * Define the effective number of parameters (see BDA3 {cite}`gelman2013bayesian`)
+    * AIC, BIC, DIC, WAIC (summary to follow; see BDA3 for details)
+    * The paper ["Practical Bayesian model evaluation using leave-one-out cross-validation and
+WAIC"](https://arxiv.org/abs/1507.04544) by Vehtari, Gelman, and Gabry is a good (and reliable) source for theoretical and practical details on assessing and comparing the predictive accuracy of different models. Quote: "Cross-validation and information criteria are two approaches to estimating out-of-sample predictive accuracy using within-sample fits." The computations use the log-likelihood evaluated at posterior simulations of the parameters. 
+
+
 

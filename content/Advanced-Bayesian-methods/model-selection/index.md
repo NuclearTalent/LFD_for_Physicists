@@ -1,3 +1,11 @@
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+  name: python3
+---
 (sec:ModelSelection)=
 # Model Selection
 <!-- !split -->
@@ -13,4 +21,9 @@ One of the main objectives in science is that of inferring the truth of one or m
 
 
 <!-- !split -->
-We will start, however, with a brief discussion on sampling theory and the frequentist approach to **hypothesis testing**. This will involve the introduction of the $P$-value or significance measure&mdash;quantities that are often misinterpreted even by scientists themselves. See, for example, the following comment published in Nature (March 20, 2019): [Scientists rise up against statistical significance](https://www.nature.com/articles/d41586-019-00857-9).
+We will start, however, in {numref}`sec:FrequentistHypothesisTesting` with a brief discussion on sampling theory and the frequentist approach to **hypothesis testing**. This will involve the introduction of the $P$-value or significance measure&mdash;quantities that are often misinterpreted even by scientists themselves. See, for example, the following comment published in Nature (March 20, 2019): [Scientists rise up against statistical significance](https://www.nature.com/articles/d41586-019-00857-9).
+
+In {ref}`sec:BayesianModelSelection` we provide a gentle introduction through the story of Dr. A and Prof. B and then in {ref}`sec:evidence-ratios-expansion` we step through the prototypical problem of different orders of an expansion, for which model selection can be analyzed analytically. Methods for {ref}`sec:EvidenceCalculations` are next and we finish by surveying {ref}`sec:InformationCriteria`, which are computationally light approximations to the evidence.
+
+There are also several problems in {ref}`ch:PartIIProblems` that apply and supplement the presentation in this chapter. See [](../problems-advanced-bayesian-methods/problem-model-selection-basics.ipynb), [](../problems-advanced-bayesian-methods/problem-evidence-calculation-for-eft-expansions.ipynb), and [](../problems-advanced-bayesian-methods/problem-model-selection-how-many-lines-ptemcee.ipynb).
+
