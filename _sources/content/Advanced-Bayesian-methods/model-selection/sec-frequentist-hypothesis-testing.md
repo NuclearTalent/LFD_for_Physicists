@@ -1,3 +1,11 @@
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+  name: python3
+---
 (sec:FrequentistHypothesisTesting)=
 # Frequentist hypothesis testing
 Recall that in frequentist statistics, probability statements are restricted to random variables. A hypothesis can not be considered a random variable, and therefore we are restricted to a much more indirect approach when trying to infer its truth, or rather when attempting to falsify it.
