@@ -119,10 +119,10 @@ $$
  \mu_Z = \frac{\mu_X}{\mu_Y}
 $$
 
-and, with $f_X = 1$ and $f_Y = -\mu_X/\mu_Y^2$, we find for the propagated variance
+and, with $f_X = 1/\mu_Y$ and $f_Y = -\mu_X/\mu_Y^2$, we find for the propagated variance
 
 $$
-  \sigma_Z^2 = \sigma_X^2 + \frac{\mu_X^2}{\mu_Y^4} \sigma_Y^2
+  \sigma_Z^2 = \frac{\sigma_X^2}{\mu_Y^2} + \frac{\mu_X^2}{\mu_Y^4} \sigma_Y^2
 $$
 
 or
