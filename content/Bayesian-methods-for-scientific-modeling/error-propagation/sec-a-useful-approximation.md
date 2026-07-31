@@ -84,7 +84,7 @@ $$
 $$ (eq:gaussian_error_propagation)
 
 is sometimes called *Gaussian error propagation*. 
-Note that they apply at this linear order for any independent distributions; we did not use that they are Gaussians in deriving the formulas.
+In fact, these relations apply at this linear order regardless of how the random variables $X$ and $Y$ are distributed. Although the above discussion was motivated by assuming they were normally distributed nothing we have done so far actually used that. The derivation does, though, assume that $X$ and $Y$ are independent random variables.
 ```
 
 ::::{admonition} Checkpoint question
