@@ -90,7 +90,7 @@
     <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="7.4. Solutions" href="sec-solutions.html" />
+    <link rel="next" title="8. Bayes in practice" href="../bayes-in-practice/index.html" />
     <link rel="prev" title="7.2. Changing variables" href="sec-changing-variables.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -251,7 +251,6 @@
 <li class="toctree-l2"><a class="reference internal" href="sec-nuisance-parameters-and-marginalization.html">7.1. Nuisance parameters and marginalization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec-changing-variables.html">7.2. Changing variables</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">7.3. A useful approximation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-solutions.html">7.4. Solutions</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../bayes-in-practice/index.html">8. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -702,7 +701,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -718,6 +719,14 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions-to-exercises">Solutions to exercises</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -729,95 +738,177 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="a-useful-approximation">
 <span id="sec-errorpropagationiii"></span><h1><span class="section-number">7.3. </span>A useful approximation<a class="headerlink" href="#a-useful-approximation" title="Link to this heading">#</a></h1>
-<p>For practical purposes, we are often satisfied to approximate PDFs with Gaussians. Within such limits there is an easier method that is often used for error propagation. Note, however, that there are instances when this method fails miserably as will be shown in the example further down.</p>
-<p>Suppose that we have summarized the PDFs <span class="math notranslate nohighlight">\(\pdf{x}{I}\)</span> and <span class="math notranslate nohighlight">\(\pdf{y}{I}\)</span> as two Gaussians with mean and standard deviation <span class="math notranslate nohighlight">\(x_0, \sigma_x\)</span> and <span class="math notranslate nohighlight">\(y_0, \sigma_y\)</span>, respectively. Assume further that these two variables are not correlated, i.e., <span class="math notranslate nohighlight">\(\pdf{x,y}{I} = \pdf{x}{I} \pdf{y}{I}\)</span>.</p>
-<p>Suppose now that we are interested in <span class="math notranslate nohighlight">\(Z=X-Y\)</span>. Intuitively, we might guess that the best estimate <span class="math notranslate nohighlight">\(z_0 = x_0 - y_0\)</span>, but the standard deviation <span class="math notranslate nohighlight">\(\sigma_z\)</span> requires some more thought. Differentiate the relation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f462318c-c752-40ff-ab23-ed1dc45e6de6">
-<span class="eqno">(7.16)<a class="headerlink" href="#equation-f462318c-c752-40ff-ab23-ed1dc45e6de6" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\delta Z = \delta X - \delta Y.
-\end{equation}\]</div>
-<p>For error bars, we are interested in this relation around the optimum, i.e., <span class="math notranslate nohighlight">\(\delta X = X - x_0\)</span> and so on. Square both sides and integrate to get the expectation value</p>
-<div class="amsmath math notranslate nohighlight" id="equation-603f418a-38ab-4cbe-9e85-095c80bb17de">
-<span class="eqno">(7.17)<a class="headerlink" href="#equation-603f418a-38ab-4cbe-9e85-095c80bb17de" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\expect{\delta Z^2} = \expect{\delta X^2 + \delta Y^2 - 2 \delta X \delta Y}  = \expect{\delta X^2} + \expect {\delta Y^2} - 2 \expect{\delta X \delta Y},
-\end{equation}\]</div>
-<p>where we have employed the linear property for an integral over a sum of terms.</p>
-<p>Since we study the differential relation around the optimum, and we assumed that the PDFs for <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> were described by independent Gaussians, we get</p>
-<div class="math notranslate nohighlight" id="equation-eq-stddev">
-<span class="eqno">(7.18)<a class="headerlink" href="#equation-eq-stddev" title="Link to this equation">#</a></span>\[
-\expect{\delta X^2} = \sigma_x^2; \qquad \expect{\delta Y^2} = \sigma_y^2; \qquad \expect{\delta X \delta Y} = 0,
+<p>We have seen in <a class="reference internal" href="sec-nuisance-parameters-and-marginalization.html#sec-errorpropagationi"><span class="std std-numref">Section 7.1</span></a> and <a class="reference internal" href="sec-changing-variables.html#sec-bayesianadvantages-changingvariables"><span class="std std-numref">Section 7.2</span></a> how to exactly calculate the probability distribution for a random variable that is a function of other random variables.
+That is, given distributions for random variables <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>, we can find the distribution for <span class="math notranslate nohighlight">\(Z = f(X,Y)\)</span>.
+But it will often be sufficient to approximate PDFs with (uncorrelated) Gaussian distributions, in which case we can anticipate being able to approximate how such distributions combine.
+Intuitively, if the distributions for <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> are sharply peaked about their means, we expect we can linearize <span class="math notranslate nohighlight">\(f(X,Y)\)</span> and then <span class="math notranslate nohighlight">\(Z\)</span> will also be a Gaussian.
+Let’s see how this plays out successfully and where it can fail.</p>
+<p>If we assume <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> are independent, then in the Gaussian approximation, the distributions for <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> are fully characterized by their means <span class="math notranslate nohighlight">\(\mu_X, \mu_Y\)</span> and variances <span class="math notranslate nohighlight">\(\sigma_X^2, \sigma_Y^2\)</span>, respectively. These are given by expectation values (recall <a class="reference internal" href="../inference-and-pdfs/sec-expectation-values-and-moments.html#sec-inference-moments"><span class="std std-ref">Expectation values and moments</span></a>)</p>
+<div class="math notranslate nohighlight" id="equation-eq-mean-abbreviations">
+<span class="eqno">(7.14)<a class="headerlink" href="#equation-eq-mean-abbreviations" title="Link to this equation">#</a></span>\[
+  \mu_X = \expect{X}, \quad \mu_Y = \expect{Y} 
 \]</div>
-<p>and we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-21adeccc-4e71-40f5-8052-00e89c90ccbd">
-<span class="eqno">(7.19)<a class="headerlink" href="#equation-21adeccc-4e71-40f5-8052-00e89c90ccbd" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\sigma_z = \sqrt{ \expect{\delta Z^2} } = \sqrt{ \sigma_x^2 + \sigma_y^2 }.
-\end{equation}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-variance-abbreviations">
+<span class="eqno">(7.15)<a class="headerlink" href="#equation-eq-variance-abbreviations" title="Link to this equation">#</a></span>\[
+  \sigma_X^2 = \expect{(\delta X)^2}, \quad \sigma_Y^2 = \expect{(\delta Y)^2}, \quad \sigma_{XY} = \expect{\delta X \delta Y} = \expect{\delta X}\times\expect{\delta Y} = 0,
+\]</div>
+<p>where we have defined the deviations from the mean</p>
+<div class="math notranslate nohighlight">
+\[
+  \delta X \equiv X - \mu_X, \quad  \delta Y \equiv Y - \mu_Y,
+\]</div>
+<p>and used that <span class="math notranslate nohighlight">\(\delta X\)</span> and <span class="math notranslate nohighlight">\(\delta Y\)</span> are independent zero-mean distributions.</p>
+<p>By assumption, we should be able to expand about the means, so for small <span class="math notranslate nohighlight">\(\delta X\)</span> and <span class="math notranslate nohighlight">\(\delta Y\)</span> we Taylor expand (here to second order):</p>
+<div class="math notranslate nohighlight" id="equation-eq-z-expansion-second-order">
+<span class="eqno">(7.16)<a class="headerlink" href="#equation-eq-z-expansion-second-order" title="Link to this equation">#</a></span>\[\begin{split}
+  \begin{aligned}
+  Z &amp;= f(X, Y) \\
+    &amp;\approx f(\mu_X, \mu_Y) + f_X \delta X + f_Y \delta Y
+    + \frac12 f_{XX}(\delta X)^2   + \frac12 f_{YY}(\delta Y)^2  + f_{XY}\delta X\delta Y + \ldots
+  \end{aligned}
+\end{split}\]</div>
+<p>where we use the abbreviations</p>
+<div class="math notranslate nohighlight">
+\[
+  f_X \equiv \left.\frac{\partial f}{\partial X}\right|_{\mu_X,\mu_Y}, \quad
+  f_Y \equiv \left.\frac{\partial f}{\partial Y}\right|_{\mu_X,\mu_Y}, 
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+  f_{XX} \equiv \left.\frac{\partial^2 f}{\partial X^2}\right|_{\mu_X,\mu_Y}, \quad
+  f_{YY} \equiv \left.\frac{\partial^2 f}{\partial Y^2}\right|_{\mu_X,\mu_Y}, \quad
+  f_{XY} \equiv \left.\frac{\partial^2 f}{\partial X\partial Y}\right|_{\mu_X,\mu_Y}.
+\]</div>
+<p>Let’s first work to linear order (i.e., keep through <span class="math notranslate nohighlight">\(\delta X\)</span> and <span class="math notranslate nohighlight">\(\delta Y\)</span>).
+Then <span class="math notranslate nohighlight">\(Z\)</span> is a linear combination of Gaussian distributions, hence is itself Gaussian.
+We can find its mean and variance by using the linearity of expectation values and that the <span class="math notranslate nohighlight">\(\delta X\)</span> and <span class="math notranslate nohighlight">\(\delta Y\)</span> are independent, zero-mean distributions:</p>
+<div class="math notranslate nohighlight" id="equation-eq-mu-z-equation">
+<span class="eqno">(7.17)<a class="headerlink" href="#equation-eq-mu-z-equation" title="Link to this equation">#</a></span>\[
+  \mu_Z = \expect{Z} = \expect{f(X,Y)} \approx f(\mu_X, \mu_Y)\, 
+\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-sigma-z-equation">
+<span class="eqno">(7.18)<a class="headerlink" href="#equation-eq-sigma-z-equation" title="Link to this equation">#</a></span>\[\begin{split}
+  \begin{aligned}
+  \sigma_Z^2 &amp;= \expect{(Z - \mu_Z)^2}
+  \approx\expect{f_X^2 (\delta X)^2 + f_Y^2 (\delta Y)^2 + 2 f_X f_Y \delta X \delta Y} \\
+  &amp;\approx f_X^2 \sigma_X^2 + f_Y^2 \sigma_Y^2 .
+  \end{aligned}
+\end{split}\]</div>
+<div class="tip admonition">
+<p class="admonition-title">Summary</p>
+<p>The application of these approximations:</p>
+<div class="math notranslate nohighlight" id="equation-eq-gaussian-error-propagation">
+<span class="eqno">(7.19)<a class="headerlink" href="#equation-eq-gaussian-error-propagation" title="Link to this equation">#</a></span>\[
+\mu_Z \approx f(\mu_X, \mu_Y), \quad 
+\sigma_Z^2 \approx f_X^2 \sigma_X^2 + f_Y^2 \sigma_Y^2 
+\]</div>
+<p>is sometimes called <em>Gaussian error propagation</em>.
+Note that they apply at this linear order for any independent distributions; we did not use that they are Gaussians in deriving the formulas.</p>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Why are expectation values linear operations?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>Recall from <a class="reference internal" href="../inference-and-pdfs/sec-expectation-values-and-moments.html#sec-inference-moments"><span class="std std-ref">Expectation values and moments</span></a> that expectation values are integrals over probability definitions. As such, they inherit linearity from the linearity of integrals.</p>
+</div>
+</div>
+<p>Let’s apply the formulas in <a class="reference internal" href="#equation-eq-gaussian-error-propagation">(7.19)</a> to <span class="math notranslate nohighlight">\(Z=X-Y\)</span>.
+For the mean we get <span class="math notranslate nohighlight">\(\mu_Z = \mu_X - \mu_Y\)</span>, which is intuitive.
+For the variance the relevant derivatives are <span class="math notranslate nohighlight">\(f_X = +1\)</span> and <span class="math notranslate nohighlight">\(f_Y = -1\)</span>, so
+we find that</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma_z^2 = \sigma_x^2 + \sigma_y^2 ,
+\]</div>
+<p>i.e., the familiar result that variances add in quadrature.
+Since the expansion of <span class="math notranslate nohighlight">\(f\)</span> in this case truncates at linear order, these results are exact.</p>
 <div class="proof example admonition" id="example:BayesianAdvantage:inferring-galactic-distances-revisited">
 <p class="admonition-title"><span class="caption-number">Example 7.3 </span> (Inferring galactic distances—revisited)</p>
 <section class="example-content" id="proof-content">
-<p>Consider, as a second example, the ratio of two parameters <span class="math notranslate nohighlight">\(Z = X/Y\)</span> that appeared in <a class="reference internal" href="sec-nuisance-parameters-and-marginalization.html#example:BayesianAdvantage:inferring-galactic-distances">Example 7.2</a> (in which we wanted to infer <span class="math notranslate nohighlight">\(x = v/H\)</span>). Differentiation gives</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1a3bf28e-4c53-469c-814b-ccbf3e7fb8dc">
-<span class="eqno">(7.20)<a class="headerlink" href="#equation-1a3bf28e-4c53-469c-814b-ccbf3e7fb8dc" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\delta Z = \frac{Y \delta X - X \delta Y}{Y^2} \quad \Leftrightarrow \quad \frac{\delta Z}{Z} = \frac{\delta X}{X} - \frac{\delta Y}{Y}.
-\end{equation}\]</div>
-<p>Squaring both sides and taking the expectation values, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ebdd53cb-d393-48e7-b43a-e2f78c863ff2">
-<span class="eqno">(7.21)<a class="headerlink" href="#equation-ebdd53cb-d393-48e7-b43a-e2f78c863ff2" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\frac{\expect{\delta Z^2}}{z_0^2} = \frac{\expect{\delta X^2}}{x_0^2} + \frac{\expect{\delta Y^2}}{y_0^2} - 2 \frac{\expect{\delta X} \expect{\delta Y}}{x_0 y_0},
-\end{equation}\]</div>
-<p>where the <span class="math notranslate nohighlight">\(X\)</span>, <span class="math notranslate nohighlight">\(Y\)</span> and <span class="math notranslate nohighlight">\(Z\)</span> in the denominator have been replaced by the constants <span class="math notranslate nohighlight">\(x_0\)</span>, <span class="math notranslate nohighlight">\(y_0\)</span> and <span class="math notranslate nohighlight">\(z_0 = x_0 / y_0\)</span> because we are interested in deviations from the peak of the PDF.</p>
-<p>Finally, substituting the information for the PDFs of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> as summarized in Eq. <a class="reference internal" href="#equation-eq-stddev">(7.18)</a> we finally obtain the propagated error for the ratio</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d3f063ff-3d71-4945-ba10-d82c554d9da9">
-<span class="eqno">(7.22)<a class="headerlink" href="#equation-d3f063ff-3d71-4945-ba10-d82c554d9da9" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\frac{\sigma_z}{z_0} = \sqrt{ \left( \frac{\sigma_x}{x_0} \right)^2 + \left( \frac{\sigma_y}{y_0} \right)^2}.
-\end{equation}\]</div>
+<p>Consider, as a second example, the ratio of two parameters <span class="math notranslate nohighlight">\(Z = X/Y\)</span> that appeared in <a class="reference internal" href="sec-nuisance-parameters-and-marginalization.html#example:BayesianAdvantage:inferring-galactic-distances">Example 7.2</a> (in which we wanted to infer <span class="math notranslate nohighlight">\(d = v/H\)</span>).</p>
+<p>Applying <a class="reference internal" href="#equation-eq-gaussian-error-propagation">(7.19)</a>, the mean is</p>
+<div class="math notranslate nohighlight">
+\[ 
+ \mu_Z = \frac{\mu_X}{\mu_Y}
+\]</div>
+<p>and, with <span class="math notranslate nohighlight">\(f_X = 1\)</span> and <span class="math notranslate nohighlight">\(f_Y = -\mu_X/\mu_Y^2\)</span>, we find for the propagated variance</p>
+<div class="math notranslate nohighlight">
+\[
+  \sigma_Z^2 = \sigma_X^2 + \frac{\mu_X^2}{\mu_Y^4} \sigma_Y^2
+\]</div>
+<p>or</p>
+<div class="math notranslate nohighlight">
+\[
+  \frac{\sigma_Z^2}{\mu_Z^2} = \frac{\sigma_X^2}{\mu_X^2} + \frac{\sigma_Y^2}{\mu_Y^2},
+\]</div>
+<p>(we can take the square root to get the ratio of standard deviation to mean).</p>
 </section>
 </div><div class="exercise admonition" id="exercise:BayesianAdvantages:gaussian-sum-of-errors">
 
-<p class="admonition-title"><span class="caption-number">Exercise 7.6 </span> (Gaussian sum of errors)</p>
+<p class="admonition-title"><span class="caption-number">Exercise 7.6 </span> (Linear combination of Gaussians)</p>
 <section id="exercise-content">
-<p>Consider <span class="math notranslate nohighlight">\(Z=X+Y\)</span> (again) and derive a PDF for <span class="math notranslate nohighlight">\(Z\)</span> assuming Gaussian errors in <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>. Compare with the result from the full convolution of  PDFs in <a class="reference internal" href="sec-nuisance-parameters-and-marginalization.html#example:BayesianAdvantage:Z=X+Y">Example 7.1</a>.</p>
+<p>Consider <span class="math notranslate nohighlight">\(Z=aX+bY\)</span>, with <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> constants. Derive a PDF for <span class="math notranslate nohighlight">\(Z\)</span> assuming Gaussian errors in <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> and applying <a class="reference internal" href="#equation-eq-gaussian-error-propagation">(7.19)</a>. Compare with the result for <span class="math notranslate nohighlight">\(X+Y\)</span> from the full convolution of  PDFs in <a class="reference internal" href="sec-nuisance-parameters-and-marginalization.html#example:BayesianAdvantage:Z=X+Y">Example 7.1</a>.</p>
 </section>
 </div>
 <div class="exercise admonition" id="exercise:BayesianAdvantages:gaussian-product-of-errors">
 
 <p class="admonition-title"><span class="caption-number">Exercise 7.7 </span> (Gaussian product of errors)</p>
 <section id="exercise-content">
-<p>Consider <span class="math notranslate nohighlight">\(Z=XY\)</span> and derive a PDF for <span class="math notranslate nohighlight">\(Z\)</span> assuming Gaussian errors in <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>.</p>
+<p>Consider <span class="math notranslate nohighlight">\(Z=XY\)</span> and derive a PDF for <span class="math notranslate nohighlight">\(Z\)</span> assuming Gaussian errors in <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> and applying <a class="reference internal" href="#equation-eq-gaussian-error-propagation">(7.19)</a>.</p>
 </section>
 </div>
-<p>Despite its virtues, let us end our discussion of error-propagation with a salutary warning against the blind use of this nifty short cut.</p>
+<p>What if the first-order approximation is not enough? We can return to <a class="reference internal" href="#equation-eq-mu-z-equation">(7.17)</a> and <a class="reference internal" href="#equation-eq-sigma-z-equation">(7.18)</a> and keep the second-order terms in <a class="reference internal" href="#equation-eq-z-expansion-second-order">(7.16)</a>.  We find improved formulas:</p>
+<div class="math notranslate nohighlight" id="equation-eq-second-order-errors">
+<span class="eqno">(7.20)<a class="headerlink" href="#equation-eq-second-order-errors" title="Link to this equation">#</a></span>\[\begin{split}
+\begin{aligned}
+  \mu_Z &amp;\approx f(\mu_X,\mu_Y) + \frac12 f_{XX}\sigma_X^2 + \frac12 f_{YY}\sigma_Y^2 \\
+  \sigma_Z^2 &amp;\approx f_X^2 \sigma_X^2 + f_Y^2 \sigma_Y^2 
+  + \frac12 f_{XX}^2 (\sigma_X^2)^2 +  \frac12 f_{YY}^2 (\sigma_Y^2)^2 + f_{XY}^2 \sigma_X^2 \sigma_Y^2 .
+\end{aligned}
+\end{split}\]</div>
+<p>In this case it is relevant that we assumed independent Gaussian distributions for <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>.</p>
+<div class="exercise admonition" id="exercise:BayesianAdvantages:second-order-error-propagation">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7.8 </span> (Deriving second-order results)</p>
+<section id="exercise-content">
+<p>Derive the results in <a class="reference internal" href="#equation-eq-second-order-errors">(7.20)</a>. You will need to use that the skewness for a Gaussian distribution is zero and that the kurtosis can be expressed in terms of the variance.</p>
+</section>
+</div>
+<p>So where can these approximations fail?
+The first-order approximation
+can perform poorly for strongly nonlinear transformations (so that higher-order corrections are important), ratios with denominators near zero, or transformations that impose boundaries or produce substantial skewness.
+The second-order corrections may help, but can also fail completely in some cases.
+Consider the following example.</p>
 <div class="proof example admonition" id="example:BayesianAdvantage:taking-square-root">
 <p class="admonition-title"><span class="caption-number">Example 7.4 </span> (Taking the square root of a number)</p>
 <section class="example-content" id="proof-content">
+<p>This example was adapted from <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id11" title="D. S. Sivia and J. Skilling. Data Analysis - A Bayesian Tutorial. Oxford Science Publications. Oxford University Press, 2nd edition, 2006.">SS06</a>]</span>.</p>
 <ul class="simple">
 <li><p>Assume that the amplitude of a Bragg peak is measured with an uncertainty <span class="math notranslate nohighlight">\(A = A_0 \pm \sigma_A\)</span> from a least-squares fit to experimental data.</p></li>
 <li><p>The Bragg peak amplitude is proportional to the square of a complex structure function: <span class="math notranslate nohighlight">\(A = |F|^2 \equiv f^2\)</span>.</p></li>
 <li><p>What is <span class="math notranslate nohighlight">\(f = f_0 \pm \sigma_f\)</span>?</p></li>
 </ul>
-<p>Obviously, we have that <span class="math notranslate nohighlight">\(f_0 = \sqrt{A_0}\)</span>. Differentiate the relation, square and take the expectation value</p>
-<div class="amsmath math notranslate nohighlight" id="equation-51a3d2f7-1ac1-4bc6-843c-cc8b5c5a09d7">
-<span class="eqno">(7.23)<a class="headerlink" href="#equation-51a3d2f7-1ac1-4bc6-843c-cc8b5c5a09d7" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\expect{\delta A^2} = 4 f_0^2 \expect{\delta f^2} \quad 
-\Leftrightarrow \quad 
-\sigma_f = \frac{\sigma_A}{2 \sqrt{A_0}},
-\end{equation}\]</div>
-<p>where we have used the Gaussian approximation for the PDFs.</p>
-<p>But what happens if the best fit gives <span class="math notranslate nohighlight">\(A_0 &lt; 0\)</span>, which would not be impossible if we have weak and strongly overlapping peaks. The above equation obviously does not work since <span class="math notranslate nohighlight">\(f_0\)</span> would be a complex number.</p>
+<p>If we blindly apply <a class="reference internal" href="#equation-eq-gaussian-error-propagation">(7.19)</a>, we find</p>
+<div class="math notranslate nohighlight">
+\[
+  f_0 = \sqrt{A_0}\, \quad \sigma_f^2 = \frac{\sigma_A^2}{4 A_0} .
+\]</div>
+<p>But what happens if the best fit gives <span class="math notranslate nohighlight">\(A_0 &lt; 0\)</span>, which would not be impossible if we have weak and strongly overlapping peaks. The above equation obviously does not work since <span class="math notranslate nohighlight">\(f_0\)</span> would be a complex number and the variance would be negative.</p>
 <p>We have made two mistakes:</p>
 <ol class="arabic simple">
-<li><p>Likelihood is not posterior!</p></li>
-<li><p>The Gaussian approximation around the peak does not always work.</p></li>
+<li><p>The likelihood is not the posterior!</p></li>
+<li><p>The Gaussian error approximation around the peak does not always work.</p></li>
 </ol>
 <p>Consider first the best fit of the signal peak. It implies that the likelihood can be approximated by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-eb37e531-43a3-481f-a072-e98644137b77">
-<span class="eqno">(7.24)<a class="headerlink" href="#equation-eb37e531-43a3-481f-a072-e98644137b77" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dfc86d4b-0ab3-4fe8-a985-ed8e82c70b08">
+<span class="eqno">(7.21)<a class="headerlink" href="#equation-dfc86d4b-0ab3-4fe8-a985-ed8e82c70b08" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\data}{A,I} \propto \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right].
 \end{equation}\]</div>
 <p>However, the posterior for <span class="math notranslate nohighlight">\(A\)</span> is <span class="math notranslate nohighlight">\(\pdf{A}{{\data},I} \propto \pdf{\data}{A,I} \pdf{A}{I}\)</span> and we should use the fact that we know that <span class="math notranslate nohighlight">\(A \ge 0\)</span>.</p>
 <p>We will incorporate this information through a simple step-function prior</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4963bb3a-3209-42a3-aa8e-99a7879d34a1">
-<span class="eqno">(7.25)<a class="headerlink" href="#equation-4963bb3a-3209-42a3-aa8e-99a7879d34a1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8be178ed-fd23-422b-a0ad-86484c3bd7db">
+<span class="eqno">(7.22)<a class="headerlink" href="#equation-8be178ed-fd23-422b-a0ad-86484c3bd7db" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{A}{I} = \left\{
 \begin{array}{ll}
 \frac{1}{A_\mathrm{max}}, &amp; 0 \le A \le A_\mathrm{max}, \\
@@ -826,14 +917,14 @@ document.write(`
 \right.
 \end{equation}\]</div>
 <p>This implies that the posterior will be a truncated Gaussian, and its maximum will always be above zero.</p>
-<p>This also implies that we cannot use the Gaussian approximation. Instead we will do the proper calculation using the transformation <a class="reference internal" href="sec-changing-variables.html#equation-eq-bayesianadvantage-transformation">(7.13)</a></p>
-<div class="amsmath math notranslate nohighlight" id="equation-d98e822b-c757-41f3-9f60-9ebc5ab30113">
-<span class="eqno">(7.26)<a class="headerlink" href="#equation-d98e822b-c757-41f3-9f60-9ebc5ab30113" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>This also implies that we cannot use the Gaussian error propagation approximation. Instead we will do the proper calculation using the transformation <a class="reference internal" href="sec-changing-variables.html#equation-eq-bayesianadvantage-transformation">(7.11)</a></p>
+<div class="amsmath math notranslate nohighlight" id="equation-d1857f5f-ee32-42a7-af6e-d7d07a97754d">
+<span class="eqno">(7.23)<a class="headerlink" href="#equation-d1857f5f-ee32-42a7-af6e-d7d07a97754d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(f|{\data},I) = \pdf{A}{{\data},I} \left| \frac{dA}{df} \right| = 2 f \pdf{A}{{\data},I}
 \end{equation}\]</div>
 <p>In the end we find the proper Bayesian error propagation given by the PDF</p>
-<div class="amsmath math notranslate nohighlight" id="equation-65dfb49a-3fe2-4875-a144-0acd62c63ccd">
-<span class="eqno">(7.27)<a class="headerlink" href="#equation-65dfb49a-3fe2-4875-a144-0acd62c63ccd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e3ac5626-f55c-40e3-b2a8-709b2dba0d0d">
+<span class="eqno">(7.24)<a class="headerlink" href="#equation-e3ac5626-f55c-40e3-b2a8-709b2dba0d0d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(f|{\data},I) \propto \left\{
 \begin{array}{ll}
 f \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right], &amp; 0 \le f \le \sqrt{A_\mathrm{max}}, \\
@@ -841,12 +932,13 @@ f \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right], &amp; 0 \le f \le \sqrt{A_
 \end{array}
 \right.
 \end{equation}\]</div>
-<p><a class="reference internal" href="#fig-example-bayesianadvantage-taking-square-root"><span class="std std-numref">Fig. 7.1</span></a> visualize the difference between the Bayesian and the naive error propagation for a few scenarios. The code to generate these plots is in the hidden cell below.</p>
+<p><a class="reference internal" href="#fig-example-bayesianadvantage-taking-square-root"><span class="std std-numref">Fig. 7.1</span></a> visualizes the difference between the Bayesian and the naive error propagation for a few scenarios. The code to generate these plots is in the hidden cell below.</p>
 </section>
 </div><figure class="align-default" id="fig-example-bayesianadvantage-taking-square-root">
 <img alt="../../../_images/ffa62e9299f60c5c90ab77238f607bee879a643edc290a4ef8b08426441d0092.png" src="../../../_images/ffa62e9299f60c5c90ab77238f607bee879a643edc290a4ef8b08426441d0092.png" />
 <figcaption>
-<p><span class="caption-number">Fig. 7.1 </span><span class="caption-text">The left-hand panels show the posterior PDF for the amplitude of a Bragg peak in three different scenarios. The right-hand plots are the corresponding PDFs for the modulus of the structure factor <span class="math notranslate nohighlight">\(f=\sqrt{A}\)</span>. The solid lines correspond to a full Bayesian error propagation, while the dashed lines are obtained with the short-cut error propagation.</span><a class="headerlink" href="#fig-example-bayesianadvantage-taking-square-root" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 7.1 </span><span class="caption-text">The left-hand panels show the posterior PDF for the amplitude of a Bragg peak in three different scenarios. The right-hand plots are the corresponding PDFs for the modulus of the structure factor <span class="math notranslate nohighlight">\(f=\sqrt{A}\)</span>. The solid lines correspond to a full Bayesian error propagation, while the dashed lines are obtained with the short-cut error propagation.
+The short-cut approximation works well for the first case, poorly for the second case, and fails completely for the third case where <span class="math notranslate nohighlight">\(A_0 &lt; 0\)</span>.</span><a class="headerlink" href="#fig-example-bayesianadvantage-taking-square-root" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <div class="cell tag_hide-cell docutils container">
@@ -900,6 +992,33 @@ f \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right], &amp; 0 \le f \le \sqrt{A_
 </div>
 </details>
 </div>
+<section id="solutions-to-exercises">
+<h2>Solutions to exercises<a class="headerlink" href="#solutions-to-exercises" title="Link to this heading">#</a></h2>
+<div class="solution dropdown admonition" id="solution:BayesianAdvantages:gaussian-sum-of-errors">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:BayesianAdvantages:gaussian-sum-of-errors"> Exercise 7.6 (Linear combination of Gaussians)</a></p>
+<section id="solution-content">
+<p>The PDF <span class="math notranslate nohighlight">\(\pdf{Z}{I}\)</span> is Gaussian with mean <span class="math notranslate nohighlight">\(\expect{Z} = \mu_Z = a \mu_X + b \mu_Y\)</span> and variance <span class="math notranslate nohighlight">\(\var{Z} = \sigma_Z^2 = a^2\sigma_Z^2 + b^2\sigma_Z^2\)</span>, where <span class="math notranslate nohighlight">\(\mu_X,\mu_Y\)</span> and <span class="math notranslate nohighlight">\(\sigma_X^2, \sigma_Y^2\)</span> are the means and variances of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>, respectively.</p>
+<p>For <span class="math notranslate nohighlight">\(a=b=1\)</span> this is the same result as in <a class="reference internal" href="sec-nuisance-parameters-and-marginalization.html#example:BayesianAdvantage:Z=X+Y">Example 7.1</a>, which should not be surprising since the errors were in fact Gaussian.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:BayesianAdvantages:gaussian-product-of-errors">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:BayesianAdvantages:gaussian-product-of-errors"> Exercise 7.7 (Gaussian product of errors)</a></p>
+<section id="solution-content">
+<p>The PDF <span class="math notranslate nohighlight">\(\pdf{Z}{I}\)</span> is Gaussian with mean <span class="math notranslate nohighlight">\(\expect{Z} = \mu_Z = \mu_X \mu_Y\)</span> and variance <span class="math notranslate nohighlight">\(\var{Z} = \sigma_Z^2 = \mu_Y^2 \sigma_X^2 + \mu_X^2 \sigma_Y^2\)</span>, where <span class="math notranslate nohighlight">\(\mu_X,\mu_Y\)</span> and <span class="math notranslate nohighlight">\(\sigma_X^2, \sigma_Y^2\)</span> are the means and variances of <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>, respectively.</p>
+</section>
+</div>
+<div class="solution dropdown admonition" id="solution:BayesianAdvantages:second-order-error-propagation">
+
+<p class="admonition-title">Solution to<a class="reference internal" href="#exercise:BayesianAdvantages:second-order-error-propagation"> Exercise 7.8 (Deriving second-order results)</a></p>
+<section id="solution-content">
+<p>We get the second-order expression for <span class="math notranslate nohighlight">\(\mu_Z\)</span> immediately by applying <a class="reference internal" href="#equation-eq-mu-z-equation">(7.17)</a> and <a class="reference internal" href="#equation-eq-variance-abbreviations">(7.15)</a>.</p>
+<p>For the variance, when applying <a class="reference internal" href="#equation-eq-sigma-z-equation">(7.18)</a> we need to remember to apply both the expansion of <span class="math notranslate nohighlight">\(Z\)</span> <em>and</em> the expansion of <span class="math notranslate nohighlight">\(\mu_Z\)</span> to second order. Once squared, there will be expectation values of third-order terms and fourth-order terms; after using independence to factorize terms, any expectation value of an odd power of <span class="math notranslate nohighlight">\(\delta X\)</span> or <span class="math notranslate nohighlight">\(\delta Y\)</span> vanishes for zero-mean Gaussian distributions (mean and skewness are both zero).
+As before, any expectation value of quadratic terms yields variances, but now we have <span class="math notranslate nohighlight">\(\expect{(\delta X)^4} = 3(\sigma_X^2)^2\)</span> and <span class="math notranslate nohighlight">\(\expect{(\delta Y)^4} = 3(\sigma_Y^2)^2\)</span> for Gaussian distributions. When the dust settles, terms like <span class="math notranslate nohighlight">\(f_{XX} f_{YY}\sigma_X^2 \sigma_Y^2\)</span> will have canceled and the factors work out to reproduce <a class="reference internal" href="#equation-eq-second-order-errors">(7.20)</a>.</p>
+</section>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -942,11 +1061,11 @@ f \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right], &amp; 0 \le f \le \sqrt{A_
       </div>
     </a>
     <a class="right-next"
-       href="sec-solutions.html"
+       href="../bayes-in-practice/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">7.4. </span>Solutions</p>
+        <p class="prev-next-title"><span class="section-number">8. </span>Bayes in practice</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -956,6 +1075,21 @@ f \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right], &amp; 0 \le f \le \sqrt{A_
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions-to-exercises">Solutions to exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

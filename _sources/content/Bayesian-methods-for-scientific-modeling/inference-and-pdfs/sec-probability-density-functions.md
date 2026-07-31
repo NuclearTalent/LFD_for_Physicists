@@ -57,6 +57,26 @@ for PDFs look just the same way as they do for probabilities. Therefore Bayes' t
 rule) can also be applied to relate the PDF of $x$ given $y$, $\pdf{x}{y}$
 to the pdf of $y$ given $x$, $\pdf{y}{x}$.
 
+```{admonition} Dirac delta functions
+A delta function $\delta(x-x_0)$ can be constructed as the limiting case of a distribution
+
+$$
+\delta(x-x_0) = \lim_{\varepsilon \to 0^+} h_{\varepsilon}(x-x_0).
+$$
+
+For example, it can be constructed as an infinitely narrow (and tall) normal distribution
+
+$$
+\delta(x-x_0) = \lim_{\varepsilon \to 0^+} \frac{1}{\sqrt{2\pi}\varepsilon} \exp\left( -\frac{(x-x_0)^2}{2\varepsilon^2}\right).
+$$
+
+This function will be zero for $x \neq x_0$, and goes to infinity at $x_0$ in a way such that the integral $\int_{-\infty}^{+\infty} \delta(x-x_0) dx = 1$, which is a defining property.
+
+More general, for well-behaved functions $f(x)$, we have $\int_{-\infty}^{+\infty} f(x) \delta(x-x_0) dx = f(x_0)$.
+```
+
+
+
 In Bayesian statistics there are PDFs (or PMFs if discrete) for
 everything. Here are a few examples:
 * fit parameters --- like the slope and intercept of a line in a
