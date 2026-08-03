@@ -93,7 +93,7 @@ We will stick to the $\p{\cdot}$ notation here, but it's worth pointing out that
 What is the PDF $\p{x}$ if we know **definitely** that $x = x_0$ (i.e., the outcome is fixed)?
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-$\p{x} = \delta(x-x_0)\quad$  [Note that $\p(x)$ is normalized.]
+$\p{x} = \delta(x-x_0)\quad$  [Note that $\p{x}$ is normalized.]
 :::
 ::::
 
@@ -112,7 +112,7 @@ $\int_{-\infty}^{+\infty} |\psi(x_1, x_2)|^2\, dx_2\ \ $ or, more generally, int
 :::
 ::::
 
-This is a specific example of the marginalization rule, now in the PDF
+This Checkpoint question is a specific example of the marginalization rule, now in the PDF
 context, that we
 discussed the general form for probabilities above. The *marginal
 probability density* of $x_1$ is the result when we marginalize the
@@ -128,7 +128,7 @@ particle 2. *Marginalizing* in the Bayesian context means
 "integrating out" a parameter one is--at least temporarily--not
 interested in, to leave the focus on the PDF of other parameters. This
 can be particularly useful if there are "nuisance" parameters in the
-statistical model that are just indirectly influencing the quantity of interest. A specific example could be a parameter that account for the impact of defects in the
+statistical model that are just indirectly influencing the quantity of interest. A specific example could be a parameter that accounts for the impact of defects in the
 measuring apparatus, but ultimately one is interested in the physics that can be 
 extracted with the imperfect apparatus.
 
@@ -338,7 +338,7 @@ See {ref}`sec:Statistics` in Appendix A for further details on PDFs. You can als
 The diversity of available distributions should make it clear
 that the "default" choice of a Gaussian distribution is just that: a
 default choice. We will explore why this default
-choice is often the correct one in {ref}`sec:1dpdfs`. But often is not the same as all the time, and it is frequently the case that another distribution gives a better description of the way data is distributed.
+choice is often the correct one in {ref}`sec:1dpdfs`. But *often* is not the same as *all the time*, and it is frequently the case that another distribution gives a better description of the way data is distributed.
 
 :::{admonition} Trivia: Who was "Student"?
 :class: note
