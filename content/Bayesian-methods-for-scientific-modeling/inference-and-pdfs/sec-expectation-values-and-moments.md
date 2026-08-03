@@ -163,7 +163,7 @@ $$
 
 Dividing through by $\sigma_X \sigma_Y$ yields $-1 \leq \rho \leq 1$.
 
-A consequence is that the matrix $\Sigma$ would not be a valid covariance matrix because the determinant would be negative.
+A consequence of $|\rho|>1$ is that the matrix $\Sigma$ would not be a valid covariance matrix because the determinant would be negative.
 :::
 ::::
 

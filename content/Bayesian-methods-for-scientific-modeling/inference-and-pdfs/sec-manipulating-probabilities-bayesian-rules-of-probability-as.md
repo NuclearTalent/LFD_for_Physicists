@@ -1,11 +1,7 @@
 (sec:Inference:manipulation)=
 # Manipulating probabilities: Bayesian rules of probability as principles of logic
 
-In the school of subjective probability you can assign whatever
-probability we want to the above statements. They represent, after
-all, your degree of belief. But you should beware! If your probability
-assignments are consistently capricious people may stop paying
-attention to them.
+There can be many different ways by which we attain our current state of knowledge. What we know about a particular parameter may be based on bounds on what is physically sensible (e.g., masses are positive), or on the results of a previous experiment (e.g., there have already been several measurements of Newton's gravitational constant), or we might know something based on the overall scales in the problem (e.g., baseball speeds are typically not larger than 150 mph). In a Bayesian formulation any of these pieces of knowledge can be represented as a pdf. Regardless of how we arrived at our state of knowledge it is crucial that we know how to combine it with other knowledge. For that purpose we need rules that allow us to keep track of probabilities. 
 
 A minimal set of rules for consistently keeping track of probabilities
 is provided by two basic rules of probability arithmetic. These are the sum
@@ -126,8 +122,8 @@ which also leads to the marginalization property
 where we used the product rule in the second step.
   ```
 
-This is a key tool in the Bayesian's article: the ability to obtain the  "marginal" probability for the outcome of one variable by summing the joint probability for $x$ and $y$ over all possible outcomes $\{y_j\}$ of the second variable. This second variable
-is not one we are interested in when computing the pdf $\cprob{x}{I}$, so we ``marginalize over it". 
+This is a key tool in the Bayesian's arsenal: the ability to obtain the  "marginal" probability for the outcome of one variable by summing the joint probability for $x$ and $y$ over all possible outcomes $\{y_j\}$ of the second variable. This second variable
+is not one we are interested in when computing the pdf $\cprob{x}{I}$, so we "marginalize over it". 
 
  We will use marginalization a lot! Note that the marginalization
  takes place in the presence of the conditional I, i.e., all
@@ -135,11 +131,11 @@ is not one we are interested in when computing the pdf $\cprob{x}{I}$, so we ``m
  information is held fixed, while the sum of all possibilities is
  constructed.
 
-For example, let’s imagine that there are five candidates in a presidential election; then $H_1$ could be the proposition that the first candidate will win, and so on. The probability that $A$ is true, for example that unemployment will be lower in a year’s time (given all relevant information $I$, but irrespective of whoever becomes president) is given by $\sum_i \prob(A,H_i|I)$. The president is a nuisance variable who has been marginalized out of the calculation. 
+For example, let’s imagine that there are five candidates in a presidential election; then $H_1$ could be the proposition that the first candidate will win, and so on. The probability that $A$ is true, for example that unemployment will be lower in a year’s time (given all relevant information $I$, but irrespective of whoever becomes president) is given by $\prob(A|I) = \sum_i \prob(A,H_i|I)$. The president is a nuisance variable who has been marginalized out of the calculation. 
 
 :::{warning}
 Although we alluded to the analogy between inserting a complete set
-of states and marginalization above this analogy breaks down in
+of states in quantum mechanics and marginalization above this analogy breaks down in
 general. It's ok to use this as a mnemonic though.
 :::
 
@@ -152,8 +148,8 @@ A rule from probability says $\prob(A \cup B) = \prob(A) + \prob(B) - \prob(A \c
 ```{exercise} Practicing the sum and product rule with population characteristics
 :label: exercise:Inferenceandpdfs:sumandproductrule
 
-In the exercise {ref}`exercise:CheckingSumProduct`
-you can go through some calculations based on the sum and product
+In this {ref}`exercise:CheckingSumProduct`
+you go through some calculations based on the sum and product
 rule. You estimate the probabilities of finding an individual in a
 population with a particular characteristic (tall with brown eyes for
 example) based on what you're told about the population and the usual
@@ -164,7 +160,7 @@ you through applying the sum and product rules.
 ```{exercise} Using Bayesian rules of probability on a standard medical problem
 :label: exercise:Inferenceandpdfs:medicalexample
 
-In the exercise {ref}`exercise:MedicalExample` your goal is to find the probability that you actually have an unknown disease given some information about the test for it. This is a problem for which your intuition and personal probability reasoning logic is likely to fail. But Bayes leads the way to the correct answer! It is good practice in translating statements to probabilities (and distinguishing between joint and conditional probabilities). 
+In this {ref}`exercise:MedicalExample` your goal is to find the probability that you actually have an unknown disease given some information about the test for it. This is a problem for which your intuition and personal probability reasoning logic is likely to fail. But Bayes leads the way to the correct answer! It is good practice in translating statements to probabilities (and distinguishing between joint and conditional probabilities). 
 ```
 
 

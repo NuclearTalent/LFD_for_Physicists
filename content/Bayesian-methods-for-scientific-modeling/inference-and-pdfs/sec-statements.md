@@ -47,7 +47,8 @@ It is easy to forget the meaning of the key word *given* and assume that $\cprob
 :::
 
 :::{note}
-Further discussion on the interpretation of probability can be found in {ref}`sec:BayesianEpistemology`.
+In this book we employ a Bayesian interpretation of probability throughout. However, we sometimes contrast our analysis of a problem to an analysis of the same problem using a frequentist interpretation of probability. And even within a Bayesian interpretation there are several different interpretations. One of the big divisions is between the school of thought which says that probabilities should be objective, and the "subjective school of Bayesian probability". In the subjective school of probability everyone has their own state of knowledge so everyone gets to assign their own pdfs to quantities of interest. More
+ discussion of these different interpretations of probability can be found in {ref}`sec:BayesianEpistemology`.
 :::
 
 
