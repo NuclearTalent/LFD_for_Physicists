@@ -13,7 +13,7 @@ jupytext:
 ## Chi Feng visualizations
 
 There are excellent javascript visualizations of MCMC sampling available on the web.
-A particularly effective set of interactive demos was created by Chi Feng, which are included in this section. 
+A particularly effective set of interactive demos was created by Chi Feng, which are included in this section (with some modifications). 
 These demos range from random walk Metropolis-Hastings (MH) to Adaptive MH to Hamiltonian Monte Carlo (HMC) to No-U-Turn Sampler (NUTS) to Metropolis-adjusted Langevin Algorithm (MALA) to Hessian-informed HMC (H2MC), to Stein Variational Gradient Descent (SVGD) to Nested Sampling with RadFriends (RadFriends-NS). 
 We'll start with the random walk MH, which is the algorithm discussed in {numref}`sec:BasicStructureMCMC`.
 
