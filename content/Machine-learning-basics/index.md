@@ -16,8 +16,8 @@ Machine learning and statistics are closely related fields in terms of methods, 
 
 We will be selective in our coverage, focusing on aspects that will ultimately connect to our Bayesian perspective. 
 The chapters here are:
-* {ref}`sec:LogisticRegression`
 * {ref}`sec:MachineLearning`, which has a general overview of machine learning and artificial neural networks (ANNs), with demonstration notebooks. Also included is an introduction to a non-empirical, field-theory-based treatment of ANNs that expands around the large-width limit of networks.
+* {ref}`sec:LogisticRegression`
 * {ref}`sec:CNN` (or CNNs)
 * {ref}`ch:PartIVProblems`.
 
