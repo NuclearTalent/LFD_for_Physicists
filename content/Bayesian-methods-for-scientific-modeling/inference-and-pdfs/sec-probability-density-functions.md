@@ -113,10 +113,8 @@ $\int_{-\infty}^{+\infty} |\psi(x_1, x_2)|^2\, dx_2\ \ $ or, more generally, int
 ::::
 
 This Checkpoint question is a specific example of the marginalization rule, now in the PDF
-context, that we
-discussed the general form for probabilities above. The *marginal
-probability density* of $x_1$ is the result when we marginalize the
-*joint probability distribution* over $x_2$: 
+context, that we discussed for probabilities above. 
+The *marginal probability density* of $x_1$ is the result when we marginalize the *joint probability distribution* over $x_2$: 
 
 $$
  \p{x_1} = \int \p{x_1, x_2} \,dx_2 .
