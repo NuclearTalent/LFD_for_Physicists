@@ -223,7 +223,7 @@ Define your own stochastic process by creating your own initial and update metho
 ```
 
 
-## Solutions
+## Solutions to selective exercises
 
 Here are answers and solutions to selected exercises.
 

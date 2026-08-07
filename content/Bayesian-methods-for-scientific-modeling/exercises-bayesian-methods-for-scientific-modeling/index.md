@@ -1,9 +1,7 @@
 (ch:PartIExercises)=
-# Exercises and problems for Part I
+# Problems for Part I
 
-In this chapter we collect various exercises and hands-on problems to build intuition or gain practice in the basics of Bayesian inference. You will work with the rules of plausible inference, parameter estimation, and you will get a first exposure to Monte Carlo sampling.
-
-* The first section is {ref}`sec:PartIExercises:exercises`. Here you will practice applying the sum and product rules (and their consequences: marginalization, Bayes’ theorem, conditional independence) using a simple and intuitive frequentist example. In {numref}`exercise:MedicalExample` you will practice on translating English statements into probability notation and then applying the Bayesian rules. The exercises are followed by {ref}`sec:PartIExercises:solutions`. 
+In this chapter we collect various hands-on problems to build intuition or gain practice in the basics of Bayesian inference. You will further explore PDFs and parameter estimation, and you will get a first exposure to Monte Carlo sampling.
 
 * [](./problem-exploring-PDFs.ipynb) has a series of tasks to play with plots of probability density functions (PDFs) using the scipy.stats and numpy libraries.
 
