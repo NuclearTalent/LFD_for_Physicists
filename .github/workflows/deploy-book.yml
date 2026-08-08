@@ -1,0 +1,98 @@
+name: Build & publish Jupyter Book
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write # needed for pushing to gh-pages
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source (public repo main)
+        uses: actions/checkout@v4
+
+      # Cache downloaded Conda packages
+      - name: Cache conda packages
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-pkgs-${{ hashFiles('environment_JB.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-pkgs-
+
+      # Set up Conda
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: latest
+          auto-update-conda: true
+          use-mamba: true
+          environment-file: environment_JB.yml
+          activate-environment: 2025-book-env
+
+      # Register Jupyter kernel
+      - name: Register Jupyter kernel
+        run: |
+          conda run -n 2025-book-env python -m ipykernel install \
+            --sys-prefix \
+            --name 2025-book-env \
+            --display-name "Python (2025-book-env)"
+
+      # ------------------------------------------------------------
+      # Build normal HTML book
+      # ------------------------------------------------------------
+      - name: Build HTML book
+        run: |
+          conda run -n 2025-book-env jupyter-book build .
+
+      # ------------------------------------------------------------
+      # Install Playwright
+      # ------------------------------------------------------------
+      - name: Install Playwright
+        run: |
+          conda run -n 2025-book-env python -m pip install playwright
+          conda run -n 2025-book-env python -m playwright install --with-deps chromium
+
+      # ------------------------------------------------------------
+      # Build the single-page HTML used to make the PDF
+      # ------------------------------------------------------------
+      - name: Build single-page HTML
+        run: |
+          conda run -n 2025-book-env jupyter-book build . --builder singlehtml
+
+      # ------------------------------------------------------------
+      # Generate PDF with Playwright
+      # ------------------------------------------------------------
+      - name: Build PDF
+        run: |
+          conda run -n 2025-book-env python make_pdf.py
+
+      # ------------------------------------------------------------
+      # Put PDF into the GitHub Pages tree
+      # ------------------------------------------------------------
+      - name: Add PDF to deployed site
+        run: |
+          cp _build/pdf/book.pdf \
+             _build/html/LFD_for_Physicists.pdf
+
+      # Optional: also make it downloadable from the Actions run
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LFD-for-Physicists-PDF
+          path: _build/pdf/book.pdf
+
+      # ------------------------------------------------------------
+      # Deploy HTML + PDF to gh-pages
+      # ------------------------------------------------------------
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_build/html
+          publish_branch: gh-pages
+          keep_files: true
