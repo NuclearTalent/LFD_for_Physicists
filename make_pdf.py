@@ -53,7 +53,7 @@ from playwright.sync_api import Page, sync_playwright
 
 BUILD_DIR = Path("_build/singlehtml").resolve()
 HTML_FILE = BUILD_DIR / "index.html"
-PDF_FILE = Path("_build/pdf/book_compact.pdf").resolve()
+PDF_FILE = Path("_build/pdf/book.pdf").resolve()
 
 PAGE_FORMAT = "Letter"
 
