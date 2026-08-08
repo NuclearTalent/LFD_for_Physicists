@@ -1,0 +1,347 @@
+/*
+ * pdf_print.css
+ *
+ * Print stylesheet for Jupyter Book 1 -> Playwright PDF.
+ *
+ * This revision keeps the compact page-breaking behavior while preventing
+ * over-wide code blocks from forcing Chromium to shrink the entire PDF.
+ *
+ * Physical page margins and page-number settings remain in make_pdf.py.
+ */
+
+@media print {
+
+    /* ================================================================
+     * Typography
+     * ================================================================ */
+
+    /*
+     * Preserve the Jupyter Book theme's normal root/body font sizing.
+     * Do not force html/body to a smaller pt size.
+     */
+
+    html {
+        font-size: 10pt !important;
+    }
+
+    body {
+        font-size: 10pt !important;
+        line-height: 1.35 !important;
+    }
+
+    h1 {
+        font-size: 22pt !important;
+    }
+
+    h2 {
+        font-size: 17pt !important;
+    }
+
+    h3 {
+        font-size: 14pt !important;
+    }
+
+    pre,
+    code {
+        font-size: 8.5pt !important;
+    }
+
+    figcaption,
+    .caption {
+        font-size: 9pt !important;
+    }
+
+    .admonition {
+        font-size: 9.5pt !important;
+    }
+
+
+    /* ================================================================
+     * Remove website-only navigation and controls
+     * ================================================================ */
+
+    .bd-header,
+    .bd-sidebar-primary,
+    .bd-sidebar-secondary,
+    .bd-footer,
+    .prev-next-area,
+    .article-header-buttons,
+    .header-article-items,
+    .footer-article-items,
+    button.print-button,
+    button.toggle-button,
+    .toggle-button {
+        display: none !important;
+    }
+
+
+    /* ================================================================
+     * Use the full printable width
+     * ================================================================ */
+
+    html,
+    body,
+    .bd-container,
+    .bd-container__inner,
+    .bd-main,
+    .bd-content,
+    .bd-article,
+    .bd-article-container {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .bd-article,
+    .bd-article-container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+
+    /* ================================================================
+     * Hidden notebook code
+     * ================================================================ */
+
+    /*
+     * Hide code input without hiding the whole cell, so figure/output
+     * content from hide-cell cells remains printable.
+     */
+    .cell.tag_hide-input .cell_input,
+    .tag_hide-input .cell_input,
+    .cell.tag_hide-cell .cell_input,
+    .tag_hide-cell .cell_input {
+        display: none !important;
+    }
+
+    /*
+     * Respect an explicit hide-output tag.
+     */
+    .cell.tag_hide-output .cell_output,
+    .tag_hide-output .cell_output {
+        display: none !important;
+    }
+
+    details[data-pdf-code-wrapper="true"] > summary {
+        display: none !important;
+    }
+
+
+    /* ================================================================
+     * Figures and image links
+     * ================================================================ */
+
+    a.image-reference[href]::after,
+    a.reference.image-reference[href]::after,
+    a[data-pdf-image-link="true"][href]::after {
+        content: none !important;
+        display: none !important;
+    }
+
+    a.image-reference,
+    a.reference.image-reference,
+    a[data-pdf-image-link="true"] {
+        text-decoration: none !important;
+    }
+
+    .bd-article img,
+    .bd-content img,
+    main img,
+    article img {
+        display: inline-block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    svg,
+    canvas {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+
+    /* ================================================================
+     * Prevent horizontal overflow from shrinking the PDF
+     * ================================================================ */
+
+    /*
+     * Constrain notebook/code containers to the printable width.
+     * min-width: 0 is important for flex/grid descendants that would
+     * otherwise refuse to shrink.
+     */
+    .cell,
+    .cell_input,
+    .cell_output,
+    .cell_output .output,
+    .cell_output .output_area,
+    .cell_output .output_stream,
+    .highlight,
+    div.highlight,
+    pre {
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /*
+     * Preserve normal code formatting, but allow a genuinely over-wide
+     * line to wrap rather than expanding the whole document width.
+     *
+     * This is deliberately less aggressive than overflow-wrap:anywhere,
+     * which caused excessive wrapping and substantially increased the
+     * page count.
+     */
+    pre {
+        white-space: pre-wrap !important;
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+
+        overflow-x: hidden !important;
+        overflow-y: visible !important;
+    }
+
+    code {
+        white-space: inherit !important;
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+
+    /* ================================================================
+     * Page breaking
+     * ================================================================ */
+
+    /*
+     * Keep headings from being stranded at the bottom of a page.
+     * Do not force chapter starts onto new pages.
+     */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        break-after: avoid-page !important;
+        page-break-after: avoid !important;
+    }
+
+    /*
+     * Explicitly allow notebook and code containers to fragment.
+     * This overrides theme rules that can otherwise push a large block
+     * wholesale to the next page.
+     */
+    .cell,
+    .cell_input,
+    .cell_output,
+    .cell_output .output,
+    .cell_output .output_area,
+    .cell_output .output_stream,
+    .highlight,
+    div.highlight,
+    pre {
+        break-before: auto !important;
+        break-after: auto !important;
+        break-inside: auto !important;
+
+        page-break-before: auto !important;
+        page-break-after: auto !important;
+        page-break-inside: auto !important;
+    }
+
+    /*
+     * Remove gray backgrounds from fragmenting code/output wrappers so
+     * a partially occupied page does not show a large gray slab.
+     */
+    .cell,
+    .cell_input,
+    .cell_output,
+    .cell_output .output,
+    .cell_output .output_area,
+    .cell_output .output_stream,
+    .highlight,
+    div.highlight,
+    pre {
+        background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .cell_input,
+    .cell_output {
+        border-top: 0 !important;
+        border-bottom: 0 !important;
+        box-shadow: none !important;
+    }
+
+    /*
+     * Keep figures and captions together when possible.
+     * Do not apply this to all cell outputs.
+     */
+    figure,
+    .figure {
+        break-inside: avoid-page !important;
+        page-break-inside: avoid !important;
+    }
+
+    /*
+     * Keep displayed equations intact.
+     */
+    div.math,
+    .math.display,
+    mjx-container[display="true"] {
+        break-inside: avoid-page !important;
+        page-break-inside: avoid !important;
+    }
+
+    /*
+     * Long tables may span pages, but individual rows should remain intact.
+     */
+    tr {
+        break-inside: avoid-page !important;
+        page-break-inside: avoid !important;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    /*
+     * Modest widow/orphan protection without introducing much whitespace.
+     */
+    p,
+    li {
+        orphans: 2;
+        widows: 2;
+    }
+
+    /*
+     * Allow long admonitions and sections to split naturally.
+     */
+    .admonition,
+    section {
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+    }
+
+
+    /* ================================================================
+     * Tables
+     * ================================================================ */
+
+    table {
+        max-width: 100% !important;
+    }
+
+
+    /* ================================================================
+     * Preserve colors in figures/admonitions/etc.
+     * ================================================================ */
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}

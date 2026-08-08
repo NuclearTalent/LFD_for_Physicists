@@ -19,6 +19,8 @@ Then run:
     python make_pdf.py
 
 This version:
+  * reads print typography/page-break rules from ``pdf_print.css``;
+  * adds configurable PDF page numbers;
   * repairs nested ``content/_images`` and ``content/_static`` URLs;
   * uses configurable margins;
   * retains ordinary internal and external links;
@@ -51,23 +53,27 @@ from playwright.sync_api import Page, sync_playwright
 
 BUILD_DIR = Path("_build/singlehtml").resolve()
 HTML_FILE = BUILD_DIR / "index.html"
-PDF_FILE = Path("_build/pdf/book.pdf").resolve()
+PDF_FILE = Path("_build/pdf/book_compact.pdf").resolve()
 
 PAGE_FORMAT = "Letter"
 
-# PDF_MARGINS = {
-#     "top": "0.65in",
-#     "right": "0.70in",
-#     "bottom": "0.70in",
-#     "left": "0.70in",
-# }
-
 PDF_MARGINS = {
-    "top": "0.50in",
-    "right": "0.50in",
-    "bottom": "0.55in",
-    "left": "0.50in",
+    "top": "0.65in",
+    "right": "0.70in",
+    # Leave enough room for the page-number footer.
+    "bottom": "0.75in",
+    "left": "0.70in",
 }
+
+# Page-number footer. Set SHOW_PAGE_NUMBERS = False to remove it.
+SHOW_PAGE_NUMBERS = True
+PAGE_NUMBER_FONT_SIZE = "9px"
+PAGE_NUMBER_COLOR = "#555"
+
+# Choose one of:
+#   "number"         ->  17
+#   "page_of_total"  ->  Page 17 of 243
+PAGE_NUMBER_STYLE = "number"
 
 VIEWPORT = {
     "width": 1440,
@@ -104,156 +110,10 @@ DEBUG_SCREENSHOT = Path("_build/pdf/book-preprint.png").resolve()
 # Print-specific CSS
 # =============================================================================
 
-PRINT_CSS = r"""
-@media print {
-    html {
-        font-size: 10pt !important;
-    }
-
-    body {
-        font-size: 10pt !important;
-        line-height: 1.35 !important;
-    }
-    /*
-     * Remove website navigation and controls.
-     */
-    .bd-header,
-    .bd-sidebar-primary,
-    .bd-sidebar-secondary,
-    .bd-footer,
-    .prev-next-area,
-    .article-header-buttons,
-    .header-article-items,
-    .footer-article-items,
-    button.print-button,
-    button.toggle-button,
-    .toggle-button {
-        display: none !important;
-    }
-
-    /*
-     * Allow the article to use the printable page width.
-     */
-    html,
-    body,
-    .bd-container,
-    .bd-container__inner,
-    .bd-main,
-    .bd-content,
-    .bd-article,
-    .bd-article-container {
-        width: 100% !important;
-        max-width: none !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-    }
-
-    .bd-article,
-    .bd-article-container {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
-
-    /*
-     * Hide notebook CODE INPUT, not the whole cell.
-     *
-     * In the earlier script, ``.tag_hide-cell`` itself was set to
-     * display:none. That also removed a figure stored in the cell output.
-     * Here a hide-cell is treated as "hide its code input in the PDF while
-     * retaining its output".
-     */
-    .cell.tag_hide-input .cell_input,
-    .tag_hide-input .cell_input,
-    .cell.tag_hide-cell .cell_input,
-    .tag_hide-cell .cell_input {
-        display: none !important;
-    }
-
-    /*
-     * Respect an explicit hide-output tag. Remove these two selectors if
-     * you instead want hide-output figures to appear in the PDF.
-     */
-    .cell.tag_hide-output .cell_output,
-    .tag_hide-output .cell_output {
-        display: none !important;
-    }
-
-    /*
-     * JavaScript marks notebook details wrappers that are opened solely so
-     * their output can be printed. Their "Show code..." summaries are not
-     * useful in the PDF.
-     */
-    details[data-pdf-code-wrapper="true"] > summary {
-        display: none !important;
-    }
-
-    /*
-     * Some theme/Bootstrap print styles append a link's URL after its text.
-     * An image is commonly wrapped in a link to ``_images/...``. Suppress
-     * that generated URL for image links so it cannot replace or trail the
-     * figure in the PDF.
-     */
-    a.image-reference[href]::after,
-    a.reference.image-reference[href]::after,
-    a[data-pdf-image-link="true"][href]::after {
-        content: none !important;
-        display: none !important;
-    }
-
-    a.image-reference,
-    a.reference.image-reference,
-    a[data-pdf-image-link="true"] {
-        text-decoration: none !important;
-    }
-
-    /*
-     * Force article images to remain visible under print media. Width and
-     * height attributes/styles remain available to determine their size.
-     */
-    .bd-article img,
-    .bd-content img,
-    main img,
-    article img {
-        display: inline-block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        max-width: 100% !important;
-        height: auto !important;
-    }
-
-    svg,
-    canvas {
-        max-width: 100% !important;
-        height: auto !important;
-    }
-
-    /*
-     * Avoid splitting figures and admonitions where possible.
-     */
-    figure,
-    .figure,
-    .cell_output,
-    .admonition {
-        break-inside: avoid-page;
-        page-break-inside: avoid;
-    }
-
-    pre,
-    code {
-        white-space: pre-wrap !important;
-        overflow-wrap: anywhere;
-    }
-
-    table {
-        max-width: 100% !important;
-    }
-
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-}
-"""
+# Keep print typography and page-breaking rules in a separate file.
+# The CSS file should live next to this script.
+SCRIPT_DIR = Path(__file__).resolve().parent
+PRINT_CSS_FILE = SCRIPT_DIR / "pdf_print.css"
 
 
 # =============================================================================
@@ -764,32 +624,42 @@ def wait_for_document_ready(
 
 
 def make_pdf_options(page: Page) -> dict[str, Any]:
+    """Construct PDF options supported by the installed Playwright version."""
+
     options: dict[str, Any] = {
         "path": str(PDF_FILE),
         "format": PAGE_FORMAT,
         "margin": PDF_MARGINS,
         "print_background": True,
         "prefer_css_page_size": False,
-
-        # Enable the special Playwright header and footer areas.
-        "display_header_footer": True,
-    
-        # Keep the header empty.
-        "header_template": "<div></div>",
-    
-        # Bottom-centered page number.
-        "footer_template": """
-            <div style="
-                width: 100%;
-                text-align: center;
-                font-family: Arial, sans-serif;
-                font-size: 9px;
-                color: #555;
-            ">
-                <span class="pageNumber"></span>
-            </div>
-        """,
     }
+
+    if SHOW_PAGE_NUMBERS:
+        if PAGE_NUMBER_STYLE == "page_of_total":
+            footer_content = (
+                'Page <span class="pageNumber"></span> '
+                'of <span class="totalPages"></span>'
+            )
+        else:
+            footer_content = '<span class="pageNumber"></span>'
+
+        options.update(
+            {
+                "display_header_footer": True,
+                "header_template": "<div></div>",
+                "footer_template": f"""
+                    <div style="
+                        width: 100%;
+                        text-align: center;
+                        font-family: Arial, Helvetica, sans-serif;
+                        font-size: {PAGE_NUMBER_FONT_SIZE};
+                        color: {PAGE_NUMBER_COLOR};
+                    ">
+                        {footer_content}
+                    </div>
+                """,
+            }
+        )
 
     parameters = inspect.signature(page.pdf).parameters
 
@@ -905,7 +775,15 @@ def main() -> None:
 
             wait_for_document_ready(page, navigation_state)
 
-            page.add_style_tag(content=PRINT_CSS)
+            if not PRINT_CSS_FILE.exists():
+                raise FileNotFoundError(
+                    f"The print CSS file does not exist:\n"
+                    f"    {PRINT_CSS_FILE}"
+                )
+
+            page.add_style_tag(
+                content=PRINT_CSS_FILE.read_text(encoding="utf-8")
+            )
             page.evaluate(PREPARE_DOCUMENT)
 
             image_report = page.evaluate(
