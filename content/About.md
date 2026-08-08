@@ -26,7 +26,8 @@ This text is aimed at physicists seeking to learn from data using Bayesian metho
 The content of this book has emerged from previous work and courses taught by the authors.
 The materials are released under a [Creative Commons BY-NC license](https://creativecommons.org/licenses/by-nc/4.0/).
 
-The book format is powered by [Jupyter Book](https://jupyterbook.org/). 
+The book format is powered by [Jupyter Book](https://jupyterbook.org/).
+[You can download the complete book as a pdf file.](../../LFD_for_Physicists.pdf) 
 
 ```{admonition} This book is work in progress
 :class: note
