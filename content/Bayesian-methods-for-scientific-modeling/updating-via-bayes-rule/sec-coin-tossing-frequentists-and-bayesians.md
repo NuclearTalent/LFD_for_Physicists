@@ -1,4 +1,4 @@
-{sec:cointossing}=
+(sec:cointossing)=
 # Coin tossing: Frequentists and Bayesians
 
 
