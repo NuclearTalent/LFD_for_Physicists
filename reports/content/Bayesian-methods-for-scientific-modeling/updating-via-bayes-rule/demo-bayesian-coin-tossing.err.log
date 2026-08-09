@@ -1,0 +1,59 @@
+Traceback (most recent call last):
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 1323, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+pH=np.linspace(0,1,1000)
+fig, axs = plt.subplots(nrows=4,ncols=3,sharex=True,sharey='row',figsize=(14,14))
+axs_vec=np.reshape(axs,-1)
+axs_vec[0].plot(pH,prior(pH))
+for ndouble in range(11):
+    ax=axs_vec[1+ndouble]
+    ax.plot(pH,posterior(pH,heads[:2**ndouble]))
+    ax.text(0.1, 0.8, '$N={0}$'.format(2**ndouble), transform=ax.transAxes)
+for row in range(4): axs[row,0].set_ylabel('$p(p_H|D_\mathrm{obs},I)$')
+for col in range(3): axs[-1,col].set_xlabel('$p_H$')
+------------------
+
+
+[31m---------------------------------------------------------------------------[39m
+[31mAttributeError[39m                            Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[3][39m[32m, line 7[39m
+[32m      3[39m axs_vec=np.reshape(axs,-[32m1[39m)
+[32m      4[39m axs_vec[[32m0[39m].plot(pH,prior(pH))
+[32m      5[39m [38;5;28;01mfor[39;00m ndouble [38;5;28;01min[39;00m range([32m11[39m):
+[32m      6[39m     ax=axs_vec[[32m1[39m+ndouble]
+[32m----> [39m[32m7[39m     ax.plot(pH,posterior(pH,heads[:[32m2[39m**ndouble]))
+[32m      8[39m     ax.text([32m0.1[39m, [32m0.8[39m, [33m'$N={0}$'[39m.format([32m2[39m**ndouble), transform=ax.transAxes)
+[32m      9[39m [38;5;28;01mfor[39;00m row [38;5;28;01min[39;00m range([32m4[39m): axs[row,[32m0[39m].set_ylabel([33m'$p(p_H|D_\mathrm{obs},I)$'[39m)
+[32m     10[39m [38;5;28;01mfor[39;00m col [38;5;28;01min[39;00m range([32m3[39m): axs[-[32m1[39m,col].set_xlabel([33m'$p_H$'[39m)
+
+[36mCell[39m[36m [39m[32mIn[2][39m[32m, line 15[39m, in [36mposterior[39m[34m(pH, data)[39m
+[32m     12[39m [38;5;28;01mdef[39;00m posterior(pH,data):
+[32m     13[39m     [33m"returns an array of (normalized) posterior probability densities"[39m
+[32m     14[39m     p=prior(pH)*likelihood(pH,data)
+[32m---> [39m[32m15[39m     norm=np.trapz(p,pH)
+[32m     16[39m     [38;5;28;01mreturn[39;00m p/norm
+
+[36mFile [39m[32m/usr/share/miniconda3/envs/2025-book-env/lib/python3.11/site-packages/numpy/__init__.py:792[39m, in [36m__getattr__[39m[34m(attr)[39m
+[32m    789[39m     [38;5;28;01mimport[39;00m[38;5;250m [39m[34;01mnumpy[39;00m[34;01m.[39;00m[34;01mchar[39;00m[38;5;250m [39m[38;5;28;01mas[39;00m[38;5;250m [39m[34;01mchar[39;00m
+[32m    790[39m     [38;5;28;01mreturn[39;00m char.chararray
+[32m--> [39m[32m792[39m [38;5;28;01mraise[39;00m [38;5;167;01mAttributeError[39;00m([33mf[39m[33m"[39m[33mmodule [39m[38;5;132;01m{[39;00m[34m__name__[39m[38;5;132;01m!r}[39;00m[33m has no attribute [39m[38;5;132;01m{[39;00mattr[38;5;132;01m!r}[39;00m[33m"[39m)
+
+[31mAttributeError[39m: module 'numpy' has no attribute 'trapz'
+
