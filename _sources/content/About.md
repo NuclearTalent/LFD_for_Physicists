@@ -27,7 +27,7 @@ The content of this book has emerged from previous work and courses taught by th
 The materials are released under a [Creative Commons BY-NC license](https://creativecommons.org/licenses/by-nc/4.0/).
 
 The book format is powered by [Jupyter Book](https://jupyterbook.org/).
-You can download the [complete book as a pdf file](https://nucleartalent.github.io/LFD_for_Physicists/LFD_for_Physicists.pdf). 
+You can also download the [complete book as a pdf file](https://nucleartalent.github.io/LFD_for_Physicists/LFD_for_Physicists.pdf). 
 
 ```{admonition} This book is work in progress
 :class: note
