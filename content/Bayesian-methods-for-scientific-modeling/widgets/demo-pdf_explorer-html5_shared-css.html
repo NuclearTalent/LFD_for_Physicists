@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interactive PDF Explorer</title>
+  <link rel="stylesheet" href="lfd-widget-common.css">
+</head>
+
+<body>
+<main class="lfd-widget-shell">
+  <h1>Interactive PDF Explorer</h1>
+
+  <div id="pdf_demo" class="pdf-demo">
+    <div class="controls">
+      <label>
+        PDF:
+        <select id="dist">
+          <option value="normal">Normal</option>
+          <option value="student-t">Student t</option>
+          <option value="beta">Beta</option>
+          <option value="gamma">Gamma</option>
+          <option value="invgamma">Inverse gamma</option>
+          <option value="lognorm">Lognormal</option>
+          <option value="skewnorm">Skew normal</option>
+          <option value="exponential">Exponential</option>
+        </select>
+      </label>
+
+      <span id="normal-params" class="param-group active">
+        <label><span class="math-var">μ</span>
+          <input id="normal-mu" type="range" min="-5" max="5" step="0.05" value="1">
+          <span id="normal-muv">1.00</span>
+        </label>
+        <label><span class="math-var">σ</span>
+          <input id="normal-sigma" type="range" min="0.1" max="5" step="0.05" value="2">
+          <span id="normal-sigmav">2.00</span>
+        </label>
+      </span>
+
+      <span id="student-t-params" class="param-group">
+        <label><span class="math-var">ν</span>
+          <input id="t-nu" type="range" min="1.01" max="30" step="0.01" value="2">
+          <span id="t-nuv">2.00</span>
+        </label>
+        <label>loc
+          <input id="t-loc" type="range" min="-5" max="5" step="0.05" value="0">
+          <span id="t-locv">0.00</span>
+        </label>
+        <label>scale
+          <input id="t-scale" type="range" min="0.1" max="5" step="0.05" value="1">
+          <span id="t-scalev">1.00</span>
+        </label>
+      </span>
+
+      <span id="beta-params" class="param-group">
+        <label><span class="math-var">a</span>
+          <input id="beta-a" type="range" min="0.2" max="10" step="0.05" value="2">
+          <span id="beta-av">2.00</span>
+        </label>
+        <label><span class="math-var">b</span>
+          <input id="beta-b" type="range" min="0.2" max="10" step="0.05" value="1">
+          <span id="beta-bv">1.00</span>
+        </label>
+      </span>
+
+      <span id="gamma-params" class="param-group">
+        <label>shape <span class="math-var">α</span>
+          <input id="gamma-alpha" type="range" min="0.2" max="10" step="0.05" value="2">
+          <span id="gamma-alphav">2.00</span>
+        </label>
+        <label>scale <span class="math-var">θ</span>
+          <input id="gamma-theta" type="range" min="0.1" max="5" step="0.05" value="1">
+          <span id="gamma-thetav">1.00</span>
+        </label>
+      </span>
+
+      <span id="invgamma-params" class="param-group">
+        <label>shape <span class="math-var">α</span>
+          <input id="invgamma-alpha" type="range" min="0.2" max="10" step="0.05" value="3">
+          <span id="invgamma-alphav">3.00</span>
+        </label>
+        <label>scale <span class="math-var">β</span>
+          <input id="invgamma-beta" type="range" min="0.1" max="10" step="0.05" value="2">
+          <span id="invgamma-betav">2.00</span>
+        </label>
+      </span>
+
+      <span id="lognorm-params" class="param-group">
+        <label>log mean <span class="math-var">μ</span>
+          <input id="lognorm-mu" type="range" min="-2" max="2" step="0.05" value="0">
+          <span id="lognorm-muv">0.00</span>
+        </label>
+        <label>log std <span class="math-var">σ</span>
+          <input id="lognorm-sigma" type="range" min="0.1" max="2" step="0.05" value="0.5">
+          <span id="lognorm-sigmav">0.50</span>
+        </label>
+      </span>
+
+      <span id="skewnorm-params" class="param-group">
+        <label>shape <span class="math-var">α</span>
+          <input id="skewnorm-alpha" type="range" min="-10" max="10" step="0.1" value="4">
+          <span id="skewnorm-alphav">4.00</span>
+        </label>
+        <label>loc
+          <input id="skewnorm-loc" type="range" min="-5" max="5" step="0.05" value="0">
+          <span id="skewnorm-locv">0.00</span>
+        </label>
+        <label>scale
+          <input id="skewnorm-scale" type="range" min="0.1" max="5" step="0.05" value="1">
+          <span id="skewnorm-scalev">1.00</span>
+        </label>
+      </span>
+
+      <span id="exponential-params" class="param-group">
+        <label>rate <span class="math-var">λ</span>
+          <input id="exp-lambda" type="range" min="0.1" max="5" step="0.05" value="1">
+          <span id="exp-lambdav">1.00</span>
+        </label>
+      </span>
+    </div>
+
+    <div class="controls">
+      <label><input id="show-normal" type="checkbox"> overlay normal with same mean/std</label>
+      <label><input id="show-annotations" type="checkbox" checked> show mean/median/mode</label>
+      <label><input id="show-intervals" type="checkbox" checked> show 68%/95% intervals</label>
+    </div>
+
+    <div id="readout" class="readout"></div>
+
+    <canvas id="plot" width="960" height="560"
+            aria-label="Probability density function plot with mean, median, mode, and credible intervals"></canvas>
+  </div>
+</main>
+
+<script>
+(function () {
+  const root = document.getElementById("pdf_demo");
+  const $ = (id) => root.querySelector("#" + id);
+  const canvas = $("plot");
+  const ctx = canvas.getContext("2d");
+
+  const FONT_SANS = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  const FONT_MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+
+  const SQRT2 = Math.sqrt(2);
+  const SQRT2PI = Math.sqrt(2 * Math.PI);
+
+  function erf(x) {
+    const sign = Math.sign(x);
+    x = Math.abs(x);
+    const a1 = 0.254829592;
+    const a2 = -0.284496736;
+    const a3 = 1.421413741;
+    const a4 = -1.453152027;
+    const a5 = 1.061405429;
+    const p = 0.3275911;
+    const t = 1 / (1 + p * x);
+    const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+    return sign * y;
+  }
+
+  function normalCdf(x, mu = 0, sigma = 1) {
+    return 0.5 * (1 + erf((x - mu) / (sigma * SQRT2)));
+  }
+
+  function normalPdf(x, mu = 0, sigma = 1) {
+    const z = (x - mu) / sigma;
+    return Math.exp(-0.5 * z * z) / (sigma * SQRT2PI);
+  }
+
+  function logGamma(z) {
+    const p = [
+      676.5203681218851,
+      -1259.1392167224028,
+      771.32342877765313,
+      -176.61502916214059,
+      12.507343278686905,
+      -0.13857109526572012,
+      9.9843695780195716e-6,
+      1.5056327351493116e-7
+    ];
+
+    if (z < 0.5) {
+      return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * z)) - logGamma(1 - z);
+    }
+
+    z -= 1;
+    let x = 0.99999999999980993;
+    for (let i = 0; i < p.length; i++) {
+      x += p[i] / (z + i + 1);
+    }
+
+    const t = z + p.length - 0.5;
+    return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+  }
+
+  function betaPdf(x, a, b) {
+    if (x <= 0 || x >= 1) return 0;
+    return Math.exp(
+      (a - 1) * Math.log(x)
+      + (b - 1) * Math.log(1 - x)
+      + logGamma(a + b) - logGamma(a) - logGamma(b)
+    );
+  }
+
+  function gammaPdf(x, alpha, theta) {
+    if (x <= 0) return 0;
+    return Math.exp(
+      (alpha - 1) * Math.log(x)
+      - x / theta
+      - logGamma(alpha)
+      - alpha * Math.log(theta)
+    );
+  }
+
+  function invGammaPdf(x, alpha, beta) {
+    if (x <= 0) return 0;
+    return Math.exp(
+      alpha * Math.log(beta)
+      - logGamma(alpha)
+      - (alpha + 1) * Math.log(x)
+      - beta / x
+    );
+  }
+
+  function logNormalPdf(x, mu, sigma) {
+    if (x <= 0) return 0;
+    const z = (Math.log(x) - mu) / sigma;
+    return Math.exp(-0.5 * z * z) / (x * sigma * SQRT2PI);
+  }
+
+  function skewNormalPdf(x, alpha, loc, scale) {
+    if (scale <= 0) return 0;
+    const z = (x - loc) / scale;
+    return 2 * normalPdf(z, 0, 1) * normalCdf(alpha * z, 0, 1) / scale;
+  }
+
+  function exponentialPdf(x, lambda) {
+    if (x < 0) return 0;
+    return lambda * Math.exp(-lambda * x);
+  }
+
+  function studentTPdf(x, nu, loc = 0, scale = 1) {
+    const z = (x - loc) / scale;
+    return Math.exp(
+      logGamma((nu + 1) / 2)
+      - logGamma(nu / 2)
+      - 0.5 * Math.log(nu * Math.PI)
+      - Math.log(scale)
+      - ((nu + 1) / 2) * Math.log(1 + z * z / nu)
+    );
+  }
+
+  function simpsonIntegrate(f, a, b, n = 500) {
+    if (n % 2 === 1) n += 1;
+    const h = (b - a) / n;
+    let s = f(a) + f(b);
+    for (let i = 1; i < n; i++) {
+      s += f(a + i * h) * (i % 2 === 0 ? 2 : 4);
+    }
+    return s * h / 3;
+  }
+
+  function numericCdf(x, pdf, xmin, xmax) {
+    if (x <= xmin) return 0;
+    if (x >= xmax) return 1;
+    const total = simpsonIntegrate(pdf, xmin, xmax, 500);
+    return simpsonIntegrate(pdf, xmin, x, 500) / Math.max(total, 1e-15);
+  }
+
+  function quantileByBisection(p, pdf, xmin, xmax) {
+    let lo = xmin;
+    let hi = xmax;
+    for (let i = 0; i < 48; i++) {
+      const mid = 0.5 * (lo + hi);
+      const c = numericCdf(mid, pdf, xmin, xmax);
+      if (c < p) lo = mid;
+      else hi = mid;
+    }
+    return 0.5 * (lo + hi);
+  }
+
+  function getState() {
+    return {
+      dist: $("dist").value,
+      normalMu: Number($("normal-mu").value),
+      normalSigma: Number($("normal-sigma").value),
+      tNu: Number($("t-nu").value),
+      tLoc: Number($("t-loc").value),
+      tScale: Number($("t-scale").value),
+      betaA: Number($("beta-a").value),
+      betaB: Number($("beta-b").value),
+      gammaAlpha: Number($("gamma-alpha").value),
+      gammaTheta: Number($("gamma-theta").value),
+      invGammaAlpha: Number($("invgamma-alpha").value),
+      invGammaBeta: Number($("invgamma-beta").value),
+      logNormMu: Number($("lognorm-mu").value),
+      logNormSigma: Number($("lognorm-sigma").value),
+      skewNormAlpha: Number($("skewnorm-alpha").value),
+      skewNormLoc: Number($("skewnorm-loc").value),
+      skewNormScale: Number($("skewnorm-scale").value),
+      expLambda: Number($("exp-lambda").value),
+      showNormal: $("show-normal").checked,
+      showAnnotations: $("show-annotations").checked,
+      showIntervals: $("show-intervals").checked
+    };
+  }
+
+  function makeDistribution(s) {
+    if (s.dist === "normal") {
+      const mu = s.normalMu;
+      const sigma = s.normalSigma;
+      return {
+        label: `normal pdf, μ = ${mu.toFixed(2)}, σ = ${sigma.toFixed(2)}`,
+        xmin: mu - 4.5 * sigma,
+        xmax: mu + 4.5 * sigma,
+        pdf: (x) => normalPdf(x, mu, sigma),
+        mean: mu,
+        median: mu,
+        mode: mu,
+        std: sigma,
+        q: (p) => quantileByBisection(p, (x) => normalPdf(x, mu, sigma), mu - 7 * sigma, mu + 7 * sigma)
+      };
+    }
+
+    if (s.dist === "student-t") {
+      const nu = s.tNu;
+      const loc = s.tLoc;
+      const scale = s.tScale;
+      const span = scale * (nu < 2 ? 12 : 7);
+      return {
+        label: `Student t pdf, ν = ${nu.toFixed(2)}, loc = ${loc.toFixed(2)}, scale = ${scale.toFixed(2)}`,
+        xmin: loc - span,
+        xmax: loc + span,
+        pdf: (x) => studentTPdf(x, nu, loc, scale),
+        mean: nu > 1 ? loc : NaN,
+        median: loc,
+        mode: loc,
+        std: nu > 2 ? scale * Math.sqrt(nu / (nu - 2)) : NaN,
+        q: (p) => quantileByBisection(p, (x) => studentTPdf(x, nu, loc, scale), loc - 30 * scale, loc + 30 * scale)
+      };
+    }
+
+    if (s.dist === "beta") {
+      const a = s.betaA;
+      const b = s.betaB;
+      const mean = a / (a + b);
+      const variance = a * b / ((a + b) * (a + b) * (a + b + 1));
+      let mode = NaN;
+      if (a > 1 && b > 1) mode = (a - 1) / (a + b - 2);
+      else if (a <= 1 && b > 1) mode = 0;
+      else if (a > 1 && b <= 1) mode = 1;
+      return {
+        label: `beta pdf, a = ${a.toFixed(2)}, b = ${b.toFixed(2)}`,
+        xmin: -0.05,
+        xmax: 1.05,
+        pdf: (x) => betaPdf(x, a, b),
+        mean,
+        median: quantileByBisection(0.5, (x) => betaPdf(x, a, b), 1e-6, 1 - 1e-6),
+        mode,
+        std: Math.sqrt(variance),
+        q: (p) => quantileByBisection(p, (x) => betaPdf(x, a, b), 1e-6, 1 - 1e-6)
+      };
+    }
+
+    if (s.dist === "gamma") {
+      const alpha = s.gammaAlpha;
+      const theta = s.gammaTheta;
+      const mean = alpha * theta;
+      const std = Math.sqrt(alpha) * theta;
+      const xmax = Math.max(mean + 5 * std, 8 * theta);
+      return {
+        label: `gamma pdf, α = ${alpha.toFixed(2)}, θ = ${theta.toFixed(2)}`,
+        xmin: 0,
+        xmax,
+        pdf: (x) => gammaPdf(x, alpha, theta),
+        mean,
+        median: quantileByBisection(0.5, (x) => gammaPdf(x, alpha, theta), 0, xmax * 3),
+        mode: alpha >= 1 ? (alpha - 1) * theta : 0,
+        std,
+        q: (p) => quantileByBisection(p, (x) => gammaPdf(x, alpha, theta), 0, xmax * 3)
+      };
+    }
+
+    if (s.dist === "invgamma") {
+      const alpha = s.invGammaAlpha;
+      const beta = s.invGammaBeta;
+      const mean = alpha > 1 ? beta / (alpha - 1) : NaN;
+      const variance = alpha > 2
+        ? beta * beta / ((alpha - 1) * (alpha - 1) * (alpha - 2))
+        : NaN;
+      const std = isFinite(variance) ? Math.sqrt(variance) : NaN;
+      const mode = beta / (alpha + 1);
+      const xmax = isFinite(mean) && isFinite(std)
+        ? Math.max(mean + 5 * std, mode * 8, 5)
+        : Math.max(mode * 30, beta * 12, 10);
+      return {
+        label: `inverse-gamma pdf, α = ${alpha.toFixed(2)}, β = ${beta.toFixed(2)}`,
+        xmin: 0,
+        xmax: Math.min(xmax, 80),
+        pdf: (x) => invGammaPdf(x, alpha, beta),
+        mean,
+        median: quantileByBisection(0.5, (x) => invGammaPdf(x, alpha, beta), 1e-6, Math.min(xmax * 3, 200)),
+        mode,
+        std,
+        q: (p) => quantileByBisection(p, (x) => invGammaPdf(x, alpha, beta), 1e-6, Math.min(xmax * 3, 200))
+      };
+    }
+
+    if (s.dist === "lognorm") {
+      const mu = s.logNormMu;
+      const sigma = s.logNormSigma;
+      const mean = Math.exp(mu + 0.5 * sigma * sigma);
+      const variance = (Math.exp(sigma * sigma) - 1) * Math.exp(2 * mu + sigma * sigma);
+      const std = Math.sqrt(variance);
+      const mode = Math.exp(mu - sigma * sigma);
+      return {
+        label: `lognormal pdf, μ = ${mu.toFixed(2)}, σ = ${sigma.toFixed(2)}`,
+        xmin: 0,
+        xmax: Math.exp(mu + 4.2 * sigma),
+        pdf: (x) => logNormalPdf(x, mu, sigma),
+        mean,
+        median: Math.exp(mu),
+        mode,
+        std,
+        q: (p) => quantileByBisection(p, (x) => logNormalPdf(x, mu, sigma), 1e-8, Math.exp(mu + 8 * sigma))
+      };
+    }
+
+    if (s.dist === "skewnorm") {
+      const alpha = s.skewNormAlpha;
+      const loc = s.skewNormLoc;
+      const scale = s.skewNormScale;
+      const delta = alpha / Math.sqrt(1 + alpha * alpha);
+      const mean = loc + scale * delta * Math.sqrt(2 / Math.PI);
+      const variance = scale * scale * (1 - 2 * delta * delta / Math.PI);
+      const std = Math.sqrt(variance);
+      const xmin = loc - 5 * scale;
+      const xmax = loc + 5 * scale;
+      let mode = xmin;
+      let bestY = -Infinity;
+      for (let i = 0; i < 1000; i++) {
+        const x = xmin + (xmax - xmin) * i / 999;
+        const y = skewNormalPdf(x, alpha, loc, scale);
+        if (y > bestY) {
+          bestY = y;
+          mode = x;
+        }
+      }
+      return {
+        label: `skew-normal pdf, α = ${alpha.toFixed(2)}, loc = ${loc.toFixed(2)}, scale = ${scale.toFixed(2)}`,
+        xmin,
+        xmax,
+        pdf: (x) => skewNormalPdf(x, alpha, loc, scale),
+        mean,
+        median: quantileByBisection(0.5, (x) => skewNormalPdf(x, alpha, loc, scale), xmin, xmax),
+        mode,
+        std,
+        q: (p) => quantileByBisection(p, (x) => skewNormalPdf(x, alpha, loc, scale), xmin, xmax)
+      };
+    }
+
+    const lambda = s.expLambda;
+    return {
+      label: `exponential pdf, λ = ${lambda.toFixed(2)}`,
+      xmin: 0,
+      xmax: 7 / lambda,
+      pdf: (x) => exponentialPdf(x, lambda),
+      mean: 1 / lambda,
+      median: Math.log(2) / lambda,
+      mode: 0,
+      std: 1 / lambda,
+      q: (p) => -Math.log(1 - p) / lambda
+    };
+  }
+
+  function updateLabels() {
+    $("normal-muv").textContent = Number($("normal-mu").value).toFixed(2);
+    $("normal-sigmav").textContent = Number($("normal-sigma").value).toFixed(2);
+    $("t-nuv").textContent = Number($("t-nu").value).toFixed(2);
+    $("t-locv").textContent = Number($("t-loc").value).toFixed(2);
+    $("t-scalev").textContent = Number($("t-scale").value).toFixed(2);
+    $("beta-av").textContent = Number($("beta-a").value).toFixed(2);
+    $("beta-bv").textContent = Number($("beta-b").value).toFixed(2);
+    $("gamma-alphav").textContent = Number($("gamma-alpha").value).toFixed(2);
+    $("gamma-thetav").textContent = Number($("gamma-theta").value).toFixed(2);
+    $("invgamma-alphav").textContent = Number($("invgamma-alpha").value).toFixed(2);
+    $("invgamma-betav").textContent = Number($("invgamma-beta").value).toFixed(2);
+    $("lognorm-muv").textContent = Number($("lognorm-mu").value).toFixed(2);
+    $("lognorm-sigmav").textContent = Number($("lognorm-sigma").value).toFixed(2);
+    $("skewnorm-alphav").textContent = Number($("skewnorm-alpha").value).toFixed(2);
+    $("skewnorm-locv").textContent = Number($("skewnorm-loc").value).toFixed(2);
+    $("skewnorm-scalev").textContent = Number($("skewnorm-scale").value).toFixed(2);
+    $("exp-lambdav").textContent = Number($("exp-lambda").value).toFixed(2);
+
+    for (const id of ["normal", "student-t", "beta", "gamma", "invgamma", "lognorm", "skewnorm", "exponential"]) {
+      $(id + "-params").classList.toggle("active", $("dist").value === id);
+    }
+
+    $("show-normal").disabled = $("dist").value === "normal";
+  }
+
+  function drawLine(points, X, Y, color, width = 2, dash = []) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.setLineDash(dash);
+    ctx.beginPath();
+    points.forEach((pt, i) => {
+      const px = X(pt.x);
+      const py = Y(pt.y);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawVertical(x, ymin, ymax, X, Y, color, dash = []) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.setLineDash(dash);
+    ctx.beginPath();
+    ctx.moveTo(X(x), Y(ymin));
+    ctx.lineTo(X(x), Y(ymax));
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawArrow(fromX, fromY, toX, toY, X, Y, color) {
+    const x1 = X(fromX);
+    const y1 = Y(fromY);
+    const x2 = X(toX);
+    const y2 = Y(toY);
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    const head = 20;
+
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 2.6;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(
+      x2 - head * Math.cos(angle - Math.PI / 6),
+      y2 - head * Math.sin(angle - Math.PI / 6)
+    );
+    ctx.lineTo(
+      x2 - head * Math.cos(angle + Math.PI / 6),
+      y2 - head * Math.sin(angle + Math.PI / 6)
+    );
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function draw() {
+    const s = getState();
+    const d = makeDistribution(s);
+    updateLabels();
+
+    const xs = [];
+    const n = 700;
+    for (let i = 0; i < n; i++) {
+      xs.push(d.xmin + (d.xmax - d.xmin) * i / (n - 1));
+    }
+
+    const ys = xs.map(d.pdf);
+    let ymax = Math.max(...ys.filter(Number.isFinite));
+    if (!isFinite(ymax) || ymax <= 0) ymax = 1;
+    ymax *= 1.22;
+
+    const q025 = d.q(0.025);
+    const q16 = d.q(0.16);
+    const q84 = d.q(0.84);
+    const q975 = d.q(0.975);
+
+    const margin = { l: 90, r: 35, t: 50, b: 80 };
+    const W = canvas.width - margin.l - margin.r;
+    const H = canvas.height - margin.t - margin.b;
+
+    const X = (x) => margin.l + (x - d.xmin) / (d.xmax - d.xmin) * W;
+    const Y = (y) => margin.t + H - y / ymax * H;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (s.showIntervals) {
+      ctx.save();
+      ctx.fillStyle = "rgba(31, 119, 180, 0.12)";
+      ctx.fillRect(X(q025), margin.t, X(q975) - X(q025), H);
+      ctx.fillStyle = "rgba(31, 119, 180, 0.24)";
+      ctx.fillRect(X(q16), margin.t, X(q84) - X(q16), H);
+      ctx.restore();
+    }
+
+    ctx.strokeStyle = "#222";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(margin.l, margin.t);
+    ctx.lineTo(margin.l, margin.t + H);
+    ctx.lineTo(margin.l + W, margin.t + H);
+    ctx.stroke();
+
+    ctx.fillStyle = "#222";
+    ctx.font = `24px ${FONT_SANS}`;
+
+    for (let i = 0; i <= 6; i++) {
+      const x = d.xmin + (d.xmax - d.xmin) * i / 6;
+      ctx.beginPath();
+      ctx.moveTo(X(x), margin.t + H);
+      ctx.lineTo(X(x), margin.t + H + 5);
+      ctx.stroke();
+      ctx.fillText(x.toFixed(Math.abs(x) < 2 ? 2 : 1), X(x) - 16, margin.t + H + 30);
+    }
+
+    for (let i = 0; i <= 5; i++) {
+      const y = ymax * i / 5;
+      ctx.beginPath();
+      ctx.moveTo(margin.l - 5, Y(y));
+      ctx.lineTo(margin.l, Y(y));
+      ctx.stroke();
+      ctx.fillText(y.toFixed(2), margin.l - 70, Y(y) + 7);
+    }
+
+    ctx.font = `24px ${FONT_SANS}`;
+    ctx.fillText("x", margin.l + W / 2, canvas.height - 26);
+
+    ctx.save();
+    ctx.translate(28, margin.t + H / 2 + 18);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText("p(x)", 0, 0);
+    ctx.restore();
+
+    ctx.font = `26px ${FONT_SANS}`;
+    ctx.fillText(d.label, margin.l + 10, margin.t - 15);
+
+    const curve = xs.map((x, i) => ({ x, y: Math.min(ys[i], ymax) }));
+    drawLine(curve, X, Y, "#1f77b4", 3);
+
+    if (s.showNormal && s.dist !== "normal" && isFinite(d.mean) && isFinite(d.std) && d.std > 0) {
+      const normalCurve = xs.map((x) => ({ x, y: normalPdf(x, d.mean, d.std) }));
+      drawLine(normalCurve, X, Y, "#d62728", 2.5, [8, 6]);
+    }
+
+    if (s.showAnnotations) {
+      const points = [
+        { name: "median", x: d.median, color: "#111", dx: 0.20 },
+        { name: "mode", x: d.mode, color: "#d62728", dx: -0.20 },
+        { name: "mean", x: d.mean, color: "#1f77b4", dx: 0.00 }
+      ].filter((p) => isFinite(p.x) && p.x >= d.xmin && p.x <= d.xmax);
+
+      const textY = 0.90 * ymax;
+      for (const p of points) {
+        const y = d.pdf(p.x);
+        const labelX = Math.min(
+          d.xmax,
+          Math.max(d.xmin, p.x + p.dx * (d.xmax - d.xmin))
+        );
+        drawArrow(labelX, textY, p.x, y, X, Y, p.color);
+        ctx.fillStyle = p.color;
+        ctx.font = `26px ${FONT_SANS}`;
+        ctx.fillText(p.name, X(labelX) - 28, Y(textY) - 10);
+        drawVertical(p.x, 0, y, X, Y, p.color, [4, 5]);
+      }
+    }
+
+    ctx.font = `21px ${FONT_SANS}`;
+    const legendRows =
+      (s.showIntervals ? 2 : 0)
+      + ((s.showNormal && s.dist !== "normal") ? 1 : 0);
+
+    if (legendRows > 0) {
+      let lx = margin.l + 20;
+      let ly = margin.t + H - 34 - 32 * legendRows;
+      const legendW = 405;
+      const legendH = 26 + 32 * legendRows;
+
+      ctx.save();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.20)";
+      ctx.lineWidth = 1;
+      ctx.fillRect(lx - 14, ly - 20, legendW, legendH);
+      ctx.strokeRect(lx - 14, ly - 20, legendW, legendH);
+      ctx.restore();
+
+      if (s.showIntervals) {
+        ctx.fillStyle = "rgba(31, 119, 180, 0.24)";
+        ctx.fillRect(lx, ly, 36, 17);
+        ctx.fillStyle = "#222";
+        ctx.fillText("central 68% interval", lx + 50, ly + 16);
+        ly += 32;
+
+        ctx.fillStyle = "rgba(31, 119, 180, 0.12)";
+        ctx.fillRect(lx, ly, 36, 17);
+        ctx.fillStyle = "#222";
+        ctx.fillText("central 95% interval", lx + 50, ly + 16);
+        ly += 32;
+      }
+
+      if (s.showNormal && s.dist !== "normal") {
+        ctx.strokeStyle = "#d62728";
+        ctx.lineWidth = 3;
+        ctx.setLineDash([10, 7]);
+        ctx.beginPath();
+        ctx.moveTo(lx, ly + 9);
+        ctx.lineTo(lx + 38, ly + 9);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = "#222";
+        ctx.fillText("normal with same mean/std", lx + 50, ly + 16);
+      }
+    }
+
+    $("readout").innerHTML =
+      `mean = ${isFinite(d.mean) ? d.mean.toFixed(2) : "undefined"}; `
+      + `median = ${isFinite(d.median) ? d.median.toFixed(2) : "undefined"}; `
+      + `mode = ${isFinite(d.mode) ? d.mode.toFixed(2) : "undefined"}; `
+      + `central 68% = [${q16.toFixed(2)}, ${q84.toFixed(2)}]; `
+      + `central 95% = [${q025.toFixed(2)}, ${q975.toFixed(2)}]`;
+  }
+
+  root.querySelectorAll("input, select").forEach((el) => {
+    el.addEventListener("input", draw);
+    el.addEventListener("change", draw);
+  });
+
+  updateLabels();
+  draw();
+})();
+</script>
+</body>
+</html>
