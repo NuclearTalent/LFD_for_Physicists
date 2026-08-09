@@ -31,6 +31,8 @@ Evaluate the normal equations for the design matrix $\dmat$ and data vector $\da
 Evaluate the sample variance $s^2$ for the example above. Do you think the result makes sense?
 ```
 
+## Solutions to exercises
+
 Here are answers and solutions to selected exercises.
 
 ````{solution} exercise:ols_example_1
