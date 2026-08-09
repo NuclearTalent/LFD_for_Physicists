@@ -506,7 +506,7 @@ See {numref}`exercise:MCMC:discrete-metropolis` for an explicit example.
 ````
 
 
-## Exercises
+## Additional exercises
 
 ```{exercise} Stationary two-state distribution 
 :label: exercise:stationary-2x2
@@ -652,7 +652,7 @@ Prove Eq. {eq}`eq:MarkovChains:T_Y_vs_T_X` to show that a reversible Markov chai
 ```
 
 
-## Solutions
+## Solutions to exercises
 
 ```{solution} exercise:MarkovChains:stochastic-matrix
 :label: solution:MarkovChains:stochastic-matrix

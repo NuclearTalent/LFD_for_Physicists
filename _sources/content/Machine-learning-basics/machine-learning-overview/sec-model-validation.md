@@ -431,7 +431,7 @@ Use either the linear regression example, or the binary classification one, to i
 - What could help to reduce the training error?
 ```
 
-## Solutions
+## Solutions to exercises
 
 ```{solution} exercise:ModelValidation:kNN-training-error
 :label: solution:ModelValidation:kNN-training-error

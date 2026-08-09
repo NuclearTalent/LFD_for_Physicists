@@ -439,7 +439,7 @@ Introduce the integration over $\parsLR$ using the sum rule and then obtain the 
 ::::
 
 
-## Solutions to selected exercises
+## Solutions to exercises
 
 
 ```{solution} exercise:BayesianLinearRegression:likelihood_pars_b

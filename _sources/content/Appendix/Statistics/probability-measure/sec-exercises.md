@@ -53,7 +53,7 @@ $$
 Find the conditional expectation $\expect{Y \vert X=x}$.
 ```
 
-## Solutions
+## Solutions to exercises
 
 ```{solution} exercise:Statistics:colorblind
 :label: solution:Statistics:colorblind

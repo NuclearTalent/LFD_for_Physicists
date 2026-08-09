@@ -485,7 +485,7 @@ The $R2$ score can be said to describe the fraction of variations in the data th
 - What does it mean when $R2 \to 0$?
 ```
 
-## Solutions
+## Solutions to exercises
 
 ```{solution} exercise:MLexamples:sigmoid-decision-boundary
 :label: solution:MLexamples:sigmoid-decision-boundary

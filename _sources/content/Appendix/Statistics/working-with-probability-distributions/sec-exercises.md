@@ -44,7 +44,7 @@ Consider the domain $x,y \in [0,1]$ and use relevant python modules / methods to
 - Compute and plot the marginal pdf $\p{y}$ (useful method: `scipy.integrate.quad`)
 ```
 
-## Solutions
+## Solutions to exercises
 
 ```{solution} exercise:Statistics:scipy-stats
 :label: colution:Statistics:scipy-stats

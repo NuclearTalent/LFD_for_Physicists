@@ -334,7 +334,7 @@ Assume that you would initialize a large number of instances of this kind of nod
 ```
 ````
 
-## Solutions
+## Solutions to exercises
 
 ```{solution} exercise:NeuralNet:simple-network
 :label: solution:NeuralNet:simple-network

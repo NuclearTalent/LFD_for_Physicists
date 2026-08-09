@@ -151,7 +151,7 @@ In all cases you should compare the Bayesian inference with the results from Ord
 ```
 
 
-## Solutions to selected exercises
+## Solutions to exercises
 
 
 
