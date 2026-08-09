@@ -177,7 +177,7 @@ Assume we have three coins in a bag. All three coins feel and look the same, but
 Assume that you reach your hand into the bag and pick a coin randomly, then flip it and obtain heads. What is the probability for obtaining heads if you flip it once more?
 ```
 
-## Solutions
+## Solutions to exercises
 
 Here are answers and solutions to selected exercises.
 

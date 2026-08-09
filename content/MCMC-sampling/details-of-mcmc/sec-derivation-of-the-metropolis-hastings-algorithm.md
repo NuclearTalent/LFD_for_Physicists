@@ -165,7 +165,7 @@ starting distributions and see if the correct limiting distribution is obtained.
 ```
 
 
-## Solutions
+## Solutions to exercises
 
 ```{solution} exercise:metropolis-sampling-uniform
 :label: solution:metropolis-sampling-uniform

@@ -168,8 +168,12 @@ We need to find the probability of getting data *at least as extreme* as $D = \{
 Comparing to $p_{\rm crit} = 0.05$, we find the p-value is greater than $p_{\rm crit}$, so the null hypothesis is not rejected at the 95\% level. (Note that we say "not rejected" as opposed to "accepted".) If we had gotten 15 heads instead we would have rejected the null hypothesis.
 We emphasize that in this frequentist analysis, the *data* is random while $p_h$ is fixed (although unknown). 
 
-:::{admonition} Exercise
-  Verify that if we had gotten 15 heads in $N=20$ tosses that we would have rejected the null hypothesis.
-:::
+
+```{exercise} Detailed balance
+:label: exercise:reject-null-hypothesis
+
+Verify that if we had gotten 15 heads in $N=20$ tosses that we would have rejected the null hypothesis.
+```
+
 
 
