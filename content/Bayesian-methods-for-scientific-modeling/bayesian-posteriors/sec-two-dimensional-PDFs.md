@@ -51,10 +51,10 @@ and $\Sigma$ is positive definite.
 
 
 ```{raw} html
-<iframe src="../../../_static/app_BivariateGaussian_shared-css.html"
+<iframe src="../../../_static/app_BivariateGaussian.html"
     width="100%"
-    height="760"
-    style="border: none; display: block;"
+    height="720"
+    style="border: none;"
     scrolling="no">
 </iframe>
 ```

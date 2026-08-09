@@ -93,7 +93,7 @@ Notes on the controls for the widget:
 
 
 ```{raw} html
-<iframe src="../../../_static/demo-pdf_explorer-html5_shared-css.html"
+<iframe src="../../../_static/demo-pdf_explorer-html5.html"
     width="100%"
     height="920"
     style="border: none;"
