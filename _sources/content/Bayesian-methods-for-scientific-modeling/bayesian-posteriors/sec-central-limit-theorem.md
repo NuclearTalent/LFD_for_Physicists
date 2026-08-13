@@ -578,7 +578,7 @@ from scipy import stats
 try:
     trapezoid = np.trapezoid
 except AttributeError:
-    trapezoid = np.trapz
+    trapezoid = np.trapezoid
 
 def invCFT(t, omega_pts, FT_pts):
     """Inverse Fourier transform for an even transform sampled on omega_pts."""

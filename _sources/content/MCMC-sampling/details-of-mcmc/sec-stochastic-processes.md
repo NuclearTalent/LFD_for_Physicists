@@ -106,13 +106,13 @@ glue("bacterial-growth_fig", fig, display=False)
 # How large is the probability that the number of bacteria exceeds 100 after 10 mins?
 i10 = np.argmin(np.abs(t-10))
 fraction_100_after_10min = 100 * np.sum(y_runs[:,i10]>100) / num_runs
-glue("growth_question", fraction_100_after_10min)
+glue("growth_question", f"{fraction_100_after_10min:.0f}")
 ```
 
 ```{glue:figure} bacterial-growth_fig
 :name: "fig-bacterial-growth"
 
-Growth of a bacteria population. The deterministic exponential growth curve is plotted against a number of realizations of a stochastic growth process. We find for example that {glue:text}`growth_question:.0f`% of the processes give 100 bacteria after ten minutes.
+Growth of a bacteria population. The deterministic exponential growth curve is plotted against a number of realizations of a stochastic growth process. We find for example that {glue:text}`growth_question`% of the processes give 100 bacteria after ten minutes.
 ```
 
 (sec:DefStochasticProcess)=
