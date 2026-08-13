@@ -66,28 +66,28 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/MCMC-sampling/details-of-mcmc/sec-derivation-of-the-metropolis-hastings-algorithm';</script>
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
-    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
-    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
-    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
-    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
-    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
-    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
-    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
-    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
-    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
-    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
-    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
-    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
-    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
-    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
-    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
-    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
     <script src="../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
     <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
     <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
-    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="21. Markov Chain Monte Carlo in practice" href="../mcmc-in-practice/index.html" />
@@ -737,8 +737,8 @@ document.write(`
 <p>How can we collect random samples from an arbitrary probability distribution <span class="math notranslate nohighlight">\(p(\pars)\)</span>? In particular, how can we perform this task when we might not even have a closed form expression for the PDF? It is common in Bayesian inference that we find ourselves in the situation that we can evaluate <span class="math notranslate nohighlight">\(p(\pars)\)</span> at any position <span class="math notranslate nohighlight">\(\pars\)</span>, but we don’t know beforehand if it will be large or small.</p>
 <p>We will now show that it is possible to construct a Markov chain that has <span class="math notranslate nohighlight">\(p(\pars)\)</span> as its stationary distribution. Once this chain has converged it will provide us with samples from <span class="math notranslate nohighlight">\(p(\pars)\)</span>.</p>
 <p>As we have learned, the evolution of positions is described by the transition density <span class="math notranslate nohighlight">\(T\)</span>. The generalization to continuous variables of the stationary-chain equilibrium described in Eq. <a class="reference internal" href="sec-markov-chains.html#equation-eq-markovchains-discrete-equlibrium">(20.16)</a> is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a10abc7f-15bb-4faa-9464-e796dcfc2d6d">
-<span class="eqno">(20.24)<a class="headerlink" href="#equation-a10abc7f-15bb-4faa-9464-e796dcfc2d6d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-42abf34d-c9b0-405e-b4ed-c5b6d17da34a">
+<span class="eqno">(20.24)<a class="headerlink" href="#equation-42abf34d-c9b0-405e-b4ed-c5b6d17da34a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(\pars) = \int_{\Omega'} p(\pars')T(\pars',\pars) d\pars'.
 \end{equation}\]</div>
 <p>This equilibrium condition can be replaced with the more stringent <strong>detailed-balance</strong> condition</p>
@@ -747,24 +747,24 @@ p(\pars) = \int_{\Omega'} p(\pars')T(\pars',\pars) d\pars'.
 p(\pars)T(\pars,\pars') = p(\pars') T(\pars',\pars),
 \]</div>
 <p>which can be understood from the integral relation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-541ce001-4178-40bb-97bf-975bdc2317da">
-<span class="eqno">(20.26)<a class="headerlink" href="#equation-541ce001-4178-40bb-97bf-975bdc2317da" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7ee90257-daa3-4918-87fb-b3aa4f4b85c7">
+<span class="eqno">(20.26)<a class="headerlink" href="#equation-7ee90257-daa3-4918-87fb-b3aa4f4b85c7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \int d\pars' p(\pars)T(\pars,\pars') = \int d\pars' p(\pars') T(\pars',\pars),
 \end{equation}\]</div>
 <p>that describes the balance between the transitions of probability density out of <span class="math notranslate nohighlight">\(\pars\)</span> and into <span class="math notranslate nohighlight">\(\pars\)</span>. At equilibrium, these integrals must be equal.</p>
 <p>The trick to achieve this for a certain <span class="math notranslate nohighlight">\(p(\pars)\)</span> is to write <span class="math notranslate nohighlight">\(T\)</span> as a product of a simple step proposal function <span class="math notranslate nohighlight">\(S(\pars,\pars')\)</span>, that provides probability densities for steps in <span class="math notranslate nohighlight">\(\pars\)</span>-space, and a function <span class="math notranslate nohighlight">\(A(\pars,\pars')\)</span> that we will call the <strong>acceptance probability</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-9fbcf154-f2ef-48c8-b94c-7ec20c86d000">
-<span class="eqno">(20.27)<a class="headerlink" href="#equation-9fbcf154-f2ef-48c8-b94c-7ec20c86d000" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9ba32d77-d529-4d60-86d2-c6f6009e8892">
+<span class="eqno">(20.27)<a class="headerlink" href="#equation-9ba32d77-d529-4d60-86d2-c6f6009e8892" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T(\pars,\pars') = A(\pars,\pars') S(\pars,\pars').
 \end{equation}\]</div>
 <p>The step proposal function can be almost anything, but a key property is that it should be easy to draw a sample from it. The probability for proposing a new position <span class="math notranslate nohighlight">\(\pars'\)</span> will depend on the current position <span class="math notranslate nohighlight">\(\pars\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-2a1b9f7e-6628-4d9a-adde-55601c35c2d2">
-<span class="eqno">(20.28)<a class="headerlink" href="#equation-2a1b9f7e-6628-4d9a-adde-55601c35c2d2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0a7dfd3a-d996-45ca-89b5-46f621c17a89">
+<span class="eqno">(20.28)<a class="headerlink" href="#equation-0a7dfd3a-d996-45ca-89b5-46f621c17a89" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\text{proposing $\pars'$}}{\text{current position}=\pars} = S(\pars,\pars')
 \end{equation}\]</div>
 <p>For example, assuming that <span class="math notranslate nohighlight">\(\pars\)</span> is a vector in a <span class="math notranslate nohighlight">\(D\)</span>-dimensional parameter space we can take <span class="math notranslate nohighlight">\(S(\pars,\pars')\)</span> to be a uniform distribution within a <span class="math notranslate nohighlight">\(D\)</span>-dimensional hypercube with side length <span class="math notranslate nohighlight">\(\Delta\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-c112c7a2-4f8f-4871-9d10-16f88960647b">
-<span class="eqno">(20.29)<a class="headerlink" href="#equation-c112c7a2-4f8f-4871-9d10-16f88960647b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-789c76e3-a4b6-4e92-ad6a-229b24bbb1ab">
+<span class="eqno">(20.29)<a class="headerlink" href="#equation-789c76e3-a4b6-4e92-ad6a-229b24bbb1ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
 S(\pars,\pars') = \left\{ 
 \begin{array}{ll}
 \frac{1}{\Delta^D} &amp; \text{if $\left| \pars'_i - \pars_i \right| \leq \frac{\Delta}{2}$ for all $i \in \{1, \ldots, D\}$} \\
@@ -775,13 +775,13 @@ S(\pars,\pars') = \left\{
 <p>Alternatively we can use a multivariate Gaussian distribution with a mean that corresponds to the current position <span class="math notranslate nohighlight">\(\pars\)</span> and a covariance matrix that we can specify.</p>
 <p>The probability of actually accepting the proposed step from <span class="math notranslate nohighlight">\(\pars\)</span> to <span class="math notranslate nohighlight">\(\pars'\)</span> will then be given by <span class="math notranslate nohighlight">\(0 \leq A(\pars,\pars') \leq 1\)</span>.</p>
 <p>The detailed balance condition <a class="reference internal" href="#equation-eq-mcmc-detailed-balance">(20.25)</a> can be fulfilled by placing the following condition on the acceptance probability</p>
-<div class="amsmath math notranslate nohighlight" id="equation-206137d5-0295-4317-b197-1a1b41754a6b">
-<span class="eqno">(20.30)<a class="headerlink" href="#equation-206137d5-0295-4317-b197-1a1b41754a6b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-aa2f93cf-234e-4d32-8687-da36bd393a00">
+<span class="eqno">(20.30)<a class="headerlink" href="#equation-aa2f93cf-234e-4d32-8687-da36bd393a00" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{A(\pars,\pars')}{A(\pars',\pars)} = \frac{p(\pars')S(\pars',\pars)}{p(\pars)S(\pars,\pars')}.
 \end{equation}\]</div>
 <p>The expression for <span class="math notranslate nohighlight">\(A\)</span> that fulfils this condition is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5fea0b87-c9b5-4430-8b2f-d422f0950907">
-<span class="eqno">(20.31)<a class="headerlink" href="#equation-5fea0b87-c9b5-4430-8b2f-d422f0950907" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8502ac10-4980-43ce-b885-437445de3ae4">
+<span class="eqno">(20.31)<a class="headerlink" href="#equation-8502ac10-4980-43ce-b885-437445de3ae4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 A(\pars,\pars') = \text{min} \left( \frac{p(\pars')S(\pars',\pars)}{p(\pars)S(\pars,\pars')},1\right),
 \end{equation}\]</div>
 <p>and holds the probability by which we decide whether to accept the proposed position <span class="math notranslate nohighlight">\(\pars'\)</span>, or remain in the old one <span class="math notranslate nohighlight">\(\pars\)</span>. The ratio that appears in the acceptance probability is called the Metropolis-Hastings ratio and will here be denoted <span class="math notranslate nohighlight">\(r\)</span>. We note that it gets further simplified for symmetric proposal functions (for which it is sometimes referred to as the Metropolis ratio)</p>

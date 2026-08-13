@@ -11,15 +11,18 @@ jupytext:
 
 Here we use Maximum Entropy to reconstruct some simple functions from their moments, using the formulation by Mead and Papanicolaou, J. Math. Phys. 24, 2404 (1984).
 The context is answering the question: 
-If we know some (or all) of the moments of a one-dimensional distribution $p(x)$, how can we find the PDF?
+If we know some (or all) of the moments of a one-dimensional distribution $p(x)$, can we determine $p(x)$?
 This question was asked in {numref}`sec:Inference:moments` and we repeat the definitions from there.
-We define the moments $m_k$ for integer $k$ as
+
+First, note that we referred to $p(x)$ as a "distribution". This means that we assume it is positive definite and normalized to 1 when integrated over its domain of support $S$ (e.g., $(-\infty,\infty)$ for a Gaussian or $[0,1]$ for a Beta distribution). Thus $p(x)$ is a candidate for a probability distribution function (pdf) and we will refer to it as such in what follows.
+ 
+We define the moments $m_k$ of $p(x)$ for integer $k$ as
 
 $$
     m_k = \int_S x^k\, p(x)\, dx,  \qquad k= 0,1,2,\ldots,
 $$
 
-where $S$ denotes the support of the PDF (e.g., $(-\infty,\infty)$ for a Gaussian or $[0,1]$ for a Beta distribution). So $m_0 = 1$, the mean $\mu$ is $m_1$, the variance $\sigma^2$ is $m_2 - m_1^2$, and so on. 
+where $S$ denotes the support of the pdf. So $m_0 = 1$, the mean $\mu$ is $m_1$, the variance $\sigma^2$ is $m_2 - m_1^2$, and so on. 
 
 If we have only a finite number $N+1$ of moments, this is an underdetermined inverse problem.
 We solve it by maximizing the entropy associated with $p(x)$ subject to the condition that the first $N+1$ moments be equal to the true moments $m_k$, $k=0,1,\ldots,N$.
