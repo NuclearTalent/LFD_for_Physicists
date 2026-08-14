@@ -66,28 +66,28 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/Advanced-Bayesian-methods/model-selection/sec-frequentist-hypothesis-testing';</script>
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
-    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
     <script src="../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
     <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
     <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
-    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
-    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
-    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
-    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
-    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
-    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
-    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
-    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
-    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
-    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
-    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
-    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
-    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
-    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
-    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
-    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="14.2. Bayesian model selection" href="sec-bayesian-model-selection.html" />
@@ -749,22 +749,22 @@ document.write(`
 <p>The standard sampling theory approach to hypothesis testing is to construct a statistical test. The basic idea is described in the following.</p>
 <p><strong>Frequentist hypothesis testing.</strong>
 The sampling theory hypothesis test is designed to compare a selected statistic from the measured data with expected results from a very large number of hypothetical repeated measurements under the assumption that a chosen null hypothesis (<span class="math notranslate nohighlight">\(\mathcal{H}_0\)</span>) is true.
-The null hypothesis is accepted or rejected purely on the basis of how unexpected the data were to <span class="math notranslate nohighlight">\(\mathcal{H}_0\)</span>, not on how much better the alternative hypothesis (<span class="math notranslate nohighlight">\(\mathcal{H}_A\)</span>) predicted the data.</p>
-<p>The degree of ‘‘unexpectedness’’ is based on a statistic, such as the sample mean or the <span class="math notranslate nohighlight">\(\chi^2\)</span> statistic.
-The statistic is a random variable and it is chosen so that its distribution can be easily computed given the truth of the null hypothesis. In other words, this is the distribution of the chosen statistic for a very large number of hypothetical repeated measurements under the assumption that the null hypothesis is true.
+The null hypothesis is accepted or rejected purely on the basis of how unexpected the data were to <span class="math notranslate nohighlight">\(\mathcal{H}_0\)</span>, not on whether the data were more expected under an alternative hypothesis (<span class="math notranslate nohighlight">\(\mathcal{H}_A\)</span>).</p>
+<p>The degree of “unexpectedness” is based on a statistic, such as the sample mean or the <span class="math notranslate nohighlight">\(\chi^2\)</span> statistic.
+The statistic is a random variable and it is chosen so that its distribution can be easily computed given the truth of the null hypothesis. In other words, this is the distribution of the chosen statistic for a very large number of hypothetical repeated measurements under the assumption that the null hypothesis is true. A threshold for how unlikely the data needs to be under the null hypothesis in order for us to reject the null hypothesis is defined.
 This statistic is then computed for the observed data set and its value is compared with the distribution that is associated with the truth of the null hypothesis.
-If the statistic from the observed data falls in a very unlikely spot on this distribution (the threshold is to be defined beforehand) we choose to reject the null hypothesis at some confidence level on the basis of the measured data set.</p>
+If the statistic from the observed data falls in a spot on this distribution that is more improbable than the pre-defined threshold we choose to reject the null hypothesis at the chosen “confidence level” on the basis of the measured data set.</p>
 </section>
 <section id="hypothesis-testing-with-the-chi-squared-statistic">
 <h2>Hypothesis testing with the chi-squared statistic<a class="headerlink" href="#hypothesis-testing-with-the-chi-squared-statistic" title="Link to this heading">#</a></h2>
 <p>A very common statistic to use is the <span class="math notranslate nohighlight">\(\chi^2\)</span> measure. A good example is found in Gregory, ch 7.2.1, with the measurements of flux density from a distant galaxy over a period of 6000 days. The main steps of the presented analysis are the following:</p>
 <ul class="simple">
-<li><p>Choose as a null hypothesis that the galaxy has an unknown, but constant, flux density. If we can reject this hypothesis at e.g. the 95% confidence level, then this provides indirect evidence(?) for the alternative hypothesis that the radio emission is variable.</p></li>
+<li><p>Choose as a null hypothesis that the galaxy has an unknown, but constant, flux density. If we can reject this hypothesis at e.g. the 95% confidence level, then this is sometimes taken as support for the opposite view that the radio emission is variable. But remember that all we have really established is that the hypothesis of constant flux density is rejected at the chosen confidence level.</p></li>
 <li><p>In this example, it is assumed that the measurement errors are independent and identically distributed (<strong>iid</strong>) according to a normal distribution with a fixed standard deviation <span class="math notranslate nohighlight">\(\sigma\)</span> that is known beforehand.</p></li>
 <li><p>The <span class="math notranslate nohighlight">\(\chi^2\)</span> statistic from the data set is evaluated (<span class="math notranslate nohighlight">\(x_i\)</span> is the data and <span class="math notranslate nohighlight">\(\bar{x}\)</span> is the average from the sample)</p></li>
 </ul>
-<div class="amsmath math notranslate nohighlight" id="equation-3a365460-8826-435f-a275-31f7c6e2f59d">
-<span class="eqno">(14.1)<a class="headerlink" href="#equation-3a365460-8826-435f-a275-31f7c6e2f59d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dcdea59d-0b17-4909-944a-3221e742ff5f">
+<span class="eqno">(14.1)<a class="headerlink" href="#equation-dcdea59d-0b17-4909-944a-3221e742ff5f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \chi^2 = \sum_{i=1}^n \frac{(x_i - \bar{x})^2}{\sigma^2}.
 
@@ -816,7 +816,7 @@ If the statistic from the observed data falls in a very unlikely spot on this di
 But the sum of the squares of <span class="math notranslate nohighlight">\(k\)</span> <em>independent</em> standard normal random variables has a known distribution, called the <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution with <span class="math notranslate nohighlight">\(k\)</span> degrees of freedom.
 So the sum of the normalized residuals squared should be distributed (if you generated many sets of them) as a <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution. How many degrees of freedom? This should be the number of independent pieces of information. But we have found the fitted parameters <span class="math notranslate nohighlight">\(\hat\pars\)</span> by minimizing <span class="math notranslate nohighlight">\(\chi^2\)</span>, i.e., by setting <span class="math notranslate nohighlight">\(\partial \chi^2(\pars)/\partial \theta_j\)</span> for <span class="math notranslate nohighlight">\(j = 1,\ldots,N_{\text{fit parameters}}\)</span>, which means <span class="math notranslate nohighlight">\(N_{\text{fit parameters}}\)</span> constraints. Therefore the number of dofs is given by <span class="math notranslate nohighlight">\(\nu = N_{\text{data}} - N_{\text{fit parameters}}\)</span>.</p>
 <p>Now what do we do with this information? We only have one draw from the (supposed) <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution. But if that distribution is narrow, we should be close to the mean. The mean of a <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution with <span class="math notranslate nohighlight">\(k = \nu\)</span> dofs is <span class="math notranslate nohighlight">\(\nu\)</span>, with variance <span class="math notranslate nohighlight">\(2\nu\)</span>.
-So if we’ve got a good fit (and our statistical model is valid), then <span class="math notranslate nohighlight">\(\chi^2/\nu\)</span> should be close to one. If it is much larger, than the conditions are not satisfied, so the model doesn’t work. If it is smaller, than the failure implies that the residuals are too small, meaning overfitting.</p>
+So if we’ve got a good fit (and our statistical model is valid), then <span class="math notranslate nohighlight">\(\chi^2/\nu\)</span> should be close to one. If it is much larger, then the conditions are not satisfied, so the model doesn’t work. If it is smaller, than the failure implies that the residuals are too small, meaning overfitting.</p>
 <p>But we should expect fluctuations, i.e., we shouldn’t always get the mean (or the mode, which is <span class="math notranslate nohighlight">\(\nu - 2\)</span> for <span class="math notranslate nohighlight">\(\nu\geq 0\)</span>). If <span class="math notranslate nohighlight">\(\nu\)</span> is large enough, then the distribution is approximately Gaussian and we can use the standard deviation / dof or <span class="math notranslate nohighlight">\(\sqrt{2\nu}/\nu = \sqrt{2/\nu}\)</span> as an expected width around one.
 One might use two or three times <span class="math notranslate nohighlight">\(\sigma\)</span> as a range to consider.
 If there are 1000 data points, then <span class="math notranslate nohighlight">\(\sigma \approx 0.045\)</span>, so <span class="math notranslate nohighlight">\(0.91 \leq \chi^2/{\rm dof} \leq 1.09\)</span> would be an acceptable range at the 95% confidence level (<span class="math notranslate nohighlight">\(2\sigma\)</span>). With fewer data points this range grows significantly.
@@ -886,7 +886,7 @@ Comparing to <span class="math notranslate nohighlight">\(p_{\rm crit} = 0.05\)<
 We emphasize that in this frequentist analysis, the <em>data</em> is random while <span class="math notranslate nohighlight">\(p_h\)</span> is fixed (although unknown).</p>
 <div class="exercise admonition" id="exercise:reject-null-hypothesis">
 
-<p class="admonition-title"><span class="caption-number">Exercise 14.1 </span> (Detailed balance)</p>
+<p class="admonition-title"><span class="caption-number">Exercise 14.1 </span> (Dealing with rejection)</p>
 <section id="exercise-content">
 <p>Verify that if we had gotten 15 heads in <span class="math notranslate nohighlight">\(N=20\)</span> tosses that we would have rejected the null hypothesis.</p>
 </section>

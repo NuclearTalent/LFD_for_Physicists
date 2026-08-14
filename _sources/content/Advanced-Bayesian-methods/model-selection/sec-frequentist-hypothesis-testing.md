@@ -16,18 +16,18 @@ The standard sampling theory approach to hypothesis testing is to construct a st
 
 **Frequentist hypothesis testing.** 
 The sampling theory hypothesis test is designed to compare a selected statistic from the measured data with expected results from a very large number of hypothetical repeated measurements under the assumption that a chosen null hypothesis ($\mathcal{H}_0$) is true.
-The null hypothesis is accepted or rejected purely on the basis of how unexpected the data were to $\mathcal{H}_0$, not on how much better the alternative hypothesis ($\mathcal{H}_A$) predicted the data. 
+The null hypothesis is accepted or rejected purely on the basis of how unexpected the data were to $\mathcal{H}_0$, not on whether the data were more expected under an alternative hypothesis ($\mathcal{H}_A$).
 
-The degree of ''unexpectedness'' is based on a statistic, such as the sample mean or the $\chi^2$ statistic. 
-The statistic is a random variable and it is chosen so that its distribution can be easily computed given the truth of the null hypothesis. In other words, this is the distribution of the chosen statistic for a very large number of hypothetical repeated measurements under the assumption that the null hypothesis is true. 
-This statistic is then computed for the observed data set and its value is compared with the distribution that is associated with the truth of the null hypothesis.
-If the statistic from the observed data falls in a very unlikely spot on this distribution (the threshold is to be defined beforehand) we choose to reject the null hypothesis at some confidence level on the basis of the measured data set. 
+The degree of "unexpectedness" is based on a statistic, such as the sample mean or the $\chi^2$ statistic. 
+The statistic is a random variable and it is chosen so that its distribution can be easily computed given the truth of the null hypothesis. In other words, this is the distribution of the chosen statistic for a very large number of hypothetical repeated measurements under the assumption that the null hypothesis is true. A threshold for how unlikely the data needs to be under the null hypothesis in order for us to reject the null hypothesis is defined. 
+This statistic is then computed for the observed data set and its value is compared with the distribution that is associated with the truth of the null hypothesis. 
+If the statistic from the observed data falls in a spot on this distribution that is more improbable than the pre-defined threshold we choose to reject the null hypothesis at the chosen "confidence level" on the basis of the measured data set. 
 
 ## Hypothesis testing with the chi-squared statistic
 
 A very common statistic to use is the $\chi^2$ measure. A good example is found in Gregory, ch 7.2.1, with the measurements of flux density from a distant galaxy over a period of 6000 days. The main steps of the presented analysis are the following:
 
-* Choose as a null hypothesis that the galaxy has an unknown, but constant, flux density. If we can reject this hypothesis at e.g. the 95% confidence level, then this provides indirect evidence(?) for the alternative hypothesis that the radio emission is variable.
+* Choose as a null hypothesis that the galaxy has an unknown, but constant, flux density. If we can reject this hypothesis at e.g. the 95% confidence level, then this is sometimes taken as support for the opposite view that the radio emission is variable. But remember that all we have really established is that the hypothesis of constant flux density is rejected at the chosen confidence level. 
 * In this example, it is assumed that the measurement errors are independent and identically distributed (**iid**) according to a normal distribution with a fixed standard deviation $\sigma$ that is known beforehand.
 * The $\chi^2$ statistic from the data set is evaluated ($x_i$ is the data and $\bar{x}$ is the average from the sample)
 
@@ -89,7 +89,7 @@ But the sum of the squares of $k$ *independent* standard normal random variables
 So the sum of the normalized residuals squared should be distributed (if you generated many sets of them) as a $\chi^2$ distribution. How many degrees of freedom? This should be the number of independent pieces of information. But we have found the fitted parameters $\hat\pars$ by minimizing $\chi^2$, i.e., by setting $\partial \chi^2(\pars)/\partial \theta_j$ for $j = 1,\ldots,N_{\text{fit parameters}}$, which means $N_{\text{fit parameters}}$ constraints. Therefore the number of dofs is given by $\nu = N_{\text{data}} - N_{\text{fit parameters}}$.
 
 Now what do we do with this information? We only have one draw from the (supposed) $\chi^2$ distribution. But if that distribution is narrow, we should be close to the mean. The mean of a $\chi^2$ distribution with $k = \nu$ dofs is $\nu$, with variance $2\nu$. 
-So if we've got a good fit (and our statistical model is valid), then $\chi^2/\nu$ should be close to one. If it is much larger, than the conditions are not satisfied, so the model doesn't work. If it is smaller, than the failure implies that the residuals are too small, meaning overfitting.
+So if we've got a good fit (and our statistical model is valid), then $\chi^2/\nu$ should be close to one. If it is much larger, then the conditions are not satisfied, so the model doesn't work. If it is smaller, than the failure implies that the residuals are too small, meaning overfitting.
 
 But we should expect fluctuations, i.e., we shouldn't always get the mean (or the mode, which is $\nu - 2$ for $\nu\geq 0$). If $\nu$ is large enough, then the distribution is approximately Gaussian and we can use the standard deviation / dof or $\sqrt{2\nu}/\nu = \sqrt{2/\nu}$ as an expected width around one.
 One might use two or three times $\sigma$ as a range to consider.
@@ -169,7 +169,7 @@ Comparing to $p_{\rm crit} = 0.05$, we find the p-value is greater than $p_{\rm 
 We emphasize that in this frequentist analysis, the *data* is random while $p_h$ is fixed (although unknown). 
 
 
-```{exercise} Detailed balance
+```{exercise} Dealing with rejection
 :label: exercise:reject-null-hypothesis
 
 Verify that if we had gotten 15 heads in $N=20$ tosses that we would have rejected the null hypothesis.
