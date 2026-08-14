@@ -8,7 +8,7 @@ jupytext:
 ---
 (sec:FrequentistHypothesisTesting)=
 # Frequentist hypothesis testing
-Recall that in frequentist statistics, probability statements are restricted to random variables. A hypothesis can not be considered a random variable, and therefore we are restricted to a much more indirect approach when trying to infer its truth, or rather when attempting to falsify it.
+Recall that in frequentist statistics, probability statements are restricted to random variables, see {ref}`sec:BayesianEpistemology`. A hypothesis can not be considered a random variable, and therefore we are restricted to a much more indirect approach when trying to infer its truth, or rather when attempting to falsify it.
 
 ## Basic idea
 
@@ -16,12 +16,81 @@ The standard sampling theory approach to hypothesis testing is to construct a st
 
 **Frequentist hypothesis testing.** 
 The sampling theory hypothesis test is designed to compare a selected statistic from the measured data with expected results from a very large number of hypothetical repeated measurements under the assumption that a chosen null hypothesis ($\mathcal{H}_0$) is true.
-The null hypothesis is accepted or rejected purely on the basis of how unexpected the data were to $\mathcal{H}_0$, not on whether the data were more expected under an alternative hypothesis ($\mathcal{H}_A$).
 
-The degree of "unexpectedness" is based on a statistic, such as the sample mean or the $\chi^2$ statistic. 
-The statistic is a random variable and it is chosen so that its distribution can be easily computed given the truth of the null hypothesis. In other words, this is the distribution of the chosen statistic for a very large number of hypothetical repeated measurements under the assumption that the null hypothesis is true. A threshold for how unlikely the data needs to be under the null hypothesis in order for us to reject the null hypothesis is defined. 
-This statistic is then computed for the observed data set and its value is compared with the distribution that is associated with the truth of the null hypothesis. 
-If the statistic from the observed data falls in a spot on this distribution that is more improbable than the pre-defined threshold we choose to reject the null hypothesis at the chosen "confidence level" on the basis of the measured data set. 
+## $P$-values: when all you can do is falsify
+
+The null hypothesis is rejected if the data are very unexpected under $\mathcal{H}_0$. Note that the null hypothesis is never accepted, it can only be rejected. Somewhat perversely then, you should really choose the null hypothesis to be the boring thing you hope is not true, e.g., if you are looking for the Higgs boson then the null hypothesis is that there is no Higgs boson, and you are checking how unlikely it is that the data you saw would've been generated under that hypothesis. Note also that you are _not_ supposed to compare the improbability of the data under the null hypothesis with how probable they would be 
+under an alternative hypothesis ($\mathcal{H}_A$).
+
+To perform frequentist hypothesis testing you should pick a level of proof you are comfortable with. For the
+Higgs boson (and for many other particle physics experiments) it is
+"5 sigma''. *How do you think we convert this statement to a
+probability?* [Hint: refer to a Gaussian distribution.]
+One minus the resulting probability is called the $P$-value. We will
+denote it $p_\mathrm{crit}$. There is nothing God-given about it. It is a standard (like "beyond a reasonable doubt") that has been agreed upon in a research community for
+determining that something is (likely) going on. 
+
+You then take data and compute $p(D|{\rm null~hypothesis})$. This probability is often summarized via a statistics, such as the $\chi^2$ statistic, which is chosen so that its distribution can be easily computed given the truth of the null hypothesis. In the second half of this section we will discuss the use of the $\chi^2$ statistic to compute this probability, but for now we keep the discussion general. 
+
+If
+$p(D|{\rm null~ hypothesis}) < p_{\rm crit}$ then you conclude that the "the null
+hypothesis is rejected at the $p_{\rm crit}$ significance level''. This would mean that the chosen statistic, when computed for the observed data, falls at a spot on the distribution that is more improbable than the pre-defined threshold. We reiterate that, if the opposite happens, and $p(D|{\rm null~hypothesis}) > p_{\rm crit}$, you cannot 
+conclude that the null hypothesis is true. It just means "no effect
+was observed".
+
+## Contrast Bayesian and significance analyses for coin flipping
+
+Suppose we do a coin flipping experiment where we toss a coin 20 times and it comes up heads 14 times. Let's compare how we might analyze this with Bayesian methods to how we might do a significance analysis with $P$-values.
+
+**Bayesian analysis.** 
+Following our study in {ref}`demo:WidgetCoinTossing`, let's calculate the probability of heads, which we call $p_h$, given data $D = \{R \text{ heads}, N \text{ tosses}\}$. 
+* Let's assume a uniform prior (encoded as a beta function with $\alpha=1$, $\beta=1$).
+* We found that this can be expressed as a beta function, which we can calculate in Python using
+$p(p_h|D) = p(D|p_h)p(p_h)$ $\longrightarrow$ `scipy.stats.beta.pdf(p_h,1+R,1+N-R)`. For $N=20$, $R=14$, this is shown on the left below.
+* Now we can answer many questions, such as: what is the probability that $p_h$ is between $0.49$ and $0.51$? The answer comes from integrating our PDF over this interval (i.e., the area under the curve).
+* Note that in the Bayesian analysis, the data is given while the probability of heads is a random value.
+
+```{image} ../assets/beta_distribution_14heads_in_20tosses.png
+:alt: bootstrapping
+:class: bg-primary
+:width: 700px
+:align: center
+```
+
+**Significance test.** Here we will try to answer the question: Is the coin fair? We'll follow the discussion in Wikipedia under [$P$-value](https://en.wikipedia.org/wiki/P-value) titled "Testing the fairness of a coin". 
+* We interpret "fair" as meaning $p_h = 0.5$. Our null hypothesis is that the coin is fair and $p_h = 0.5$.
+* We plot the probabilities for getting $R$ heads in $N=20$ tosses using the binomial probability mass distribution on the right above.
+* We decide on the significance $p_{\rm crit} = 0.05$.
+
+
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+$p_{\rm crit}$ and $p_h$ are both probabilities. Explain what they are the probabilities of and how they are different. 
+:::{admonition} Answer 
+:class: dropdown, my-answer 
+$p_h$ is the probability that the coin comes up heads on any one toss. $p_{\rm crit}$ is the "unlikeliness" threshold we have chosen at which we will declare that the observed number of heads is too unlikely to have been generated by a fair coin. (Rejecting the null hypothesis.)
+:::
+::::
+
+We need to find the probability of getting data *at least as extreme* as $D = \{R \text{ heads}, N \text{ tosses}\}$. For our example, that means adding up the binomial probabilities for $R = 14, 15, \ldots, 20$, which is 0.058. (This is called a "one-tailed test". If we wanted to consider deviations favoring tails as well, we would would add as well the probabilities for $R = 0, 1, \ldots, 6$, so $0.115$ in total. This would be a "two-tailed test".) 
+Comparing to $p_{\rm crit} = 0.05$, we find the p-value is greater than $p_{\rm crit}$, so the null hypothesis is not rejected at the 95\% level. (Note that we say "not rejected" as opposed to "accepted".) If we had gotten 15 heads instead we would have rejected the null hypothesis.
+We emphasize that in this frequentist analysis, the *data* is random while $p_h$ is fixed (although unknown). 
+
+
+```{exercise} Dealing with rejection
+:label: exercise:reject-null-hypothesis
+
+Verify that if we had gotten 15 heads in $N=20$ tosses that we would have rejected the null hypothesis.
+```
+
+:::{exercise} How many tosses will it take?
+  Look at
+  {ref}`demo:WidgetCoinTossing`. Pick
+  a $p_{\rm crit}$-value. If  $p_h=0.4$, work out how many coin tosses it would take
+  to reject the null hypothesis that it's a fair coin ($p_h=0.5$) at
+  this significance level. 
+:::
+
 
 ## Hypothesis testing with the chi-squared statistic
 
@@ -38,7 +107,7 @@ A very common statistic to use is the $\chi^2$ measure. A good example is found 
 \end{equation}
 
 * In our example we had 15 data points, but we are using them first to estimate the mean $\mu$. Therefore, we lose one degree of freedom and are left with 14. This number will determine the form of the $\chi^2$ distribution that will be used for comparison with our actual $\chi^2$ statistic.
-* The question of how unlikely is this value of $\chi^2$ is by convention interpreted in terms of the area in the tail of the $\chi^2$ distribution beyond this line. This is called the $P$-value or significance. 
+* The question of how unlikely is this value of $\chi^2$ is by convention interpreted in terms of the area in the tail of the $\chi^2$ distribution beyond this line. This is the $P$-value or significance of the test, under these data. 
 * In some cases, a two-sided statistic should be considered instead. 
 
 ```{figure} ../assets/gregory_7_2.png
@@ -49,7 +118,7 @@ The $\chi^2$ distribution for 14 degrees of freedom. The value computed from the
 
 At the point of performing this comparison, and making a final statement, the sampling theory school divides itself into two camps:
 
-1. One camp uses the following protocol: first, before looking at the data, pick the significance level of the test (e.g. 5%), and determine the critical value of $\chi^2$ above which the null hypothesis will be rejected. (The significance level is the fraction of times that the statistic $\chi^2$ would exceed the critical value, if the null hypothesis were true.) Then, compare the actual $\chi^2$ with the critical value, and declare the outcome of the test, and its significance level (which was fixed beforehand).
+1. One camp uses the following protocol: first, before looking at the data, pick the significance level of the test (e.g. 5%), and determine the critical value of $\chi^2$ above which the null hypothesis will be rejected. (The significance level is the fraction of times that the statistic $\chi^2$ would exceed the critical value, if the null hypothesis were true.) Then, compare the actual $\chi^2$ with the critical value, and declare the outcome of the test, and its significance level (which was fixed beforehand). This was the school articulated above when the $P$-value was first introduced.
 2. The second camp looks at the data, finds $\chi^2$, then looks in the table of $\chi^2$-distributions for the significance level, $P$, for which the observed value of $\chi^2$ would be the critical value. The result of the test is then reported by giving this value of $p$, which is the fraction of times that a result as extreme as the one observed, or more extreme, would be expected to arise if the null hypothesis were true. 
 
 ## $\chi^2$/dof for model assessment and comparison  
@@ -101,79 +170,6 @@ What can go wrong? Lots! See
 we've ignored informative (or, more precisely, non-uniform) priors.
 
 
-
-## p-values: when all you can do is falsify
-
-A common way for a frequentist to discuss a theory/model, or put a
-bound on a parameter value, is to quote a p-value.
-This is set up using something called the null hypothesis. Somewhat
-perversely you should pick the null hypothesis to be the opposite of
-what you want to prove. So if you want to discover the Higgs boson,
-the null hypothesis is that the Higgs boson does not exist.
-
-Then you pick a level of proof you are comfortable with. For the
-Higgs boson (and for many other particle physics experiments) it is
-"5 sigma''. *How do you think we convert this statement to a
-probability?* [Hint: refer to a Gaussian distribution.]
-One minus the resulting probability is called the $p$-value. We will
-denote it $p_\mathrm{crit}$. There is nothing
-God-given about it. It is a standard (like "beyond a reasonable
-doubt") that has been agreed upon in a research community for
-determining that something is (likely) going on. 
-
-You then take data and compute $p(D|{\rm null~hypothesis})$. If
-$p(D|{\rm null~ hypothesis}) < p_{\rm crit}$ then you conclude that the "the null
-hypothesis is rejected at the $p_{\rm crit}$ significance level''.
-Note that if $p(D|{\rm null~hypothesis}) > p_{\rm crit}$ you cannot
-conclude that the null hypothesis is true. It just means "no effect
-was observed".
-
-:::{admonition} Exercise
-  Look at
-  {ref}`demo:WidgetCoinTossing`. Pick
-  a $p_{\rm crit}$-value. If  $p_h=0.4$, work out how many coin tosses it would take
-  to reject the null hypothesis that it's a fair coin ($p_h=0.5$) at
-  this significance level. 
-:::
-
-
-
-## Contrast Bayesian and significance analyses for coin flipping
-
-Suppose we do a coin flipping experiment where we toss a coin 20 times and it comes up heads 14 times. Let's compare how we might analyze this with Bayesian methods to how we might do a significance analysis with p-values.
-
-**Bayesian analysis.** 
-Following our study in {ref}`demo:WidgetCoinTossing`, let's calculate the probability of heads, which we call $p_h$, given data $D = \{R \text{ heads}, N \text{ tosses}\}$. 
-* Let's assume a uniform prior (encoded as a beta function with $\alpha=1$, $\beta=1$).
-* We found that this can be expressed as a beta function, which we can calculate in Python using
-$p(p_h|D) = p(D|p_h)p(p_h)$ $\longrightarrow$ `scipy.stats.beta.pdf(p_h,1+R,1+N-R)`. For $N=20$, $R=14$, this is shown on the left below.
-* Now we can answer many questions, such as: what is the probability that $p_h$ is between $0.49$ and $0.51$? The answer comes from integrating our PDF over this interval (i.e., the area under the curve).
-* Note that in the Bayesian analysis, the data is given while the probability of heads is a random value.
-
-```{image} ../assets/beta_distribution_14heads_in_20tosses.png
-:alt: bootstrapping
-:class: bg-primary
-:width: 700px
-:align: center
-```
-
-**Significance test.** Here we will try to answer the question: Is the coin fair? We'll follow the discussion in Wikipedia under [p-value](https://en.wikipedia.org/wiki/P-value) titled "Testing the fairness of a coin". 
-* We interpret "fair" as meaning $p_h = 0.5$. Our null hypothesis is that the coin is fair and $p_h = 0.5$.
-* We plot the probabilities for getting $R$ heads in $N=20$ tosses using the binomial probability mass distribution on the right above.
-* We decide on the significance $p_{\rm crit} = 0.05$.
-:::{admonition} Important conceptual question
-$p_{\rm crit}$ and $p_h$ are both probabilities. Explain what they are the probabilities of and how they are different. 
-:::
-We need to find the probability of getting data *at least as extreme* as $D = \{R \text{ heads}, N \text{ tosses}\}$. For our example, that means adding up the binomial probabilities for $R = 14, 15, \ldots, 20$, which is 0.058. (This is called a "one-tailed test". If we wanted to consider deviations favoring tails as well, we would would add as well the probabilities for $R = 0, 1, \ldots, 6$, so $0.115$ in total. This would be a "two-tailed test".) 
-Comparing to $p_{\rm crit} = 0.05$, we find the p-value is greater than $p_{\rm crit}$, so the null hypothesis is not rejected at the 95\% level. (Note that we say "not rejected" as opposed to "accepted".) If we had gotten 15 heads instead we would have rejected the null hypothesis.
-We emphasize that in this frequentist analysis, the *data* is random while $p_h$ is fixed (although unknown). 
-
-
-```{exercise} Dealing with rejection
-:label: exercise:reject-null-hypothesis
-
-Verify that if we had gotten 15 heads in $N=20$ tosses that we would have rejected the null hypothesis.
-```
 
 
 
