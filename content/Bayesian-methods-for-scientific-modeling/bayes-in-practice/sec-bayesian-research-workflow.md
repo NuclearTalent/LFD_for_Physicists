@@ -12,10 +12,13 @@ In {ref}`sec:Intro:Workflow` we presented a four-step Bayesian workflow, repeate
 :::
 
 
-In this chapter we elaborate on these steps. We start with a condensed description of a Bayesian workflow for rigorous scientific inference. It is partially based on the more extensive exposition in the Methods Primer by Van De Schoot et al. {cite}`Vandeschoot:2021`.
+In this chapter we elaborate on these steps. 
+<!--We start with a condensed description of a Bayesian workflow for rigorous scientific inference. It -->
+Our discussion is partially based on the more extensive exposition in the Methods Primer by Van De Schoot et al. {cite}`Vandeschoot:2021`.
 
-This formulation divides a typical Bayesian workflow into three main steps (see {numref}`fig-BayesianWorkflow-research-cycle`): (i) capturing available knowledge about given parameters in a statistical model via the prior distribution (typically performed before data collection); (ii) determining the likelihood function using the information about the data generating process; and (iii) combining the prior distribution and the likelihood function using Bayes’ theorem and so obtaining the posterior distribution. The posterior distribution is then used to conduct inferences. 
-These steps correspond to the first three steps above. In order to match our previously introduced workflow we add to these three steps a fourth one: using the posterior to check the extent to which aspects of the statistical model are consistent with the data being analyzed. 
+The formulation divides a typical Bayesian workflow into four main steps (see {numref}`fig-BayesianWorkflow-research-cycle`): (1) capturing available knowledge about given parameters in a statistical model via the prior distribution (typically performed before data collection); (2) determining the likelihood function using the information about the data generating process; and (3) combining the prior distribution and the likelihood function using Bayes’ theorem and so obtaining the posterior distribution. The posterior distribution is then used to conduct inferences. 
+<!--These steps correspond to the first three steps above. In order to match our previously introduced workflow--> 
+We add to these three steps a fourth one: (4) using the posterior to check the extent to which aspects of the statistical model are consistent with the data being analyzed. 
 
 In the following subsections we expand upon each step.
 
