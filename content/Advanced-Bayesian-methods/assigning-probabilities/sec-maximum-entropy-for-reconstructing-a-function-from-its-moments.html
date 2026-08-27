@@ -820,54 +820,54 @@ For <span class="math notranslate nohighlight">\(N=2\)</span> to <span class="ma
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">();</span> <span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s2">&quot;talk&quot;</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">();</span> <span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s2">"talk"</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">Boltzmann</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Defines the &quot;Boltzmann factor&quot;.  The Lagrange multiplier array lambdas</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Defines the "Boltzmann factor".  The Lagrange multiplier array lambdas</span>
 <span class="sd">    can be any size. </span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="p">[</span> <span class="n">lambdas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> 
                               <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lambdas</span><span class="p">))</span> <span class="p">]</span> 
                           <span class="p">)</span> 
                  <span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">Z</span><span class="p">(</span><span class="n">lambdas</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Defines the partition function.</span>
 <span class="sd">    Note shift in index because of way Python subscripts arrays.</span>
 <span class="sd">    Using quad from scipy.integrate.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Boltzmann</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">lambdas</span><span class="p">,</span> <span class="n">epsrel</span><span class="o">=</span><span class="mf">1.e-16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">EffectivePotential</span><span class="p">(</span><span class="n">lambdas</span><span class="p">,</span> <span class="n">mus</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Defines the effective potential.</span>
 <span class="sd">    lambdas and mus must be numpy arrays.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span> <span class="n">Z</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span> <span class="p">)</span> <span class="o">+</span> <span class="n">mus</span> <span class="o">@</span> <span class="n">lambdas</span> 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">Px</span><span class="p">(</span><span class="n">x_pts</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    MaxEnt estimate for polynomial P(x).  </span>
 <span class="sd">    Takes a numpy array x_pts and the vector lambdas as input.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">norm</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Boltzmann</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">,</span> 
                           <span class="n">epsrel</span><span class="o">=</span><span class="mf">1.e-14</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">Boltzmann</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_pts</span><span class="p">]</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">y_true</span><span class="p">(</span><span class="n">x_pts</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple test function: y = x + 1/2&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Simple test function: y = x + 1/2"""</span>
     <span class="k">return</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">x_pts</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">lambdas_min</span><span class="p">(</span><span class="n">mus</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Minimize the effective potential with respects to the lambdas,</span>
+<span class="w">    </span><span class="sd">"""Minimize the effective potential with respects to the lambdas,</span>
 <span class="sd">       given an array of mu values (mus).</span>
 <span class="sd">       We need to specify a small tolerance (tol) to ensure the output</span>
 <span class="sd">       from minimize is sufficiently precise.</span>
 <span class="sd">       At high orders this seems to have trouble converging to the best</span>
 <span class="sd">       minimum.  Sensitive to where one starts and the method.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">lambdas0</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mus</span><span class="p">))</span>  <span class="c1"># start the minimization with all ones</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">EffectivePotential</span><span class="p">,</span> <span class="n">lambdas0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">mus</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
@@ -877,24 +877,24 @@ For <span class="math notranslate nohighlight">\(N=2\)</span> to <span class="ma
     <span class="n">y_reconstruct</span> <span class="o">=</span> <span class="n">Px</span><span class="p">(</span><span class="n">x_pts</span><span class="p">,</span> <span class="n">lambdas_min</span><span class="p">(</span><span class="n">mus</span><span class="p">))</span>
 
     <span class="n">font_size</span> <span class="o">=</span> <span class="mi">18</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="n">font_size</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">'font.size'</span><span class="p">:</span> <span class="n">font_size</span><span class="p">})</span>
     
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
 
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_pts</span><span class="p">,</span> <span class="n">y_reconstruct</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;MaxEnt reconstruction&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_pts</span><span class="p">,</span> <span class="n">y_true</span><span class="p">(</span><span class="n">x_pts</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True function&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x$&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$y$&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_pts</span><span class="p">,</span> <span class="n">y_reconstruct</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"MaxEnt reconstruction"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_pts</span><span class="p">,</span> <span class="n">y_true</span><span class="p">(</span><span class="n">x_pts</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">"True function"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$x$'</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$y$'</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
     <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="c1">#     ax2.plot(x_pts, y_true(x_pts) - y_reconstruct, </span>
-<span class="c1">#             label=&quot;residual&quot;, color=&quot;blue&quot;)</span>
+<span class="c1">#             label="residual", color="blue")</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_pts</span><span class="p">,</span> <span class="n">y_reconstruct</span> <span class="o">/</span> <span class="n">y_true</span><span class="p">(</span><span class="n">x_pts</span><span class="p">),</span> 
-            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Ratio reconstucted/true&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x$&#39;</span><span class="p">)</span>
-    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$y$&#39;</span><span class="p">)</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">"Ratio reconstucted/true"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$x$'</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$y$'</span><span class="p">)</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
     <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>    
@@ -914,18 +914,18 @@ For <span class="math notranslate nohighlight">\(N=2\)</span> to <span class="ma
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mus2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="o">/</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">])</span>
 <span class="n">plot_lines</span><span class="p">(</span><span class="n">mus2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Moments: &#39;</span><span class="p">,</span> <span class="n">mus2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Minimized Lagrange multipliers lambdas: &#39;</span><span class="p">,</span><span class="n">lambdas_min</span><span class="p">(</span><span class="n">mus2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Moments: '</span><span class="p">,</span> <span class="n">mus2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Minimized Lagrange multipliers lambdas: '</span><span class="p">,</span><span class="n">lambdas_min</span><span class="p">(</span><span class="n">mus2</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 </details>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Moments:  [0.58333333 0.41666667]
-Minimized Lagrange multipliers lambdas:  [-1.58929037  0.53499052]
+Minimized Lagrange multipliers lambdas:  [-1.58929843  0.53499767]
 </pre></div>
 </div>
-<img alt="../../../_images/31c590d0276aa8df001a02bf21b8088147908e29a0a1ffe845c64887b34a0f95.png" src="../../../_images/31c590d0276aa8df001a02bf21b8088147908e29a0a1ffe845c64887b34a0f95.png" />
+<img alt="../../../_images/5869f47730fc982730ec1030b4eef01834f350cbef5db8a4bb773ba74867f985.png" src="../../../_images/5869f47730fc982730ec1030b4eef01834f350cbef5db8a4bb773ba74867f985.png" />
 </div>
 </div>
 </section>
@@ -940,18 +940,18 @@ Minimized Lagrange multipliers lambdas:  [-1.58929037  0.53499052]
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mus3</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="o">/</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="o">/</span><span class="mi">40</span><span class="p">])</span>
 <span class="n">plot_lines</span><span class="p">(</span><span class="n">mus3</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Moments: &#39;</span><span class="p">,</span> <span class="n">mus3</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Minimized Lagrange multipliers lambdas: &#39;</span><span class="p">,</span><span class="n">lambdas_min</span><span class="p">(</span><span class="n">mus3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Moments: '</span><span class="p">,</span> <span class="n">mus3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Minimized Lagrange multipliers lambdas: '</span><span class="p">,</span><span class="n">lambdas_min</span><span class="p">(</span><span class="n">mus3</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 </details>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Moments:  [0.58333333 0.41666667 0.325     ]
-Minimized Lagrange multipliers lambdas:  [-1.84592699  1.13225838 -0.38053871]
+Minimized Lagrange multipliers lambdas:  [-1.84582474  1.13202354 -0.38038996]
 </pre></div>
 </div>
-<img alt="../../../_images/175bcea8356f262c1819670e9d2fadab33645f225e14a5d42c4620a54e2e3cee.png" src="../../../_images/175bcea8356f262c1819670e9d2fadab33645f225e14a5d42c4620a54e2e3cee.png" />
+<img alt="../../../_images/6505573bfbb432c065382f9df52bcc3446af5c3c74882565d70c6ee3fae2f2d6.png" src="../../../_images/6505573bfbb432c065382f9df52bcc3446af5c3c74882565d70c6ee3fae2f2d6.png" />
 </div>
 </div>
 </section>
@@ -966,18 +966,18 @@ Minimized Lagrange multipliers lambdas:  [-1.84592699  1.13225838 -0.38053871]
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mus4</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="o">/</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span> <span class="mi">4</span><span class="o">/</span><span class="mi">15</span><span class="p">])</span>
 <span class="n">plot_lines</span><span class="p">(</span><span class="n">mus4</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Moments: &#39;</span><span class="p">,</span> <span class="n">mus4</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Minimized Lagrange multipliers lambdas: &#39;</span><span class="p">,</span><span class="n">lambdas_min</span><span class="p">(</span><span class="n">mus4</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Moments: '</span><span class="p">,</span> <span class="n">mus4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Minimized Lagrange multipliers lambdas: '</span><span class="p">,</span><span class="n">lambdas_min</span><span class="p">(</span><span class="n">mus4</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 </details>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Moments:  [0.58333333 0.41666667 0.325      0.26666667]
-Minimized Lagrange multipliers lambdas:  [-1.69941869  0.54752565  0.45580342 -0.39288493]
+Minimized Lagrange multipliers lambdas:  [-1.69941464  0.54752491  0.45578456 -0.39286796]
 </pre></div>
 </div>
-<img alt="../../../_images/8d1d59137a5dcbac459f505637a8ad719f76b5b434784c7ad668e67ed001dcf4.png" src="../../../_images/8d1d59137a5dcbac459f505637a8ad719f76b5b434784c7ad668e67ed001dcf4.png" />
+<img alt="../../../_images/7f58d1c9e1561bd5a8082112f41a4a197e3ae0d0aba68ae5c918f28fb8d8ef36.png" src="../../../_images/7f58d1c9e1561bd5a8082112f41a4a197e3ae0d0aba68ae5c918f28fb8d8ef36.png" />
 </div>
 </div>
 </section>
@@ -992,18 +992,20 @@ Minimized Lagrange multipliers lambdas:  [-1.69941869  0.54752565  0.45580342 -0
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mus5</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="o">/</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span> <span class="mi">4</span><span class="o">/</span><span class="mi">15</span><span class="p">,</span> <span class="mi">19</span><span class="o">/</span><span class="mi">84</span><span class="p">])</span>
 <span class="n">plot_lines</span><span class="p">(</span><span class="n">mus5</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Moments: &#39;</span><span class="p">,</span> <span class="n">mus5</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Minimized Lagrange multipliers lambdas: &#39;</span><span class="p">,</span><span class="n">lambdas_min</span><span class="p">(</span><span class="n">mus5</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Moments: '</span><span class="p">,</span> <span class="n">mus5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Minimized Lagrange multipliers lambdas: '</span><span class="p">,</span><span class="n">lambdas_min</span><span class="p">(</span><span class="n">mus5</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 </details>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Moments:  [0.58333333 0.41666667 0.325      0.26666667 0.22619048]
-Minimized Lagrange multipliers lambdas:  [-1.57580825  0.23066237  0.48944599  0.13622227 -0.3634522 ]
 </pre></div>
 </div>
-<img alt="../../../_images/7747f7ebb540d62e68d2140c7aae904ff347b61d054ab2fbb1d52d211515cf0e.png" src="../../../_images/7747f7ebb540d62e68d2140c7aae904ff347b61d054ab2fbb1d52d211515cf0e.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Minimized Lagrange multipliers lambdas:  [-1.57581329  0.23066303  0.48946185  0.13620955 -0.36345239]
+</pre></div>
+</div>
+<img alt="../../../_images/7fdde43a947e70053bf4825a6cd1804fbac708913e5d0b7f3fe81ca3344207d5.png" src="../../../_images/7fdde43a947e70053bf4825a6cd1804fbac708913e5d0b7f3fe81ca3344207d5.png" />
 </div>
 </div>
 <div class="my-checkpoint admonition">

@@ -823,29 +823,29 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 <span class="c1"># ================================ emcee sampler ==================================</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">emcee_sampling</span><span class="p">(</span><span class="n">min_param</span><span class="p">,</span> <span class="n">max_param</span><span class="p">,</span> <span class="n">log_posterior</span><span class="p">,</span> 
                    <span class="n">nburn</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">num_walker_per_dim</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Function for sampling in parallel using emcee.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters:</span>
 <span class="sd">      - min_param (list or array): minimum values parameters</span>
 <span class="sd">      - max_param (list or array): maximum values parameters</span>
 <span class="sd">      - log_posterior (callable): log posterior</span>
-<span class="sd">      - nburn (int): &quot;burn-in&quot; period to let chains stabilize</span>
+<span class="sd">      - nburn (int): "burn-in" period to let chains stabilize</span>
 <span class="sd">      - nsteps (int): # number of MCMC steps to take after burn-in</span>
 <span class="sd">      - num_walker_per_dim (int): number of walker per dimension</span>
 <span class="sd">      - samples_save_dir (string): directory name in which the samples will be saved</span>
 <span class="sd">      - progress (boolean): toggle the progress bar</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">min_param</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">max_param</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;min_param and max_param must have the same length.&quot;</span>
+                <span class="sa">f</span><span class="s2">"min_param and max_param must have the same length."</span>
             <span class="p">)</span>
 
     <span class="n">ndim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">min_param</span><span class="p">)</span>  <span class="c1"># number of parameters in the model</span>
     <span class="n">nwalkers</span> <span class="o">=</span> <span class="n">ndim</span> <span class="o">*</span> <span class="n">num_walker_per_dim</span>  <span class="c1"># number of MCMC walkers</span>
     
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting MCMC sampling using emcee with </span><span class="si">{</span><span class="n">nwalkers</span><span class="si">}</span><span class="s2"> walkers in parallel...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Starting MCMC sampling using emcee with </span><span class="si">{</span><span class="n">nwalkers</span><span class="si">}</span><span class="s2"> walkers in parallel..."</span><span class="p">)</span>
 
     <span class="c1"># Generate starting guesses within the prior bounds</span>
     <span class="n">starting_guesses</span> <span class="o">=</span>  <span class="n">min_param</span> <span class="o">+</span> <span class="p">(</span><span class="n">max_param</span> <span class="o">-</span> <span class="n">min_param</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span><span class="n">ndim</span><span class="p">)</span>
@@ -855,7 +855,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
         <span class="c1"># Pass the pool to the sampler</span>
         <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span><span class="n">ndim</span><span class="p">,</span><span class="n">log_posterior</span><span class="p">,</span><span class="n">pool</span><span class="o">=</span><span class="n">pool</span><span class="p">)</span>
     
-        <span class="c1"># &quot;Burn-in&quot; period</span>
+        <span class="c1"># "Burn-in" period</span>
         <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">starting_guesses</span><span class="p">,</span> <span class="n">nburn</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">)</span>
         <span class="n">sampler</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
     
@@ -866,9 +866,9 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
     <span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
     <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sampling complete. Time taken: </span><span class="si">{</span><span class="p">(</span><span class="n">end_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean acceptance fraction: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (in total </span><span class="si">{</span><span class="n">nwalkers</span><span class="o">*</span><span class="n">nsteps</span><span class="si">}</span><span class="s2"> steps)&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Samples shape: </span><span class="si">{</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Sampling complete. Time taken: </span><span class="si">{</span><span class="p">(</span><span class="n">end_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> minutes."</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean acceptance fraction: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (in total </span><span class="si">{</span><span class="n">nwalkers</span><span class="o">*</span><span class="n">nsteps</span><span class="si">}</span><span class="s2"> steps)"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Samples shape: </span><span class="si">{</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">samples</span>
 
@@ -879,7 +879,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
                     <span class="c1"># n_prior=2048, n_max_steps=200, </span>
                     <span class="n">n_total</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">n_evidence</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">ncores</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
                    <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This function is based on PocoMC package (version 1.2.1).</span>
 <span class="sd">    pocoMC is a Preconditioned Monte Carlo (PMC) sampler that uses </span>
 <span class="sd">    normalizing flows to precondition the target distribution.</span>
@@ -900,7 +900,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 <span class="sd">      - ncores: Number of cores to use in sampling. </span>
 <span class="sd">                  -1 (default): use all availaible cores</span>
 <span class="sd">                   n (int): use n cores</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Generating prior range for pocomc</span>
     <span class="n">priors</span> <span class="o">=</span> <span class="p">[</span><span class="n">uniform</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">-</span> <span class="n">lower</span><span class="p">)</span> <span class="k">for</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">min_param</span><span class="p">,</span> <span class="n">max_param</span><span class="p">)]</span>
@@ -918,7 +918,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 
     <span class="c1"># Validate that ncores is an integer and at least -1</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ncores</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ncores</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ncores must be an integer greater than or equal to -1. Specify &#39;-1&#39; to use all available cores.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"ncores must be an integer greater than or equal to -1. Specify '-1' to use all available cores."</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">ncores</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
         <span class="c1"># Use all available cores</span>
@@ -926,7 +926,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
     <span class="k">elif</span> <span class="n">ncores</span> <span class="o">&gt;</span> <span class="n">available_cores</span><span class="p">:</span>
         <span class="c1"># Warn if more cores are requested than available and then use available cores</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;ncores (</span><span class="si">{</span><span class="n">ncores</span><span class="si">}</span><span class="s2">) exceeds available cores (</span><span class="si">{</span><span class="n">available_cores</span><span class="si">}</span><span class="s2">). Using available cores.&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"ncores (</span><span class="si">{</span><span class="n">ncores</span><span class="si">}</span><span class="s2">) exceeds available cores (</span><span class="si">{</span><span class="n">available_cores</span><span class="si">}</span><span class="s2">). Using available cores."</span><span class="p">,</span>
             <span class="ne">UserWarning</span>
         <span class="p">)</span>
         <span class="n">num_cores</span> <span class="o">=</span> <span class="n">available_cores</span>
@@ -943,7 +943,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
                                  <span class="n">pool</span><span class="o">=</span><span class="n">num_cores</span>
                                  <span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting sampling using pocomc in </span><span class="si">{</span><span class="n">num_cores</span><span class="si">}</span><span class="s2"> cores...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Starting sampling using pocomc in </span><span class="si">{</span><span class="n">num_cores</span><span class="si">}</span><span class="s2"> cores..."</span><span class="p">)</span>
 
     <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">n_total</span><span class="o">=</span><span class="n">n_total</span><span class="p">,</span> 
                 <span class="n">n_evidence</span><span class="o">=</span><span class="n">n_evidence</span><span class="p">,</span> 
@@ -956,16 +956,16 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
     
     <span class="c1"># Generating the evidence</span>
     <span class="c1"># logz, logz_err = sampler.evidence() # Bayesian model evidence estimate and uncertainty</span>
-    <span class="c1"># print(&quot;Log evidence: &quot;, logz)</span>
-    <span class="c1"># print(&quot;Log evidence error: &quot;, logz_err)</span>
+    <span class="c1"># print("Log evidence: ", logz)</span>
+    <span class="c1"># print("Log evidence error: ", logz_err)</span>
     
-    <span class="c1"># logging.info(&#39;Writing pocoMC chains to file...&#39;)</span>
-    <span class="c1"># chain_data = {&#39;chain&#39;: samples, &#39;weights&#39;: weights, &#39;logl&#39;: logl,</span>
-    <span class="c1">#                 &#39;logp&#39;: logp, &#39;logz&#39;: logz, &#39;logz_err&#39;: logz_err}</span>
+    <span class="c1"># logging.info('Writing pocoMC chains to file...')</span>
+    <span class="c1"># chain_data = {'chain': samples, 'weights': weights, 'logl': logl,</span>
+    <span class="c1">#                 'logp': logp, 'logz': logz, 'logz_err': logz_err}</span>
 
     <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sampling complete. Time taken: </span><span class="si">{</span><span class="p">(</span><span class="n">end_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Samples shape: </span><span class="si">{</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Sampling complete. Time taken: </span><span class="si">{</span><span class="p">(</span><span class="n">end_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> minutes."</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Samples shape: </span><span class="si">{</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         
     <span class="k">return</span> <span class="n">samples</span>
 </pre></div>
@@ -982,7 +982,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 
 <span class="k">def</span><span class="w"> </span><span class="nf">True_height</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">h0</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">v0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
                 <span class="n">g</span><span class="o">=</span><span class="mf">9.8</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">0.4</span><span class="p">):</span>    <span class="c1"># initial conditions</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Height of a falling ball with linear + quadratic air drag.</span>
 
 <span class="sd">    Parameters</span>
@@ -1002,7 +1002,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 <span class="sd">    -------</span>
 <span class="sd">    h : 1darray</span>
 <span class="sd">        Height(s) at the requested time points (same shape as `t`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">derivatives</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">_t</span><span class="p">):</span>
         <span class="n">h</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">y</span>
@@ -1043,10 +1043,10 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> 
 <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">t_obs</span><span class="p">,</span> <span class="n">hexp_mean</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="p">[</span><span class="mf">1.96</span><span class="o">*</span><span class="n">hexp_err</span><span class="p">,</span> <span class="mf">1.96</span><span class="o">*</span><span class="n">hexp_err</span><span class="p">],</span> 
-             <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">capsize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> 
-             <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;``Experiment&quot;: 95\% CI&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+             <span class="n">fmt</span><span class="o">=</span><span class="s1">'o'</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">capsize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'black'</span><span class="p">,</span> 
+             <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'``Experiment": 95\% CI'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'height'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'time'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1111,7 +1111,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
     <span class="c1">#=======================================================================</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="p">[]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the log-likelihood of a dataset given the mean and covariance matrix.</span>
 <span class="sd">    </span>
 <span class="sd">        Parameters:</span>
@@ -1120,7 +1120,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 <span class="sd">    </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            Log-likelihood of the dataset.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
     
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_model_param</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">g</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1150,7 +1150,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
     <span class="c1">#=======================================================================</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">log_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta_and_phi</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the log posterior = sum of log priors + log likelihood.</span>
 <span class="sd">    </span>
 <span class="sd">        Parameters</span>
@@ -1162,7 +1162,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The log posterior value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">theta_and_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">theta_and_phi</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">MD</span><span class="p">:</span>
@@ -1212,9 +1212,9 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 
 <span class="c1"># Define function for general beta priors </span>
 <span class="k">def</span><span class="w"> </span><span class="nf">log_prior_param</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">alpha_val</span><span class="p">,</span> <span class="n">beta_val</span><span class="p">,</span> <span class="n">param_min</span><span class="p">,</span> <span class="n">param_max</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Log prior for parameter based on a Beta distribution.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">param_max</span> <span class="o">-</span> <span class="n">param_min</span>  <span class="c1"># Rescaling factor</span>
 
     <span class="k">if</span> <span class="n">param_min</span> <span class="o">&lt;</span> <span class="n">param</span> <span class="o">&lt;</span> <span class="n">param_max</span><span class="p">:</span>
@@ -1234,7 +1234,7 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_param_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="mf">20.0</span> <span class="p">],</span>
                                <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span> <span class="p">,</span>  <span class="mf">2.0</span> <span class="p">]])</span>
 
-<span class="c1"># model_param_bounds = np.array([[ 0.0,  20.0 ]])  # When only model parameter is g -- That&#39;s all the change required in code</span>
+<span class="c1"># model_param_bounds = np.array([[ 0.0,  20.0 ]])  # When only model parameter is g -- That's all the change required in code</span>
 
 <span class="n">num_model_param</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_param_bounds</span><span class="p">)</span>
 
@@ -1271,18 +1271,18 @@ The coefficients <span class="math notranslate nohighlight">\(b\)</span> and <sp
 
 <span class="c1"># Find Maximum likelihood value for parameters --&gt;</span>
 <span class="n">nll</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="o">-</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">nll</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span>  <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Powell&#39;</span><span class="p">)</span>
-<span class="n">max_lik</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">nll</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span>  <span class="n">method</span> <span class="o">=</span> <span class="s1">'Powell'</span><span class="p">)</span>
+<span class="n">max_lik</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">'x'</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Maximum likelihood value for parameters:&quot;</span><span class="p">,</span> <span class="n">max_lik</span><span class="p">,</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Maximum likelihood value for parameters:"</span><span class="p">,</span> <span class="n">max_lik</span><span class="p">,</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="c1"># Find MAP values for parameters --&gt;</span>
 <span class="n">nlp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="o">-</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">nlp</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span>  <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Powell&#39;</span><span class="p">)</span>
-<span class="n">MAP</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">nlp</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span>  <span class="n">method</span> <span class="o">=</span> <span class="s1">'Powell'</span><span class="p">)</span>
+<span class="n">MAP</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">'x'</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">MAP values for parameters:&quot;</span><span class="p">,</span> <span class="n">MAP</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">MAP values for parameters:"</span><span class="p">,</span> <span class="n">MAP</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1318,7 +1318,7 @@ MAP values for parameters: [3.97794526 1.35323281]
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">min_param</span> <span class="o">=</span> <span class="n">model_param_bounds</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">max_param</span> <span class="o">=</span> <span class="n">model_param_bounds</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">lab</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$g$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$v_0$&#39;</span><span class="p">]</span>
+<span class="n">lab</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">'$g$'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'$v_0$'</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -1335,8 +1335,8 @@ MAP values for parameters: [3.97794526 1.35323281]
                          <span class="n">log_posterior</span> <span class="o">=</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">,</span> 
                          <span class="n">nburn</span> <span class="o">=</span> <span class="n">num_burn</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">num_walker_per_dim</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
 
-<span class="n">fig</span> <span class="o">=</span> <span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">samples_WMD</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">lab</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">],</span>
-                   <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span> <span class="n">hist_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">samples_WMD</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">lab</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'C0'</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">],</span>
+                   <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"fontsize"</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span> <span class="n">hist_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">'density'</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1371,8 +1371,8 @@ Samples shape: (3200, 2)
 <span class="c1">#                                   n_effective=n_effective, n_active=n_effective, n_steps=n_steps,</span>
 <span class="c1">#                                   n_total=n_total, n_evidence=n_total)</span>
 
-<span class="c1"># fig = corner.corner(samples_WMD_poco, labels=lab, color=&#39;C0&#39;, quantiles=[0.16, 0.5, 0.84],</span>
-<span class="c1">#                    show_titles=True, title_kwargs={&quot;fontsize&quot;: 12}, hist_kwargs={&#39;density&#39;: True})</span>
+<span class="c1"># fig = corner.corner(samples_WMD_poco, labels=lab, color='C0', quantiles=[0.16, 0.5, 0.84],</span>
+<span class="c1">#                    show_titles=True, title_kwargs={"fontsize": 12}, hist_kwargs={'density': True})</span>
 <span class="c1"># plt.show()</span>
 </pre></div>
 </div>
@@ -1387,7 +1387,7 @@ Samples shape: (3200, 2)
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.gaussian_process.kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">DotProduct</span><span class="p">,</span> <span class="n">RBF</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">MD_kernel</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">cbar</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Compute the covariance matrix using a custom kernel:</span>
 <span class="sd">    K(X1, X2) = s^2 + cbar^2 * (X1 @ X2.T)^r * exp(-||X1 - X2||^2 / (2 * l^2)).</span>
 
@@ -1404,7 +1404,7 @@ Samples shape: (3200, 2)
 
 <span class="sd">    Returns:</span>
 <span class="sd">        - numpy.ndarray: A covariance matrix computed using the defined kernel.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Compute the dot product term</span>
     <span class="n">dot_product_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">**</span> <span class="n">r</span> <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
 
@@ -1463,11 +1463,11 @@ Samples shape: (3200, 2)
 <span class="n">guess</span> <span class="o">=</span> <span class="n">param_bounds</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">nlp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="o">-</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">nlp</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span>  <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Powell&#39;</span><span class="p">)</span>
-<span class="n">MAP</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">nlp</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span>  <span class="n">method</span> <span class="o">=</span> <span class="s1">'Powell'</span><span class="p">)</span>
+<span class="n">MAP</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">'x'</span><span class="p">]</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">MAP values for parameters:&quot;</span><span class="p">,</span> <span class="n">MAP</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">MAP values for parameters:"</span><span class="p">,</span> <span class="n">MAP</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1494,7 +1494,7 @@ MAP values for parameters: [6.94940459 0.53522913 0.67887983 6.30979757 6.134445
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">min_param</span> <span class="o">=</span> <span class="n">param_bounds</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">max_param</span> <span class="o">=</span> <span class="n">param_bounds</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">lab</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$g$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$v_0$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\bar</span><span class="si">{c}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\ell$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$r$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$s$&#39;</span><span class="p">]</span>
+<span class="n">lab</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">'$g$'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'$v_0$'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'$\bar</span><span class="si">{c}</span><span class="s1">$'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'$\ell$'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'$r$'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'$s$'</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -1508,8 +1508,8 @@ MAP values for parameters: [6.94940459 0.53522913 0.67887983 6.30979757 6.134445
                          <span class="n">log_posterior</span> <span class="o">=</span> <span class="n">MDC</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">,</span> 
                          <span class="n">nburn</span> <span class="o">=</span> <span class="n">num_burn</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">num_walker_per_dim</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
 
-<span class="n">fig</span> <span class="o">=</span> <span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">samples_MD</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">lab</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">],</span>
-                   <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span> <span class="n">hist_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">samples_MD</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">lab</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'C0'</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">],</span>
+                   <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"fontsize"</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span> <span class="n">hist_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">'density'</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>

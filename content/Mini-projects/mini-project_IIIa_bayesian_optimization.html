@@ -784,7 +784,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">multivariate_normal</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">);</span> <span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s2">&quot;talk&quot;</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">"darkgrid"</span><span class="p">);</span> <span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s2">"talk"</span><span class="p">)</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">GPy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">GPyOpt</span>   <span class="c1"># This will do the Bayesian optimization</span>
@@ -868,7 +868,7 @@ document.write(`
 <li><p>Include this kernel as an input argument to <code class="docutils literal notranslate"><span class="pre">GPyOpt.methods.BayesianOptimization</span></code></p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">BayesianOptimization</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">fNoise</span><span class="p">,</span> 
-                                 <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;GP&#39;</span><span class="p">,</span>
+                                 <span class="n">model_type</span><span class="o">=</span><span class="s1">'GP'</span><span class="p">,</span>
                                  <span class="n">kernel</span><span class="o">=</span><span class="n">GPkernel</span><span class="p">,</span> 
                                  <span class="o">...</span>
 </pre></div>
@@ -924,7 +924,7 @@ As an alternative to LCB, if you have time, you can also try the implementation 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">propose_location</span><span class="p">(</span><span class="n">acquisition</span><span class="p">,</span> <span class="n">X_sample</span><span class="p">,</span> <span class="n">Y_sample</span><span class="p">,</span> <span class="n">gpr</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">n_restarts</span><span class="o">=</span><span class="mi">25</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39; </span>
+<span class="w">    </span><span class="sd">''' </span>
 <span class="sd">    Proposes the next sampling point by optimizing the acquisition function. </span>
 <span class="sd">    Args: </span>
 <span class="sd">    acquisition: Acquisition function. </span>
@@ -932,7 +932,7 @@ As an alternative to LCB, if you have time, you can also try the implementation 
 <span class="sd">    Y_sample: Sample values (n x 1). </span>
 <span class="sd">    gpr: A GaussianProcessRegressor fitted to samples. </span>
 <span class="sd">    Returns: Location of the acquisition function maximum. </span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="n">dim</span> <span class="o">=</span> <span class="n">X_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">min_val</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">min_x</span> <span class="o">=</span> <span class="kc">None</span>
@@ -943,7 +943,7 @@ As an alternative to LCB, if you have time, you can also try the implementation 
     
     <span class="c1"># Find the best optimum by starting from n_restart different random points.</span>
     <span class="k">for</span> <span class="n">x0</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">bounds</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">bounds</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_restarts</span><span class="p">,</span> <span class="n">dim</span><span class="p">)):</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">min_obj</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;L-BFGS-B&#39;</span><span class="p">)</span>        
+        <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">min_obj</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'L-BFGS-B'</span><span class="p">)</span>        
         <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="n">min_val</span><span class="p">:</span>
             <span class="n">min_val</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">fun</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">min_x</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span>           
@@ -959,7 +959,7 @@ As an alternative to LCB, if you have time, you can also try the implementation 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">expected_improvement</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X_sample</span><span class="p">,</span> <span class="n">Y_sample</span><span class="p">,</span> <span class="n">gpr</span><span class="p">,</span> <span class="n">xi</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39; </span>
+<span class="w">    </span><span class="sd">''' </span>
 <span class="sd">    Computes the EI at points X based on existing samples, </span>
 <span class="sd">    X_sample and Y_sample, using a Gaussian process surrogate model. </span>
 <span class="sd">    Args: </span>
@@ -970,7 +970,7 @@ As an alternative to LCB, if you have time, you can also try the implementation 
 <span class="sd">    xi: Exploitation-exploration trade-off parameter. </span>
 <span class="sd">    </span>
 <span class="sd">    Returns: Expected improvements at points X. </span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">=</span> <span class="n">gpr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
     <span class="p">(</span><span class="n">mu_sample</span><span class="p">,</span> <span class="n">sigma_sample</span><span class="p">)</span> <span class="o">=</span> <span class="n">gpr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_sample</span><span class="p">)</span>
 
@@ -980,7 +980,7 @@ As an alternative to LCB, if you have time, you can also try the implementation 
     <span class="c1"># otherwise use np.max(Y_sample).</span>
     <span class="n">mu_sample_opt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mu_sample</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;warn&#39;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">'warn'</span><span class="p">):</span>
         <span class="n">imp</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">-</span> <span class="n">mu_sample_opt</span> <span class="o">-</span> <span class="n">xi</span>
         <span class="n">Z</span> <span class="o">=</span> <span class="n">imp</span> <span class="o">/</span> <span class="n">sigma</span>
         <span class="n">ei</span> <span class="o">=</span> <span class="n">imp</span> <span class="o">*</span> <span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
@@ -1007,12 +1007,12 @@ As an alternative to LCB, if you have time, you can also try the implementation 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">langermann</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Langermann test objective function.</span>
 <span class="sd">    Args: </span>
 <span class="sd">    x: Two-dimensional point; format: [[x0, x1]] </span>
 <span class="sd">    Returns: Function value </span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># for compatibility with GPyOpt</span>
     

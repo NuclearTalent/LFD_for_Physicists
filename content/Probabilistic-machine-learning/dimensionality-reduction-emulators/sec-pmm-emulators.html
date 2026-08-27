@@ -897,7 +897,7 @@ This allows one to see whether the emulator is merely fitting the training regio
 <p class="expanded admonition-title">Hide code cell source</p>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""</span>
 <span class="sd">pmm_emulator_with_ec_demo.py</span>
 
 <span class="sd">Demonstration of a Parametric Matrix Model (PMM) used as an emulator,</span>
@@ -906,7 +906,7 @@ This allows one to see whether the emulator is merely fitting the training regio
 
 <span class="sd">Truth model:</span>
 <span class="sd">    A moderately large matrix H_true(x), whose lowest eigenvalue E0(x)</span>
-<span class="sd">    represents an &quot;expensive&quot; observable.</span>
+<span class="sd">    represents an "expensive" observable.</span>
 
 <span class="sd">PMM emulator:</span>
 <span class="sd">    A small trainable symmetric matrix</span>
@@ -927,7 +927,7 @@ This allows one to see whether the emulator is merely fitting the training regio
 <span class="sd">    4. Fits a scalar polynomial regression baseline.</span>
 <span class="sd">    5. Compares all predictions on a dense test grid.</span>
 <span class="sd">    6. Plots predictions and semi-log absolute errors.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -939,9 +939,9 @@ This allows one to see whether the emulator is merely fitting the training regio
 <span class="c1"># ----------------------------------------------------------------------</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">symmetric_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Construct a real symmetric n x n matrix from n(n+1)/2 parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
     <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -955,9 +955,9 @@ This allows one to see whether the emulator is merely fitting the training regio
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">unpack_pmm_params</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n_pmm</span><span class="p">,</span> <span class="n">degree</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert a parameter vector theta into matrices A0, A1, ..., A_degree.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">n_tri</span> <span class="o">=</span> <span class="n">n_pmm</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_pmm</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
     <span class="n">matrices</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -969,11 +969,11 @@ This allows one to see whether the emulator is merely fitting the training regio
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">pmm_matrix</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">n_pmm</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Construct the PMM matrix</span>
 
 <span class="sd">        P(x) = A0 + x A1 + x^2 A2 + ...</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">matrices</span> <span class="o">=</span> <span class="n">unpack_pmm_params</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n_pmm</span><span class="p">,</span> <span class="n">degree</span><span class="p">)</span>
 
     <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_pmm</span><span class="p">,</span> <span class="n">n_pmm</span><span class="p">))</span>
@@ -985,19 +985,19 @@ This allows one to see whether the emulator is merely fitting the training regio
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">pmm_predict_one</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">n_pmm</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">eigen_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Predict using one eigenvalue of the PMM matrix.</span>
 
 <span class="sd">    eigen_index=0 means the lowest eigenvalue.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">evals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">pmm_matrix</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">n_pmm</span><span class="p">,</span> <span class="n">degree</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">evals</span><span class="p">[</span><span class="n">eigen_index</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">pmm_predict</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">n_pmm</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">eigen_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Vectorized PMM prediction.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
         <span class="n">pmm_predict_one</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">n_pmm</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">eigen_index</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_values</span>
@@ -1005,17 +1005,17 @@ This allows one to see whether the emulator is merely fitting the training regio
 
 
 <span class="c1"># ----------------------------------------------------------------------</span>
-<span class="c1"># A synthetic &quot;expensive&quot; truth model</span>
+<span class="c1"># A synthetic "expensive" truth model</span>
 <span class="c1"># ----------------------------------------------------------------------</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">make_truth_matrices</span><span class="p">(</span><span class="n">n_true</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Build fixed matrices defining the truth Hamiltonian.</span>
 
 <span class="sd">        H_true(x) = H0 + x V + x^2 W + nonlinear diagonal term</span>
 
 <span class="sd">    The nonlinear diagonal term makes the target smooth but nontrivial.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">rand_sym</span><span class="p">(</span><span class="n">scale</span><span class="p">):</span>
@@ -1038,9 +1038,9 @@ This allows one to see whether the emulator is merely fitting the training regio
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">H_true</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The larger, more expensive model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">H0_TRUE</span>
         <span class="o">+</span> <span class="n">x</span> <span class="o">*</span> <span class="n">V_TRUE</span>
@@ -1050,16 +1050,16 @@ This allows one to see whether the emulator is merely fitting the training regio
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">expensive_observable</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Observable to emulate: the ground-state energy of H_true(x).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">H_true</span><span class="p">(</span><span class="n">x</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">expensive_observable_array</span><span class="p">(</span><span class="n">x_values</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Vectorized expensive observable.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">expensive_observable</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_values</span><span class="p">])</span>
 
 
@@ -1068,7 +1068,7 @@ This allows one to see whether the emulator is merely fitting the training regio
 <span class="c1"># ----------------------------------------------------------------------</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">build_ec_basis</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">svd_tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Build an eigenvector-continuation basis from exact ground-state</span>
 <span class="sd">    eigenvectors of the truth Hamiltonian at the training points.</span>
 
@@ -1086,7 +1086,7 @@ This allows one to see whether the emulator is merely fitting the training regio
 <span class="sd">        Orthonormal EC basis vectors as columns.</span>
 <span class="sd">    overlap_evals : array</span>
 <span class="sd">        Eigenvalues of the raw overlap matrix B.T @ B.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">basis_vectors</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_train</span><span class="p">:</span>
@@ -1104,7 +1104,7 @@ This allows one to see whether the emulator is merely fitting the training regio
     <span class="n">keep</span> <span class="o">=</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">svd_tol</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">keep</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;EC basis is numerically singular.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"EC basis is numerically singular."</span><span class="p">)</span>
 
     <span class="n">Q</span> <span class="o">=</span> <span class="n">B</span> <span class="o">@</span> <span class="n">U</span><span class="p">[:,</span> <span class="n">keep</span><span class="p">]</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">keep</span><span class="p">]))</span>
 
@@ -1112,7 +1112,7 @@ This allows one to see whether the emulator is merely fitting the training regio
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">ec_predict_one</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Q</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Eigenvector-continuation prediction at one x.</span>
 
 <span class="sd">    The full Hamiltonian is projected into the EC subspace:</span>
@@ -1120,15 +1120,15 @@ This allows one to see whether the emulator is merely fitting the training regio
 <span class="sd">        H_EC(x) = Q.T @ H_true(x) @ Q</span>
 
 <span class="sd">    and the EC prediction is its lowest eigenvalue.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">H_proj</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">H_true</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">@</span> <span class="n">Q</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">H_proj</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">ec_predict</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">Q</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Vectorized EC prediction.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ec_predict_one</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_values</span><span class="p">])</span>
 
 
@@ -1146,12 +1146,12 @@ This allows one to see whether the emulator is merely fitting the training regio
     <span class="n">n_restarts</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
     <span class="n">max_nfev</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Fit the PMM by nonlinear least squares.</span>
 
 <span class="sd">    Because eigenvalue models are nonlinear in the matrix entries,</span>
 <span class="sd">    multiple random restarts are useful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
     <span class="n">n_tri</span> <span class="o">=</span> <span class="n">n_pmm</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_pmm</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
@@ -1200,17 +1200,17 @@ This allows one to see whether the emulator is merely fitting the training regio
 <span class="c1"># ----------------------------------------------------------------------</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">fit_polynomial_baseline</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Ordinary scalar polynomial regression baseline.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">degree</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">coeffs</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">polynomial_predict</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Evaluate scalar polynomial baseline.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">x_values</span><span class="p">)</span>
 
 
@@ -1219,9 +1219,9 @@ This allows one to see whether the emulator is merely fitting the training regio
 <span class="c1"># ----------------------------------------------------------------------</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">rmse</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Root-mean-square error.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y_pred</span> <span class="o">-</span> <span class="n">y_true</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
 
 
@@ -1293,25 +1293,25 @@ This allows one to see whether the emulator is merely fitting the training regio
     <span class="n">poly_rmse_interp</span> <span class="o">=</span> <span class="n">rmse</span><span class="p">(</span><span class="n">y_poly</span><span class="p">[</span><span class="n">train_mask</span><span class="p">],</span> <span class="n">y_test</span><span class="p">[</span><span class="n">train_mask</span><span class="p">])</span>
     <span class="n">poly_rmse_extra</span> <span class="o">=</span> <span class="n">rmse</span><span class="p">(</span><span class="n">y_poly</span><span class="p">[</span><span class="n">extra_mask</span><span class="p">],</span> <span class="n">y_test</span><span class="p">[</span><span class="n">extra_mask</span><span class="p">])</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PMM emulator demo with eigenvector continuation&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-----------------------------------------------&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of training points:       </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Truth matrix dimension:          </span><span class="si">{</span><span class="n">H0_TRUE</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PMM matrix dimension:            </span><span class="si">{</span><span class="n">n_pmm</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PMM polynomial degree:           </span><span class="si">{</span><span class="n">pmm_degree</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Polynomial baseline degree:      </span><span class="si">{</span><span class="n">poly_degree</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PMM training loss:               </span><span class="si">{</span><span class="n">pmm_train_loss</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;EC basis dimension:              </span><span class="si">{</span><span class="n">Q_ec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Smallest raw EC overlap eigval:  </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ec_overlap_evals</span><span class="p">)</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"PMM emulator demo with eigenvector continuation"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"-----------------------------------------------"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Number of training points:       </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Truth matrix dimension:          </span><span class="si">{</span><span class="n">H0_TRUE</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"PMM matrix dimension:            </span><span class="si">{</span><span class="n">n_pmm</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"PMM polynomial degree:           </span><span class="si">{</span><span class="n">pmm_degree</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Polynomial baseline degree:      </span><span class="si">{</span><span class="n">poly_degree</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"PMM training loss:               </span><span class="si">{</span><span class="n">pmm_train_loss</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"EC basis dimension:              </span><span class="si">{</span><span class="n">Q_ec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Smallest raw EC overlap eigval:  </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ec_overlap_evals</span><span class="p">)</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">()</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RMSE on dense test grid&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  PMM interpolation region:      </span><span class="si">{</span><span class="n">pmm_rmse_interp</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  PMM extrapolation region:      </span><span class="si">{</span><span class="n">pmm_rmse_extra</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  EC interpolation region:       </span><span class="si">{</span><span class="n">ec_rmse_interp</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  EC extrapolation region:       </span><span class="si">{</span><span class="n">ec_rmse_extra</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Polynomial interpolation:      </span><span class="si">{</span><span class="n">poly_rmse_interp</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Polynomial extrapolation:      </span><span class="si">{</span><span class="n">poly_rmse_extra</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"RMSE on dense test grid"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  PMM interpolation region:      </span><span class="si">{</span><span class="n">pmm_rmse_interp</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  PMM extrapolation region:      </span><span class="si">{</span><span class="n">pmm_rmse_extra</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  EC interpolation region:       </span><span class="si">{</span><span class="n">ec_rmse_interp</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  EC extrapolation region:       </span><span class="si">{</span><span class="n">ec_rmse_extra</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Polynomial interpolation:      </span><span class="si">{</span><span class="n">poly_rmse_interp</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Polynomial extrapolation:      </span><span class="si">{</span><span class="n">poly_rmse_extra</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Plot emulator predictions.</span>
@@ -1321,47 +1321,47 @@ This allows one to see whether the emulator is merely fitting the training regio
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
         <span class="n">x_test</span><span class="p">,</span>
         <span class="n">y_test</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Expensive model&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"Expensive model"</span><span class="p">,</span>
         <span class="n">lw</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
         <span class="n">x_test</span><span class="p">,</span>
         <span class="n">y_pmm</span><span class="p">,</span>
-        <span class="s2">&quot;--&quot;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PMM emulator&quot;</span><span class="p">,</span>
+        <span class="s2">"--"</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"PMM emulator"</span><span class="p">,</span>
         <span class="n">lw</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
         <span class="n">x_test</span><span class="p">,</span>
         <span class="n">y_ec</span><span class="p">,</span>
-        <span class="s2">&quot;-.&quot;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Eigenvector continuation&quot;</span><span class="p">,</span>
+        <span class="s2">"-."</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"Eigenvector continuation"</span><span class="p">,</span>
         <span class="n">lw</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
         <span class="n">x_test</span><span class="p">,</span>
         <span class="n">y_poly</span><span class="p">,</span>
-        <span class="s2">&quot;:&quot;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Polynomial baseline&quot;</span><span class="p">,</span>
+        <span class="s2">":"</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"Polynomial baseline"</span><span class="p">,</span>
         <span class="n">lw</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
         <span class="n">x_train</span><span class="p">,</span>
         <span class="n">y_train</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Training data&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"Training data"</span><span class="p">,</span>
         <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">x_test_min</span><span class="p">,</span> <span class="n">x_train_min</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.08</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">x_train_max</span><span class="p">,</span> <span class="n">x_test_max</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.08</span><span class="p">)</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Input parameter $x$&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Observable $E_0(x)$&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;PMM emulator compared with EC and polynomial regression&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"Input parameter $x$"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"Observable $E_0(x)$"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"PMM emulator compared with EC and polynomial regression"</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
@@ -1377,55 +1377,55 @@ This allows one to see whether the emulator is merely fitting the training regio
     <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span>
         <span class="n">x_test</span><span class="p">,</span>
         <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_pmm</span> <span class="o">-</span> <span class="n">y_test</span><span class="p">)</span> <span class="o">+</span> <span class="n">eps</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PMM absolute error&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"PMM absolute error"</span><span class="p">,</span>
         <span class="n">lw</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span>
         <span class="n">x_test</span><span class="p">,</span>
         <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_ec</span> <span class="o">-</span> <span class="n">y_test</span><span class="p">)</span> <span class="o">+</span> <span class="n">eps</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;EC absolute error&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"EC absolute error"</span><span class="p">,</span>
         <span class="n">lw</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span>
         <span class="n">x_test</span><span class="p">,</span>
         <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_poly</span> <span class="o">-</span> <span class="n">y_test</span><span class="p">)</span> <span class="o">+</span> <span class="n">eps</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Polynomial absolute error&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"Polynomial absolute error"</span><span class="p">,</span>
         <span class="n">lw</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x_train_min</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x_train_max</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x_train_min</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x_train_max</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Input parameter $x$&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Absolute prediction error&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Absolute emulator errors&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"Input parameter $x$"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"Absolute prediction error"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Absolute emulator errors"</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"both"</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;x_train&quot;</span><span class="p">:</span> <span class="n">x_train</span><span class="p">,</span>
-        <span class="s2">&quot;y_train&quot;</span><span class="p">:</span> <span class="n">y_train</span><span class="p">,</span>
-        <span class="s2">&quot;x_test&quot;</span><span class="p">:</span> <span class="n">x_test</span><span class="p">,</span>
-        <span class="s2">&quot;y_test&quot;</span><span class="p">:</span> <span class="n">y_test</span><span class="p">,</span>
-        <span class="s2">&quot;y_pmm&quot;</span><span class="p">:</span> <span class="n">y_pmm</span><span class="p">,</span>
-        <span class="s2">&quot;y_ec&quot;</span><span class="p">:</span> <span class="n">y_ec</span><span class="p">,</span>
-        <span class="s2">&quot;y_poly&quot;</span><span class="p">:</span> <span class="n">y_poly</span><span class="p">,</span>
-        <span class="s2">&quot;theta_pmm&quot;</span><span class="p">:</span> <span class="n">theta_pmm</span><span class="p">,</span>
-        <span class="s2">&quot;Q_ec&quot;</span><span class="p">:</span> <span class="n">Q_ec</span><span class="p">,</span>
-        <span class="s2">&quot;ec_overlap_evals&quot;</span><span class="p">:</span> <span class="n">ec_overlap_evals</span><span class="p">,</span>
-        <span class="s2">&quot;poly_coeffs&quot;</span><span class="p">:</span> <span class="n">poly_coeffs</span><span class="p">,</span>
-        <span class="s2">&quot;pmm_train_loss&quot;</span><span class="p">:</span> <span class="n">pmm_train_loss</span><span class="p">,</span>
-        <span class="s2">&quot;rmse&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;pmm_interp&quot;</span><span class="p">:</span> <span class="n">pmm_rmse_interp</span><span class="p">,</span>
-            <span class="s2">&quot;pmm_extra&quot;</span><span class="p">:</span> <span class="n">pmm_rmse_extra</span><span class="p">,</span>
-            <span class="s2">&quot;ec_interp&quot;</span><span class="p">:</span> <span class="n">ec_rmse_interp</span><span class="p">,</span>
-            <span class="s2">&quot;ec_extra&quot;</span><span class="p">:</span> <span class="n">ec_rmse_extra</span><span class="p">,</span>
-            <span class="s2">&quot;poly_interp&quot;</span><span class="p">:</span> <span class="n">poly_rmse_interp</span><span class="p">,</span>
-            <span class="s2">&quot;poly_extra&quot;</span><span class="p">:</span> <span class="n">poly_rmse_extra</span><span class="p">,</span>
+        <span class="s2">"x_train"</span><span class="p">:</span> <span class="n">x_train</span><span class="p">,</span>
+        <span class="s2">"y_train"</span><span class="p">:</span> <span class="n">y_train</span><span class="p">,</span>
+        <span class="s2">"x_test"</span><span class="p">:</span> <span class="n">x_test</span><span class="p">,</span>
+        <span class="s2">"y_test"</span><span class="p">:</span> <span class="n">y_test</span><span class="p">,</span>
+        <span class="s2">"y_pmm"</span><span class="p">:</span> <span class="n">y_pmm</span><span class="p">,</span>
+        <span class="s2">"y_ec"</span><span class="p">:</span> <span class="n">y_ec</span><span class="p">,</span>
+        <span class="s2">"y_poly"</span><span class="p">:</span> <span class="n">y_poly</span><span class="p">,</span>
+        <span class="s2">"theta_pmm"</span><span class="p">:</span> <span class="n">theta_pmm</span><span class="p">,</span>
+        <span class="s2">"Q_ec"</span><span class="p">:</span> <span class="n">Q_ec</span><span class="p">,</span>
+        <span class="s2">"ec_overlap_evals"</span><span class="p">:</span> <span class="n">ec_overlap_evals</span><span class="p">,</span>
+        <span class="s2">"poly_coeffs"</span><span class="p">:</span> <span class="n">poly_coeffs</span><span class="p">,</span>
+        <span class="s2">"pmm_train_loss"</span><span class="p">:</span> <span class="n">pmm_train_loss</span><span class="p">,</span>
+        <span class="s2">"rmse"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"pmm_interp"</span><span class="p">:</span> <span class="n">pmm_rmse_interp</span><span class="p">,</span>
+            <span class="s2">"pmm_extra"</span><span class="p">:</span> <span class="n">pmm_rmse_extra</span><span class="p">,</span>
+            <span class="s2">"ec_interp"</span><span class="p">:</span> <span class="n">ec_rmse_interp</span><span class="p">,</span>
+            <span class="s2">"ec_extra"</span><span class="p">:</span> <span class="n">ec_rmse_extra</span><span class="p">,</span>
+            <span class="s2">"poly_interp"</span><span class="p">:</span> <span class="n">poly_rmse_interp</span><span class="p">,</span>
+            <span class="s2">"poly_extra"</span><span class="p">:</span> <span class="n">poly_rmse_extra</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">}</span>
 
@@ -1442,21 +1442,21 @@ Truth matrix dimension:          40
 PMM matrix dimension:            4
 PMM polynomial degree:           2
 Polynomial baseline degree:      6
-PMM training loss:               3.568e-21
+PMM training loss:               1.479e-22
 EC basis dimension:              9
 Smallest raw EC overlap eigval:  2.562e-05
 
 RMSE on dense test grid
-  PMM interpolation region:      4.118e-03
-  PMM extrapolation region:      4.399e-02
+  PMM interpolation region:      2.112e-02
+  PMM extrapolation region:      2.442e+00
   EC interpolation region:       3.833e-05
   EC extrapolation region:       2.963e-02
   Polynomial interpolation:      1.010e-02
   Polynomial extrapolation:      9.715e-01
 </pre></div>
 </div>
-<img alt="../../../_images/88cd9f67a3be8cfaf354e595978ab63b92403579bf62d5aa4bc8c2e36ecd38d1.png" src="../../../_images/88cd9f67a3be8cfaf354e595978ab63b92403579bf62d5aa4bc8c2e36ecd38d1.png" />
-<img alt="../../../_images/68054c973a4e8ad178e317c64b0432e300d969c6980dbf3bb959e49010727ef1.png" src="../../../_images/68054c973a4e8ad178e317c64b0432e300d969c6980dbf3bb959e49010727ef1.png" />
+<img alt="../../../_images/6ab8dbcada95d9bacaae46a828e4691af8f57d88152c9771e680a94e6f1f6e2f.png" src="../../../_images/6ab8dbcada95d9bacaae46a828e4691af8f57d88152c9771e680a94e6f1f6e2f.png" />
+<img alt="../../../_images/9530bc7ae00ea6f007e1bd899b15b6b115e6de8bbc1aad63c55f62834629c711.png" src="../../../_images/9530bc7ae00ea6f007e1bd899b15b6b115e6de8bbc1aad63c55f62834629c711.png" />
 </div>
 </div>
 </section>
