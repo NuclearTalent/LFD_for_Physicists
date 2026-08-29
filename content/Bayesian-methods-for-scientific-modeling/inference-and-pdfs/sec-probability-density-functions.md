@@ -183,7 +183,7 @@ Bayes' rule tells us how to reverse the conditional: $p(\alphavec|\thetavec) \Ri
 A typical application is when $\alphavec$ is a vector of data $\data$. Then Bayes' rule is
 
 $$
-  \overbrace{ \pdf{\thetavec}{\data,I)} }^{\textrm{posterior}} =
+  \overbrace{ \pdf{\thetavec}{\data,I} }^{\textrm{posterior}} =
   \frac{ \color{red}{ \overbrace{ \pdf{\data}{\thetavec,I} }^{\textrm{likelihood}}} 
  \color{black}{\ \times\ } 
   \color{blue}{ \overbrace{ \pdf{\thetavec}{I}}^{\textrm{prior}}}    

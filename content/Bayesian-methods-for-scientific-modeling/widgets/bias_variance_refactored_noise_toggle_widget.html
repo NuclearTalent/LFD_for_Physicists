@@ -1,0 +1,1282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bias-Variance Trade-off by Model Complexity</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0;
+      padding: 1.5rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f6f7f9;
+      color: #222;
+      line-height: 1.5;
+    }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+    h1 { margin-top: 0; font-size: 1.6rem; }
+    .widget {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      background: #fff;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+    }
+    select, input, button { font: inherit; }
+    input[type="range"] { width: 140px; }
+    button {
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      background: #f7f7f7;
+      padding: 0.35rem 0.7rem;
+      cursor: pointer;
+    }
+    button:hover { background: #eeeeee; }
+    canvas {
+      width: 100%;
+      max-width: 1080px;
+      height: 520px;
+      display: block;
+      margin: 0.35rem auto 0;
+      border: 1px solid #eee;
+      background: white;
+    }
+    .controls-panel {
+      display: block;
+      border: 1px solid #e2e2e2;
+      border-radius: 8px;
+      background: #fafafa;
+      padding: 0.45rem 0.6rem;
+      margin-bottom: 0.4rem;
+    }
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 0.45rem 0.9rem;
+    }
+    .control-grid label {
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+    .readout { display: none; }
+    .note { display: none; }
+  </style>
+</head>
+
+<body>
+<main>
+  <h1>Bias-Variance Trade-off by Model Complexity</h1>
+
+  <div id="bias_variance_widget" class="widget">
+<div id="controls-panel" class="controls-panel">
+      <div class="control-grid">
+        <label>
+          function
+          <select id="truth">
+            <option value="sine">smooth sine</option>
+            <option value="wiggly">wiggly sine</option>
+            <option value="step">smooth step</option>
+            <option value="quadratic">quadratic</option>
+            <option value="cubic">cubic polynomial</option>
+            <option value="abs">absolute-value cusp</option>
+            <option value="bump">Gaussian bump</option>
+            <option value="highfreq">high-frequency sine</option>
+            <option value="damped">damped oscillation</option>
+          </select>
+        </label>
+
+        <label>
+          max degree
+          <span>
+            <input id="max-degree" type="range" min="3" max="18" step="1" value="15">
+            <span id="max-degree-value">15</span>
+          </span>
+        </label>
+
+        <label>
+          selected degree
+          <span>
+            <input id="selected-degree" type="range" min="0" max="15" step="1" value="3">
+            <span id="selected-degree-value">3</span>
+          </span>
+        </label>
+
+        <label>
+          samples
+          <span>
+            <input id="ntrain" type="range" min="6" max="80" step="1" value="18">
+            <span id="ntrain-value">18</span>
+          </span>
+        </label>
+
+        <label>
+          noise σ
+          <span>
+            <input id="noise" type="range" min="0" max="1.0" step="0.02" value="0.25">
+            <span id="noise-value">0.25</span>
+          </span>
+        </label>
+
+        <label>
+          repetitions
+          <span>
+            <input id="nrep" type="range" min="10" max="150" step="5" value="60">
+            <span id="nrep-value">60</span>
+          </span>
+        </label>
+
+        <label>
+          ridge λ
+          <span>
+            <input id="ridge" type="range" min="-6" max="1" step="0.25" value="-6">
+            <span id="ridge-value">0</span>
+          </span>
+        </label>
+
+        <label>
+          y scale
+          <select id="yscale">
+            <option value="log" selected>log</option>
+            <option value="linear">linear</option>
+            <option value="normalized">normalized</option>
+          </select>
+        </label>
+
+        <label>
+          <span>show fitted models</span>
+          <input id="show-sample-panel" type="checkbox" checked>
+        </label>
+
+        <label>
+          <span>include noise in MSE</span>
+          <input id="include-noise" type="checkbox">
+        </label>
+
+        <label>
+          <span></span>
+          <button id="resample" type="button">Resample simulation</button>
+        </label>
+      </div>
+    </div>
+
+    <div id="readout" class="readout"></div>
+    <div class="note"></div>
+
+    <canvas id="plot" width="1080" height="620"
+            aria-label="Bias variance decomposition as a function of model complexity"></canvas>
+  </div>
+</main>
+
+<script>
+/*
+  Bias-variance trade-off widget
+
+  Structure:
+  1. UI state and random-number utilities
+  2. True functions
+  3. Polynomial ridge regression
+  4. Monte Carlo bias-variance simulation
+  5. Canvas plotting helpers
+  6. Rendering and event bindings
+
+  The main pedagogical plot is generated from repeated simulations but is
+  displayed on a log scale by default so that the bias-variance trade-off is
+  visible even when high-degree polynomial fits occasionally have large errors.
+*/
+(function () {
+  "use strict";
+
+  // ---------------------------------------------------------------------------
+  // DOM handles and reproducible random numbers
+  // ---------------------------------------------------------------------------
+
+  const root = document.getElementById("bias_variance_widget");
+  const $ = (id) => root.querySelector("#" + id);
+  const canvas = $("plot");
+  const ctx = canvas.getContext("2d");
+
+  let seed = 123456789;
+
+  function random() {
+    seed = (seed * 48271) % 2147483647;
+    return (seed - 1) / 2147483646;
+  }
+
+  function normalRandom() {
+    const u1 = Math.max(random(), 1e-12);
+    const u2 = random();
+    return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Test grid and true functions
+  // ---------------------------------------------------------------------------
+
+  const xMin = -1;
+  const xMax = 1;
+  const nGrid = 160;
+
+  const xGrid = Array.from({ length: nGrid }, (_, i) =>
+    xMin + (xMax - xMin) * i / (nGrid - 1)
+  );
+
+  function trueFunction(kind, x) {
+    if (kind === "wiggly") {
+      return 0.75 * Math.sin(Math.PI * x) + 0.35 * Math.sin(3 * Math.PI * x);
+    }
+
+    if (kind === "step") {
+      return Math.tanh(4.0 * x);
+    }
+
+    if (kind === "quadratic") {
+      return 1.2 * x * x - 0.4;
+    }
+
+    if (kind === "cubic") {
+      return 1.4 * x * x * x - 0.6 * x;
+    }
+
+    if (kind === "abs") {
+      return Math.abs(1.6 * x) - 0.65;
+    }
+
+    if (kind === "bump") {
+      return 1.35 * Math.exp(-18 * (x - 0.20) * (x - 0.20)) - 0.45;
+    }
+
+    if (kind === "highfreq") {
+      return 0.65 * Math.sin(4 * Math.PI * x);
+    }
+
+    if (kind === "damped") {
+      return 1.15 * Math.exp(-1.8 * (x + 1)) * Math.sin(4.5 * Math.PI * (x + 1));
+    }
+
+    return Math.sin(Math.PI * x);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Polynomial ridge regression
+  // ---------------------------------------------------------------------------
+
+  function polynomialFeatures(x, degree) {
+    const features = [];
+    let power = 1;
+
+    for (let k = 0; k <= degree; k++) {
+      features.push(power);
+      power *= x;
+    }
+
+    return features;
+  }
+
+  function zeros(n, m) {
+    return Array.from({ length: n }, () => Array(m).fill(0));
+  }
+
+  function solveLinearSystem(Ain, bin) {
+    const n = bin.length;
+    const A = Ain.map((row) => row.slice());
+    const b = bin.slice();
+
+    for (let col = 0; col < n; col++) {
+      let pivot = col;
+      let best = Math.abs(A[col][col]);
+
+      for (let row = col + 1; row < n; row++) {
+        const candidate = Math.abs(A[row][col]);
+        if (candidate > best) {
+          best = candidate;
+          pivot = row;
+        }
+      }
+
+      if (pivot !== col) {
+        [A[col], A[pivot]] = [A[pivot], A[col]];
+        [b[col], b[pivot]] = [b[pivot], b[col]];
+      }
+
+      const diag = Math.abs(A[col][col]) < 1e-12
+        ? (A[col][col] < 0 ? -1e-12 : 1e-12)
+        : A[col][col];
+
+      for (let row = col + 1; row < n; row++) {
+        const factor = A[row][col] / diag;
+
+        for (let k = col; k < n; k++) {
+          A[row][k] -= factor * A[col][k];
+        }
+
+        b[row] -= factor * b[col];
+      }
+    }
+
+    const x = Array(n).fill(0);
+
+    for (let row = n - 1; row >= 0; row--) {
+      let sum = b[row];
+
+      for (let col = row + 1; col < n; col++) {
+        sum -= A[row][col] * x[col];
+      }
+
+      x[row] = sum / A[row][row];
+    }
+
+    return x;
+  }
+
+  function fitPolynomialRidge(xs, ys, degree, lambda) {
+    const p = degree + 1;
+    const XtX = zeros(p, p);
+    const Xty = Array(p).fill(0);
+
+    for (let i = 0; i < xs.length; i++) {
+      const phi = polynomialFeatures(xs[i], degree);
+
+      for (let a = 0; a < p; a++) {
+        Xty[a] += phi[a] * ys[i];
+
+        for (let b = 0; b < p; b++) {
+          XtX[a][b] += phi[a] * phi[b];
+        }
+      }
+    }
+
+    // Ridge stabilizes high-degree fits. The intercept is not penalized.
+    for (let a = 1; a < p; a++) {
+      XtX[a][a] += lambda;
+    }
+
+    return solveLinearSystem(XtX, Xty);
+  }
+
+  function predictPolynomial(coeffs, x) {
+    let y = 0;
+    let power = 1;
+
+    for (let k = 0; k < coeffs.length; k++) {
+      y += coeffs[k] * power;
+      power *= x;
+    }
+
+    return y;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Bias-variance simulation
+  // ---------------------------------------------------------------------------
+
+  function makeTrainingSet(truth, nTrain, noiseSigma) {
+    const xs = [];
+    const ys = [];
+
+    for (let i = 0; i < nTrain; i++) {
+      const x = xMin + (xMax - xMin) * random();
+      const y = trueFunction(truth, x) + noiseSigma * normalRandom();
+      xs.push(x);
+      ys.push(y);
+    }
+
+    return { xs, ys };
+  }
+
+  function predictionForDegree(data, truth, degree, lambda) {
+    const coeffs = fitPolynomialRidge(data.xs, data.ys, degree, lambda);
+    return xGrid.map((x) => predictPolynomial(coeffs, x));
+  }
+
+  function computeDecomposition(state) {
+    const trueValues = xGrid.map((x) => trueFunction(state.truth, x));
+    const degrees = Array.from({ length: state.maxDegree + 1 }, (_, i) => i);
+
+    const predictionsByDegree = degrees.map(() => []);
+    let selectedExample = null;
+
+    for (let r = 0; r < state.nRep; r++) {
+      const data = makeTrainingSet(state.truth, state.nTrain, state.noiseSigma);
+
+      if (r === 0) {
+        selectedExample = data;
+      }
+
+      for (const degree of degrees) {
+        const prediction = predictionForDegree(data, state.truth, degree, state.lambda);
+        predictionsByDegree[degree].push(prediction);
+      }
+    }
+
+    const rows = [];
+
+    for (const degree of degrees) {
+      const predictions = predictionsByDegree[degree];
+      const meanPrediction = Array(nGrid).fill(0);
+
+      for (const prediction of predictions) {
+        for (let i = 0; i < nGrid; i++) {
+          meanPrediction[i] += prediction[i] / state.nRep;
+        }
+      }
+
+      let bias2 = 0;
+      let variance = 0;
+
+      for (let i = 0; i < nGrid; i++) {
+        const bias = meanPrediction[i] - trueValues[i];
+        bias2 += bias * bias / nGrid;
+
+        for (const prediction of predictions) {
+          const d = prediction[i] - meanPrediction[i];
+          variance += d * d / (state.nRep * nGrid);
+        }
+      }
+
+      const noise = state.noiseSigma * state.noiseSigma;
+
+      // Function MSE compares the fitted function to the true noiseless target.
+      // It is the error due to learning only: bias² + variance.
+      const functionMse = bias2 + variance;
+
+      // Noisy-observation test MSE includes irreducible observation noise.
+      const noisyTestMse = functionMse + noise;
+
+      rows.push({
+        degree,
+        bias2,
+        variance,
+        noise,
+        functionMse,
+        noisyTestMse,
+        mse: functionMse,
+        predictions,
+        meanPrediction
+      });
+    }
+
+    return {
+      degrees,
+      rows,
+      trueValues,
+      selectedExample
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Plotting helpers
+  // ---------------------------------------------------------------------------
+
+  function drawLine(points, X, Y, color, width = 2.5, dash = [], alpha = 1) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.setLineDash(dash);
+    ctx.beginPath();
+
+    points.forEach((point, i) => {
+      const px = X(point.x);
+      const py = Y(point.y);
+
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawPoints(points, X, Y, color, radius = 4) {
+    ctx.save();
+    ctx.fillStyle = color;
+
+    for (const point of points) {
+      ctx.beginPath();
+      ctx.arc(X(point.x), Y(point.y), radius, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  function drawAxes(panel, xmin, xmax, ymin, ymax, xlabel, ylabel, title) {
+    const X = (x) => panel.x + (x - xmin) / (xmax - xmin) * panel.w;
+    const Y = (y) => panel.y + panel.h - (y - ymin) / (ymax - ymin) * panel.h;
+
+    ctx.strokeStyle = "#222";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(panel.x, panel.y);
+    ctx.lineTo(panel.x, panel.y + panel.h);
+    ctx.lineTo(panel.x + panel.w, panel.y + panel.h);
+    ctx.stroke();
+
+    ctx.fillStyle = "#222";
+    ctx.font = "16px sans-serif";
+
+    const xTicks = 6;
+    for (let i = 0; i <= xTicks; i++) {
+      const x = xmin + (xmax - xmin) * i / xTicks;
+      ctx.beginPath();
+      ctx.moveTo(X(x), panel.y + panel.h);
+      ctx.lineTo(X(x), panel.y + panel.h + 5);
+      ctx.stroke();
+      ctx.fillText(String(Math.round(x)), X(x) - 6, panel.y + panel.h + 24);
+    }
+
+    const yTicks = 5;
+    for (let i = 0; i <= yTicks; i++) {
+      const y = ymin + (ymax - ymin) * i / yTicks;
+      ctx.beginPath();
+      ctx.moveTo(panel.x - 5, Y(y));
+      ctx.lineTo(panel.x, Y(y));
+      ctx.stroke();
+      ctx.fillText(y.toFixed(2), panel.x - 58, Y(y) + 5);
+    }
+
+    ctx.font = "18px sans-serif";
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.fillText(xlabel, panel.x + panel.w / 2, panel.y + panel.h + 48);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(panel.x - 82, panel.y + panel.h / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.fillText(ylabel, 0, 0);
+    ctx.restore();
+
+    ctx.font = "19px sans-serif";
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.fillText(title, panel.x + panel.w / 2, panel.y - 14);
+    ctx.restore();
+
+    return { X, Y };
+  }
+
+  function drawLegend(panel, rows, xOffset = 250) {
+    const x = panel.x + panel.w - xOffset;
+    let y = panel.y + 26;
+    const rowHeight = 25;
+    const width = xOffset - 25;
+    const height = 20 + rows.length * rowHeight;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.18)";
+    ctx.fillRect(x - 12, y - 20, width, height);
+    ctx.strokeRect(x - 12, y - 20, width, height);
+
+    ctx.font = "16px sans-serif";
+
+    for (const row of rows) {
+      ctx.strokeStyle = row.color;
+      ctx.lineWidth = row.width || 3;
+      ctx.setLineDash(row.dash || []);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 30, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "#222";
+      ctx.fillText(row.label, x + 40, y + 6);
+      y += rowHeight;
+    }
+
+    ctx.restore();
+  }
+
+  function drawVerticalMarker(x, panel, X, color) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(X(x), panel.y);
+    ctx.lineTo(X(x), panel.y + panel.h);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ---------------------------------------------------------------------------
+  // UI state
+  // ---------------------------------------------------------------------------
+
+  function sliderLambda() {
+    const log10Lambda = Number($("ridge").value);
+    if (log10Lambda <= -5.999) return 0;
+    return Math.pow(10, log10Lambda);
+  }
+
+  function getState() {
+    const maxDegree = Number($("max-degree").value);
+    let selectedDegree = Number($("selected-degree").value);
+
+    if (selectedDegree > maxDegree) {
+      selectedDegree = maxDegree;
+      $("selected-degree").value = selectedDegree;
+    }
+
+    $("selected-degree").max = maxDegree;
+
+    return {
+      truth: $("truth").value,
+      maxDegree,
+      selectedDegree,
+      nTrain: Number($("ntrain").value),
+      noiseSigma: Number($("noise").value),
+      nRep: Number($("nrep").value),
+      lambda: sliderLambda(),
+      showSamplePanel: $("show-sample-panel").checked,
+      includeNoise: $("include-noise").checked,
+      yScaleMode: $("yscale").value
+    };
+  }
+
+  function updateReadouts(state) {
+    $("max-degree-value").textContent = state.maxDegree;
+    $("selected-degree-value").textContent = state.selectedDegree;
+    $("ntrain-value").textContent = state.nTrain;
+    $("noise-value").textContent = state.noiseSigma.toFixed(2);
+    $("nrep-value").textContent = state.nRep;
+    $("ridge-value").textContent =
+      state.lambda === 0 ? "0" : state.lambda.toExponential(1);
+  }
+
+
+  function quantile(values, q) {
+    const sorted = values.slice().filter(Number.isFinite).sort((a, b) => a - b);
+    if (sorted.length === 0) return 1;
+    const pos = (sorted.length - 1) * q;
+    const lo = Math.floor(pos);
+    const hi = Math.ceil(pos);
+    if (lo === hi) return sorted[lo];
+    return sorted[lo] + (pos - lo) * (sorted[hi] - sorted[lo]);
+  }
+
+  function normalizeRowsForSchematic(rows) {
+    // For a pedagogical plot, use a common robust scale so the trade-off
+    // shape is visible even if the highest-degree fits occasionally blow up.
+    const finiteMse = rows.map((row) => displayMse(row)).filter(Number.isFinite);
+    const robustScale = Math.max(1e-12, quantile(finiteMse, 0.90));
+
+    return rows.map((row) => ({
+      ...row,
+      plotBias2: row.bias2 / robustScale,
+      plotVariance: row.variance / robustScale,
+      plotNoise: row.noise / robustScale,
+      plotMse: row.mse / robustScale
+    }));
+  }
+
+  function clippedRowsForRawScale(rows, ymax) {
+    // Avoid drawing curves far outside the panel if high-degree fits explode.
+    return rows.map((row) => ({
+      ...row,
+      plotBias2: Math.min(row.bias2, ymax),
+      plotVariance: Math.min(row.variance, ymax),
+      plotNoise: Math.min(row.noise, ymax),
+      plotMse: Math.min(displayMse(row), ymax)
+    }));
+  }
+
+  function fillComplexityBand(panel, X, Y, x0, x1, yTop, color, label) {
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.fillRect(X(x0), Y(yTop), X(x1) - X(x0), Y(0) - Y(yTop));
+
+    ctx.fillStyle = "rgba(70, 70, 70, 0.75)";
+    ctx.font = "18px sans-serif";
+    ctx.fillText(label, X(x0) + 14, Y(yTop) + 28);
+    ctx.restore();
+  }
+
+  function drawComplexityLegend(panel) {
+    const x = panel.x + panel.w * 0.37;
+    let y = panel.y + 28;
+    const rowHeight = 25;
+    const rows = [
+      { label: "bias²", color: "#1f3fff" },
+      { label: "variance", color: "#d62728" },
+      { label: includeNoise ? "test MSE" : "function MSE", color: "#208020" },
+      { label: "optimal complexity", color: "#8a008a", dash: [6, 5] }
+    ];
+    const width = 265;
+    const height = 24 + rows.length * rowHeight;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.18)";
+    ctx.fillRect(x - 12, y - 20, width, height);
+    ctx.strokeRect(x - 12, y - 20, width, height);
+    ctx.font = "17px sans-serif";
+
+    for (const row of rows) {
+      ctx.strokeStyle = row.color;
+      ctx.lineWidth = 3;
+      ctx.setLineDash(row.dash || []);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 34, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#222";
+      ctx.fillText(row.label, x + 46, y + 6);
+      y += rowHeight;
+    }
+
+    ctx.restore();
+  }
+
+
+  function quantile(values, q) {
+    const sorted = values.slice().filter(Number.isFinite).sort((a, b) => a - b);
+    if (sorted.length === 0) return 1;
+
+    const pos = (sorted.length - 1) * q;
+    const lo = Math.floor(pos);
+    const hi = Math.ceil(pos);
+
+    if (lo === hi) return sorted[lo];
+
+    return sorted[lo] + (pos - lo) * (sorted[hi] - sorted[lo]);
+  }
+
+  function makeMainPlotRows(rows, mode, includeNoise) {
+    const displayMse = (row) => includeNoise ? row.noisyTestMse : row.functionMse;
+
+    const allErrors = rows.flatMap((row) => [
+      row.bias2,
+      row.variance,
+      includeNoise ? row.noise : 0,
+      displayMse(row)
+    ]).filter((x) => Number.isFinite(x) && x > 0);
+
+    const medianMse = quantile(rows.map((row) => displayMse(row)), 0.5);
+    const eps = Math.max(1e-12, 1e-6 * medianMse);
+
+    if (mode === "log") {
+      const transformed = rows.map((row) => ({
+        ...row,
+        plotBias2: Math.log10(row.bias2 + eps),
+        plotVariance: Math.log10(row.variance + eps),
+        plotNoise: Math.log10(row.noise + eps),
+        plotMse: Math.log10(displayMse(row) + eps)
+      }));
+
+      const values = transformed.flatMap((row) => [
+        row.plotBias2,
+        row.plotVariance,
+        row.plotNoise,
+        row.plotMse
+      ]);
+
+      const ymin = Math.floor(quantile(values, 0.02) * 2) / 2;
+      const ymax = Math.ceil(quantile(values, 0.98) * 2) / 2;
+
+      return {
+        rows: transformed,
+        ymin,
+        ymax: Math.max(ymax, ymin + 1),
+        yLabel: "log10(error)",
+        title: includeNoise ? "Bias-variance trade-off with irreducible noise" : "Bias-variance trade-off"
+      };
+    }
+
+    if (mode === "normalized") {
+      const scale = Math.max(1e-12, quantile(rows.map((row) => displayMse(row)), 0.90));
+      const transformed = rows.map((row) => ({
+        ...row,
+        plotBias2: row.bias2 / scale,
+        plotVariance: row.variance / scale,
+        plotNoise: row.noise / scale,
+        plotMse: displayMse(row) / scale
+      }));
+
+      return {
+        rows: transformed,
+        ymin: 0,
+        ymax: Math.max(1.15, quantile(transformed.map((row) => row.plotMse), 0.95) * 1.15),
+        yLabel: "relative error",
+        title: includeNoise ? "Bias-variance trade-off with irreducible noise" : "Bias-variance trade-off"
+      };
+    }
+
+    const robustY = Math.max(0.05, quantile(allErrors, 0.92));
+    const ymax = robustY * 1.25;
+
+    return {
+      rows: rows.map((row) => ({
+        ...row,
+        plotBias2: Math.min(row.bias2, ymax),
+        plotVariance: Math.min(row.variance, ymax),
+        plotNoise: Math.min(row.noise, ymax),
+        plotMse: Math.min(displayMse(row), ymax)
+      })),
+      ymin: 0,
+      ymax,
+      yLabel: "expected squared error",
+      title: includeNoise ? "Bias-variance trade-off with irreducible noise" : "Bias-variance trade-off"
+    };
+  }
+
+  function fillComplexityBand(panel, X, Y, x0, x1, yTop, yBottom, color, label) {
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.fillRect(X(x0), Y(yTop), X(x1) - X(x0), Y(yBottom) - Y(yTop));
+
+    ctx.fillStyle = "rgba(70, 70, 70, 0.75)";
+    ctx.font = "18px sans-serif";
+    ctx.fillText(label, X(x0) + 14, Y(yTop) + 28);
+    ctx.restore();
+  }
+
+  function drawArticleStyleLegend(panel, includeNoise) {
+    const x = panel.x + panel.w * 0.38;
+    let y = panel.y + 28;
+    const rowHeight = 25;
+    const rows = [
+      { label: "bias²", color: "#1f3fff" },
+      { label: "variance", color: "#d62728" },
+      { label: includeNoise ? "test MSE" : "function MSE", color: "#208020" },
+      { label: "optimal complexity", color: "#8a008a", dash: [6, 5] }
+    ];
+    const width = 265;
+    const height = 24 + rows.length * rowHeight;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.18)";
+    ctx.fillRect(x - 12, y - 20, width, height);
+    ctx.strokeRect(x - 12, y - 20, width, height);
+    ctx.font = "17px sans-serif";
+
+    for (const row of rows) {
+      ctx.strokeStyle = row.color;
+      ctx.lineWidth = 3;
+      ctx.setLineDash(row.dash || []);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 34, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#222";
+      ctx.fillText(row.label, x + 46, y + 6);
+      y += rowHeight;
+    }
+
+    ctx.restore();
+  }
+
+
+  function smoothSeries(rows, key, window = 3) {
+    if (window <= 1) return rows.map((row) => row[key]);
+
+    const half = Math.floor(window / 2);
+
+    return rows.map((row, i) => {
+      let sum = 0;
+      let count = 0;
+
+      for (let j = i - half; j <= i + half; j++) {
+        if (j >= 0 && j < rows.length) {
+          sum += rows[j][key];
+          count += 1;
+        }
+      }
+
+      return sum / count;
+    });
+  }
+
+  function drawIntegerDegreeTicks(panel, X, ymin, ymax, Y, maxDegree) {
+    // Model complexity is an integer, so draw ticks at integer degrees.
+    // Label every integer for small ranges; skip some labels for larger ranges.
+    const labelEvery = maxDegree <= 12 ? 1 : (maxDegree <= 18 ? 2 : 3);
+
+    ctx.save();
+    ctx.fillStyle = "#222";
+    ctx.strokeStyle = "#222";
+    ctx.lineWidth = 1;
+    ctx.font = "16px sans-serif";
+
+    for (let d = 0; d <= maxDegree; d++) {
+      const px = X(d);
+
+      ctx.beginPath();
+      ctx.moveTo(px, panel.y + panel.h);
+      ctx.lineTo(px, panel.y + panel.h + 5);
+      ctx.stroke();
+
+      if (d % labelEvery === 0 || d === maxDegree) {
+        ctx.fillText(String(d), px - 5, panel.y + panel.h + 24);
+      }
+    }
+
+    ctx.restore();
+  }
+
+  function drawComplexityAxes(panel, xmin, xmax, ymin, ymax, ylabel, title) {
+    const X = (x) => panel.x + (x - xmin) / (xmax - xmin) * panel.w;
+    const Y = (y) => panel.y + panel.h - (y - ymin) / (ymax - ymin) * panel.h;
+
+    ctx.strokeStyle = "#222";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(panel.x, panel.y);
+    ctx.lineTo(panel.x, panel.y + panel.h);
+    ctx.lineTo(panel.x + panel.w, panel.y + panel.h);
+    ctx.stroke();
+
+    drawIntegerDegreeTicks(panel, X, ymin, ymax, Y, xmax);
+
+    ctx.fillStyle = "#222";
+    ctx.font = "16px sans-serif";
+
+    const yTicks = 5;
+    for (let i = 0; i <= yTicks; i++) {
+      const y = ymin + (ymax - ymin) * i / yTicks;
+
+      ctx.beginPath();
+      ctx.moveTo(panel.x - 5, Y(y));
+      ctx.lineTo(panel.x, Y(y));
+      ctx.stroke();
+
+      ctx.fillText(y.toFixed(1), panel.x - 52, Y(y) + 5);
+    }
+
+    ctx.font = "18px sans-serif";
+    ctx.fillText(
+      "Model complexity",
+      panel.x + panel.w / 2 - 75,
+      panel.y + panel.h + 48
+    );
+
+    ctx.save();
+    ctx.translate(panel.x - 82, panel.y + panel.h / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.fillText(ylabel, 0, 0);
+    ctx.restore();
+
+    ctx.font = "19px sans-serif";
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.fillText(title, panel.x + panel.w / 2, panel.y - 14);
+    ctx.restore();
+
+    return { X, Y };
+  }
+
+  function markerLabelOffsets(optimalDegree, selectedDegree) {
+    const close = Math.abs(optimalDegree - selectedDegree) <= 1;
+    if (!close) {
+      return {
+        optimalDy: -34,
+        selectedDy: -12
+      };
+    }
+
+    return {
+      optimalDy: -42,
+      selectedDy: -15
+    };
+  }
+
+  function drawVerticalMarkerWithOffsetLabel(x, panel, X, color, label, dy, dash = [6, 5]) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.4;
+    ctx.setLineDash(dash);
+    ctx.beginPath();
+    ctx.moveTo(X(x), panel.y);
+    ctx.lineTo(X(x), panel.y + panel.h);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    if (label) {
+      ctx.fillStyle = color;
+      ctx.font = "16px sans-serif";
+
+      let labelX = X(x) + 6;
+      const labelWidth = ctx.measureText(label).width;
+      if (labelX + labelWidth > panel.x + panel.w) {
+        labelX = X(x) - labelWidth - 6;
+      }
+
+      ctx.fillText(label, labelX, panel.y + panel.h + dy);
+    }
+
+    ctx.restore();
+  }
+
+  function drawVerticalMarkerWithLabel(x, panel, X, color, label, dash = [6, 5]) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.4;
+    ctx.setLineDash(dash);
+    ctx.beginPath();
+    ctx.moveTo(X(x), panel.y);
+    ctx.lineTo(X(x), panel.y + panel.h);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    if (label) {
+      ctx.fillStyle = color;
+      ctx.font = "16px sans-serif";
+      ctx.fillText(label, X(x) + 6, panel.y + panel.h - 12);
+    }
+
+    ctx.restore();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Main rendering
+  // ---------------------------------------------------------------------------
+
+  function draw() {
+    const state = getState();
+    updateReadouts(state);
+
+    const result = computeDecomposition(state);
+    const selected = result.rows[state.selectedDegree];
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    canvas.height = state.showSamplePanel ? 520 : 410;
+
+    const mainPanel = state.showSamplePanel
+      ? { x: 116, y: 48, w: 870, h: 215 }
+      : { x: 116, y: 48, w: 870, h: 290 };
+
+    const samplePanel = { x: 116, y: 350, w: 870, h: 120 };
+
+    const displayedMse = (row) => state.includeNoise ? row.noisyTestMse : row.functionMse;
+
+    const rawBest = result.rows.reduce(
+      (best, row) => displayedMse(row) < displayedMse(best) ? row : best,
+      result.rows[0]
+    );
+
+    // includeNoise chooses whether the green curve is the function MSE
+    // bias² + variance, or the noisy-observation test MSE
+    // bias² + variance + sigma_noise².
+    const mainPlot = makeMainPlotRows(result.rows, state.yScaleMode, state.includeNoise);
+    const plotRows = mainPlot.rows;
+
+    const plotBest = plotRows.reduce(
+      (best, row) => row.plotMse < best.plotMse ? row : best,
+      plotRows[0]
+    );
+
+    const mainAxes = drawComplexityAxes(
+      mainPanel,
+      0,
+      state.maxDegree,
+      mainPlot.ymin,
+      mainPlot.ymax,
+      mainPlot.yLabel,
+      mainPlot.title
+    );
+
+    // Data-driven interpretation regions:
+    //   left of the minimum-MSE degree  -> underfitting side
+    //   right of the minimum-MSE degree -> overfitting side
+    // A small neutral window around the optimum avoids visually implying that
+    // the exact neighboring integer degrees are sharply classified.
+    const optimalDegree = plotBest.degree;
+    const neutralHalfWidth = Math.max(0.35, 0.035 * state.maxDegree);
+
+    const underfitEnd = Math.max(0, optimalDegree - neutralHalfWidth);
+    const overfitStart = Math.min(state.maxDegree, optimalDegree + neutralHalfWidth);
+
+    if (underfitEnd > 0.05) {
+      fillComplexityBand(
+        mainPanel,
+        mainAxes.X,
+        mainAxes.Y,
+        0,
+        underfitEnd,
+        mainPlot.ymax,
+        mainPlot.ymin,
+        "rgba(80, 100, 255, 0.13)",
+        "underfitting"
+      );
+    }
+
+    if (overfitStart < state.maxDegree - 0.05) {
+      fillComplexityBand(
+        mainPanel,
+        mainAxes.X,
+        mainAxes.Y,
+        overfitStart,
+        state.maxDegree,
+        mainPlot.ymax,
+        mainPlot.ymin,
+        "rgba(255, 80, 80, 0.13)",
+        "overfitting"
+      );
+    }
+
+    const smoothWindow = state.maxDegree >= 8 ? 3 : 1;
+    const smoothBias2 = smoothSeries(plotRows, "plotBias2", smoothWindow);
+    const smoothVariance = smoothSeries(plotRows, "plotVariance", smoothWindow);
+    const smoothMse = smoothSeries(plotRows, "plotMse", smoothWindow);
+
+    drawLine(
+      plotRows.map((row, i) => ({ x: row.degree, y: smoothBias2[i] })),
+      mainAxes.X,
+      mainAxes.Y,
+      "#1f3fff",
+      3
+    );
+
+    drawLine(
+      plotRows.map((row, i) => ({ x: row.degree, y: smoothVariance[i] })),
+      mainAxes.X,
+      mainAxes.Y,
+      "#d62728",
+      3
+    );
+
+    drawLine(
+      plotRows.map((row, i) => ({ x: row.degree, y: smoothMse[i] })),
+      mainAxes.X,
+      mainAxes.Y,
+      "#208020",
+      3.5
+    );
+
+    const labelOffsets = markerLabelOffsets(plotBest.degree, state.selectedDegree);
+
+    drawVerticalMarkerWithOffsetLabel(
+      plotBest.degree,
+      mainPanel,
+      mainAxes.X,
+      "#8a008a",
+      "optimal",
+      labelOffsets.optimalDy,
+      [6, 5]
+    );
+
+    drawVerticalMarkerWithOffsetLabel(
+      state.selectedDegree,
+      mainPanel,
+      mainAxes.X,
+      "#666",
+      "selected",
+      labelOffsets.selectedDy,
+      [4, 5]
+    );
+
+    drawArticleStyleLegend(mainPanel, state.includeNoise);
+
+    if (state.showSamplePanel) {
+      const sampleAxes = drawAxes(
+        samplePanel,
+        xMin,
+        xMax,
+        -2.4,
+        2.4,
+        "x",
+        "y",
+        `Degree ${state.selectedDegree}: repeated fitted curves`
+      );
+
+      // Plot a representative subset of individual fits to avoid over-plotting.
+      // The bias-variance estimates still use all repetitions; this only affects
+      // the visual ensemble in the explanatory lower panel.
+      const maxDisplayedFits = 24;
+      const stride = Math.max(1, Math.ceil(selected.predictions.length / maxDisplayedFits));
+
+      for (let i = 0; i < selected.predictions.length; i += stride) {
+        drawLine(
+          xGrid.map((x, j) => ({ x, y: selected.predictions[i][j] })),
+          sampleAxes.X,
+          sampleAxes.Y,
+          "rgba(100, 145, 220, 0.23)",
+          1.0
+        );
+      }
+
+      // True function: thick black reference curve.
+      drawLine(
+        xGrid.map((x, i) => ({ x, y: result.trueValues[i] })),
+        sampleAxes.X,
+        sampleAxes.Y,
+        "#111",
+        3.2
+      );
+
+      // Mean prediction across repeated data sets: thick blue curve.
+      drawLine(
+        xGrid.map((x, i) => ({ x, y: selected.meanPrediction[i] })),
+        sampleAxes.X,
+        sampleAxes.Y,
+        "#1f3fff",
+        3.3
+      );
+
+      // One representative noisy training set: larger red points.
+      drawPoints(
+        result.selectedExample.xs.map((x, i) => ({ x, y: result.selectedExample.ys[i] })),
+        sampleAxes.X,
+        sampleAxes.Y,
+        "rgba(210, 55, 55, 0.82)",
+        4.2
+      );
+
+      drawLegend(samplePanel, [
+        { label: "true function", color: "#111" },
+        { label: "mean fit", color: "#1f3fff" },
+        { label: "individual fits", color: "#6491dc", width: 2 }
+      ], 225);
+    }
+    $("readout").innerHTML = state.includeNoise
+      ? "Green curve: bias² + variance + noise."
+      : "Green curve: bias² + variance.";
+  }
+
+  // ---------------------------------------------------------------------------
+  // Event bindings
+  // ---------------------------------------------------------------------------
+
+  root.querySelectorAll("input, select").forEach((element) => {
+    element.addEventListener("input", draw);
+    element.addEventListener("change", draw);
+  });
+
+  $("resample").addEventListener("click", () => {
+    seed = Math.floor(Math.random() * 2147483647) || 123456789;
+    draw();
+  });
+draw();
+})();
+</script>
+</body>
+</html>
