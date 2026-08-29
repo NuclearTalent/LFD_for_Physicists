@@ -702,7 +702,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -718,6 +720,29 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prelude">Prelude</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-idea-of-ns">Basic idea of NS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ns-in-practice">NS in practice</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-of-nested-sampling">Simulation of nested sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multimodal-sampling">Multimodal sampling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-nested-sampling">Summary of Nested Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Multimodal sampling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Summary of Nested Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-the-difference-ns-vs-mcmc">Visualizing the Difference: NS vs. MCMC</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#physics-connection-statistical-mechanics">Physics connection: statistical mechanics</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -730,10 +755,806 @@ document.write(`
   <div class="math notranslate nohighlight">
 \[\newcommand\pos{\boldsymbol{x}}
 \newcommand\mom{\boldsymbol{p}}
-\newcommand\mass{\mathcal{M}}\]</div>
+\newcommand\mass{\mathcal{M}}
+\newcommand{\like}{\mathcal{L}}
+\newcommand{\threshold}{\like^\star}
+\newcommand{\prior}{\pi}
+\newcommand{\nlive}{n_{\rm live}}
+\newcommand{\evidence}{\mathcal{Z}}  % or just Z
+\]</div>
 <section class="tex2jax_ignore mathjax_ignore" id="nested-sampling">
 <span id="sec-nested-sampling"></span><h1><span class="section-number">22.6. </span>Nested sampling<a class="headerlink" href="#nested-sampling" title="Link to this heading">#</a></h1>
-<p>Section to be added.</p>
+<section id="prelude">
+<h2>Prelude<a class="headerlink" href="#prelude" title="Link to this heading">#</a></h2>
+<p>Nested sampling (or NS) is a technique invented by John Skilling to estimate the Bayesian <em>evidence</em> (and we get a sampling of the posterior as a by-product, see below).
+Let us recall the ingredients of Bayes’ theorem:</p>
+<div class="math notranslate nohighlight">
+\[
+  \overbrace{ \pdf{\thetavec}{\data,I} }^{\textrm{posterior}} =
+  \frac{ \color{red}{ \overbrace{ \pdf{\data}{\thetavec,I} }^{\textrm{likelihood}}} 
+ \color{black}{\ \times\ } 
+  \color{blue}{ \overbrace{ \pdf{\thetavec}{I}}^{\textrm{prior}}}    
+ } 
+ { \color{darkgreen}{ \underbrace{ \pdf{\data}{I} }_{\textrm{evidence}}} }
+ \equiv \frac{\like(\pars)\prior(\pars)}{\evidence} \equiv p(\pars),
+\]</div>
+<p>where we have introduced a condensed notation for clarity in the following discussion.
+We can write <span class="math notranslate nohighlight">\(\evidence\)</span>, the evidence (or marginal likelihood or normalizing constant), as</p>
+<div class="math notranslate nohighlight" id="equation-eq-evidence-z">
+<span class="eqno">(22.10)<a class="headerlink" href="#equation-eq-evidence-z" title="Link to this equation">#</a></span>\[
+   \evidence = \int \like(\pars)\prior(\pars)\, d\pars ,
+\]</div>
+<p>so, as expressed here, it is an integral in the often high-dimensional space of <span class="math notranslate nohighlight">\(\pars\)</span>.
+You can think of the posterior as the shape of the integrand of this integral while <span class="math notranslate nohighlight">\(\evidence\)</span> is the magnitude of the integral.
+The usual MCMC sampling techniques based on importance sampling are designed to estimate the relative shape in terms of a representative sampling of points <span class="math notranslate nohighlight">\(\pars_i\)</span> found via a Markov chain.
+But finding the absolute normalization can be a much greater challenge.</p>
+<p>To gain intuition about NS, first recall the standard integration method as a Riemannian sum: we divide space into small volumes (e.g., multi-dimensional cubes) and approximate the integral as a sum over the integrand evaluated in each volume times the volume (see the left panel of <a class="reference internal" href="#nested-sampling-intuition-1"><span class="std std-numref">Fig. 22.4</span></a>).
+The cost of such an integral grows exponentially with the dimension of the integral (“the curse of dimensionality”), which is why we turned to Monte Carlo integration in the first place.
+To meet this challenge a different way, NS transforms the problem into finding a statistical estimate of a <em>one-dimensional</em> integral.</p>
+<p>Good references for NS include:</p>
+<ul class="simple">
+<li><p><span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id14" title="D. S. Sivia and J. Skilling. Data Analysis - A Bayesian Tutorial. Oxford Science Publications. Oxford University Press, 2nd edition, 2006.">SS06</a>]</span> D.S. Sivia with J. Skilling, <em>“Data Analysis : A Bayesian Tutorial”</em>, Oxford University Press (2006). </br></p></li>
+<li><p><span class="bibtex-citation" id="id2">[<a class="reference internal" href="../../Backmatter/bibliography.html#id3" title="Greg Ashton and others. Nested sampling for physical scientists. Nature, 2022. arXiv:2205.15570, doi:10.1038/s43586-022-00121-x.">A+22</a>]</span> G. Ashton et al., <em>“Nested sampling for physical scientists”</em>,
+Nature (2022). </br></p></li>
+<li><p><span class="bibtex-citation" id="id3">[<a class="reference internal" href="../../Backmatter/bibliography.html#id2" title="Johannes Buchner. Nested sampling methods. Statistics Surveys, 17:169–215, 2023. URL: https://projecteuclid.org/journals/statistics-surveys/volume-17/issue-none/Nested-sampling-methods/10.1214/23-SS144.full, doi:10.1214/23-SS144.">Buc23</a>]</span> J. Buchner, <em>“Nested sampling methods”</em>, Statistical Surveys (2023). </br></p></li>
+<li><p><span class="bibtex-citation" id="id4">[<a class="reference internal" href="../../Backmatter/bibliography.html#id4" title="Luca Martino and Fernando Llorente. Nested Sampling: A Critical and Comprehensive Theoretical Guide. 6 2026. arXiv:2606.17916.">ML26</a>]</span> L. Martino and L. Fernando, <em>“Nested Sampling: A Critical and Comprehensive Theoretical Guide”</em>, arXiv:2606.17916 (2026). </br></p></li>
+<li><p>See also method discussions in the documentation of NS implementations, such as <a class="reference external" href="https://dynesty.readthedocs.io/en/stable/overview.html">dynesty</a> and <a class="reference external" href="https://johannesbuchner.github.io/UltraNest/method.html">Ultranest</a>.</p></li>
+</ul>
+</section>
+<section id="basic-idea-of-ns">
+<h2>Basic idea of NS<a class="headerlink" href="#basic-idea-of-ns" title="Link to this heading">#</a></h2>
+<figure class="align-center" id="nested-sampling-intuition-1">
+<a class="reference internal image-reference" href="../../../_images/ns_evidence_consistent_combined.png"><img alt="Representation of nested sampling identity" src="../../../_images/ns_evidence_consistent_combined.png" style="width: 600px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 22.4 </span><span class="caption-text">On the left is a schematic for evaluating the evidence integral by summing over uniform small volumes in the multi-dimensional parameter space (here the two-dimensional area is <span class="math notranslate nohighlight">\(\Delta \theta_1 \Delta \theta_2\)</span>).
+On the right is a schematic for evaluating the same integral but now by grouping all points with the same likelihood value into small volumes <span class="math notranslate nohighlight">\(\Delta X_i\)</span> and summing over <span class="math notranslate nohighlight">\(\mathcal{L}(X_i)\Delta X_i\)</span>, which approximates <a class="reference internal" href="#equation-eq-evidence-z">(22.10)</a>.</span><a class="headerlink" href="#nested-sampling-intuition-1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>A key observation leading to NS is that
+we can use other shapes beside cubes to estimate an integral, if
+volume elements are such that <span class="math notranslate nohighlight">\(p(\pars)\)</span> is almost constant for any shape.
+In particular, we can group together into small volumes all points with the same value of the likelihood, as in the right panel of <a class="reference internal" href="#nested-sampling-intuition-1"><span class="std std-numref">Fig. 22.4</span></a>.
+To get to an expression taking advantage of this observation, we first split
+the evidence integral into an integration over likelihood values <span class="math notranslate nohighlight">\(\threshold\)</span>, where for each <span class="math notranslate nohighlight">\(\threshold\)</span> we have an integral over the enclosed part of parameter space weighted by the prior:</p>
+<div class="math notranslate nohighlight">
+\[
+   \evidence = \int^{+\infty} \biggl[ \int_{\pars:\like(\pars) &gt; \threshold} \prior(\pars)\, d\pars \biggr]\, d\threshold .
+\]</div>
+<p>Here the integral in square brackets is the volume variable <span class="math notranslate nohighlight">\(X\)</span>, defined by</p>
+<div class="math notranslate nohighlight" id="equation-eq-definition-of-x">
+<span class="eqno">(22.11)<a class="headerlink" href="#equation-eq-definition-of-x" title="Link to this equation">#</a></span>\[
+   X(\threshold) \equiv \int_{\pars:\like(\pars) &gt; \threshold} \prior(\pars)\, d\pars , 
+\]</div>
+<p>which is the prior-constrained volume enclosed by contour <span class="math notranslate nohighlight">\(\threshold = \like(\pars)\)</span> (which may consist of  disconnected regions).</p>
+<figure class="align-center" id="nested-sampling-intuition-2">
+<a class="reference internal image-reference" href="../../../_images/oneD_L_vs_theta.png"><img alt="One-D schematic of X as function of threshold L-star" src="../../../_images/oneD_L_vs_theta.png" style="width: 600px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 22.5 </span><span class="caption-text">Schematic example showing how the prior-weighted scalar volume <span class="math notranslate nohighlight">\(X\)</span> is determined at a given value of <span class="math notranslate nohighlight">\(\threshold\)</span>. The vertical dashed lines indicate the limits in <span class="math notranslate nohighlight">\(\theta\)</span> for which <span class="math notranslate nohighlight">\(\like(\pars) &gt; \threshold\)</span>; in one dimensions these define the lengths <span class="math notranslate nohighlight">\(\theta_a\)</span> and <span class="math notranslate nohighlight">\(\theta_b\)</span>. The prior <span class="math notranslate nohighlight">\(\pi(\theta)\)</span> is approximately constant (equal to <span class="math notranslate nohighlight">\(\pi_0\)</span>) in those regions, so the integral defining <span class="math notranslate nohighlight">\(X\)</span> is approximately <span class="math notranslate nohighlight">\(X \approx \pi_0(\theta_a + \theta_b)\)</span>. This piece contributes to the evidence integral as <span class="math notranslate nohighlight">\(X \Delta\threshold\)</span>.</span><a class="headerlink" href="#nested-sampling-intuition-2" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>In <a class="reference internal" href="#nested-sampling-intuition-2"><span class="std std-numref">Fig. 22.5</span></a> we show a one-dimensional example of how this works.
+As we step through each value of <span class="math notranslate nohighlight">\(\threshold\)</span> in the outer integral, this defines a region in <span class="math notranslate nohighlight">\(\theta\)</span> where the likelihood satisfies <span class="math notranslate nohighlight">\(\like(\theta) &gt; \threshold\)</span>. In the example, the current region, which is disconnected, is defined by lengths <span class="math notranslate nohighlight">\(\theta_a\)</span> and <span class="math notranslate nohighlight">\(\theta_b\)</span>.
+In one dimension, the internal integration over <span class="math notranslate nohighlight">\(\theta\)</span> for an approximately constant <span class="math notranslate nohighlight">\(\prior(\theta) \approx \prior_0\)</span> yields <span class="math notranslate nohighlight">\(X \approx \prior_0 (\theta_a + \theta_b)\)</span>.
+In two dimensions, this region would be the area defined by a slice at height <span class="math notranslate nohighlight">\(\threshold\)</span>, in three dimensions it would be a 3D volume, and so on.
+Note that there is no problem with the likelihood being multimodal.
+Note also that <span class="math notranslate nohighlight">\(X\)</span> is monotonic in <span class="math notranslate nohighlight">\(\threshold\)</span> (this may be easiest to see if you visualize a line at <span class="math notranslate nohighlight">\(\threshold\)</span> starting well above the peak and being moved downward; then <span class="math notranslate nohighlight">\(X\)</span> always increases, even if <span class="math notranslate nohighlight">\(\prior(\pars)\)</span> is not constant).
+We multiply <span class="math notranslate nohighlight">\(X\)</span> by the width <span class="math notranslate nohighlight">\(\Delta\threshold\)</span> to get the contribution to the evidence, and sum this up for all <span class="math notranslate nohighlight">\(\threshold\)</span> to get the total evidence.</p>
+<p>When the threshold <span class="math notranslate nohighlight">\(\threshold\)</span> is zero, <span class="math notranslate nohighlight">\(X=1\)</span> (the entire prior space is included, and the prior is normalized).
+As the threshold increases toward the peak value, the allowed space shrinks, and <span class="math notranslate nohighlight">\(X\)</span> approaches zero.
+Because <span class="math notranslate nohighlight">\(X\)</span> is monotonic and decreases smoothly from 1 to 0, we can invert <span class="math notranslate nohighlight">\(X(\threshold)\)</span> to find <span class="math notranslate nohighlight">\(\threshold(X)\)</span>.
+Integrating the evidence integral by parts yields the NS evidence identity,</p>
+<div class="math notranslate nohighlight">
+\[
+  \evidence = \int^{+\infty} X(\threshold)\, d\threshold = \int_0^1 \threshold(X) \,dX ,
+\]</div>
+<p>assuming <span class="math notranslate nohighlight">\(\threshold(X)\)</span>, the inverse of <span class="math notranslate nohighlight">\(X(\threshold)\)</span>, exists and <span class="math notranslate nohighlight">\(\evidence\)</span> is finite.
+If we can evaluate the iso-likelihood contour <span class="math notranslate nohighlight">\(\like_i\equiv \like(X_i)\)</span> (dropping the <span class="math notranslate nohighlight">\(\star\)</span>) associated with samples from the prior volumes</p>
+<div class="math notranslate nohighlight">
+\[
+ 1 &gt; X_1 &gt; X_2 &gt; \cdots &gt; X_N &gt; 0 ,
+\]</div>
+<p>then we can compute the evidence <span class="math notranslate nohighlight">\(\evidence = \int_0^1 \like(X)\,dX \approx \sum_i \like_i \Delta X_i\)</span> by basic numerical quadrature (e.g., the trapezoid rule). Computing the evidence using these “nested shells” is what gives Nested Sampling its name.
+The NS procedure is illustrated schematically in <a class="reference internal" href="#schematic-ns-2d"><span class="std std-numref">Fig. 22.6</span></a>.</p>
+<figure class="align-center" id="schematic-ns-2d">
+<a class="reference internal image-reference" href="../../../_images/ns_schematic_profile_combined_adjusted_v3.png"><img alt="Schematic of NS for a two-dimensional problem" src="../../../_images/ns_schematic_profile_combined_adjusted_v3.png" style="width: 600px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 22.6 </span><span class="caption-text">Schematic representation of NS for a two dimensional problem. The samples <span class="math notranslate nohighlight">\(X_i\)</span> from the prior volumes at <span class="math notranslate nohighlight">\(\like_i\)</span> satisfy <span class="math notranslate nohighlight">\(1 &gt; X_1 &gt; X_2 &gt; X_3 &gt; X_4 &gt; 0\)</span>. The corresponding <span class="math notranslate nohighlight">\(\Delta X_i\)</span>s are multiplied by the <span class="math notranslate nohighlight">\(\like_i\)</span>s and summed to
+approximate the evidence: <span class="math notranslate nohighlight">\(\evidence = \int_0^1 \like(X)\,dX \approx \sum_i \like_i \Delta X_i\)</span>.</span><a class="headerlink" href="#schematic-ns-2d" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>This sounds great, but we realize that calculating the <span class="math notranslate nohighlight">\(X_i\)</span>s directly involves a series of high-dimensional integrals that are exactly what we want to avoid!
+So we will estimate the <span class="math notranslate nohighlight">\(X_i\)</span>s statistically.</p>
+</section>
+<section id="ns-in-practice">
+<h2>NS in practice<a class="headerlink" href="#ns-in-practice" title="Link to this heading">#</a></h2>
+<p>In an implementation of NS one evolves a collection of so-called “live points” through the parameter space.
+We start with <span class="math notranslate nohighlight">\(\nlive\)</span> points drawn from the prior.
+The prior should cover the full range of parameters being sampled.
+The likelihood is calculated for all of the live points, and the least likely (i.e., lowest value of <span class="math notranslate nohighlight">\(\like\)</span>) is removed and a new draw is made to replace the “dead” point. This lowest value is <span class="math notranslate nohighlight">\(\threshold\)</span>.
+(We keep track of the dead points, which give an estimate of the posterior, see below).</p>
+<p>Suppose we could (magically) know the prior volume <span class="math notranslate nohighlight">\(X_i\)</span> from <a class="reference internal" href="#equation-eq-definition-of-x">(22.11)</a> associated with each live point <span class="math notranslate nohighlight">\(\theta_i\)</span>.
+If the current volume is <span class="math notranslate nohighlight">\(X_{i-1}\)</span>, then the variables <span class="math notranslate nohighlight">\(u_j = X_j / X_{i-1}\)</span> would all be uniformly distributed in <span class="math notranslate nohighlight">\([0,1]\)</span>.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Intuitively, why is <span class="math notranslate nohighlight">\(u_j\)</span> uniformly distributed in <span class="math notranslate nohighlight">\([0,1]\)</span>?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>Imagine dividing the prior into nested likelihood regions that have prior volumes <span class="math notranslate nohighlight">\(X = 0.1, 0.2, 0.3, \ldots, 1\)</span>. Then the region with <span class="math notranslate nohighlight">\(X(\theta) \equiv X(\like(\theta)) &lt; 0.2\)</span> has, by construction, 20% of the prior probability. So for a random draw of <span class="math notranslate nohighlight">\(\theta\)</span>, the cumulative probability of the corresponding <span class="math notranslate nohighlight">\(X &lt; 0.2\)</span> is <span class="math notranslate nohighlight">\(0.2\)</span>. And, generally, the cumulative probability for <span class="math notranslate nohighlight">\(X &lt; x\)</span> is <span class="math notranslate nohighlight">\(x\)</span>. This is the cumulative probability distribution for a uniform distribution of <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>If we have already eliminated points so that the current volume is <span class="math notranslate nohighlight">\(X_{i-1}\)</span>, then the uniform distribution is between <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(X_{i-1}\)</span>, so to make it uniform in <span class="math notranslate nohighlight">\([0,1]\)</span> we define <span class="math notranslate nohighlight">\(u_j\)</span> with <span class="math notranslate nohighlight">\(X_{i-1}\)</span> divided out.</p>
+<p>This result is independent of the details of the likelihood or the prior, because <span class="math notranslate nohighlight">\(X\)</span> has been defined in terms of enclosed prior probability, so it automatically turns prior draws into uniform random variables.</p>
+</div>
+</div>
+<p>Removing the point with the lowest likelihood means removing the one with the highest <span class="math notranslate nohighlight">\(X\)</span>,
+so</p>
+<div class="math notranslate nohighlight">
+\[
+    t_i \equiv \frac{X_i}{X_{i-1}} = \max(u_1, \ldots, u_{\nlive}),
+\]</div>
+<p>which means (because the <span class="math notranslate nohighlight">\(u_i\)</span>s are independent):</p>
+<div class="math notranslate nohighlight">
+\[
+   F(t_i &lt; t) = t^{\nlive} \quad\Longrightarrow\quad
+   p(t) = \nlive t^{\nlive - 1} \quad\Longrightarrow\quad
+   t_i \sim \text{Beta}(\nlive,1) ,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(F\)</span> is the cumulative distribution and <span class="math notranslate nohighlight">\(p(t)\)</span> therefore follows as its derivative.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Why is this a Beta distribution?</p>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>The general Beta pdf is</p>
+<div class="math notranslate nohighlight">
+\[
+  p(t) = \frac{1}{B(a,b)}t^{a-1}(1-t)^{b-1} , \quad\text{where}\ 
+    B(a,b) = \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)} ,
+\]</div>
+<p>and <span class="math notranslate nohighlight">\(\Gamma(z)\)</span> is the gamma function.
+Here <span class="math notranslate nohighlight">\(a=\nlive\)</span> and <span class="math notranslate nohighlight">\(b=1\)</span> to match <span class="math notranslate nohighlight">\(p(t) = \nlive t^{\nlive - 1}\)</span> and
+<span class="math notranslate nohighlight">\(B(\nlive,1) = 1/\nlive\)</span>.</p>
+</div>
+</div>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Why is <span class="math notranslate nohighlight">\(t\)</span> so close to 1? Does this make sense intuitively?</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>Imagine you are determining <span class="math notranslate nohighlight">\(t\)</span> from 50 points uniformly distributed between 0 and 1.</p>
+</div>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<p>Intuitively it makes sense: with 50 points between 0 and 1 and you are taking the largest one, you expect it to be close to 1.</p>
+<p>Mathematically, with <span class="math notranslate nohighlight">\(\nlive = 50\)</span>, the density is <span class="math notranslate nohighlight">\(p(t) = 50 t^{50}\)</span> and any number not close to 1 raised to an exponent of 50 will be close to zero, so the strength is concentrated near 1.</p>
+</div>
+</div>
+<p>This is the statistical shrinkage rule.
+So while there really is a sequence of <span class="math notranslate nohighlight">\(X_i\)</span>s, they are irregular and random because the live points themselves were randomly drawn.
+The NS algorithm doesn’t know these while it does know <span class="math notranslate nohighlight">\(\like_i\)</span> (as noted above, calculating the <span class="math notranslate nohighlight">\(X_i\)</span> would be a difficult multidimensional integral of the type we are trying to avoid).
+So, in fact, representative values are used in practice:</p>
+<div class="math notranslate nohighlight">
+\[
+  X_i \approx e^{-i/\nlive} \quad \text{or} \quad X_i = t_i X_{i-1}, \text{ with }
+  t_i \sim \text{Beta}(\nlive,1).
+\]</div>
+<p>The process is repeated over many iterations
+and the evidence accumulated from</p>
+<div class="math notranslate nohighlight">
+\[
+\evidence \approx \sum_{i} \like_i \cdot \Delta X_i ,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Delta X_i = X_{i-1} - X_i\)</span>.
+The iterations are stopped when the remaining evidence is negligible (various stopping criterion are used in different implementations of NS).</p>
+<p>As a by-product,
+posteriors for <span class="math notranslate nohighlight">\(\pars\)</span> are acquired “for free” from the same
+dead points by assigning each sample its associated importance weight</p>
+<div class="math notranslate nohighlight">
+\[
+  \prob(\pars_i) = p(X_i) \approx \frac{\like_i \Delta X_i}{\evidence} .
+\]</div>
+<p>To determine replacement live points, there are different strategies used by different NS implementations.
+For example, to do region sampling, a geometric shape (e.g., an ellipse) is constructed around the live points and a new point is drawn from within the region, rejecting it if it falls outside the region.
+Below we examine in detail one such implementation.</p>
+</section>
+<section id="simulation-of-nested-sampling">
+<h2>Simulation of nested sampling<a class="headerlink" href="#simulation-of-nested-sampling" title="Link to this heading">#</a></h2>
+<p>To establish some intuition about NS in practice, we return to the excellent set of <a class="reference external" href="https://chi-feng.github.io/mcmc-demo/">interactive demos by Chi Feng</a>.
+You might want to refresh your memory first on MH and HMC sampling before jumping into the nested sampling demo.</p>
+<div class="note admonition">
+<p class="admonition-title">Controls for the MCMC simulations</p>
+<ul class="simple">
+<li><p>The initial simulation uses MH sampling. To switch to an implementation of nested sampling, select <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Controls</span></code> and pull down the <code class="docutils literal notranslate"><span class="pre">Algorithm</span></code> menu and select <code class="docutils literal notranslate"><span class="pre">RadFriends-NS</span></code>.
+Note the <code class="docutils literal notranslate"><span class="pre">Algorithm</span> <span class="pre">Options</span></code>, where <code class="docutils literal notranslate"><span class="pre">numLivePoints</span></code> <span class="math notranslate nohighlight">\(= \nlive\)</span> is set.</p></li>
+<li><p>After making changes, use <code class="docutils literal notranslate"><span class="pre">Close</span> <span class="pre">Controls</span></code> to avoid obscuring the simulation.</p></li>
+<li><p>The initial <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">distribution</span></code> should be <code class="docutils literal notranslate"><span class="pre">banana</span></code>, which is a good choice to demonstrate the nested sampling algorithm.</p></li>
+<li><p>But for orientation, you might want to first switch the <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">distribution</span></code> to <code class="docutils literal notranslate"><span class="pre">standard</span></code>. This distribution is a two-dimensional Gaussian (just the product of two one-dimensional Gaussians).</p></li>
+<li><p>If you uncheck the <code class="docutils literal notranslate"><span class="pre">Autoplay</span></code> box, you can use the <code class="docutils literal notranslate"><span class="pre">Step</span></code> button to see the algorithm carried out one step at a time.</p></li>
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">Reset</span></code> button to clear the live points and start again with the full prior.</p></li>
+</ul>
+</div>
+<iframe src="../../../_static/chi-feng/app_RandomWalkMH.html"
+    width="100%"
+    height="600"
+    style="border: none;"
+    scrolling="no">
+</iframe><p>In standard MCMC (like Random Walk or HMC), the histograms accumulate sequentially. Every time a single particle takes a step, the algorithm records its coordinate and adds exactly one tally mark to the corresponding bin.
+Nested Sampling, however, does not follow a single particle. It tracks an entire population of active (live) points simultaneously, weighting their contributions based on the prior volume they represent.</p>
+<ul class="simple">
+<li><p>Weighting by Posterior Mass: Because Nested Sampling’s goal is to compute the total integral (<span class="math notranslate nohighlight">\(\evidence\)</span>), every point that gets killed/replaced carries a specific “weight” (<span class="math notranslate nohighlight">\(w_i = L_i \cdot \Delta X_i\)</span>), which represents how much total probability mass that point occupies.</p></li>
+<li><p>The Histogram Addition: In the visualization, the histograms are built by accumulating these weights. When a point is eliminated, its position along the X and Y axes is recorded into the histograms, multiplied by the fractional volume it leaves behind.</p></li>
+</ul>
+<p>Notes for the <code class="docutils literal notranslate"><span class="pre">RadFriends-NS</span></code> simultation:</p>
+<ol class="arabic simple">
+<li><p>Initially, points are drawn from the entire parameter space (green) weighted by the prior. At any time, the number of points will match the setting of <code class="docutils literal notranslate"><span class="pre">numLivePoints</span></code>.
+You might want to first set it to a low number (10 is the least) and switch off autoplay so that you count each of the dots and watch what happens step by step.</p></li>
+<li><p>In each step, the live point with the lowest likelihood (worst fit) is removed, and a better one sought. At each removal, the volume sampled by the live points shrinks.
+If you go step-by-step (<code class="docutils literal notranslate"><span class="pre">Autoplay</span></code> unchecked) with a small number of points, you can identify by eye the point with the lowest likelihood (it is easiest to start with the <code class="docutils literal notranslate"><span class="pre">standard</span></code> target distribution). When you take a step it will disappear.
+The green arrow visualizes the birth of a new, valid replacement point; it points from a randomly chosen live point (different from the one about to die) to the sampled next point, which will be added to the set of live points.
+There are red points to indicate potential next points that do not have a higher likelihood, and therefore are rejected as candidate live points.</p></li>
+<li><p>To still sample from the prior, RadFriends creates ellipsoids around all live points (not just the one being removed) and samples from them. The ellipsoid size is determined by bootstrapping: Some points are randomly left out, and the ellipsoids have to be large enough so that they could have been sampled. This is repeated several times. In <a class="reference external" href="https://johannesbuchner.github.io/UltraNest/method.html">Ultranest</a>, the ellipsoid shape is learnt as well.
+Other NS algorithms have other ways to do the sampling.</p></li>
+<li><p>Nested sampling proceeds to the peak, keeping track of the likelihood. The volume becomes smaller and smaller. At some point, the remainder does not contribute any probability mass, and the exploration is finished.</p></li>
+<li><p>The removed points are weighted by their likelihood and the volume they represent. These are the posterior samples (histograms).</p></li>
+</ol>
+<div class="note admonition">
+<p class="admonition-title">Why do so many points appear initially in the histograms?</p>
+<p>The instant appearance of many bins on Step 1 of the Rad-Friends-NS simulation is the result of a specific programmatic sequence in the rendering engine.
+Before the simulation officially begins iterating, the code checks the likelihood of all 40 randomly scattered points (assuming you are using the default <span class="math notranslate nohighlight">\(\nlive=40\)</span>. The visualization code treats this entire initial batch of 40 points as the starting baseline.
+Because a histogram cannot show “live” floating points (it can only record permanent data data-points), the code takes all <span class="math notranslate nohighlight">\(\nlive\)</span> initial locations and puts them into the histogram array simultaneously as a single initialization event. You are seeing the birth of the entire population rendering all at once, not a single particle moving.
+Thus, the code pushes the coordinates of all <span class="math notranslate nohighlight">\(\nlive\)</span> points into the histogram bin counters in a single clock cycle. If you have 40 points, up to 40 different bins across the X and Y axes instantly receive a value.</p>
+<p>Once that initial batch of <span class="math notranslate nohighlight">\(\nlive\)</span> points is registered into the visualization framework, the simulation settles into its actual loop:</p>
+<ul class="simple">
+<li><p>Step 2: One single worst point is removed. One new green arrow finds one replacement point. Therefore, only one new coordinate is added to the histogram.</p></li>
+<li><p>Step 3: Only one point is replaced. Only one contribution is added to a single bin.</p></li>
+<li><p>The massive burst of bins is a one-time initialization dump required to set up the population ecosystem on screen. Every step after that will only modify a single point at a time, making the progress look slow and incremental from that moment forward.</p></li>
+</ul>
+</div>
+<div class="note admonition">
+<p class="admonition-title">The Life Cycle of a Green Arrow in RadFriends-NS</p>
+<ul class="simple">
+<li><p><strong>The Replacement Goal:</strong> The algorithm identifies the “worst” active point in the entire population (the point with the lowest likelihood density) and marks it to be destroyed.</p></li>
+<li><p><strong>The Originating End (The Tail):</strong> To find a replacement, the algorithm randomly selects one of the other, surviving active points to act as a parent. The tail of the green arrow sits exactly on this surviving parent point.</p></li>
+<li><p><strong>The “Friend” Ball:</strong> The algorithm draws a radius (the “Rad” in RadFriends) around that parent point to define a local neighborhood.</p></li>
+<li><p><strong>The Pointy End (The Tip):</strong> The algorithm randomly samples a new coordinate inside that neighborhood. If this new coordinate has a higher likelihood than the “worst” point, it is accepted. The tip of the green arrow lands on this new location.</p></li>
+</ul>
+<p><strong>Summary of the Visual Mechanics</strong></p>
+<ul class="simple">
+<li><p><strong>The Tail:</strong> The surviving point chosen to spawn a new candidate.</p></li>
+<li><p><strong>The Tip:</strong> The successful new point that instantly takes the place of the dead, lowest-likelihood point.</p></li>
+<li><p><strong>The Deleted Point:</strong> The actual point being replaced vanishes from the screen elsewhere in the cluster without an arrow drawn directly to it.</p></li>
+</ul>
+<p>Other notes:</p>
+<ul class="simple">
+<li><p>The RadFriends algorithm determines the radius of the proposal region dynamically. This resulting radius builds a local bounding region around each surviving point. By overlapping these regions across all active points, a collective “friend” zone envelope is formed that wraps around the entire high-density target landscape.</p></li>
+<li><p>A red arrow represents a failed proposal where a newly sampled point is rejected. This occurs because the algorithm failed to meet the strict criterion of Nested Sampling: every new point must have a higher likelihood density than the worst point in the current population. Just like a green arrow, a red arrow starts at the randomly selected parent point. The population remains unchanged, no points are replaced, and the algorithm tries again from a new random parent.</p></li>
+</ul>
+</div>
+<section id="multimodal-sampling">
+<h3>Multimodal sampling<a class="headerlink" href="#multimodal-sampling" title="Link to this heading">#</a></h3>
+<p>Now switch the <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">distribution</span></code> to <code class="docutils literal notranslate"><span class="pre">multimodal</span></code>. Compare the performance of nested sampling to MH or HMC.
+We will compare several sampling techniques in finding multimodal posteriors and calculating evidence integrals in demo notebooks in the next chapter.</p>
+</section>
+</section>
+<section id="summary-of-nested-sampling">
+<h2>Summary of Nested Sampling<a class="headerlink" href="#summary-of-nested-sampling" title="Link to this heading">#</a></h2>
+<div class="note admonition">
+<p class="admonition-title">Comparison of Nested Sampling, Metropolis-Hastings, and HMC simulations</p>
+<p>RadFriends-NS (Nested Sampling) differs fundamentally from algorithms like Metropolis-Hastings (MH) and Hamiltonian Monte Carlo (HMC) because it is designed to calculate a total volume (the Bayesian evidence) rather than just exploring a continuous path (or multiple paths in parallel).</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Algorithm</p></th>
+<th class="head"><p>Exploration Strategy</p></th>
+<th class="head"><p>Behavior of Arrows</p></th>
+<th class="head"><p>Best Used For</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>RadFriends-NS</strong> (RadFriends Nested Sampling)</p></td>
+<td><p>Shrinks a contour to isolate high-density zones while keeping a population of active points.</p></td>
+<td><p><strong>Radial clusters.</strong> Green arrows radiate outward inside an adaptive bounding region (a “friend” ball) to replace the lowest-likelihood point.</p></td>
+<td><p>Multi-modal distributions and calculating Bayesian evidence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Random Walk MH</strong> (Metropolis-Hastings)</p></td>
+<td><p>Takes blind, random steps in any direction from a single active point.</p></td>
+<td><p><strong>Jagged, local paths.</strong> Shows many red arrows (rejections) because random steps frequently land in low-probability areas.</p></td>
+<td><p>Simple, low-dimensional distributions.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>HMC</strong> (Hamiltonian Monte Carlo)</p></td>
+<td><p>Uses physics simulation (gradient/slope) to glide smoothly across the distribution.</p></td>
+<td><p><strong>Long, sweeping curves.</strong> Green arrows form long, elegant trajectories with very few red arrows, easily moving between distant peaks.</p></td>
+<td><p>Complex, high-dimensional, and continuous distributions.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!--
+Appearance of each:
+1. **RadFriends-NS: The Adaptive Bounding Box**  
+  Instead of a single particle walking around, Nested Sampling maintains a population of points. It identifies the worst point (lowest value of the likelihood), throws it away, and tries to generate a new, better point to replace it.
+    * **The "RadFriends" Trick:** To avoid guessing blindly, the algorithm draws an adaptive envelope around the surviving points (the "friend" zone).
+    * **The Visual Result:** You see green arrows popping up dynamically within this specialized cluster. As time goes on, the allowed boundary shrinks, tightening around the peaks like a lasso.
+
+2. **Random Walk Metropolis-Hastings: The Blind Explorer**  
+  This algorithm is a single particle that tosses a coin to choose a random direction and distance. If the new spot has higher density, it moves there (green arrow). If it has lower density, it usually (but not always) stays put (red arrow).
+    * **The Visual Result:** The trail looks like a chaotic, jagged "drunkard's walk." It spends a massive amount of time generating red arrows because blind guesses often hit poor zones.
+
+3. **Hamiltonian Monte Carlo: The Orbiting Satellite**  
+  HMC treats the particle like a hockey puck sliding on a frictionless, curved surface where the high-density areas are deep valleys. It gives the particle a random push (momentum) and lets gravity simulate a smooth path.
+    * **The Visual Result:** Beautiful, sweeping green arcs that effortlessly trace the contours of the shape. Because it uses math gradients to guide its path, almost every single proposal is accepted, resulting in almost zero red arrows.
+-->
+</div>
+<div class="note admonition">
+<p class="admonition-title">Why do so many points appear initially in the histograms?</p>
+<p>The instant appearance of many bins on Step 1 of the Rad-Friends-NS simulation is the result of a specific programmatic sequence in the rendering engine.
+Before the simulation officially begins iterating, the code checks the likelihood of all 40 randomly scattered points (assuming you are using the default <span class="math notranslate nohighlight">\(\nlive=40\)</span>. The visualization code treats this entire initial batch of 40 points as the starting baseline.
+Because a histogram cannot show “live” floating points (it can only record permanent data data-points), the code takes all <span class="math notranslate nohighlight">\(\nlive\)</span> initial locations and puts them into the histogram array simultaneously as a single initialization event. You are seeing the birth of the entire population rendering all at once, not a single particle moving.
+Thus, the code pushes the coordinates of all <span class="math notranslate nohighlight">\(\nlive\)</span> points into the histogram bin counters in a single clock cycle. If you have 40 points, up to 40 different bins across the X and Y axes instantly receive a value.</p>
+<p>Once that initial batch of <span class="math notranslate nohighlight">\(\nlive\)</span> points is registered into the visualization framework, the simulation settles into its actual loop:</p>
+<ul class="simple">
+<li><p>Step 2: One single worst point is removed. One new green arrow finds one replacement point. Therefore, only one new coordinate is added to the histogram.</p></li>
+<li><p>Step 3: Only one point is replaced. Only one contribution is added to a single bin.</p></li>
+<li><p>The massive burst of bins is a one-time initialization dump required to set up the population ecosystem on screen. Every step after that will only modify a single point at a time, making the progress look slow and incremental from that moment forward.</p></li>
+</ul>
+</div>
+<div class="note admonition">
+<p class="admonition-title">The Life Cycle of a Green Arrow in RadFriends-NS</p>
+<ul class="simple">
+<li><p><strong>The Replacement Goal:</strong> The algorithm identifies the “worst” active point in the entire population (the point with the lowest likelihood density) and marks it to be destroyed.</p></li>
+<li><p><strong>The Originating End (The Tail):</strong> To find a replacement, the algorithm randomly selects one of the other, surviving active points to act as a parent. The tail of the green arrow sits exactly on this surviving parent point.</p></li>
+<li><p><strong>The “Friend” Ball:</strong> The algorithm draws a radius (the “Rad” in RadFriends) around that parent point to define a local neighborhood.</p></li>
+<li><p><strong>The Pointy End (The Tip):</strong> The algorithm randomly samples a new coordinate inside that neighborhood. If this new coordinate has a higher likelihood than the “worst” point, it is accepted. The tip of the green arrow lands on this new location.</p></li>
+</ul>
+<p><strong>Summary of the Visual Mechanics</strong></p>
+<ul class="simple">
+<li><p><strong>The Tail:</strong> The surviving point chosen to spawn a new candidate.</p></li>
+<li><p><strong>The Tip:</strong> The successful new point that instantly takes the place of the dead, lowest-likelihood point.</p></li>
+<li><p><strong>The Deleted Point:</strong> The actual point being replaced vanishes from the screen elsewhere in the cluster without an arrow drawn directly to it.</p></li>
+</ul>
+<p>Other notes:</p>
+<ul class="simple">
+<li><p>The RadFriends algorithm determines the radius of the proposal region dynamically. This resulting radius builds a local bounding region around each surviving point. By overlapping these regions across all active points, a collective “friend” zone envelope is formed that wraps around the entire high-density target landscape.</p></li>
+<li><p>A red arrow represents a failed proposal where a newly sampled point is rejected. This occurs because the algorithm failed to meet the strict criterion of Nested Sampling: every new point must have a higher likelihood density than the worst point in the current population. Just like a green arrow, a red arrow starts at the randomly selected parent point. The population remains unchanged, no points are replaced, and the algorithm tries again from a new random parent.</p></li>
+</ul>
+</div>
+<section id="id5">
+<h3>Multimodal sampling<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>Now switch the <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">distribution</span></code> to <code class="docutils literal notranslate"><span class="pre">multimodal</span></code>. Compare the performance of nested sampling to MH or HMC.
+We will compare several sampling techniques in finding multimodal posteriors and calculating evidence integrals in demo notebooks in the next chapter.</p>
+</section>
+</section>
+<section id="id6">
+<h2>Summary of Nested Sampling<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<div class="note admonition">
+<p class="admonition-title">Comparison of Nested Sampling, Metropolis-Hastings, and HMC simulations</p>
+<p>RadFriends-NS (Nested Sampling) differs fundamentally from algorithms like Metropolis-Hastings (MH) and Hamiltonian Monte Carlo (HMC) because it is designed to calculate a total volume (the Bayesian evidence) rather than just exploring a continuous path (or multiple paths in parallel).</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Algorithm</p></th>
+<th class="head"><p>Exploration Strategy</p></th>
+<th class="head"><p>Behavior of Arrows</p></th>
+<th class="head"><p>Best Used For</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>RadFriends-NS</strong> (RadFriends Nested Sampling)</p></td>
+<td><p>Shrinks a contour to isolate high-density zones while keeping a population of active points.</p></td>
+<td><p><strong>Radial clusters.</strong> Green arrows radiate outward inside an adaptive bounding region (a “friend” ball) to replace the lowest-likelihood point.</p></td>
+<td><p>Multi-modal distributions and calculating Bayesian evidence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Random Walk MH</strong> (Metropolis-Hastings)</p></td>
+<td><p>Takes blind, random steps in any direction from a single active point.</p></td>
+<td><p><strong>Jagged, local paths.</strong> Shows many red arrows (rejections) because random steps frequently land in low-probability areas.</p></td>
+<td><p>Simple, low-dimensional distributions.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>HMC</strong> (Hamiltonian Monte Carlo)</p></td>
+<td><p>Uses physics simulation (gradient/slope) to glide smoothly across the distribution.</p></td>
+<td><p><strong>Long, sweeping curves.</strong> Green arrows form long, elegant trajectories with very few red arrows, easily moving between distant peaks.</p></td>
+<td><p>Complex, high-dimensional, and continuous distributions.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!--
+Appearance of each:
+1. **RadFriends-NS: The Adaptive Bounding Box**  
+  Instead of a single particle walking around, Nested Sampling maintains a population of points. It identifies the worst point (lowest value of the likelihood), throws it away, and tries to generate a new, better point to replace it.
+    * **The "RadFriends" Trick:** To avoid guessing blindly, the algorithm draws an adaptive envelope around the surviving points (the "friend" zone).
+    * **The Visual Result:** You see green arrows popping up dynamically within this specialized cluster. As time goes on, the allowed boundary shrinks, tightening around the peaks like a lasso.
+
+2. **Random Walk Metropolis-Hastings: The Blind Explorer**  
+  This algorithm is a single particle that tosses a coin to choose a random direction and distance. If the new spot has higher density, it moves there (green arrow). If it has lower density, it usually (but not always) stays put (red arrow).
+    * **The Visual Result:** The trail looks like a chaotic, jagged "drunkard's walk." It spends a massive amount of time generating red arrows because blind guesses often hit poor zones.
+
+3. **Hamiltonian Monte Carlo: The Orbiting Satellite**  
+  HMC treats the particle like a hockey puck sliding on a frictionless, curved surface where the high-density areas are deep valleys. It gives the particle a random push (momentum) and lets gravity simulate a smooth path.
+    * **The Visual Result:** Beautiful, sweeping green arcs that effortlessly trace the contours of the shape. Because it uses math gradients to guide its path, almost every single proposal is accepted, resulting in almost zero red arrows.
+-->
+</div>
+<!--
+### Code demo
+
+```{code-cell} python3
+:label: Nested-sampling-1
+:tags: [hide-input]
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 1. Setup target distribution (2D Gaussian landscape)
+def log_likelihood(x, y):
+    # Peak is at (0,0)
+    return -0.5 * (x**2 + y**2)
+
+# 2. Simulation parameters
+np.random.seed(42)
+num_points = 20
+num_iterations = 150
+expansion_factor = 1.5  # Scale factor (F) for the friend ball
+
+# Initialize random population uniformly distributed between -3 and 3
+population = np.random.uniform(-3, 3, (num_points, 2))
+likelihoods = np.array([log_likelihood(p[0], p[1]) for p in population])
+
+# Track historical metrics for plotting
+history_worst_lh = []
+history_rejection_rate = []
+
+# Data structures to store arrows for visualization
+green_arrows = [] # (start_x, start_y, dx, dy)
+red_arrows = []
+
+print("Running RadFriends Nested Sampling Simulation...")
+
+for idx in range(num_iterations):
+    # Find the current worst point (lowest likelihood)
+    worst_idx = np.argmin(likelihoods)
+    worst_lh = likelihoods[worst_idx]
+    history_worst_lh.append(worst_lh)
+    
+    # Calculate adaptive radius (distance to nearest surviving neighbor)
+    radii = []
+    for i, p1 in enumerate(population):
+        if i == worst_idx:
+            continue
+        distances = [np.linalg.norm(p1 - p2) for j, p2 in enumerate(population) if j != i and j != worst_idx]
+        radii.append(min(distances) * expansion_factor)
+    avg_radius = np.mean(radii)
+    
+    # Try to propose a valid replacement point
+    attempts = 0
+    accepted = False
+    
+    while not accepted:
+        attempts += 1
+        # Pick a random surviving parent point
+        parent_idx = np.random.choice([i for i in range(num_points) if i != worst_idx])
+        parent = population[parent_idx]
+        
+        # Sample uniformly within a circular "friend ball" around the parent
+        r = avg_radius * np.sqrt(np.random.rand())
+        theta = np.random.rand() * 2 * np.pi
+        dx, dy = r * np.cos(theta), r * np.sin(theta)
+        proposal = parent + np.array([dx, dy])
+        
+        # Check acceptance criteria
+        prop_lh = log_likelihood(proposal[0], proposal[1])
+        if prop_lh > worst_lh:
+            # Success: Accept proposal and replace the worst point
+            population[worst_idx] = proposal
+            likelihoods[worst_idx] = prop_lh
+            accepted = True
+            # Store sample arrow from early, middle, or late phase to visualize
+            if len(green_arrows) < 15 and idx % 10 == 0:
+                green_arrows.append((parent[0], parent[1], dx, dy))
+        else:
+            # Failure: Record rejection arrow location
+            if len(red_arrows) < 30 and idx % 5 == 0:
+                red_arrows.append((parent[0], parent[1], dx, dy))
+                
+    history_rejection_rate.append((attempts - 1) / attempts)
+
+# 3. Plotting results
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
+# Left Plot: The Population and Arrow Vectors
+# Draw contours of the target landscape
+X, Y = np.meshgrid(np.linspace(-3, 3, 100), np.linspace(-3, 3, 100))
+Z = log_likelihood(X, Y)
+ax1.contourf(X, Y, Z, cmap='Blues', alpha=0.6)
+
+# Plot final converged point cloud
+ax1.scatter(population[:, 0], population[:, 1], c='black', label='Final Active Points', zorder=5)
+
+# Overlay Green Arrows (Accepted Steps)
+for arrow in green_arrows:
+    ax1.arrow(arrow[0], arrow[1], arrow[2], arrow[3], head_width=0.08, head_length=0.08, fc='g', ec='g', alpha=0.8)
+# Overlay Red Arrows (Rejected Steps)
+for arrow in red_arrows:
+    ax1.arrow(arrow[0], arrow[1], arrow[2], arrow[3], head_width=0.06, head_length=0.06, fc='r', ec='r', alpha=0.4)
+
+ax1.set_title("RadFriends Particle Field & Proposals")
+ax1.set_xlabel("X coordinate")
+ax1.set_ylabel("Y coordinate")
+# Proxy artists for legend
+from matplotlib.patches import Patch
+legend_elements = [Patch(facecolor='g', edgecolor='g', label='Accepted Proposal (Green)'),
+                   Patch(facecolor='r', edgecolor='r', alpha=0.5, label='Rejected Proposal (Red)'),
+                   plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='black', markersize=8, label='Active Points')]
+ax1.legend(handles=legend_elements, loc='upper right')
+
+# Right Plot: The Shrinking Boundary Effects
+ax2.plot(history_worst_lh, color='darkblue', linewidth=2, label='Worst Likelihood Threshold')
+ax2.set_xlabel("Iteration")
+ax2.set_ylabel("Log Likelihood Value (Higher = Closer to Peak)")
+ax2.set_title("Convergence & Threshold Tightening")
+ax2.grid(True, linestyle='--', alpha=0.5)
+ax2.legend(loc='lower right')
+
+plt.tight_layout()
+plt.show()
+
+print("\nSimulation complete. Plot window displayed.")
+
+
+```
+
+
+* The Vector Clusters: On the left map, you will see green arrows moving directly toward the higher-density core.
+* The Red Chaos: Scattered red arrows map out where the "friend" ball overstepped the threshold boundaries, illustrating how the algorithm wastes steps guessing outside the valid contour line.
+* The Threshold Slope: The right graph shows how the minimum allowable likelihood value climbs higher over time, squeezing the target volume exactly like the animation behaves in the interactive gallery.
+
+
+```{code-cell} python3
+:label: Nested-sampling-2
+:tags: [hide-input]
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 1. Setup multi-modal target distribution (Two distinct Gaussian peaks)
+def log_likelihood_multimodal(x, y):
+    # Peak 1 centered at (-1.5, -1.5)
+    peak1 = -0.5 * ((x + 1.5)**2 + (y + 1.5)**2)
+    # Peak 2 centered at (1.5, 1.5)
+    peak2 = -0.5 * ((x - 1.5)**2 + (y - 1.5)**2)
+    
+    # Use log-sum-exp trick to safely add probabilities in log space
+    # This represents a mixture of two separate density islands
+    max_p = np.maximum(peak1, peak2)
+    return max_p + np.log(np.exp(peak1 - max_p) + np.exp(peak2 - max_p))
+
+# 2. Simulation parameters
+np.random.seed(101) # Seed chosen to highlight the split behavior well
+num_points = 30     # Increased point pool to adequately cover both peaks
+num_iterations = 200
+expansion_factor = 1.3 
+
+# Initialize random population uniformly across the entire grid
+population = np.random.uniform(-4, 4, (num_points, 2))
+likelihoods = np.array([log_likelihood_multimodal(p, p) for p in population])
+
+history_worst_lh = []
+green_arrows = [] 
+red_arrows = []
+
+print("Running Multi-Modal RadFriends Nested Sampling Simulation...")
+
+for idx in range(num_iterations):
+    # Find the current worst point to destroy
+    worst_idx = np.argmin(likelihoods)
+    worst_lh = likelihoods[worst_idx]
+    history_worst_lh.append(worst_lh)
+    
+    # Calculate adaptive radius based on nearest neighbors
+    radii = []
+    for i, p1 in enumerate(population):
+        if i == worst_idx:
+            continue
+        distances = [np.linalg.norm(p1 - p2) for j, p2 in enumerate(population) if j != i and j != worst_idx]
+        radii.append(min(distances) * expansion_factor)
+    avg_radius = np.mean(radii)
+    
+    accepted = False
+    while not accepted:
+        # Pick a random surviving parent point
+        parent_idx = np.random.choice([i for i in range(num_points) if i != worst_idx])
+        parent = population[parent_idx]
+        
+        # Sample uniformly within the local "friend ball"
+        r = avg_radius * np.sqrt(np.random.rand())
+        theta = np.random.rand() * 2 * np.pi
+        dx, dy = r * np.cos(theta), r * np.sin(theta)
+        proposal = parent + np.array([dx, dy])
+        
+        # Evaluate proposal
+        prop_lh = log_likelihood_multimodal(proposal, proposal)
+        if prop_lh > worst_lh:
+            population[worst_idx] = proposal
+            likelihoods[worst_idx] = prop_lh
+            accepted = True
+            # Sample arrows periodically for clean visualization
+            if idx % 8 == 0:
+                green_arrows.append((parent, parent, dx, dy))
+        else:
+            if len(red_arrows) < 40 and idx % 4 == 0:
+                red_arrows.append((parent, parent, dx, dy))
+
+# 3. Plotting multi-modal results
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
+# Left Plot: Multi-modal Contour and Clustering
+X, Y = np.meshgrid(np.linspace(-4, 4, 100), np.linspace(-4, 4, 100))
+Z = log_likelihood_multimodal(X, Y)
+ax1.contourf(X, Y, Z, cmap='Blues', alpha=0.6)
+
+# Plot final active points (you'll see them split between both islands)
+ax1.scatter(population[:, 0], population[:, 1], c='black', label='Final Active Points', zorder=5)
+
+# Overlay Arrows
+for arrow in green_arrows:
+    ax1.arrow(arrow, arrow, arrow, arrow, head_width=0.08, head_length=0.08, fc='g', ec='g', alpha=0.7)
+for arrow in red_arrows:
+    ax1.arrow(arrow, arrow, arrow, arrow, head_width=0.06, head_length=0.06, fc='r', ec='r', alpha=0.3)
+
+ax1.set_title("RadFriends Splitting on Multi-Modal Distribution")
+ax1.set_xlabel("X coordinate")
+ax1.set_ylabel("Y coordinate")
+
+from matplotlib.patches import Patch
+legend_elements = [Patch(facecolor='g', edgecolor='g', label='Accepted Steps (Green)'),
+                   Patch(facecolor='r', edgecolor='r', alpha=0.5, label='Rejected Steps (Red)'),
+                   plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='black', markersize=8, label='Active Points')]
+ax1.legend(handles=legend_elements, loc='upper left')
+
+# Right Plot: Sharp threshold jumps as valleys are cleared
+ax2.plot(history_worst_lh, color='darkblue', linewidth=2, label='Worst Likelihood Threshold')
+ax2.set_xlabel("Iteration")
+ax2.set_ylabel("Log Likelihood Value")
+ax2.set_title("Threshold Progression Over Valleys")
+ax2.grid(True, linestyle='--', alpha=0.5)
+ax2.legend(loc='lower right')
+
+plt.tight_layout()
+plt.show()
+
+print("\nSimulation complete. Multi-modal plot window displayed.")
+
+
+```
+
+* The Valley of Rejection: In the space between the two islands (near 0,0), you will see highly concentrated red arrows. As the threshold tightens, proposals that drop into this empty valley are fiercely rejected.
+* Independent Neighborhoods: Because avg_radius continuously shrinks as clusters tighten, the points on the top-right peak stop generating proposals that land on the bottom-left peak. The populations become visually and functionally isolated.
+* The Threshold Step-Function: On the right-hand graph, you may notice a sudden sharp inflection or "jump" in the log-likelihood curve. This represents the precise moment the algorithm completely purged the last point stuck in the dead-zone valley, leaving only points securely resting on the two high-density summits.
+-->
+<section id="visualizing-the-difference-ns-vs-mcmc">
+<h3>Visualizing the Difference: NS vs. MCMC<a class="headerlink" href="#visualizing-the-difference-ns-vs-mcmc" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Aspect</p></th>
+<th class="head"><p>Traditional MCMC (e.g., HMC, Metropolis)</p></th>
+<th class="head"><p>Nested Sampling (e.g., RadFriends-NS)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Mathematical Goal</p></td>
+<td><p>Samples proportionally to the target density to map the shape of the   posterior.</p></td>
+<td><p>Directly calculates the absolute volume under the likelihood curve.</p></td>
+</tr>
+<tr class="row-odd"><td><p>The Integration Issue</p></td>
+<td><p>Cannot easily compute <span class="math notranslate nohighlight">\(\evidence\)</span> because it does not track the total   volume of unvisited spaces.</p></td>
+<td><p>Explicitly solves <span class="math notranslate nohighlight">\(\evidence\)</span> by systematically compressing the known   prior volume.</p></td>
+</tr>
+<tr class="row-even"><td><p>Handling Phase Transitions</p></td>
+<td><p>Often gets trapped on a single peak, missing entire “islands”   of probability.</p></td>
+<td><p>Compresses all modes uniformly, naturally isolating multiple peaks as the   volume shrinks.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Every time you see a green arrow replace a point in the RadFriends simulation, the algorithm   is taking one more step down the <span class="math notranslate nohighlight">\(X\)</span>-axis (from 1 toward 0). It locks in the likelihood of   the rejected point (<span class="math notranslate nohighlight">\(\like_i\)</span>), shrinks the remaining volume estimate (<span class="math notranslate nohighlight">\(X_i\)</span>), and adds another   rectangle to the grand total of the Bayesian Evidence (<span class="math notranslate nohighlight">\(\evidence\)</span>).</p>
+<div class="note admonition">
+<p class="admonition-title">Advantages of nested sampling</p>
+<ul class="simple">
+<li><p>Returns results for both model comparison and parameter inference at the same time.</p></li>
+<li><p>Successful in multi-model problems.</p></li>
+<li><p>Naturally self-tuning.</p></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="physics-connection-statistical-mechanics">
+<h2>Physics connection: statistical mechanics<a class="headerlink" href="#physics-connection-statistical-mechanics" title="Link to this heading">#</a></h2>
+<p>[This discussion is based on <span class="bibtex-citation" id="id7">[<a class="reference internal" href="../../Backmatter/bibliography.html#id3" title="Greg Ashton and others. Nested sampling for physical scientists. Nature, 2022. arXiv:2205.15570, doi:10.1038/s43586-022-00121-x.">A+22</a>]</span>]</p>
+<p>We can make a connection between the evidence and the canonical ensemble partition function in statistical mechanics by defining an “energy”</p>
+<div class="math notranslate nohighlight">
+\[
+          E(\pars) = -\log \like(\pars) \quad\Longrightarrow\quad \like(\pars)= e^{-E(\pars)},
+\]</div>
+<p>where we think of <span class="math notranslate nohighlight">\(\pars\)</span> as defining a microstate.
+Then the partition function at inverse temperature <span class="math notranslate nohighlight">\(\beta\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[
+   Z(\beta) = \int e^{-\beta E(\pars)} \prior(\pars)\, d\pars
+   = \int \like(\pars)^\beta\prior(\pars) \, d\pars,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\prior(\pars)\,d\pars\)</span> is the underlying phase-space measure.
+For <span class="math notranslate nohighlight">\(\beta=1\)</span> this is the evidence and with <span class="math notranslate nohighlight">\(\beta=0\)</span> the integrand is just the prior.
+In parallel tempering, we find a differential equation in <span class="math notranslate nohighlight">\(\beta\)</span> for <span class="math notranslate nohighlight">\(Z(\beta)\)</span>.</p>
+<p>Nested sampling of parameters <span class="math notranslate nohighlight">\(\pars\)</span> presents a different perspective, which is also well aligned with statistical mechanics, but the analogies are to the <em>microcanonical ensemble</em>.
+The microcanonical ensemble has all states with <span class="math notranslate nohighlight">\(E(\pars) = \epsilon\)</span> where <span class="math notranslate nohighlight">\(\epsilon\)</span> is a constant energy level.
+The volume of state space corresponding to a given energy <span class="math notranslate nohighlight">\(\epsilon\)</span> is given by the density of states,</p>
+<div class="math notranslate nohighlight">
+\[
+g(\epsilon) = \int \delta(E(\pars) - \epsilon)\prior(\pars) \, d\pars .
+\]</div>
+<!--
+Taking the prior to be uniform corresponds to the  *ergodic hypothesis*, namely that each microstate that is allowed by applicable conservation laws is equally likely to be observed. 
+-->
+<p>Taking the Laplace transform of the density of states <span class="math notranslate nohighlight">\(g\)</span> is the canonical partition function <span class="math notranslate nohighlight">\(\evidence(\beta) = \int e^{-\beta E} g(E) d E\)</span>, which corresponds to the generalized evidence <span class="math notranslate nohighlight">\(\evidence(\beta)\)</span>.
+As noted, the canonical ensemble describes thermodynamic states based on the inverse temperature <span class="math notranslate nohighlight">\(\beta\)</span> rather than the energy level <span class="math notranslate nohighlight">\(\epsilon.\)</span>
+In the canonical ensemble, the Boltzmann distribution <span class="math notranslate nohighlight">\(p(\pars\mid\beta) = \exp\{-\beta E(\pars)\} / \evidence(\beta)\)</span> characterizes the distribution of states.</p>
+<p>NS in essence tracks the cumulative density of states via:</p>
+<div class="math notranslate nohighlight">
+\[
+  X(\like) = \int\limits_{E \le -\log \like} g(E) \, d E,
+\]</div>
+<p>Thus, NS is a way of reconstructing the density-of-states information.
+Note that in NS, we don’t have a microcanonical <em>shell</em>, but rather the entire interior below a given <span class="math notranslate nohighlight">\(E\)</span>.
+The practical approximation to the evidence follows as</p>
+<div class="math notranslate nohighlight">
+\[
+\evidence(\beta) \approx \sum_i {e^{-\beta E_i} \left(X_{i-1}  -  X_{i+1} \right)/2}.
+\]</div>
+<div class="note admonition">
+<p class="admonition-title">Correspondence between Bayesian inference and stat mech</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p>Bayesian inference (NS)</p></th>
+<th class="head text-center"><p>Statistical mechanics</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p><span class="math notranslate nohighlight">\(\pars\)</span></p></td>
+<td class="text-center"><p>configuration / microstate</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p><span class="math notranslate nohighlight">\(-\log\like(\pars)\)</span></p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(E(\pars)\)</span></p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p><span class="math notranslate nohighlight">\(\prior(\pars)\,d\pars\)</span></p></td>
+<td class="text-center"><p>reference phase-space measure</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p><span class="math notranslate nohighlight">\(X(\like)\)</span></p></td>
+<td class="text-center"><p>cumulative density of states</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p><span class="math notranslate nohighlight">\(\like = e^{-E}\)</span></p></td>
+<td class="text-center"><p>Boltzmann factor at <span class="math notranslate nohighlight">\(\beta = 1\)</span></p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p><span class="math notranslate nohighlight">\(\evidence\)</span></p></td>
+<td class="text-center"><p>partition function</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p><span class="math notranslate nohighlight">\(-\log\evidence\)</span></p></td>
+<td class="text-center"><p>free energy at <span class="math notranslate nohighlight">\(\beta = 1\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>During NS, states are generated from the prior constrained by an upper energy limit <span class="math notranslate nohighlight">\(\epsilon = -\log \threshold\)</span>, which can be achieved with various techniques (see references).
+The information entropy of the constrained prior is the <em>volume entropy</em> <span class="math notranslate nohighlight">\(\log X(\epsilon)\)</span>.
+As NS progresses from one energy limit <span class="math notranslate nohighlight">\(\epsilon\)</span> to the next <span class="math notranslate nohighlight">\(\epsilon' &lt; \epsilon\)</span>, the volume entropy changes by <span class="math notranslate nohighlight">\(\Delta H = \log[X(\epsilon) / X(\epsilon')]\)</span> at a rate that is constant on average: <span class="math notranslate nohighlight">\(\langle \Delta H \rangle = 1 / \nlive\)</span>.</p>
+<p>The evidence is an energy-entropy competition, which is what determines equilibrium in statistical mechanics. In Bayesian terms, high likelihood favors a small region around an excellent fit while prior volume favors broader regions fit reasonably well.
+We recognize this as the tradeoff between better fit and the Occam penalty.</p>
+<div class="note admonition">
+<p class="admonition-title">NS vs. thermodynamic integration</p>
+<p>The NS procedure with energy as a control parameter can be contrasted with thermodynamic integration (see <a class="reference internal" href="sec-parallel-tempering.html#sec-parallel-tempering"><span class="std std-ref">Parallel tempering</span></a>), which works in the canonical ensemble and uses the inverse temperature <span class="math notranslate nohighlight">\(\beta\)</span> as a control parameter to weight each microstate.
+In contrast to the ensemble property <span class="math notranslate nohighlight">\(\beta\)</span>, a key advantage of <span class="math notranslate nohighlight">\(E(\pars)\)</span> is that it can be evaluated for a single microstate <span class="math notranslate nohighlight">\(\pars\)</span>.
+NS constructs a sequence of energy levels at runtime.
+The sequence is optimal in that it achieves constant thermodynamic speed because changes in the volume entropy are constant on average.
+Therefore, NS avoids having to design a good temperature schedule, as must be done in thermodynamic integration.</p>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -790,6 +1611,36 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prelude">Prelude</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-idea-of-ns">Basic idea of NS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ns-in-practice">NS in practice</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-of-nested-sampling">Simulation of nested sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multimodal-sampling">Multimodal sampling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-nested-sampling">Summary of Nested Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Multimodal sampling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Summary of Nested Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-the-difference-ns-vs-mcmc">Visualizing the Difference: NS vs. MCMC</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#physics-connection-statistical-mechanics">Physics connection: statistical mechanics</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
