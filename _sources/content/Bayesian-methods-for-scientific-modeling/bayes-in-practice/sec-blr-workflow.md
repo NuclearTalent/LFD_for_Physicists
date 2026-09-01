@@ -173,7 +173,8 @@ Let's first consider a single datum $\data_i$ and the corresponding model predic
 \end{equation}
 
 Since the relation between data and residual is a simple additive transformation $\data_i = \modeloutput_i + \residual_i$,
-we can use the standard probability rules to obtain (alternatively we can apply the recipe for changing variables *(add reference)*) 
+we can use the standard probability rules to obtain 
+<!--(alternatively we can apply the recipe for changing variables *(add reference)*)--> 
 
 $$
 \begin{align}

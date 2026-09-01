@@ -72,7 +72,7 @@ $$ (eq:coinflip_posterior_norm)
 :::{admonition} Recall Beta function
 $$
   B(x,y) = \int_0^1 t^{x-1} (1-t)^{y-1} \, dt = \frac{\Gamma(x)\Gamma(y)}{\Gamma(x+y)}
-  \ \  \mbox{for } \text{He}(x,y) > 0
+  \ \  \mbox{for } \text{Re}(x,y) > 0
 $$  (eq:beta_function)
 
 and $\Gamma(x) = (x-1)!$ for integers.

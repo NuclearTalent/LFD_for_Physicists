@@ -138,7 +138,7 @@ See {numref}`sec:2dPDFs` for plotting what this looks like.
 
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
-What can't we have $\rho > 1$ or $\rho < -1$?
+Why can't we have $\rho > 1$ or $\rho < -1$?
 
 :::{admonition} Answer 
 :class: dropdown, my-answer 
@@ -273,7 +273,7 @@ $$
 $$
 
 Now define $\widetilde y_i = y_i - \mu_0$ and $\widetilde z = z - \mu_0$, so that these new random variables are all mean zero (this is for clarity, not necessity). 
-The variance of $\widetilde y_i$ is equal to $\langle y_i^2 \rangle = \sigma_0^2$. 
+The variance of $\widetilde y_i$ is equal to $\langle \widetilde y_i^2 \rangle = \sigma_0^2$. 
 Consider now the variance of $\widetilde z$ which is equal to the expectation value of $\widetilde z^2$,
 
 $$
@@ -285,7 +285,7 @@ $$ (eq:variance_n_effective)
 Since $\langle\widetilde y_i \widetilde y_j\rangle$ either is zero or equals $\sigma_0^2$ for the two extremes of correlation, we find
 
 $$\begin{align}
-   &\text{uncorrelated}\  & \langle \widetilde z^2 \rangle &= \frac{1}{n^2}\cdot n\langle y_i^2 \rangle = \frac{\sigma_0^2}{n} , \\
+   &\text{uncorrelated}\  & \langle \widetilde z^2 \rangle &= \frac{1}{n^2}\cdot n\langle \widetilde y_i^2 \rangle = \frac{\sigma_0^2}{n} , \\
    &\text{fully correlated}\ & \langle \widetilde z^2 \rangle &= \frac{1}{n^2} \cdot n^2 \langle \widetilde y_i \widetilde y_j \rangle = \frac{\sigma_0^2}{1} ,
 \end{align}$$
 
