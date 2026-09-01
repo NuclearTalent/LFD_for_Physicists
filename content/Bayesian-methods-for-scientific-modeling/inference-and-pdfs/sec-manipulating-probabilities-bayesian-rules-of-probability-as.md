@@ -71,17 +71,17 @@ $$
 
 Equating this to the expression in {eq}`eq:joint_prob` yields **Bayes' Rule** (or Theorem):
 
-\begin{equation}
+$$
 \cprob{x}{y,I} = \frac{\cprob{y}{x,I} \cprob{x}{I}}{\cprob{y}{I}}
-\end{equation}
+$$ (eq:Bayes_theorem_xy)
 
-Bayes' theorem tells us how to reverse the conditional: $\cprob{y}{x}
-\Rightarrow \cprob{x}{y}$. The first thing to realize is that these two
+Bayes' theorem tells us how to reverse the conditional: $\cprob{y}{x,I}
+\Rightarrow \cprob{x}{y,I}$. The first thing to realize is that these two
 probabilities are not the same thing.
 
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
-Construct your own example of $\cprob{x}{y} \neq \cprob{y}{I}$
+Construct your own example of $\cprob{x}{y,I} \neq \cprob{y}{x,I}$
 :::{admonition} Possible answers 
 :class: dropdown, my-hint 
 The probability that there is a cloud in the sky given that it is
@@ -92,11 +92,11 @@ that there is a cloud in the sky.
 
 
 ```{admonition} Ingredients of Bayes' theorem
-A typical use of Bayes' theorem is to update information on a hypothesis $y$ according to new data $x$ that we obtain. In that case the various terms in the theorem have formal names. 
-* The quantity on the far right, $\cprob{y}{I}$, is called the *prior* probability; it represents our state of knowledge (or ignorance) about the truth of the hypothesis $y$ before we have analysed the new data $x$.
-* This is modified by additional information on $y$ through $\cprob{x}{y,I}$, the *likelihood* function, that tells us how likely it is that we measure $x$, given that $y$ is true (and $I$ is true as well). 
-* The denominator $\cprob{x}{I}$ is called the *evidence*. It does not depend on the hypothesis and can be regarded as a normalization constant in many situations. 
-* Together, these yield the *posterior* probability, $\cprob{y}{x,I}$, representing ourupdated state of knowledge about the hypothesis $y$ in light of the information we had before, $I$, and the additional data $x$.
+A typical use of Bayes' theorem {eq}`eq:Bayes_theorem_xy` is to update information on a hypothesis $x$ according to new data $y$ that we obtain. In that case the various terms in the theorem have formal names. 
+* The quantity on the far right, $\cprob{x}{I}$, is called the *prior* probability; it represents our state of knowledge (or ignorance) about the truth of the hypothesis $x$ before we have analysed the new data $y$.
+* This is modified by additional information on $x$ through $\cprob{y}{x,I}$, the *likelihood* function, that tells us how likely it is that we measure $y$, given that $x$ is true (and $I$ is true as well). 
+* The denominator $\cprob{y}{I}$ is called the *evidence*. It does not depend on the hypothesis and can be regarded as a normalization constant in many situations. 
+* Together, these yield the *posterior* probability, $\cprob{x}{y,I}$, representing our updated state of knowledge about the hypothesis $x$ in light of the information we had before, $I$, and the additional data $y$.
 
 In this sense, Bayes’ theorem is a mathematically rigorous statement of how probabilities should be updated in light of new information: the process of learning from data.
 ```
