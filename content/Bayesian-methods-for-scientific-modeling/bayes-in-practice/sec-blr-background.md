@@ -346,7 +346,7 @@ In frequentist linear regression using the ordinary least-squares method we make
 (sec:ols_in_practice_b)=
 ## Addendum: Ordinary linear regression in practice
 
-We often have situation where we have much more than just two datapoints, and they rarely  fall exactly on a straight line. Let's use python to generate some more realistic, yet artificial, data. Using the function below you can generate data from some linear process with random variables for the underlying parameters. We call this a data-generating process.
+We often have a situation where we have much more than just two datapoints, and they rarely  fall exactly on a straight line. Let's use python to generate some more realistic, yet artificial, data. Using the function below you can generate data from some linear process with random variables for the underlying parameters. We call this a data-generating process.
 
  ```{code-cell} python3
 import numpy as np

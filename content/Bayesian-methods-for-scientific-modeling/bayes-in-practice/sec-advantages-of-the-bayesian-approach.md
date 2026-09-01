@@ -33,7 +33,7 @@ The Bayesian approach offers a number of distinct advantages in scientific appli
    * For data with a small signal-to-noise ratio, a Bayesian analysis can frequently yield many orders of magnitude improvement in model parameter estimation, through the incorporation of relevant prior information about the signal model.
 5. For some problems, a Bayesian analysis may simply lead to a familiar (frequentist) statistic. Even in this situation it often provides a powerful new insight concerning the interpretation of the statistic.
 6. Provides a more powerful way of assessing competing theories at the forefront of science by automatically quantifying Occam’s razor. 
-   * The evidence for two hypotheses or models, $M_i$ and $M_j$, can be compared in light of data $\data$ by evaluating the ratio $p(M_i|\data, I) / (M_j|\data, I)$.
+   * The evidence for two hypotheses or models, $M_i$ and $M_j$, can be compared in light of data $\data$ by evaluating the ratio $p(M_i|\data, I) / p(M_j|\data, I)$.
    * The Bayesian quantitative Occam’s razor can also save a lot of time that might otherwise be spent chasing noise artifacts that masquerade as possible detections of real phenomena.
 ```
 
