@@ -6,7 +6,7 @@ We've divided the material into chapters on:
 
 * {ref}`ch:Inferenceandpdfs`, with an introduction to Bayes' theorem and other ingredients of Bayesian statistical analysis, including our first look at parameter estimation;
 
-* {ref}`sec:MoreOnPDFs`, with further details and explorations of probability density (or distribution) functions (PDFs);
+* {ref}`sec:MoreOnPDFs`, with further details and explorations of probability distributions, including probability density functions (PDFs);
 
 * {ref}`sec:UpdatingBayes`, with interactive guides to the updating of PDFs when additional knowledge is acquired; 
 
@@ -21,4 +21,4 @@ Good supplementary references for this material that are particularly physicist-
 Many of the examples in Sivia have been implemented in Jupyter notebooks that you should work through as we proceed. You are highly encouraged to answer the questions in the notebooks, play with different values for the parameters, and extend the examples.
 
 ::: note
-Additional material on scientific modeling can be found in Appendix A. See {ref}`sec:RootScientificModeling`.
+Additional material on scientific modeling can be found in Appendix A and Appendix B. See  {ref}`sec:sec:Statistics` and {ref}`sec:RootScientificModeling`.

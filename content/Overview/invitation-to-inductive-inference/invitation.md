@@ -15,7 +15,7 @@ But how much more likely? Our physicist training cries out for us to quantify th
 
 Bayes' theorem provides us with a mathematical identity (deductively inferred!) that tells us how to do the latter: how to update our inferences as more data is acquired. But to do this we must couch our inference of Betty's species identity in the language of random variables and probability. You might think this a bug, but we will argue throughout this book that it's a feature, because it means that our inferences are then subject to the laws of probability. And these too are mathematical rules that tell you quantitatively  how additional assumptions you may make along your path from data to inference affect your final conclusion. 
 
-The basic process of inference is employed also in the field of machine learning. Here, the learning part might take place when confronting a large set of data with a machine learning algorithm, and the specific aim might be tasks such as classification or clusterization or emulation.
+The basic process of inference is employed also in the field of machine learning. Here, the learning part might take place when confronting a large set of data with a machine learning algorithm, and the specific aim might be tasks such as classification or clustering or emulation.
 We aim in this book to bring a particularly Bayesian perspective to our consideration of machine learning. 
 
 ```{figure} ../assets/MLinference.png
