@@ -66,28 +66,28 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/Bayesian-methods-for-scientific-modeling/error-propagation/sec-nuisance-parameters-and-marginalization';</script>
     <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
     <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
     <script src="../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
     <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
-    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
-    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
-    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
     <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
-    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
-    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
-    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
     <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
-    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
-    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
     <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
     <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
     <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
-    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
-    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
-    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
-    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
-    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="7.2. Changing variables" href="sec-changing-variables.html" />
@@ -741,13 +741,13 @@ document.write(`
 <span id="sec-errorpropagationi"></span><h1><span class="section-number">7.1. </span>Nuisance parameters and marginalization<a class="headerlink" href="#nuisance-parameters-and-marginalization" title="Link to this heading">#</a></h1>
 <p>The Bayesian approach offers a straightforward approach for dealing with (known) systematic uncertainties; namely by marginalization.</p>
 <p>For example, assume that we have a model with two parameters, <span class="math notranslate nohighlight">\(\theta\)</span> and <span class="math notranslate nohighlight">\(\phi\)</span>, although only one of them (say <span class="math notranslate nohighlight">\(\theta\)</span>) is of physical relevance. The other one is then labeled a <em>nuisance parameter</em>. If through a Bayesian data analysis we get the joint posterior PDF</p>
-<div class="amsmath math notranslate nohighlight" id="equation-db8ef458-4f63-4323-8577-87268cb62c0b">
-<span class="eqno">(7.1)<a class="headerlink" href="#equation-db8ef458-4f63-4323-8577-87268cb62c0b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b56f1833-dc16-404a-bb5b-ea7c8ef8826b">
+<span class="eqno">(7.1)<a class="headerlink" href="#equation-b56f1833-dc16-404a-bb5b-ea7c8ef8826b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\theta, \phi}{\data, I},
 \end{equation}\]</div>
 <p>then the marginal posterior PDF <span class="math notranslate nohighlight">\(\pdf{\theta}{\data, I}\)</span> is obtained via marginalization</p>
-<div class="amsmath math notranslate nohighlight" id="equation-79ada8c0-402e-4bd3-9484-1e555ac6abc5">
-<span class="eqno">(7.2)<a class="headerlink" href="#equation-79ada8c0-402e-4bd3-9484-1e555ac6abc5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c4d58cfc-fb38-4be8-bdda-ad2f4bd09248">
+<span class="eqno">(7.2)<a class="headerlink" href="#equation-c4d58cfc-fb38-4be8-bdda-ad2f4bd09248" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\theta}{\data, I} = \int \pdf{\theta, \phi}{\data, I} \,d\phi.
 \end{equation}\]</div>
 <p>Thus we have directly derived how to propagate the uncertainty in <span class="math notranslate nohighlight">\(\phi\)</span> to the probability distribution for <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
@@ -760,8 +760,8 @@ document.write(`
 <p>A slightly more general scenario for which the marginalization procedure is used for error propagation is the following: Assume that we have measured or inferred distributions for the random variables <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>; what can we say about the distributions for the difference <span class="math notranslate nohighlight">\(X-Y\)</span> or the raio <span class="math notranslate nohighlight">\(X/Y\)</span>, or the sum of their squares <span class="math notranslate nohighlight">\(X^2+Y^2\)</span>, etc?</p>
 <p>Such questions can be rephrased as: Given the joint PDF <span class="math notranslate nohighlight">\(\pdf{x,y}{I}\)</span>, what is <span class="math notranslate nohighlight">\(\pdf{z}{I}\)</span>, where <span class="math notranslate nohighlight">\(z=f(x,y)\)</span>?
 In this situation we can use marginalization and the product rule.</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f902c8ab-98f3-4444-8832-7b0ff6f343ee">
-<span class="eqno">(7.3)<a class="headerlink" href="#equation-f902c8ab-98f3-4444-8832-7b0ff6f343ee" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e695d9e5-6b71-43a2-a1f3-6fee377faf42">
+<span class="eqno">(7.3)<a class="headerlink" href="#equation-e695d9e5-6b71-43a2-a1f3-6fee377faf42" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{z}{I} = \int \pdf{z,x,y}{I}\,dx\,dy = \int \pdf{z}{x,y,I}\, \pdf{x,y}{I}\,dx\,dy.
 \end{equation}\]</div>
 <p>We first realize that <span class="math notranslate nohighlight">\(\pdf{z}{x,y,I} = \delta(z-f(x,y))\)</span> due to the deterministic functional relationship between the parameters.</p>
@@ -774,19 +774,19 @@ In this situation we can use marginalization and the product rule.</p>
 <p class="admonition-title"><span class="caption-number">Example 7.1 </span> (<span class="math notranslate nohighlight">\(Z = X + Y\)</span>)</p>
 <section class="example-content" id="proof-content">
 <p>Let us consider the situation where you are interested in the quantity <span class="math notranslate nohighlight">\(Z = X + Y\)</span>, and you know that <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> are distributed as independent Gaussians with <span class="math notranslate nohighlight">\(\expect{X} = x_0\)</span>, <span class="math notranslate nohighlight">\(\var{X} = \sigma_x^2\)</span> and <span class="math notranslate nohighlight">\(\expect{Y} = y_0\)</span>, <span class="math notranslate nohighlight">\(\var{Y} = \sigma_y^2\)</span>. Then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b7cef0c3-c113-4744-8d48-2694214b5269">
-<span class="eqno">(7.5)<a class="headerlink" href="#equation-b7cef0c3-c113-4744-8d48-2694214b5269" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-3c484cc2-6ca4-45b0-aed2-ea387058aede">
+<span class="eqno">(7.5)<a class="headerlink" href="#equation-3c484cc2-6ca4-45b0-aed2-ea387058aede" title="Permalink to this equation">#</a></span>\[\begin{align}
 \pdf{x,y}{I} &amp;= \pdf{x}{I}\,\pdf{y}{I} \\
 &amp;= \frac{1}{2\pi\sigma_x\sigma_y} \exp\left[ - \frac{(x-x_0)^2}{2\sigma_x^2} \right] \exp\left[ - \frac{(y-y_0)^2}{2\sigma_y^2} \right].
 \end{align}\]</div>
 <p>Let us now use marginalization and the product rule to find</p>
-<div class="amsmath math notranslate nohighlight" id="equation-aac575d5-14ee-46a4-9fb0-c961ba829fbf">
-<span class="eqno">(7.6)<a class="headerlink" href="#equation-aac575d5-14ee-46a4-9fb0-c961ba829fbf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2f8853bf-71c9-44b3-8405-b0f9469388f2">
+<span class="eqno">(7.6)<a class="headerlink" href="#equation-2f8853bf-71c9-44b3-8405-b0f9469388f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{z}{I} = \int \pdf{z,x,y}{I}\,dx\,dy = \int \pdf{z}{x,y,I}\, \pdf{x,y}{I}\,dx\,dy.
 \end{equation}\]</div>
 <p>We realize that <span class="math notranslate nohighlight">\(\pdf{z}{x,y,I} = \delta(z-(x+y))\)</span> due to the functional relationship between the random variables, and we have <span class="math notranslate nohighlight">\(\pdf{x,y}{I}\)</span> as a product of Gaussian  PDFs from above. The delta function can be used to evaluate one of the integrals, and the PDF for <span class="math notranslate nohighlight">\(Z\)</span> becomes a convolution</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7c797a1e-fb21-4abb-84cc-b084e69db04f">
-<span class="eqno">(7.7)<a class="headerlink" href="#equation-7c797a1e-fb21-4abb-84cc-b084e69db04f" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-92883960-6b5d-4012-8d00-8e5f32635fca">
+<span class="eqno">(7.7)<a class="headerlink" href="#equation-92883960-6b5d-4012-8d00-8e5f32635fca" title="Permalink to this equation">#</a></span>\[\begin{align}
 \pdf{z}{I} &amp;= \int \pdf{x}{I}\, \pdf{y=z-x}{I}\, dx \\
 &amp;= \frac{1}{2\pi\sigma_x\sigma_y} \int \exp\left[ - \frac{(x-x_0)^2}{2\sigma_x^2} \right] \exp\left[ - \frac{(z - x - y_0)^2}{2\sigma_y^2} \right] dx.
 \end{align}\]</div>
@@ -866,8 +866,8 @@ t = \frac{x+y}{\sqrt{2}} \\
 <li><p>and the fact that <span class="math notranslate nohighlight">\(H\)</span> is independent of <span class="math notranslate nohighlight">\(d\)</span>: <span class="math notranslate nohighlight">\(p(H|d,I) = \pdf{H}{I}\)</span>,</p></li>
 </ul>
 <p>we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a72aeb39-4308-4ec7-83d2-b32827c6d0ab">
-<span class="eqno">(7.10)<a class="headerlink" href="#equation-a72aeb39-4308-4ec7-83d2-b32827c6d0ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-83ba1081-bf10-437d-b5e5-37eea2123d14">
+<span class="eqno">(7.10)<a class="headerlink" href="#equation-83ba1081-bf10-437d-b5e5-37eea2123d14" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{d}{\data,I} \propto \pdf{d}{I} \int \pdf{H}{I}\, \pdf{\data}{d,H,I}\, dH ,
 \end{equation}\]</div>
 <p>which means that we have expressed the quantity that we want (the posterior of <span class="math notranslate nohighlight">\(d\)</span>) in terms of quantities that we can specify, as follows.</p>

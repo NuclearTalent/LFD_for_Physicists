@@ -40,7 +40,7 @@ George Pólya was a Hungarian-American mathematician who, in addition to many co
 
 :::{Admonition} Moral qualities of the scientist
 
-Adapted from G. Polya, Induction and Analogy in Mathematics, chapter 1, section 4, which is entitled "The Inductive Attitude".
+Adapted from G. Pólya, Induction and Analogy in Mathematics, chapter 1, section 4, which is entitled "The Inductive Attitude".
 
 Intellectual courage
 : One should be ready to revise any one of our beliefs.

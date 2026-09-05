@@ -3,7 +3,7 @@
 
 We hope anyone, or at least anyone reading this book, wants to learn. As taught in this book the practice of learning from data has four steps, which we will revisit repeatedly:
 
-1. Formulate "priors" that express our knowledge about a model before the new data is taken. Some physicists may argue that we should "let the data speak for itself", with the implication that any informative prior is biasing the result. To the contrary, not using as informative priors as possible risks biases and fails to use all the information. 
+1. Formulate "priors" that express our knowledge about a model before conditioning on new data.  Some physicists may argue that we should "let the data speak for itself", with the implication that any informative prior is biasing the result. To the contrary, not using appropriately informative priors risks biases and fails to use all the information. 
 <!--This is discussed in Part II and X.-->
 
 2. Define the probabilistic relationship between the physical model and the data. No experiment is perfect, and all models are wrong at some level, so both the "data generation process" and "theory defects" need to be accounted for as stochastic variables when we define the relationship between the physics model we want to learn and the data we are using to learn about it. We will call that relationship the "statistical model". <!-- and we discuss it in Part II and Y. -->
