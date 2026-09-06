@@ -14,7 +14,7 @@ Without a statistical model the chain of rigorous inference is broken. But, once
 4. Check the answers obtained after they have been computed to see if the statistical model we wrote down in step 2 is consistent with both what we now know (in the probabilistic sense) about the physics model and the data we are analyzing. This step is called "model checking". You will be exposed to best practices for model checking as well as specific tools to carry it out.
 <!--Tools for model checking are presented in Part W.-->
 
-These four steps are the way: the "Bayesian workflow". It is the practice by which principled learning from data can be carried out, and the results of that learning validated. The Bayesian workflow is discussed in more detail in {ref}`sec:BayesianWorkflow`.
+These four steps are the way: the "Bayesian workflow". It is the practice by which principled learning from data can be carried out, and the results of that learning validated. Although presented linearly here, in detail there are internal and overall cycles where assumptions and implications are examined and steps are revisited, as discussed in more detail in {ref}`sec:BayesianWorkflow`.
 
 :::{admonition} Four-step Bayesian workflow in brief
 1. Formulate informative priors before new data is used.
