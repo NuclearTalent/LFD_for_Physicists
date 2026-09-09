@@ -47,7 +47,7 @@ Appendix C has various materials to set you up for Learning from Data (see {ref}
 
 ```{admonition} Icons and menus
   The Jupyter Book has many useful features:
-* A clickable high-level table of contents (TOC) is available in the panel at the left of each page. (You can toggle this panel open or close with the contents icon at the upper left of the middle panel.) At the top of this TOC is a search box for the book.
+* A clickable high-level table of contents (TOC) is available in the panel at the left of each page. (You can toggle this panel open or close with the contents icon at the upper left of the middle panel.) At the top of this TOC is a search box for the book (put your search words in quotes).
 * The icons at the top-right in the middle panel can be used to take you to the source repository for the book; download the source code for the page (in different formats); view the page in full-screen mode; or switch between light and dark mode.
 * For each section that has subsections, a clickable table of contents appears in the rightmost panel.
 * There are hyperlinks throughout the text to other sections, equations, references, and more.
