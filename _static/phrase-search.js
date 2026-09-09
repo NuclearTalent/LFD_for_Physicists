@@ -4,21 +4,25 @@
  * Exact quoted-phrase searching plus persistent result-page highlighting
  * for Jupyter Book 1 / Sphinx 7.4.x.
  *
+ * Quoted searches are displayed in Jupyter Book TOC/sidebar order.
+ * Ordinary unquoted searches retain Sphinx's normal relevance ordering.
+ *
  * Examples:
  *
  *   statistical model
- *       -> ordinary Sphinx search
+ *       -> ordinary Sphinx search/relevance ordering
  *       -> each result page highlights "statistical" and "model"
  *
  *   "statistical model"
  *       -> only pages containing the exact phrase are returned
+ *       -> matching pages are listed in book/TOC order
  *       -> each result page highlights the whole phrase as a unit
  *
  *   "statistical model" likelihood
  *       -> pages must contain the exact phrase and satisfy the normal
  *          Sphinx search for likelihood
- *       -> the destination page highlights the phrase as a unit and
- *          also highlights likelihood
+ *       -> matching pages are listed in book/TOC order
+ *       -> the phrase is highlighted as a unit and likelihood separately
  *
  * Curly double quotes (“...”) are treated like straight quotes ("...").
  *
@@ -29,40 +33,52 @@
 (function () {
   "use strict";
 
-  const PHRASE_PARAM = "phrase-highlight";
-  const WORD_PARAM = "word-highlight";
+  const HIGHLIGHT_STORAGE_KEY =
+    "jb_search_highlight_payload";
+
+  const HIGHLIGHT_MAX_AGE_MS =
+    10 * 60 * 1000;
 
   function normalizeText(text) {
     return text
       .toLowerCase()
-      .replace(/\u00ad/g, "")                    // soft hyphen
-      .replace(/[\u200b-\u200d\uFEFF]/g, "")    // zero-width characters
+      .replace(/\u00ad/g, "")
+      .replace(/[\u200b-\u200d\uFEFF]/g, "")
       .replace(/\s+/g, " ")
       .trim();
   }
 
   function escapeRegExp(text) {
-    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return text.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      "\\$&"
+    );
   }
 
   function parseQuotedPhrases(query) {
-    const normalizedQuery = query.replace(/[“”]/g, '"');
+    const normalizedQuery =
+      query.replace(/[“”]/g, '"');
+
     const phrases = [];
     const re = /"([^"]+)"/g;
     let match;
 
-    while ((match = re.exec(normalizedQuery)) !== null) {
-      const phrase = normalizeText(match[1]);
+    while (
+      (match = re.exec(normalizedQuery)) !== null
+    ) {
+      const phrase =
+        normalizeText(match[1]);
 
       if (phrase) {
         phrases.push(phrase);
       }
     }
 
-    const unquotedQuery = normalizedQuery
-      .replace(/"[^"]*"/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
+    const unquotedQuery =
+      normalizedQuery
+        .replace(/"[^"]*"/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
 
     return {
       normalizedQuery,
@@ -73,19 +89,36 @@
 
   function requestUrlForResult(result) {
     const docName = result[0];
+
     const contentRoot =
-      document.documentElement.dataset.content_root || "";
+      document.documentElement
+        .dataset.content_root || "";
 
-    if (DOCUMENTATION_OPTIONS.BUILDER === "dirhtml") {
-      let dirname = docName + "/";
+    if (
+      DOCUMENTATION_OPTIONS.BUILDER ===
+      "dirhtml"
+    ) {
+      let dirname =
+        docName + "/";
 
-      if (dirname.match(/\/index\/$/)) {
-        dirname = dirname.substring(0, dirname.length - 6);
-      } else if (dirname === "index/") {
+      if (
+        dirname.match(/\/index\/$/)
+      ) {
+        dirname =
+          dirname.substring(
+            0,
+            dirname.length - 6
+          );
+      } else if (
+        dirname === "index/"
+      ) {
         dirname = "";
       }
 
-      return contentRoot + dirname;
+      return (
+        contentRoot +
+        dirname
+      );
     }
 
     return (
@@ -101,65 +134,309 @@
         "sphinx_highlight_terms"
       );
     } catch (error) {
-      // Safe to ignore if localStorage is unavailable.
+      // Safe to ignore.
     }
   }
 
   /*
-   * ----------------------------------------------------------------------
-   * Destination-page highlighting
-   * ----------------------------------------------------------------------
+   * ------------------------------------------------------------
+   * TOC/book ordering for quoted searches
+   * ------------------------------------------------------------
    */
 
-  function getCustomHighlightsFromCurrentUrl() {
+  function canonicalPageKey(urlLike) {
     const url =
-      new URL(window.location.href);
+      new URL(
+        urlLike,
+        window.location.href
+      );
 
-    const phrases =
-      url.searchParams
-        .getAll(PHRASE_PARAM)
-        .map(normalizeText)
-        .filter(Boolean);
+    url.hash = "";
+    url.search = "";
 
-    const words =
-      url.searchParams
-        .getAll(WORD_PARAM)
-        .map(normalizeText)
-        .filter(Boolean);
+    let path =
+      url.pathname;
 
-    return {
-      phrases,
-      words,
-    };
+    path =
+      path.replace(
+        /\/index\.html$/,
+        "/"
+      );
+
+    return (
+      url.origin +
+      path
+    );
   }
 
-  function removeCustomHighlightParamsFromAddressBar() {
-    const url =
-      new URL(window.location.href);
+  function buildTocOrderMap() {
+    const tocOrder =
+      new Map();
 
-    if (
-      !url.searchParams.has(PHRASE_PARAM) &&
-      !url.searchParams.has(WORD_PARAM)
-    ) {
-      return;
+    const tocLinks =
+      document.querySelectorAll(
+        "nav.bd-links a.reference.internal[href], " +
+        ".bd-sidenav a.reference.internal[href]"
+      );
+
+    let nextRank = 0;
+
+    tocLinks.forEach(
+      (link) => {
+        const href =
+          link.getAttribute(
+            "href"
+          );
+
+        if (
+          !href ||
+          href === "#"
+        ) {
+          return;
+        }
+
+        const key =
+          canonicalPageKey(
+            href
+          );
+
+        if (
+          !tocOrder.has(key)
+        ) {
+          tocOrder.set(
+            key,
+            nextRank
+          );
+
+          nextRank += 1;
+        }
+      }
+    );
+
+    return tocOrder;
+  }
+
+  function orderPhraseResultsByToc(
+    results
+  ) {
+    const tocOrder =
+      buildTocOrderMap();
+
+    if (!tocOrder.size) {
+      console.warn(
+        "Phrase search could not find the Jupyter Book sidebar TOC; " +
+        "keeping Sphinx's original result ordering."
+      );
+
+      return results;
     }
 
-    url.searchParams.delete(
-      PHRASE_PARAM
+    /*
+     * Sphinx displays results using results.pop().
+     * Reverse first to obtain actual display order.
+     */
+    const currentDisplayOrder =
+      results
+        .slice()
+        .reverse();
+
+    const inToc = [];
+    const notInToc = [];
+
+    currentDisplayOrder.forEach(
+      (
+        result,
+        originalDisplayIndex
+      ) => {
+        const key =
+          canonicalPageKey(
+            requestUrlForResult(
+              result
+            )
+          );
+
+        if (
+          tocOrder.has(key)
+        ) {
+          inToc.push({
+            result,
+            rank:
+              tocOrder.get(key),
+            originalDisplayIndex,
+          });
+        } else {
+          notInToc.push({
+            result,
+            originalDisplayIndex,
+          });
+        }
+      }
     );
 
-    url.searchParams.delete(
-      WORD_PARAM
+    inToc.sort(
+      (a, b) => {
+        if (
+          a.rank !== b.rank
+        ) {
+          return (
+            a.rank -
+            b.rank
+          );
+        }
+
+        return (
+          a.originalDisplayIndex -
+          b.originalDisplayIndex
+        );
+      }
     );
 
-    window.history.replaceState(
-      {},
-      "",
-      url
+    const desiredDisplayOrder = [
+      ...inToc.map(
+        (entry) =>
+          entry.result
+      ),
+
+      ...notInToc.map(
+        (entry) =>
+          entry.result
+      ),
+    ];
+
+    /*
+     * Reverse again because Sphinx consumes the array with pop().
+     */
+    return (
+      desiredDisplayOrder
+        .reverse()
     );
   }
 
-  function unwrapExistingHighlights(root) {
+  /*
+   * ------------------------------------------------------------
+   * Persistent highlighting WITHOUT changing result URLs
+   * ------------------------------------------------------------
+   */
+
+  function saveHighlightPayload(
+    link,
+    phrases,
+    words
+  ) {
+    try {
+      const href =
+        link.getAttribute(
+          "href"
+        );
+
+      if (!href) {
+        return;
+      }
+
+      const targetUrl =
+        new URL(
+          href,
+          window.location.href
+        );
+
+      const payload = {
+        targetPath:
+          targetUrl.pathname,
+
+        phrases:
+          [...phrases],
+
+        words:
+          [...words],
+
+        createdAt:
+          Date.now(),
+      };
+
+      localStorage.setItem(
+        HIGHLIGHT_STORAGE_KEY,
+        JSON.stringify(
+          payload
+        )
+      );
+
+    } catch (error) {
+      console.warn(
+        "Could not save search highlighting state:",
+        error
+      );
+    }
+  }
+
+  function readHighlightPayloadForCurrentPage() {
+    try {
+      const raw =
+        localStorage.getItem(
+          HIGHLIGHT_STORAGE_KEY
+        );
+
+      if (!raw) {
+        return null;
+      }
+
+      const payload =
+        JSON.parse(raw);
+
+      const tooOld =
+        !payload.createdAt ||
+        (
+          Date.now() -
+          payload.createdAt
+        ) >
+        HIGHLIGHT_MAX_AGE_MS;
+
+      const wrongPage =
+        payload.targetPath !==
+        window.location.pathname;
+
+      if (
+        tooOld ||
+        wrongPage
+      ) {
+        localStorage.removeItem(
+          HIGHLIGHT_STORAGE_KEY
+        );
+
+        return null;
+      }
+
+      /*
+       * Consume this payload. Going back to the search page and
+       * clicking another result writes a fresh one.
+       */
+      localStorage.removeItem(
+        HIGHLIGHT_STORAGE_KEY
+      );
+
+      return payload;
+
+    } catch (error) {
+      try {
+        localStorage.removeItem(
+          HIGHLIGHT_STORAGE_KEY
+        );
+      } catch (_) {
+        // Ignore.
+      }
+
+      return null;
+    }
+  }
+
+  /*
+   * ------------------------------------------------------------
+   * Destination-page highlighting
+   * ------------------------------------------------------------
+   */
+
+  function unwrapExistingHighlights(
+    root
+  ) {
     const parents =
       new Set();
 
@@ -167,26 +444,31 @@
       .querySelectorAll(
         "span.highlighted"
       )
-      .forEach((span) => {
-        const parent =
-          span.parentNode;
+      .forEach(
+        (span) => {
+          const parent =
+            span.parentNode;
 
-        if (!parent) {
-          return;
-        }
+          if (!parent) {
+            return;
+          }
 
-        while (
-          span.firstChild
-        ) {
-          parent.insertBefore(
-            span.firstChild,
-            span
+          while (
+            span.firstChild
+          ) {
+            parent.insertBefore(
+              span.firstChild,
+              span
+            );
+          }
+
+          span.remove();
+
+          parents.add(
+            parent
           );
         }
-
-        span.remove();
-        parents.add(parent);
-      });
+      );
 
     parents.forEach(
       (parent) =>
@@ -222,23 +504,27 @@
       }
 
       /*
-       * Allow arbitrary rendered whitespace between words.
-       * Thus "statistical model" also matches text containing
-       * a newline or several spaces between the two words.
+       * Permit arbitrary whitespace between phrase words.
        */
       const pieces =
         text
           .trim()
           .split(/\s+/)
-          .map(escapeRegExp);
+          .map(
+            escapeRegExp
+          );
 
-      if (!pieces.length) {
+      if (
+        !pieces.length
+      ) {
         return;
       }
 
       const pattern =
         new RegExp(
-          pieces.join("\\s+"),
+          pieces.join(
+            "\\s+"
+          ),
           "i"
         );
 
@@ -313,8 +599,7 @@
       node.remove();
 
       /*
-       * There may be additional occurrences in the remainder
-       * of this text node.
+       * Highlight further occurrences in the remainder.
        */
       highlightTextInNode(
         afterNode,
@@ -348,10 +633,6 @@
   function addHideHighlightsLink(
     root
   ) {
-    /*
-     * Don't add another link if the theme/Sphinx already
-     * supplied one.
-     */
     if (
       document.querySelector(
         "#searchbox .highlight-link"
@@ -386,7 +667,8 @@
     a.href = "#";
 
     a.textContent =
-      typeof _ === "function"
+      typeof _ ===
+      "function"
         ? _(
             "Hide Search Matches"
           )
@@ -406,7 +688,10 @@
     );
 
     p.appendChild(a);
-    searchBox.appendChild(p);
+
+    searchBox.appendChild(
+      p
+    );
   }
 
   function highlightDestinationTerms(
@@ -433,23 +718,18 @@
       return;
     }
 
-    /*
-     * Remove any built-in Sphinx word highlights that may
-     * already have appeared.
-     */
     unwrapExistingHighlights(
       root
     );
 
     /*
      * Highlight complete quoted phrases first.
-     * Longest phrases come first in case one phrase contains
-     * another.
      */
     [...phrases]
       .sort(
         (a, b) =>
-          b.length - a.length
+          b.length -
+          a.length
       )
       .forEach(
         (phrase) => {
@@ -461,14 +741,12 @@
       );
 
     /*
-     * Then highlight ordinary unquoted search words.
-     *
-     * highlightTextInNode() skips existing .highlighted spans,
-     * so individual words will not break apart a quoted phrase
-     * that has already been highlighted as one unit.
+     * Then highlight unquoted words.
      */
     [
-      ...new Set(words),
+      ...new Set(
+        words
+      ),
     ].forEach(
       (word) => {
         highlightTextInNode(
@@ -481,28 +759,26 @@
     addHideHighlightsLink(
       root
     );
-
-    /*
-     * The highlighting information no longer needs to remain
-     * visible in the address bar after it has been applied.
-     */
-    removeCustomHighlightParamsFromAddressBar();
   }
 
-  const destinationHighlights =
-    getCustomHighlightsFromCurrentUrl();
+  const destinationPayload =
+    readHighlightPayloadForCurrentPage();
 
   if (
-    destinationHighlights
-      .phrases.length ||
-    destinationHighlights
-      .words.length
+    destinationPayload
   ) {
-    /*
-     * Prevent Sphinx's normal one-shot localStorage highlighter
-     * from competing with this script's persistent highlighting.
-     */
     clearSphinxHighlightStorage();
+
+    const applyHighlights =
+      () => {
+        highlightDestinationTerms(
+          destinationPayload
+            .phrases || [],
+
+          destinationPayload
+            .words || []
+        );
+      };
 
     if (
       document.readyState ===
@@ -510,29 +786,17 @@
     ) {
       document.addEventListener(
         "DOMContentLoaded",
-        () => {
-          highlightDestinationTerms(
-            destinationHighlights
-              .phrases,
-            destinationHighlights
-              .words
-          );
-        }
+        applyHighlights
       );
     } else {
-      highlightDestinationTerms(
-        destinationHighlights
-          .phrases,
-        destinationHighlights
-          .words
-      );
+      applyHighlights();
     }
   }
 
   /*
-   * ----------------------------------------------------------------------
-   * Search-result handling
-   * ----------------------------------------------------------------------
+   * ------------------------------------------------------------
+   * Search-result highlighting handler
+   * ------------------------------------------------------------
    */
 
   function extractHighlightTerms(
@@ -545,10 +809,6 @@
       return terms;
     }
 
-    /*
-     * Mirror Sphinx's rules for which raw query terms are
-     * highlighted: omit stopwords and pure numbers.
-     */
     splitQuery(
       query.trim()
     ).forEach(
@@ -567,14 +827,16 @@
           return;
         }
 
-        terms.add(lower);
+        terms.add(
+          lower
+        );
       }
     );
 
     return terms;
   }
 
-  function installResultLinkDecorator(
+  function installResultHighlightHandler(
     phrases,
     words
   ) {
@@ -582,134 +844,82 @@
       return;
     }
 
-    function decorateLink(
-      link
+    if (
+      Search.output
+        ._jbHighlightHandlerInstalled
     ) {
-      if (
-        !link ||
-        link.dataset
-          .phraseSearchDecorated ===
-          "true"
-      ) {
-        return;
-      }
-
-      const url =
-        new URL(
-          link.href,
-          window.location.href
-        );
-
-      /*
-       * Remove stale copies before adding the current search's
-       * highlighting information.
-       */
-      url.searchParams.delete(
-        PHRASE_PARAM
-      );
-
-      url.searchParams.delete(
-        WORD_PARAM
-      );
-
-      phrases.forEach(
-        (phrase) => {
-          url.searchParams.append(
-            PHRASE_PARAM,
-            phrase
-          );
-        }
-      );
-
-      words.forEach(
-        (word) => {
-          url.searchParams.append(
-            WORD_PARAM,
-            word
-          );
-        }
-      );
-
-      link.href =
-        url.toString();
-
-      link.dataset
-        .phraseSearchDecorated =
-        "true";
+      return;
     }
 
-    function decorateNode(
-      node
-    ) {
-      if (
-        node.nodeType !==
-        Node.ELEMENT_NODE
-      ) {
-        return;
-      }
-
-      if (
-        node.matches("a")
-      ) {
-        decorateLink(node);
-      }
-
-      node
-        .querySelectorAll("a")
-        .forEach(
-          decorateLink
-        );
-    }
-
-    /*
-     * Decorate links that may already exist.
-     */
     Search.output
-      .querySelectorAll("a")
-      .forEach(
-        decorateLink
-      );
+      ._jbHighlightHandlerInstalled =
+      true;
 
-    /*
-     * Sphinx inserts result entries asynchronously.
-     * Watch for each new result and decorate its link immediately.
-     *
-     * Doing this at insertion time rather than at click time also
-     * makes right-click -> Open Link in New Tab work.
-     */
-    const observer =
-      new MutationObserver(
-        (mutations) => {
-          mutations.forEach(
-            (mutation) => {
-              mutation.addedNodes
-                .forEach(
-                  decorateNode
-                );
-            }
-          );
+    const rememberForEvent =
+      (event) => {
+        const target =
+          event.target instanceof
+          Element
+            ? event.target
+            : event.target.parentElement;
+
+        if (!target) {
+          return;
         }
-      );
 
-    observer.observe(
-      Search.output,
-      {
-        childList: true,
-        subtree: true,
-      }
+        const link =
+          target.closest(
+            "a[href]"
+          );
+
+        if (
+          !link ||
+          !Search.output.contains(
+            link
+          )
+        ) {
+          return;
+        }
+
+        /*
+         * IMPORTANT:
+         *
+         * Do NOT alter link.href here.
+         * Sphinx generated the correct destination URL.
+         */
+        saveHighlightPayload(
+          link,
+          phrases,
+          words
+        );
+      };
+
+    Search.output.addEventListener(
+      "click",
+      rememberForEvent,
+      true
+    );
+
+    Search.output.addEventListener(
+      "auxclick",
+      rememberForEvent,
+      true
+    );
+
+    Search.output.addEventListener(
+      "contextmenu",
+      rememberForEvent,
+      true
     );
   }
 
   /*
-   * ----------------------------------------------------------------------
+   * ------------------------------------------------------------
    * Search implementation
-   * ----------------------------------------------------------------------
+   * ------------------------------------------------------------
    */
 
   function installPhraseSearch() {
-    /*
-     * Search exists only on Sphinx's dedicated search page.
-     */
     if (
       typeof Search ===
       "undefined"
@@ -717,9 +927,6 @@
       return;
     }
 
-    /*
-     * Avoid installing twice.
-     */
     if (
       Search._phraseSearchInstalled
     ) {
@@ -759,7 +966,9 @@
                   );
                 }
 
-                return response.text();
+                return (
+                  response.text()
+                );
               }
             )
             .then(
@@ -774,13 +983,17 @@
         );
       }
 
-      return pageTextCache.get(
-        url
+      return (
+        pageTextCache.get(
+          url
+        )
       );
     }
 
     Search.query =
-      async function (query) {
+      async function (
+        query
+      ) {
         const parsed =
           parseQuotedPhrases(
             query
@@ -791,11 +1004,9 @@
          * Ordinary unquoted search
          * ------------------------------------------------------
          *
-         * Use Sphinx's normal parser and normal indexed search.
-         * The only change is destination-page highlighting:
-         * instead of transient localStorage state, put the terms
-         * directly into every result link.
+         * Keep Sphinx's normal relevance ordering.
          */
+
         if (
           parsed.phrases
             .length === 0
@@ -811,11 +1022,6 @@
               query
             );
 
-          /*
-           * _parseQuery() just populated Sphinx's one-shot
-           * localStorage highlighting. We don't need it because
-           * every result link will carry its own terms.
-           */
           clearSphinxHighlightStorage();
 
           const results =
@@ -827,19 +1033,11 @@
               objectTerms
             );
 
-          /*
-           * Add persistent word highlighting information to
-           * every result URL.
-           */
-          installResultLinkDecorator(
+          installResultHighlightHandler(
             [],
             [...highlightTerms]
           );
 
-          /*
-           * Use Sphinx's standard result rendering, including
-           * normal highlighting of snippets on the search page.
-           */
           _displayNextItem(
             results,
             results.length,
@@ -875,26 +1073,23 @@
           }
 
           Search.stopPulse();
+
           return;
         }
 
         /*
-         * First use the Sphinx index to get candidate pages.
-         *
-         * For example,
-         *
-         *   "statistical model" likelihood
-         *
-         * becomes
-         *
-         *   statistical model likelihood
-         *
-         * for the indexed candidate search.
+         * Use Sphinx's index as a fast candidate search.
          */
         const candidateQuery =
           parsed.normalizedQuery
-            .replace(/"/g, " ")
-            .replace(/\s+/g, " ")
+            .replace(
+              /"/g,
+              " "
+            )
+            .replace(
+              /\s+/g,
+              " "
+            )
             .trim();
 
         const [
@@ -908,9 +1103,6 @@
             candidateQuery
           );
 
-        /*
-         * Again, do not use Sphinx's one-shot localStorage state.
-         */
         clearSphinxHighlightStorage();
 
         const candidates =
@@ -930,11 +1122,6 @@
             `candidate page(s) for exact phrase...`;
         }
 
-        /*
-         * Fetch each candidate's actual page text and require
-         * every quoted phrase to occur exactly after
-         * case/whitespace normalization.
-         */
         const checks =
           await Promise.all(
             candidates.map(
@@ -947,18 +1134,20 @@
                       result
                     );
 
-                  return parsed
-                    .phrases
-                    .every(
-                      (
-                        phrase
-                      ) =>
-                        pageText.includes(
+                  return (
+                    parsed.phrases
+                      .every(
+                        (
                           phrase
-                        )
-                    )
-                    ? result
-                    : null;
+                        ) =>
+                          pageText.includes(
+                            phrase
+                          )
+                      )
+                      ? result
+                      : null
+                  );
+
                 } catch (
                   error
                 ) {
@@ -980,25 +1169,23 @@
           );
 
         /*
-         * Determine which terms were genuinely outside quotes.
-         *
-         * Thus for
-         *
-         *   "statistical model" likelihood
-         *
-         * the complete phrase is highlighted as one unit and
-         * likelihood is highlighted separately.
+         * Only quoted searches are reordered into book/TOC order.
          */
+        const orderedResults =
+          orderPhraseResultsByToc(
+            filteredResults
+          );
+
         const unquotedHighlightTerms =
           extractHighlightTerms(
             parsed.unquotedQuery
           );
 
         /*
-         * Put both phrase and ordinary-word highlighting into
-         * every result link.
+         * Install highlighting behavior, but DO NOT alter the
+         * links generated by Sphinx.
          */
-        installResultLinkDecorator(
+        installResultHighlightHandler(
           parsed.phrases,
           [
             ...unquotedHighlightTerms,
@@ -1006,8 +1193,7 @@
         );
 
         /*
-         * On the search-results page itself, highlight complete
-         * quoted phrases plus any additional unquoted words.
+         * Search-results-page highlighting.
          */
         const resultHighlightTerms =
           new Set([
@@ -1022,13 +1208,9 @@
             ...unquotedHighlightTerms,
           ]);
 
-        /*
-         * Preserve Sphinx's normal result renderer, result order,
-         * snippets, links, and result-count message.
-         */
         _displayNextItem(
-          filteredResults,
-          filteredResults.length,
+          orderedResults,
+          orderedResults.length,
           searchTerms,
           resultHighlightTerms
         );
@@ -1036,8 +1218,7 @@
   }
 
   /*
-   * Install after Sphinx's searchtools.js has defined Search,
-   * but before Search.init() starts the search.
+   * Install before Search.init() launches the query.
    */
   if (
     document.readyState ===
