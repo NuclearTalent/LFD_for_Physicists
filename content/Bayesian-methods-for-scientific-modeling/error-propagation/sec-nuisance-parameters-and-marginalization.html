@@ -411,11 +411,11 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Probabilistic machine learning</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../Probabilistic-machine-learning/index.html">30. Overview of Part V </a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/index.html">31. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/sec-basic-neural-network.html">31.1. Basic neural network</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/sec-probabilistic-model.html">31.2. Probabilistic model</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/index.html">31. Bayesian neural networks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/sec-probabilistic-neural-network.html">31.1. Probabilistic neural network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/sec-bayesian-inference-network-weights.html">31.2. Bayesian inference for network weights</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/sec-bnns-in-practice.html">31.3. Bayesian neural networks in practice</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/demo-variational-inference-and-bnn.html">31.4. Demo: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/demo-bayes-by-backprop-in-pytorch.html">31.4. Demo: Bayes by Backprop in PyTorch</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/gaussian-processes/index.html">32. Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -742,13 +742,13 @@ document.write(`
 <span id="sec-errorpropagationi"></span><h1><span class="section-number">7.1. </span>Nuisance parameters and marginalization<a class="headerlink" href="#nuisance-parameters-and-marginalization" title="Link to this heading">#</a></h1>
 <p>The Bayesian approach offers a straightforward approach for dealing with (known) systematic uncertainties; namely by marginalization.</p>
 <p>For example, assume that we have a model with two parameters, <span class="math notranslate nohighlight">\(\theta\)</span> and <span class="math notranslate nohighlight">\(\phi\)</span>, although only one of them (say <span class="math notranslate nohighlight">\(\theta\)</span>) is of physical relevance. The other one is then labeled a <em>nuisance parameter</em>. If through a Bayesian data analysis we get the joint posterior PDF</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dd5a2ab7-06ac-4cd9-b6dc-9d8cfa629cc6">
-<span class="eqno">(7.1)<a class="headerlink" href="#equation-dd5a2ab7-06ac-4cd9-b6dc-9d8cfa629cc6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-de6df0d9-7d91-4e03-a454-82600dd82456">
+<span class="eqno">(7.1)<a class="headerlink" href="#equation-de6df0d9-7d91-4e03-a454-82600dd82456" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\theta, \phi}{\data, I},
 \end{equation}\]</div>
 <p>then the marginal posterior PDF <span class="math notranslate nohighlight">\(\pdf{\theta}{\data, I}\)</span> is obtained via marginalization</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e6a52e22-ab09-47e8-9863-dbab55f76dec">
-<span class="eqno">(7.2)<a class="headerlink" href="#equation-e6a52e22-ab09-47e8-9863-dbab55f76dec" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7bfb6cd9-ddf7-49f9-9f66-5b1925e06ed3">
+<span class="eqno">(7.2)<a class="headerlink" href="#equation-7bfb6cd9-ddf7-49f9-9f66-5b1925e06ed3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\theta}{\data, I} = \int \pdf{\theta, \phi}{\data, I} \,d\phi.
 \end{equation}\]</div>
 <p>Thus we have directly derived how to propagate the uncertainty in <span class="math notranslate nohighlight">\(\phi\)</span> to the probability distribution for <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
@@ -761,8 +761,8 @@ document.write(`
 <p>A slightly more general scenario for which the marginalization procedure is used for error propagation is the following: Assume that we have measured or inferred distributions for the random variables <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>; what can we say about the distributions for the difference <span class="math notranslate nohighlight">\(X-Y\)</span> or the raio <span class="math notranslate nohighlight">\(X/Y\)</span>, or the sum of their squares <span class="math notranslate nohighlight">\(X^2+Y^2\)</span>, etc?</p>
 <p>Such questions can be rephrased as: Given the joint PDF <span class="math notranslate nohighlight">\(\pdf{x,y}{I}\)</span>, what is <span class="math notranslate nohighlight">\(\pdf{z}{I}\)</span>, where <span class="math notranslate nohighlight">\(z=f(x,y)\)</span>?
 In this situation we can use marginalization and the product rule.</p>
-<div class="amsmath math notranslate nohighlight" id="equation-63056d60-b39d-4d1b-a89a-435b8d6f040e">
-<span class="eqno">(7.3)<a class="headerlink" href="#equation-63056d60-b39d-4d1b-a89a-435b8d6f040e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-83a982d9-1f82-41e3-b6f1-2e54f74fe8bd">
+<span class="eqno">(7.3)<a class="headerlink" href="#equation-83a982d9-1f82-41e3-b6f1-2e54f74fe8bd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{z}{I} = \int \pdf{z,x,y}{I}\,dx\,dy = \int \pdf{z}{x,y,I}\, \pdf{x,y}{I}\,dx\,dy.
 \end{equation}\]</div>
 <p>We first realize that <span class="math notranslate nohighlight">\(\pdf{z}{x,y,I} = \delta(z-f(x,y))\)</span> due to the deterministic functional relationship between the parameters.</p>
@@ -775,19 +775,19 @@ In this situation we can use marginalization and the product rule.</p>
 <p class="admonition-title"><span class="caption-number">Example 7.1 </span> (<span class="math notranslate nohighlight">\(Z = X + Y\)</span>)</p>
 <section class="example-content" id="proof-content">
 <p>Let us consider the situation where you are interested in the quantity <span class="math notranslate nohighlight">\(Z = X + Y\)</span>, and you know that <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> are distributed as independent Gaussians with <span class="math notranslate nohighlight">\(\expect{X} = x_0\)</span>, <span class="math notranslate nohighlight">\(\var{X} = \sigma_x^2\)</span> and <span class="math notranslate nohighlight">\(\expect{Y} = y_0\)</span>, <span class="math notranslate nohighlight">\(\var{Y} = \sigma_y^2\)</span>. Then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-de7070b4-7e7d-457a-a156-16bdc879496f">
-<span class="eqno">(7.5)<a class="headerlink" href="#equation-de7070b4-7e7d-457a-a156-16bdc879496f" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-fbb36674-b09c-4fa2-9d5b-c3306747aaa8">
+<span class="eqno">(7.5)<a class="headerlink" href="#equation-fbb36674-b09c-4fa2-9d5b-c3306747aaa8" title="Permalink to this equation">#</a></span>\[\begin{align}
 \pdf{x,y}{I} &amp;= \pdf{x}{I}\,\pdf{y}{I} \\
 &amp;= \frac{1}{2\pi\sigma_x\sigma_y} \exp\left[ - \frac{(x-x_0)^2}{2\sigma_x^2} \right] \exp\left[ - \frac{(y-y_0)^2}{2\sigma_y^2} \right].
 \end{align}\]</div>
 <p>Let us now use marginalization and the product rule to find</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7c854dcd-4971-4847-8236-6e3ea2a9052e">
-<span class="eqno">(7.6)<a class="headerlink" href="#equation-7c854dcd-4971-4847-8236-6e3ea2a9052e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-47bc3012-42fe-40fb-b195-2216b010462c">
+<span class="eqno">(7.6)<a class="headerlink" href="#equation-47bc3012-42fe-40fb-b195-2216b010462c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{z}{I} = \int \pdf{z,x,y}{I}\,dx\,dy = \int \pdf{z}{x,y,I}\, \pdf{x,y}{I}\,dx\,dy.
 \end{equation}\]</div>
 <p>We realize that <span class="math notranslate nohighlight">\(\pdf{z}{x,y,I} = \delta(z-(x+y))\)</span> due to the functional relationship between the random variables, and we have <span class="math notranslate nohighlight">\(\pdf{x,y}{I}\)</span> as a product of Gaussian  PDFs from above. The delta function can be used to evaluate one of the integrals, and the PDF for <span class="math notranslate nohighlight">\(Z\)</span> becomes a convolution</p>
-<div class="amsmath math notranslate nohighlight" id="equation-59ea904a-8f43-4c7a-b8ac-7438b291e87d">
-<span class="eqno">(7.7)<a class="headerlink" href="#equation-59ea904a-8f43-4c7a-b8ac-7438b291e87d" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-373967c4-ed43-4a6c-9214-cd2eca844c06">
+<span class="eqno">(7.7)<a class="headerlink" href="#equation-373967c4-ed43-4a6c-9214-cd2eca844c06" title="Permalink to this equation">#</a></span>\[\begin{align}
 \pdf{z}{I} &amp;= \int \pdf{x}{I}\, \pdf{y=z-x}{I}\, dx \\
 &amp;= \frac{1}{2\pi\sigma_x\sigma_y} \int \exp\left[ - \frac{(x-x_0)^2}{2\sigma_x^2} \right] \exp\left[ - \frac{(z - x - y_0)^2}{2\sigma_y^2} \right] dx.
 \end{align}\]</div>
@@ -867,8 +867,8 @@ t = \frac{x+y}{\sqrt{2}} \\
 <li><p>and the fact that <span class="math notranslate nohighlight">\(H\)</span> is independent of <span class="math notranslate nohighlight">\(d\)</span>: <span class="math notranslate nohighlight">\(p(H|d,I) = \pdf{H}{I}\)</span>,</p></li>
 </ul>
 <p>we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cc4e4df2-e2a8-4a3c-949b-89338b655d93">
-<span class="eqno">(7.10)<a class="headerlink" href="#equation-cc4e4df2-e2a8-4a3c-949b-89338b655d93" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-03541fb1-fce9-4dee-9274-16b9b9cdffb0">
+<span class="eqno">(7.10)<a class="headerlink" href="#equation-03541fb1-fce9-4dee-9274-16b9b9cdffb0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{d}{\data,I} \propto \pdf{d}{I} \int \pdf{H}{I}\, \pdf{\data}{d,H,I}\, dH ,
 \end{equation}\]</div>
 <p>which means that we have expressed the quantity that we want (the posterior of <span class="math notranslate nohighlight">\(d\)</span>) in terms of quantities that we can specify, as follows.</p>

@@ -411,11 +411,11 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Probabilistic machine learning</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../Probabilistic-machine-learning/index.html">30. Overview of Part V </a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/index.html">31. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/sec-basic-neural-network.html">31.1. Basic neural network</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/sec-probabilistic-model.html">31.2. Probabilistic model</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/index.html">31. Bayesian neural networks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/sec-probabilistic-neural-network.html">31.1. Probabilistic neural network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/sec-bayesian-inference-network-weights.html">31.2. Bayesian inference for network weights</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/sec-bnns-in-practice.html">31.3. Bayesian neural networks in practice</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/demo-variational-inference-and-bnn.html">31.4. Demo: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Probabilistic-machine-learning/bayesian-neural-nets/demo-bayes-by-backprop-in-pytorch.html">31.4. Demo: Bayes by Backprop in PyTorch</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../Probabilistic-machine-learning/gaussian-processes/index.html">32. Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -757,8 +757,8 @@ document.write(`
 <span id="sec-binaryclassification"></span><h1><span class="section-number">26.2. </span>Binary classification<a class="headerlink" href="#binary-classification" title="Link to this heading">#</a></h1>
 <p>Let us specialize to the case of two classes only, with outputs
 <span class="math notranslate nohighlight">\(t^{(i)} \in \{0,1\}\)</span>. That is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-63951e4e-205b-4e64-adb5-0ce0bbee7cdc">
-<span class="eqno">(26.1)<a class="headerlink" href="#equation-63951e4e-205b-4e64-adb5-0ce0bbee7cdc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-01e66b90-9c10-4569-be8a-8f1484ccee15">
+<span class="eqno">(26.1)<a class="headerlink" href="#equation-01e66b90-9c10-4569-be8a-8f1484ccee15" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 t^{(i)} = \begin{bmatrix} 0 \\  1 \end{bmatrix}
 = \begin{bmatrix} \mathrm{no}\\  \mathrm{yes} \end{bmatrix}.
@@ -767,8 +767,8 @@ t^{(i)} = \begin{bmatrix} 0 \\  1 \end{bmatrix}
 <section id="the-perceptron">
 <h2>The perceptron<a class="headerlink" href="#the-perceptron" title="Link to this heading">#</a></h2>
 <p>Before moving to the logistic model, let us try to use a linear regression model to classify these two outcomes. We could use a linear model</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d9bd5e1e-49b5-4205-9f02-504e34c678f2">
-<span class="eqno">(26.2)<a class="headerlink" href="#equation-d9bd5e1e-49b5-4205-9f02-504e34c678f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-69a7bf20-c942-4ccf-b6d2-d3d64ddcd1f7">
+<span class="eqno">(26.2)<a class="headerlink" href="#equation-69a7bf20-c942-4ccf-b6d2-d3d64ddcd1f7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \boldsymbol{\tilde{y}} = \boldsymbol{X} \boldsymbol{w},
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\boldsymbol{\tilde{y}}\)</span> is a vector representing the possible outcomes, <span class="math notranslate nohighlight">\(\boldsymbol{X}\)</span> is our <span class="math notranslate nohighlight">\(n\times p\)</span> design matrix and <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> are the model parameters.</p>
@@ -791,15 +791,15 @@ outputs the probability of being in a category <span class="math notranslate noh
 <h2>The logistic function<a class="headerlink" href="#the-logistic-function" title="Link to this heading">#</a></h2>
 <p>Logistic regression is the simplest example of the use of such a soft classifier. Let us assume that we have two classes such that <span class="math notranslate nohighlight">\(t^{(i)}\)</span> is either <span class="math notranslate nohighlight">\(0\)</span> or <span class="math notranslate nohighlight">\(1\)</span>.</p>
 <p>In logistic regression, we will use the so-called <em>logit</em> function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9ea08ccb-07f5-4495-9b37-7f9d101f4e37">
-<span class="eqno">(26.3)<a class="headerlink" href="#equation-9ea08ccb-07f5-4495-9b37-7f9d101f4e37" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e007f6a9-0a53-412d-b10c-442fa1dfc66d">
+<span class="eqno">(26.3)<a class="headerlink" href="#equation-e007f6a9-0a53-412d-b10c-442fa1dfc66d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 y(\boldsymbol{x}; \boldsymbol{w}) = y(z) = \frac{1}{1+e^{-z}} = \frac{e^z}{1+e^z},
 \end{equation}\]</div>
 <p>with the so called <em>activation</em> <span class="math notranslate nohighlight">\(z = z(\boldsymbol{x}; \boldsymbol{w})\)</span>.
 This function is no longer linear in the model parameters <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span>. It is an example of a S-shape or <em>Sigmoid</em> function.</p>
 <p>We let <span class="math notranslate nohighlight">\(y^{(i)}\)</span> give the probability that a data point <span class="math notranslate nohighlight">\(\boldsymbol{x}^{(i)}\)</span> belongs to category <span class="math notranslate nohighlight">\(t^{(i)} = 1\)</span>,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-81245c20-c8c2-456f-9175-418212729f5c">
-<span class="eqno">(26.4)<a class="headerlink" href="#equation-81245c20-c8c2-456f-9175-418212729f5c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bfd60565-4705-4f7c-bb5a-e32eb4fb3ede">
+<span class="eqno">(26.4)<a class="headerlink" href="#equation-bfd60565-4705-4f7c-bb5a-e32eb4fb3ede" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \prob \left( t^{(i)} = 1 \vert \boldsymbol{x}^{(i)}, \boldsymbol{w} \right) = y(\boldsymbol{x}^{(i)}; \boldsymbol{w}).
 \end{equation}\]</div>
 <ul class="simple">
@@ -894,8 +894,8 @@ likelihood in terms of the product of the individual probabilities of a specific
 \mathcal{L} = \prob (\mathcal{D}|\boldsymbol{w})&amp; = \prod_{i=1}^N \left[p(t^{(i)}=1|x^{(i)},\boldsymbol{w})\right]^{t^{(i)}}\left[1-p(t^{(i)}=1|x^{(i)},\boldsymbol{w}))\right]^{1-t^{(i)}}\nonumber \\
 \end{align*}\]</div>
 <p>The <strong>cost/loss</strong> function (to be minimized) is then defined as the negative log-likelihood</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2ab021d8-31a6-406f-8ba7-bab610472a02">
-<span class="eqno">(26.5)<a class="headerlink" href="#equation-2ab021d8-31a6-406f-8ba7-bab610472a02" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-902b07da-fcce-415b-b1be-dd25ee15b1e4">
+<span class="eqno">(26.5)<a class="headerlink" href="#equation-902b07da-fcce-415b-b1be-dd25ee15b1e4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \mathcal{C}(\boldsymbol{w}) = -L \equiv -\log(\mathcal{L}) = -\sum_{i=1}^N \left( t^{(i)}\log{\prob (t^{(i)}=1|x^{(i)},\boldsymbol{w})} + (1-t^{(i)})\log\left[1-\prob (t^{(i)}=1|x^{(i)},\boldsymbol{w}))\right]\right).
 
@@ -904,8 +904,8 @@ likelihood in terms of the product of the individual probabilities of a specific
 <section id="the-cost-function-rewritten-as-cross-entropy">
 <h3>The cost function rewritten as cross entropy<a class="headerlink" href="#the-cost-function-rewritten-as-cross-entropy" title="Link to this heading">#</a></h3>
 <p>Using the definitions of the probabilities we can rewrite the <strong>cost/loss</strong> function as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8ba67bbb-edc0-4a7b-bd9e-85bf6537f6cf">
-<span class="eqno">(26.6)<a class="headerlink" href="#equation-8ba67bbb-edc0-4a7b-bd9e-85bf6537f6cf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-852b799b-3b04-4d3e-a451-fe372497bc23">
+<span class="eqno">(26.6)<a class="headerlink" href="#equation-852b799b-3b04-4d3e-a451-fe372497bc23" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \mathcal{C}(\boldsymbol{w}) = -\sum_{i=1}^N \left( t^{(i)}\log{ y(x^{(i)},\boldsymbol{w})} + (1-t^{(i)})\log\left[ 1-y( x^{(i)},\boldsymbol{w}) \right] \right),
 
@@ -913,8 +913,8 @@ likelihood in terms of the product of the individual probabilities of a specific
 <p>which can be recognised as the relative entropy between the empirical probability distribution <span class="math notranslate nohighlight">\((t^{(i)}, 1-t^{(i)})\)</span> and the probability distribution predicted by the classifier <span class="math notranslate nohighlight">\((y^{(i)}, 1-y^{(i)})\)</span>.
 Therefore, this cost function is known in statistics as the <strong>cross entropy</strong>.</p>
 <p>Using specifically the logistic sigmoid activation function with two weights, and reordering the logarithms, we can rewrite the log-likelihood to obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-da52d5b4-d29d-4547-847d-47377cdf8a07">
-<span class="eqno">(26.7)<a class="headerlink" href="#equation-da52d5b4-d29d-4547-847d-47377cdf8a07" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c32eb3c1-1e3d-4e9a-ac11-b238154246ca">
+<span class="eqno">(26.7)<a class="headerlink" href="#equation-c32eb3c1-1e3d-4e9a-ac11-b238154246ca" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{C}(\boldsymbol{w})=-\sum_{i=1}^N  \left[ t^{(i)} (w_0+w_1x^{(i)}) -\log{ \left( 1+\exp{(w_0+w_1x^{(i)})} \right) } \right].
 \end{equation}\]</div>
 <p>MLE should give the weights <span class="math notranslate nohighlight">\(\boldsymbol{w}^*\)</span> that minimizes this cost function.</p>
@@ -923,8 +923,8 @@ Therefore, this cost function is known in statistics as the <strong>cross entrop
 <h3>Regularization<a class="headerlink" href="#regularization" title="Link to this heading">#</a></h3>
 <p>In practice, just as for linear regression, one often supplements the cross-entropy cost function with additional regularization terms, usually <span class="math notranslate nohighlight">\(L_1\)</span> and <span class="math notranslate nohighlight">\(L_2\)</span> regularization. This introduces hyperparameters into the classifier.</p>
 <p>In particular, Ridge regularization is obtained by defining another cost function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-98ffcd3f-9c4e-41ba-b77c-d89c1fdf4bf2">
-<span class="eqno">(26.8)<a class="headerlink" href="#equation-98ffcd3f-9c4e-41ba-b77c-d89c1fdf4bf2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-39651280-79fc-4364-bc2b-539e1ef0b5fa">
+<span class="eqno">(26.8)<a class="headerlink" href="#equation-39651280-79fc-4364-bc2b-539e1ef0b5fa" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \mathcal{C}_W (\boldsymbol{w}) \equiv \mathcal{C} (\boldsymbol{w}) + \alpha E_W (\boldsymbol{w})
 
@@ -958,8 +958,8 @@ therefore, any local minimizer is a global minimizer.</p>
 <span class="math notranslate nohighlight">\(N\times 2\)</span> matrix <span class="math notranslate nohighlight">\(\boldsymbol{X}\)</span> which contains the <span class="math notranslate nohighlight">\((1, x^{(i)})\)</span> predictor variables, and a
 vector <span class="math notranslate nohighlight">\(\boldsymbol{y}\)</span> of the outputs <span class="math notranslate nohighlight">\(y^{(i)} = y(x^{(i)},\boldsymbol{w})\)</span>. We can then express the first
 derivative of the cost function in matrix form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-889168dc-b63a-4b1d-ac92-728d8f883254">
-<span class="eqno">(26.9)<a class="headerlink" href="#equation-889168dc-b63a-4b1d-ac92-728d8f883254" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d09f5e9b-4e53-46dd-95bd-85dae3a1be12">
+<span class="eqno">(26.9)<a class="headerlink" href="#equation-d09f5e9b-4e53-46dd-95bd-85dae3a1be12" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \frac{\partial \mathcal{C}(\boldsymbol{w})}{\partial \boldsymbol{w}} = -\boldsymbol{X}^T\left( \boldsymbol{t}-\boldsymbol{y} \right). 
 
@@ -981,15 +981,15 @@ Having access to the first derivative we can define an <em>on-line learning rule
 <section id="extending-to-more-features">
 <h3>Extending to more features<a class="headerlink" href="#extending-to-more-features" title="Link to this heading">#</a></h3>
 <p>Within a binary classification problem, we can easily expand our model to include multiple input features. Our activation function is then (with <span class="math notranslate nohighlight">\(p\)</span> features)</p>
-<div class="amsmath math notranslate nohighlight" id="equation-246d9512-e383-4e25-b89c-5dc80570005a">
-<span class="eqno">(26.10)<a class="headerlink" href="#equation-246d9512-e383-4e25-b89c-5dc80570005a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9971727a-097b-4efa-bfb6-0a2750a2ebd8">
+<span class="eqno">(26.10)<a class="headerlink" href="#equation-9971727a-097b-4efa-bfb6-0a2750a2ebd8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 z( \boldsymbol{x}^{(i)}, \boldsymbol{w} ) = w_0 + w_1 x_1^{(i)} + w_2 x_2^{(i)} + \dots + w_p x_p^{(i)}.
 
 \end{equation}\]</div>
 <p>Defining <span class="math notranslate nohighlight">\(\boldsymbol{x}^{(i)} \equiv [1,x_1^{(i)}, x_2^{(i)}, \dots, x_p^{(i)}]\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{w}=[w_0, w_1, \dots, w_p]\)</span> we get</p>
-<div class="amsmath math notranslate nohighlight" id="equation-22419ad7-bd52-4cfa-ab54-085444f147cf">
-<span class="eqno">(26.11)<a class="headerlink" href="#equation-22419ad7-bd52-4cfa-ab54-085444f147cf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8ad5013b-70d6-428d-885a-9febc7d3e05f">
+<span class="eqno">(26.11)<a class="headerlink" href="#equation-8ad5013b-70d6-428d-885a-9febc7d3e05f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \prob (t^{(i)}=1 | \boldsymbol{w}, \boldsymbol{x}^{(i)}) = \frac{ \exp{ \left( \boldsymbol{w} \cdot \boldsymbol{x}^{(i)} \right) }}{ 1 + \exp{ \left( \boldsymbol{w} \cdot \boldsymbol{x}^{(i)} \right) } }.
 

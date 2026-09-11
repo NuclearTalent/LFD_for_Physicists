@@ -1,0 +1,1347 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>31.4. Demo: Bayes by Backprop in PyTorch &#8212; Combined Learning from Data materials</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/coloredpages.css?v=0a037ad7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=b3e4c87c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myadmonitions.css?v=89ac28d1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'false';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/textmacros"]}, "chtml": {"mtextInheritFont": true}, "tex": {"packages": {"[+]": ["textmacros"]}, "macros": {"data": "\\mathcal{D}", "pars": "\\boldsymbol{\\theta}", "para": "\\theta", "optpars": "\\pars^*", "optpara": "\\para^*", "prob": "\\mathbb{P}", "cprob": ["\\prob\\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "cprobsub": ["\\prob_{#1}\\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "pdf": ["p \\left( #1 \\, \\left\\vert \\, #2 \\right. \\right)", 2], "pdfsub": ["p_{#1} \\left( #2 \\, \\left\\vert \\, #3 \\right. \\right)", 3], "p": ["p \\left( #1 \\right)", 1], "psub": ["p_{#1} \\left( #2 \\right)", 2], "futuredata": "\\mathcal{F}", "expect": ["\\mathbb{E} \\left[ #1 \\right]", 1], "var": ["\\text{Var} \\left( #1 \\right)", 1], "std": ["\\text{Std} \\left( #1 \\right)", 1], "cov": ["\\text{Cov} \\left( #1, #2 \\right)", 2], "dmat": "\\boldsymbol{X}", "models": ["\\boldsymbol{M}\\left( #1 \\, ; \\, #2 \\right)", 2], "model": ["M\\left( #1 \\, ; \\, #2 \\right)", 2], "modeloutputs": "\\boldsymbol{M}", "modeloutput": "M", "MLmodel": ["\\boldsymbol{\\hat{y}}\\left( #1 \\right)", 1], "MLoutputs": "\\boldsymbol{\\hat{y}}", "MLoutput": "\\hat{y}", "outputs": "\\boldsymbol{y}", "inputs": "\\boldsymbol{x}", "targets": "\\boldsymbol{t}", "weights": "\\boldsymbol{w}", "testoutputs": "\\boldsymbol{y}^\\odot", "testinputs": "\\boldsymbol{x}^\\odot", "output": "y", "inputt": "x", "target": "t", "weight": "w", "testoutput": "y^\\odot", "MLtestoutput": "\\hat{y}^\\odot", "testinput": "x^\\odot", "trainingdata": "\\mathcal{T}", "LaTeX": "\\text{LaTeX}", "residual": "\\epsilon", "residuals": "\\boldsymbol{\\epsilon}", "zeros": "\\boldsymbol{0}", "covres": "\\boldsymbol{\\Sigma_{\\epsilon}}", "covpars": "\\boldsymbol{\\Sigma_{\\pars}}", "tildecovpars": "\\boldsymbol{\\widetilde{\\Sigma}_{\\pars}}", "sigmas": "\\boldsymbol{\\sigma}", "sigmai": "\\sigma_i", "sigmares": "\\sigma_{\\epsilon}", "cbar": "\\bar c", "Lra": "\\Longrightarrow", "yth": "y_{\\rm th}", "yexp": "y_{\\rm exp}", "ym": "y_{\\rm m}", "thetavec": "\\boldsymbol{\\theta}", "parsLR": "\\boldsymbol{\\beta}", "paraLR": "\\beta", "covparsLR": "\\boldsymbol{\\Sigma_{\\parsLR}}", "optparsLR": "\\parsLR^*", "optparaLR": "\\paraLR^*", "tildecovparsLR": "\\boldsymbol{\\widetilde{\\Sigma}_{\\parsLR}}", "alphavec": "\\boldsymbol{\\alpha}", "muvec": "\\boldsymbol{\\mu}", "phivec": "\\boldsymbol{\\phi}", "betavec": "\\boldsymbol{\\beta}", "sigmavec": "\\boldsymbol{\\sigma}", "Sigmavec": "\\boldsymbol{\\Sigma}", "thetavechat": "\\widehat\\thetavec", "avec": "\\boldsymbol{a}", "Bvec": "\\boldsymbol{B}", "fvec": "\\boldsymbol{f}", "mvec": "\\boldsymbol{m}", "qvec": "\\boldsymbol{q}", "rvec": "\\boldsymbol{r}", "uvec": "\\boldsymbol{u}", "vvec": "\\boldsymbol{v}", "wvec": "\\boldsymbol{w}", "xvec": "\\boldsymbol{x}", "yvec": "\\boldsymbol{y}", "wt": "\\widetilde", "nb": "n_b", "mel": ["\\langle #1 | #2 | #3 \\rangle", 3], "qoi": "\\mathbf{Q}", "ytrue": "y_{\\rm true}", "Amat": "\\boldsymbol{A}", "AmatT": "\\boldsymbol{A^\\top}", "Sigmamat": "\\boldsymbol{\\Sigma}", "Yvec": "\\boldsymbol{Y}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/Probabilistic-machine-learning/bayesian-neural-nets/demo-bayes-by-backprop-in-pytorch';</script>
+    <script src="../../../_static/custom.js?v=33f35b7a"></script>
+    <script src="../../../_static/phrase-search.js?v=97a9d95f"></script>
+    <script src="../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
+    <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
+    <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
+    <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
+    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
+    <script src="../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
+    <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
+    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="32. Overview of Gaussian processes" href="../gaussian-processes/index.html" />
+    <link rel="prev" title="31.3. Bayesian neural networks in practice" href="sec-bnns-in-practice.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../About.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo-copilot.png" class="logo__image only-light" alt="Combined Learning from Data materials - Home"/>
+    <script>document.write(`<img src="../../../_static/logo-copilot.png" class="logo__image only-dark" alt="Combined Learning from Data materials - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../About.html">
+                    Learning from data for physicists
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Overview/invitation-to-inductive-inference/invitation.html">1. Invitation to inductive inference</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Overview/introduction/index.html">2. Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-physicist-s-perspective.html">2.1. Physicist’s perspective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-bayesian-workflow.html">2.2. Bayesian workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-machine-learning.html">2.3. Machine learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Overview/introduction/sec-virtues.html">2.4. Virtues</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I: Bayesian methods for scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/index.html">3. Overview of Part I</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/index.html">4. Inference and PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-statements.html">4.1. Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-manipulating-probabilities-bayesian-rules-of-probability-as.html">4.2. Manipulating probabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-probability-density-functions.html">4.3. Probability density functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-expectation-values-and-moments.html">4.4. Expectation values and moments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-data-models-predictions.html">4.5. Data, models, and predictions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/inference-and-pdfs/sec-bayesian-epistemology.html">4.6. *Aside: Bayesian epistemology</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/index.html">5. More on PDFs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-one-dimensional-PDFs.html">5.1. One-dimensional PDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-two-dimensional-PDFs.html">5.2. Two-dimensional PDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-bayesian-credible-intervals.html">5.3. Bayesian credible intervals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayesian-posteriors/sec-central-limit-theorem.html">5.4. The Central Limit Theorem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/index.html">6. Updating via Bayes' rule</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-coin-tossing-frequentists-and-bayesians.html">6.1. Coin tossing: Frequentists and Bayesians</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/demo-bayesian-coin-tossing.html">6.2. Demo: Bayesian Coin Tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/demo-widget-coin-tossing.html">6.3. Demo: Widgetized coin tossing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-take-aways-and-follow-up-questions-from-coin-flipping.html">6.4. Take-aways and follow-ups for coin flipping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/updating-via-bayes-rule/sec-computing-the-posterior-analytically.html">6.5. Analytic coin-flipping posterior</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/index.html">7. Error propagation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-nuisance-parameters-and-marginalization.html">7.1. Nuisance parameters and marginalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-changing-variables.html">7.2. Changing variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/error-propagation/sec-a-useful-approximation.html">7.3. A useful approximation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/index.html">8. Bayes in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-advantages-of-the-bayesian-approach.html">8.1. Advantages of the Bayesian approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-bayesian-research-workflow.html">8.2. Bayesian research workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-blr-background.html">8.3. BLR-I: Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-blr-workflow.html">8.4. BLR-II: Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/sec-blr-demo.html">8.5. BLR-III: Demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/bayes-in-practice/demo-model-validation-bias-variance.html">8.6. Demo: The bias-variance trade-off</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/index.html">9. Problems for Part I</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/problem-exploring-PDFs.html">9.1. Problem: Exploring PDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/problem-gaussian-mean-and-variance.html">9.2. Problem: Gaussian noise and averages I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/problem-radioactive-lighthouse-problem.html">9.3. Problem: Radioactive lighthouse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/problem-amplitude-of-a-signal-in-the-presence-of-background.html">9.4. Problem: Amplitude of a signal in the presence of background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/problem-fitting-a-straight-line-i.html">9.5. Problem: Fitting a straight line I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/problem-fitting-a-straight-line-ii.html">9.6. Problem: Fitting a straight line II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/problem-gaussian-noise-and-averages-ii.html">9.7. Problem: Gaussian noise and averages II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/problem-2d-radioactive-lighthouse-location-using-mcmc.html">9.8. Problem: 2D radioactive lighthouse location using MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Bayesian-methods-for-scientific-modeling/exercises-bayesian-methods-for-scientific-modeling/exercise-comparing-noise-sampling-to-lighthouse-analysis.html">9.9. Comparing Gaussian noise sampling to lighthouse analysis</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II: Advanced Bayesian methods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Advanced-Bayesian-methods/index.html">10. Overview of Part II</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/index.html">11. Assigning probabilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/sec-assigning-probabilities-i-indifferences-and-translation-groups.html">11.1. Indifferences and translation groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/sec-assigning-probabilities-ii-the-principle-of-maximum-entropy.html">11.2. The principle of maximum entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/assigning-probabilities/sec-maximum-entropy-for-reconstructing-a-function-from-its-moments.html">11.3. Maximum Entropy for reconstructing a function</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/index.html">12. Dealing with outliers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/sec-setup-linear-regression-outliers.html">12.1. Setup: linear regression with bad data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/sec-frequentist-methods-for-outliers.html">12.2. Frequentist methods to deal with outliers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/sec-bayesian-methods-for-outliers.html">12.3. Bayesian methods to deal with outliers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/demo-dealing-with-outliers.html">12.4. Demo: Illustrating approaches to outliers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/dealing-with-outliers/demo-student-t-distribution-from-gaussians.html">12.5. Demo: Student's t-distribution from Gaussians</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/bayes-goes-linear-history-matching/index.html">13. Bayes goes linear — History matching</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/bayes-goes-linear-history-matching/sec-bayes-linear-methods.html">13.1. Bayes linear methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/bayes-goes-linear-history-matching/sec-iterative-history-matching.html">13.2. Iterative history matching</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/index.html">14. Model selection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-frequentist-hypothesis-testing.html">14.1. Frequentist hypothesis testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-bayesian-model-selection.html">14.2. Bayesian model selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-evidence-ratios-for-an-expansion.html">14.3. Evidence ratios for an expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-evidence-calculations.html">14.4. Evidence calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-selection/sec-information-criteria.html">14.5. Information criteria</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/index.html">15. Discrepancy Models with GPs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-introduction-to-discrepancy-models.html">15.1. Introduction to discrepancy models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-koh-framework.html">15.2. The KOH and BOH frameworks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-the-ball-drop-model.html">15.3. The ball-drop model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/demo-ball-drop-experiment.html">15.4. Demo: Ball-drop experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/discrepancy-models/sec-real-world-application-of-discrepancy-model.html">15.5. Example: Discrepancy models for relativistic heavy-ion collisions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/index.html">16. Model averaging and mixing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-bayesian-inference-in-the-multi-model-setting.html">16.1. Bayesian inference in the multi-model setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-bayesian-model-averaging.html">16.2. Bayesian model averaging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-bayesian-model-mixing.html">16.3. Bayesian model mixing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/model-averaging-and-mixing/sec-a-tale-of-two-models.html">16.4. A tale of two models</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Advanced-Bayesian-methods/problems-advanced-bayesian-methods/index.html">17. Problems for Part II</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/problems-advanced-bayesian-methods/problem-evidence-calculation-for-eft-expansions.html">17.1. Problem: Evidence calculation for EFT expansions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/problems-advanced-bayesian-methods/problem-model-selection-basics.html">17.2. Problem: Model selection basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Advanced-Bayesian-methods/problems-advanced-bayesian-methods/problem-model-selection-how-many-lines-ptemcee.html">17.3. Problem: How many lines?</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III: MCMC sampling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../MCMC-sampling/index.html">18. Overview of Part III</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/index.html">19. Intuition for MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-why-mcmc.html">19.1. Why MCMC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-the-metropolis-hastings-algorithm.html">19.2. The Metropolis–Hastings algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/sec-visualizations-of-mcmc.html">19.3. Visualizations of MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/demo-sampling-of-a-poisson-distribution.html">19.4. Demo: Sampling of a Poisson distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/intuition-for-mcmc/demo-random-walk-and-sampling.html">19.5. Demo: Random walk and sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/index.html">20. Details of MCMC</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-stochastic-processes.html">20.1. Stochastic processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-example-random-walk.html">20.2. Example: Random walk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-special-case-gaussian-process.html">20.3. Special case: Gaussian process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-markov-chains.html">20.4. Markov chains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/details-of-mcmc/sec-derivation-of-the-metropolis-hastings-algorithm.html">20.5. Derivation of the Metropolis–Hastings algorithm</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/index.html">21. MCMC in practice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-workflow-for-mcmc-sampling.html">21.1. Workflow for MCMC sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-diagnostics-for-mcmc-sampling.html">21.2. Diagnostics for MCMC sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/demo-mcmc-diagnostics.html">21.3. Demo: MCMC diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-best-practices-for-mcmc-sampling.html">21.4. Best practices for MCMC sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/index.html">22. Advanced sampling algorithms</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-ensemble-sampling.html">22.1. Ensemble sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-parallel-tempering.html">22.2. Parallel tempering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-hamiltonian-monte-carlo.html">22.3. Hamiltonian Monte Carlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-sampling-importance-resampling.html">22.4. Sampling / Importance resampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-slice-sampling.html">22.5. Slice sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/sec-nested-sampling.html">22.6. Nested sampling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/index.html">23. State-of-the-art sampling implementations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/sec-overview-implementations.html">23.1. Overview: individual sampling libraries and full probabilistic packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/demo-multimodal-distributions-with-two-samplers.html">23.2. Demo: Multimodal distributions with the ptemcee and Zeus samplers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/demo-pocomc.html">23.3. Demo: pocoMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/sec-overview-intro-to-pymc.html">23.4. Overview: Intro to PyMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/demo-pymc-introduction.html">23.5. Demo: PyMC Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/demo-bilby.html">23.6. Demo: Bilby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/state-of-the-art-mcmc-implementations/demo-comparing-samplers-for-a-simple-problem.html">23.7. Demo: Comparing samplers for a simple problem</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV: Machine learning basics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Machine-learning-basics/index.html">24. Overview of Part IV</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-basics/machine-learning-overview/index.html">25. Machine learning overview</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/machine-learning-overview/sec-types-of-machine-learning.html">25.1. Types of Machine Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/machine-learning-overview/sec-data-handling-machine-learning-and-ethical-aspects.html">25.2. Data handling, machine learning and ethical aspects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/machine-learning-overview/sec-model-validation.html">25.3. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/machine-learning-overview/sec-data-bias-and-fairness.html">25.4. Data bias and fairness in machine learning</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-basics/logistic-regression/index.html">26. Logistic Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/logistic-regression/sec-optimization-deep-learning.html">26.1. Optimization and deep learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/logistic-regression/sec-binary-classification.html">26.2. Binary classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/logistic-regression/sec-extending-to-more-classes.html">26.3. Extending to more classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/logistic-regression/sec-machine-learning-first-examples.html">26.4. Machine Learning: First examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/logistic-regression/exercise-logreg-and-neural-networks.html">26.5. Exercise: Logistic Regression and Neural Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-basics/artificial-neural-networks/index.html">27. Artificial neural networks (ANNs)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/artificial-neural-networks/sec-artificial-neural-networks.html">27.1. Details of ANNs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/artificial-neural-networks/sec-neural-networks-backpropagation.html">27.2. Training an ANN: backpropagation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/artificial-neural-networks/demo-ann-simple-function-using-pytorch.html">27.3. Demo: ANN for simple function using PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/artificial-neural-networks/demo-mnist-classifier-in-pytorch.html">27.4. Demo: MNIST classifier demo in PyTorch</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Machine-learning-basics/convolutional-neural-nets/index.html">28. *Convolutional neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/convolutional-neural-nets/sec-what-is-a-convolutional-neural-network.html">28.6. Alternative: What is a convolutional neural network?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/convolutional-neural-nets/demo-image-recognition-with-cnn.html">28.7. Demo: Image recognition with Convolutional Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/convolutional-neural-nets/demo-cnn-pytorch.html">28.8. Demo: Pytorch version of the CNN demo notebook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Machine-learning-basics/artificial-neural-networks/demo-mnist-classifier-in-pytorch-cnn-binder.html">28.9. Demo: Binder version of original MNIST classifier with CNN</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Machine-learning-basics/problems-machine-learning-basics/index.html">29. Problems for Part IV</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Probabilistic machine learning</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">30. Overview of Part V </a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">31. Bayesian neural networks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="sec-probabilistic-neural-network.html">31.1. Probabilistic neural network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-bayesian-inference-network-weights.html">31.2. Bayesian inference for network weights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec-bnns-in-practice.html">31.3. Bayesian neural networks in practice</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">31.4. Demo: Bayes by Backprop in PyTorch</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../gaussian-processes/index.html">32. Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian-processes/demo-intuition-for-gaussian-processes.html">32.1. Demo: Intuition for Gaussian processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian-processes/sec-basic-info-on-gps.html">32.2. Basic info on GPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian-processes/sec-more-details-on-gps.html">32.3. More details on GPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian-processes/demo-gaussian-processes.html">32.4. Demo: Gaussian Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian-processes/sec-sklearn-demos.html">32.5. Demo: Scikit-Learn demo notebooks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../anns-in-the-large-width-limit/index.html">33. ANNs in the large-width limit (ANNFT)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../anns-in-the-large-width-limit/sec-sparsity.html">33.1. Sparsity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../anns-in-the-large-width-limit/sec-anns-at-large-width.html">33.2. Neural networks in the large width limit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../anns-in-the-large-width-limit/sec-annft-key-ideas.html">33.3. ANNFT key ideas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../anns-in-the-large-width-limit/sec-criticality-analysis.html">33.4. Criticality analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../anns-in-the-large-width-limit/sec-validating-ANNFT.html">33.5. Validating ANNFT training behaviors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../anns-in-the-large-width-limit/sec-expansion-parameter.html">33.6. Expansion parameter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../anns-in-the-large-width-limit/sec-critical-tuning.html">33.7. Critical tuning of hyperparameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../anns-in-the-large-width-limit/sec-summary-results.html">33.8. Summary of results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../anns-in-the-large-width-limit/sec-field-theory-formalism.html">33.9. Appendix: field theory formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../anns-in-the-large-width-limit/demo-distributions-of-randomly-initialized-anns.html">33.10. Demo: Distributions of Randomly-Initialized ANNs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../bayesian-optimization/index.html">34. Bayesian Optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../bayesian-optimization/sec-overview-bayesian-optimization.html">34.1. Overview of Bayesian optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayesian-optimization/sec-acquisition-functions.html">34.2. Acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayesian-optimization/sec-examples.html">34.3. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bayesian-optimization/sec-concluding-remarks.html">34.4. Concluding remarks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dimensionality-reduction-emulators/index.html">35. Dimensionality reduction and emulators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dimensionality-reduction-emulators/sec-svd-and-pca.html">35.1. SVD and PCA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dimensionality-reduction-emulators/sec-bayes-goes-fast.html">35.2. Bayes goes fast: Emulator overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dimensionality-reduction-emulators/sec-rbm-emulators.html">35.3. RBM emulators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dimensionality-reduction-emulators/demo-rbm-ho-gp-example.html">35.4. Demo: RBM vs. HO expansion vs. GP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dimensionality-reduction-emulators/sec-building-emulator-basis.html">35.5. Building an emulator basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dimensionality-reduction-emulators/sec-pmm-emulators.html">35.6. PMM emulators</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../problems-probabilistic-machine-learning/index.html">36. Problems for Part V</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="problem-bayesian-neural-networks.html">36.1. Bayesian neural networks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Backmatter</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Backmatter/bibliography.html">37. Bibliography</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix A: Statistics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Statistics/index.html">38. Notation and overview of statistics material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Statistics/probability-measure/index.html">39. The probability measure</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/probability-measure/sec-important-definitions.html">39.1. Important definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/probability-measure/sec-types-probability.html">39.2. Types of probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/probability-measure/sec-exercises.html">39.3. Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Statistics/working-with-probability-distributions/index.html">40. Working with probability distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/working-with-probability-distributions/sec-important-distributions.html">40.1. Important distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/working-with-probability-distributions/sec-scipy-stats.html">40.2. Quick introduction to  <code class="docutils literal notranslate"><span class="pre">scipy.stats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/working-with-probability-distributions/sec-point-estimates-credible-regions.html">40.3. Point estimates and credible regions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Statistics/working-with-probability-distributions/sec-exercises.html">40.4. Exercises</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix B: Scientific modeling</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Scientific-modeling/index.html">41. Overview of scientific modeling material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/index.html">42. Overview of modeling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-notation.html">42.1. Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-models-in-science.html">42.2. Models in science</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-parametric-versus-non-parametric-models.html">42.3. Parametric versus non-parametric models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-linear-versus-non-linear-models.html">42.4. Linear versus non-linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-regression-analysis-optimization-versus-inference.html">42.5. Regression analysis: optimization versus inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/overview-modeling/sec-exercises.html">42.6. Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/index.html">43. Linear models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-definition-of-linear-models.html">43.1. Definition of linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-regression-analysis-with-linear-models.html">43.2. Regression analysis with linear models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-ordinary-linear-regression-warmup.html">43.3. Ordinary linear regression: warmup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/linear-models/sec-ordinary-linear-regression-in-practice.html">43.4. Ordinary linear regression in practice</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/index.html">44. Mathematical optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-gradient-descent-optimization.html">44.1. Gradient-descent optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-batch-stochastic-and-mini-batch-gradient-descent.html">44.2. Batch, stochastic and mini-batch gradient descent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Scientific-modeling/mathematical-optimization/sec-adaptive-gradient-descent-algorithms.html">44.3. Adaptive gradient descent algorithms</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix C: Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Getting-started/index.html">45. Overview of Getting started material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/index.html">46. Setting up for interactive use of this Jupyter book</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/sec-using-git.html">46.1. Using git for cloning the book repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/setting-up-for-using-this-jupyter-book/sec-using-conda.html">46.2. Setting up your Python enviroment</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Appendix/Getting-started/jupyter-notebooks-and-python/index.html">47. Jupyter notebooks and Python</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/index.html">48. Guides on Jupyter notebooks and Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/jupyter-notebooks-and-python/exercise-jupyter-notebooks-and-python.html">48.1. Exercise: Jupyter notebooks and Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/exercise-python-lists-and-iterations.html">48.2. Python lists and iterations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/exercise-linear-algebra-operations-with-numpy.html">48.3. Linear algebra operations with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/demo-reading-data-and-fitting.html">48.4. Demo: Reading data and fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Appendix/Getting-started/more-about-python-and-jupyter-notebooks/demo-making-a-simple-widget-based-ui.html">48.5. Demo: Making a simple widget-based UI</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TALENT mini-projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/index.html">Overview of mini-projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_I_toy_model_of_EFT.html"> MP I: Parameter estimation for a toy model of an EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIa_bayesian_optimization.html"> MP IIIa: Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mini-projects/mini-project_IIIb_Bayesian_neural_networks_from_demo.html"> MP IIIb: Bayesian Neural Networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/NuclearTalent/LFD_for_Physicists/main?urlpath=tree/./content/Probabilistic-machine-learning/bayesian-neural-nets/demo-bayes-by-backprop-in-pytorch.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Binder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Binder logo" src="../../../_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_for_Physicists" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NuclearTalent/LFD_for_Physicists/issues/new?title=Issue%20on%20page%20%2Fcontent/Probabilistic-machine-learning/bayesian-neural-nets/demo-bayes-by-backprop-in-pytorch.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/content/Probabilistic-machine-learning/bayesian-neural-nets/demo-bayes-by-backprop-in-pytorch.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Demo: Bayes by Backprop in PyTorch</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-data">The data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-variational-inference-to-bayes-by-backprop">From variational inference to Bayes by Backprop</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-bayesian-linear-layer">A Bayesian linear layer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-network">The network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cost">The cost</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-predictive-distribution">The predictive distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#did-it-learn-the-right-noise">Did it learn the right noise?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-to-take-away">What to take away</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="demo-bayes-by-backprop-in-pytorch">
+<span id="demo-bayes-by-backprop"></span><h1><span class="section-number">31.4. </span>Demo: Bayes by Backprop in PyTorch<a class="headerlink" href="#demo-bayes-by-backprop-in-pytorch" title="Link to this heading">#</a></h1>
+<p>The previous section derived the variational free energy and described <em>Bayes by
+Backprop</em>. Here we implement it in <code class="docutils literal notranslate"><span class="pre">PyTorch</span></code>, and use it on a one-dimensional regression problem where we know
+the right answer.</p>
+<p>The point of the demo is to see the <strong>two different uncertainties</strong> that a
+Bayesian neural network gives you, and to see that they behave differently:</p>
+<ul class="simple">
+<li><p>the <strong>aleatoric</strong> part is the noise in the data. It is irreducible: more data
+would pin it down more precisely but would not make it smaller.</p></li>
+<li><p>the <strong>epistemic</strong> part is our uncertainty about the weights. It is large where
+we have no data and shrinks where we have plenty.</p></li>
+</ul>
+<p>See the general discussion on epistemic and aleatoric uncertainties in <a class="reference internal" href="sec-probabilistic-neural-network.html#sec-probabilistic-neural-network-epistemic-aleatoric"><span class="std std-ref">Types of uncertainty</span></a>.</p>
+<p>We will build a data set in which both are visible at a glance: the noise grows
+from left to right, and there is a gap in the middle with no data at all.</p>
+<section id="the-data">
+<h2>The data<a class="headerlink" href="#the-data" title="Link to this heading">#</a></h2>
+<p>We generate data with</p>
+<div class="math notranslate nohighlight">
+\[
+y = \sin(2x) + \varepsilon(x), \qquad
+\varepsilon(x) \sim \mathcal{N}\left(0, \sigma_\mathrm{true}(x)^2\right),
+\]</div>
+<p>with a noise level that grows linearly across the interval. Both <span class="math notranslate nohighlight">\(\sin(2x)\)</span> and
+<span class="math notranslate nohighlight">\(\sigma_\mathrm{true}(x)\)</span> are known to us, so at the end we can check what the
+network learned against the truth. This is a luxury we never have in a real
+problem, and exactly why a demo is worth exploring.</p>
+<p>We sample <span class="math notranslate nohighlight">\(x\)</span> uniformly from <span class="math notranslate nohighlight">\([-3, 3]\)</span> but leave <span class="math notranslate nohighlight">\([0, 1]\)</span> unsampled to study how our model performs for interpolation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">f_true</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sigma_true</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The noise level grows from left to right."""</span>
+    <span class="k">return</span> <span class="mf">0.05</span> <span class="o">+</span> <span class="mf">0.15</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">6.0</span>
+
+
+<span class="c1"># Sample x everywhere except the gap [0, 1]</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">4</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">)][:</span><span class="n">n</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">f_true</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sigma_true</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="n">xt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">yt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">xgrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>          <span class="c1"># note: wider than the data</span>
+<span class="n">xgrid_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">'.'</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'data'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">f_true</span><span class="p">(</span><span class="n">xgrid</span><span class="p">),</span> <span class="s1">'k-'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'$\sin(2x)$'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.9'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'gap (no data)'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.95'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.95'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'outside the data'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'$x$'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'$y$'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">'upper right'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/b1403c936ab3d6331a0e3811d44bb75d553d271335af7c0ac6a2ab811351c7cf.png" src="../../../_images/b1403c936ab3d6331a0e3811d44bb75d553d271335af7c0ac6a2ab811351c7cf.png" />
+</div>
+</div>
+</section>
+<section id="from-variational-inference-to-bayes-by-backprop">
+<h2>From variational inference to Bayes by Backprop<a class="headerlink" href="#from-variational-inference-to-bayes-by-backprop" title="Link to this heading">#</a></h2>
+<p>Variational inference (see <a class="reference internal" href="sec-bnns-in-practice.html#sec-bnns-in-practice-elbo"><span class="std std-ref">The evidence lower bound</span></a>) is a <em>strategy</em> to address the hard Bayesian inference problem: replace the intractable
+<span class="math notranslate nohighlight">\(p(\boldsymbol{w} \lvert \mathcal{D})\)</span> by a tractable family of distributions
+<span class="math notranslate nohighlight">\(q(\boldsymbol{w} \lvert \boldsymbol{\theta})\)</span> and pick the member of that family that
+maximises the ELBO, equation <a class="reference internal" href="sec-bnns-in-practice.html#equation-eq-elbo">(31.12)</a>. It leaves two questions open:</p>
+<ul class="simple">
+<li><p><em>Which family</em> <span class="math notranslate nohighlight">\(q\)</span> should we use?</p></li>
+<li><p><em>How</em> do we maximise the ELBO, which contains an expectation over <span class="math notranslate nohighlight">\(q\)</span> that has
+no closed form?</p></li>
+</ul>
+<p><em>Bayes by Backprop</em> answers both so that training reduces to ordinary
+backpropagation. Choice 1 answers the first question while choices 2 and 3
+answer the second.</p>
+<ol class="arabic simple">
+<li><p><strong>The family is a diagonal Gaussian.</strong> Every weight is independently normal
+with its own mean and width (the <em>mean-field</em> assumption). The KL term then
+becomes a sum of one-dimensional analytic expressions. The price is that a
+diagonal <span class="math notranslate nohighlight">\(q\)</span> cannot capture the correlations of the true posterior, and
+mean-field methods tend to <em>underestimate</em> the posterior width in parameter
+space, although the predictive variance can still come out too large
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id66" title="James Odgers, Ben Riegler, Siddharth Swaroop, and Vincent Fortuin. Gaussian mean field variational inference can overestimate predictive variance. 2026. ICML 2026. doi:10.48550/ARXIV.2606.25745.">ORSF26</a>]</span>.</p></li>
+<li><p><strong>The expectation over <span class="math notranslate nohighlight">\(q\)</span> is estimated with one sample per gradient step.</strong>
+A single draw of <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> gives a noisy but unbiased estimate; the
+noise averages out over many steps, as mini-batch noise does.</p></li>
+<li><p><strong>The draw is made differentiable by the reparameterisation trick.</strong> Writing
+<span class="math notranslate nohighlight">\(w = \mu + \sigma \epsilon\)</span> with <span class="math notranslate nohighlight">\(\epsilon \sim \mathcal{N}(0, 1)\)</span> moves the
+randomness into <span class="math notranslate nohighlight">\(\epsilon\)</span>, which carries no parameters, so gradients flow
+to <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>.</p></li>
+</ol>
+<p>Together these turn “maximise the ELBO” into “call <code class="docutils literal notranslate"><span class="pre">.backward()</span></code>”, hence the name.</p>
+<p>Note that the optimiser adjusts <span class="math notranslate nohighlight">\(\boldsymbol{\theta} = (\mu, \rho)\)</span>, the parameters
+of the <em>distribution over</em> the weights, not the weights themselves. The network
+below has twice as many numbers to learn as its deterministic counterpart, and
+none of them is a weight.</p>
+</section>
+<section id="a-bayesian-linear-layer">
+<h2>A Bayesian linear layer<a class="headerlink" href="#a-bayesian-linear-layer" title="Link to this heading">#</a></h2>
+<p>Every weight and bias gets a variational posterior
+<span class="math notranslate nohighlight">\(q(w \lvert \theta) = \mathcal{N}(w; \mu, \sigma^2)\)</span>, parameterised by <span class="math notranslate nohighlight">\(\mu\)</span> and
+<span class="math notranslate nohighlight">\(\rho\)</span> with <span class="math notranslate nohighlight">\(\sigma = \log(1 + e^{\rho})\)</span> so that <span class="math notranslate nohighlight">\(\sigma\)</span> stays positive. A
+forward pass draws one sample using the reparameterisation trick,</p>
+<div class="math notranslate nohighlight">
+\[
+w = \mu + \sigma \odot \epsilon, \qquad \epsilon \sim \mathcal{N}(0, I),
+\]</div>
+<p>so that gradients flow to <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\rho\)</span> through a deterministic function of
+<span class="math notranslate nohighlight">\(\epsilon\)</span>.</p>
+<p>The layer also has to report its contribution to the KL divergence
+<span class="math notranslate nohighlight">\(D_\mathrm{KL}(q \Vert p)\)</span>, equation <a class="reference internal" href="sec-bnns-in-practice.html#equation-eq-kl">(31.9)</a>. For
+two diagonal Gaussians this is analytic:</p>
+<div class="math notranslate nohighlight">
+\[
+D_\mathrm{KL} = \sum_j \left[ \log \frac{\sigma_p}{\sigma_j}
++ \frac{\sigma_j^2 + \mu_j^2}{2 \sigma_p^2} - \frac{1}{2} \right].
+\]</div>
+<p>We take the prior <span class="math notranslate nohighlight">\(p(w) = \mathcal{N}(0, \sigma_p^2)\)</span> with
+<span class="math notranslate nohighlight">\(\sigma_p^2 = 2 / n_\mathrm{in}\)</span>, which is the <code class="docutils literal notranslate"><span class="pre">relu</span></code> initialisation
+distribution.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BayesLinear</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Linear layer with q(w) = N(w; mu, sigma^2) and sigma = softplus(rho)."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_in</span><span class="p">,</span> <span class="n">n_out</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prior_sigma</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">n_in</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_mu</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_out</span><span class="p">,</span> <span class="n">n_in</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior_sigma</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b_mu</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_out</span><span class="p">))</span>
+        <span class="c1"># softplus(-5) is about 0.007: start almost deterministic and let the</span>
+        <span class="c1"># data widen the posterior. Starting wide often fails to train at all.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_rho</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_out</span><span class="p">,</span> <span class="n">n_in</span><span class="p">),</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b_rho</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_out</span><span class="p">,),</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_mu</span> <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">softplus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_rho</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_rho</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_mu</span> <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">softplus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b_rho</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b_rho</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">kl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">mu</span><span class="p">,</span> <span class="n">rho</span> <span class="ow">in</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">w_mu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_rho</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b_mu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_rho</span><span class="p">)):</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softplus</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="n">total</span> <span class="o">+</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prior_sigma</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span>
+                             <span class="o">+</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">mu</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior_sigma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                             <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">total</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-network">
+<h2>The network<a class="headerlink" href="#the-network" title="Link to this heading">#</a></h2>
+<p>The architecture is chosen empirically. Two hidden layers of width 16 (about 340
+weights and biases, each with a mean and a width to learn) is enough to follow
+<span class="math notranslate nohighlight">\(\sin(2x)\)</span> and the growing noise level. Smaller networks underfit the mean near the
+edges, and the residual then lands in the aleatoric term. Much larger networks do
+not help either: the KL term penalises every parameter that deviates from the prior,
+and the fit degrades with too many parameters such that the
+epistemic width becomes large everywhere. The output layer produces <strong>two</strong> numbers
+rather than one: the mean <span class="math notranslate nohighlight">\(\mu(x)\)</span> and the log-variance <span class="math notranslate nohighlight">\(\log v(x)\)</span> of the
+predictive distribution at that <span class="math notranslate nohighlight">\(x\)</span>. Letting the network output the width is
+what allows the aleatoric term to depend on the input, which it must here, since
+<span class="math notranslate nohighlight">\(\sigma_\mathrm{true}\)</span> grows with <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<p>Clamping the log-variance is used to avoid sending it to <span class="math notranslate nohighlight">\(-\infty\)</span> due to a single unlucky batch
+early in training, which would cause the run to never recover.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BayesMLP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h1</span> <span class="o">=</span> <span class="n">BayesLinear</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h2</span> <span class="o">=</span> <span class="n">BayesLinear</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">BayesLinear</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>      <span class="c1"># mean and log-variance</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">o</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="n">o</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">kl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">h1</span><span class="o">.</span><span class="n">kl</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">h2</span><span class="o">.</span><span class="n">kl</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">kl</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-cost">
+<h2>The cost<a class="headerlink" href="#the-cost" title="Link to this heading">#</a></h2>
+<p>We minimise the variational free energy <span class="math notranslate nohighlight">\(\mathcal{F} = -J_\mathrm{ELBO}\)</span>. Per
+data point,</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\mathcal{F}}{N} = \mathbb{E}_{q}\left[-\log p(y \lvert x, w)\right]
++ \frac{D_\mathrm{KL}(q \Vert p)}{N},
+\]</div>
+<p>where the expectation is estimated with a single weight sample per step — one
+sample is noisy but unbiased, and the noise averages out over many steps.</p>
+<p>Two things to be careful about. The KL term is divided by the size of the
+<strong>data set</strong>, not the size of the mini-batch: it is a single penalty shared over
+all <span class="math notranslate nohighlight">\(N\)</span> points, and getting this wrong reweights prior against likelihood by the
+ratio of the two. And with a predicted variance the likelihood is Gaussian, so</p>
+<div class="math notranslate nohighlight">
+\[
+-\log p(y \lvert x, w) = \tfrac{1}{2}\left[ \log v(x)
++ \frac{(y - \mu(x))^2}{v(x)} \right] + \text{const},
+\]</div>
+<p>which reduces to the familiar squared error only when <span class="math notranslate nohighlight">\(v\)</span> is held fixed.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">gaussian_nll</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">log_var</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">log_var</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">log_var</span><span class="o">.</span><span class="n">exp</span><span class="p">())</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+
+<span class="n">net</span> <span class="o">=</span> <span class="n">BayesMLP</span><span class="p">()</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xt</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8000</span><span class="p">):</span>
+    <span class="n">mean</span><span class="p">,</span> <span class="n">log_var</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">xt</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">gaussian_nll</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">log_var</span><span class="p">)</span> <span class="o">+</span> <span class="n">net</span><span class="o">.</span><span class="n">kl</span><span class="p">()</span> <span class="o">/</span> <span class="n">N</span>     <span class="c1"># F / N</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">();</span> <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">();</span> <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'step </span><span class="si">{</span><span class="n">step</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">:</span><span class="s1">5d</span><span class="si">}</span><span class="s1">   F/N = </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s1">8.4f</span><span class="si">}</span><span class="s1">   '</span>
+              <span class="sa">f</span><span class="s1">'KL/N = </span><span class="si">{</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">kl</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s1">7.4f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>step  2000   F/N =  -1.0919   KL/N =  0.3515
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>step  4000   F/N =  -1.1636   KL/N =  0.3304
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>step  6000   F/N =  -1.0165   KL/N =  0.3155
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>step  8000   F/N =  -1.2572   KL/N =  0.3079
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-predictive-distribution">
+<h2>The predictive distribution<a class="headerlink" href="#the-predictive-distribution" title="Link to this heading">#</a></h2>
+<p>The quantity we actually want is</p>
+<div class="math notranslate nohighlight">
+\[
+p(y \lvert x, \mathcal{D}) = \int d w \, p(y \lvert x, w) \, q(w \lvert \theta^*),
+\]</div>
+<p>which we estimate by drawing <span class="math notranslate nohighlight">\(S\)</span> weight samples. Each sample <span class="math notranslate nohighlight">\(w_s\)</span> gives a mean
+<span class="math notranslate nohighlight">\(\mu_s(x)\)</span> and a variance <span class="math notranslate nohighlight">\(v_s(x)\)</span>, and the <strong>law of total variance</strong> splits the
+result into the two pieces exactly:</p>
+<div class="math notranslate nohighlight">
+\[
+\underbrace{\mathrm{Var}\left[y \lvert x, \mathcal{D}\right]}_{\text{total}}
+= \underbrace{\mathbb{E}_{q}\left[v_w(x)\right]}_{\text{aleatoric}}
++ \underbrace{\mathrm{Var}_{q}\left[\mu_w(x)\right]}_{\text{epistemic}} .
+\]</div>
+<p>In words: average the <em>variances</em> to get the aleatoric part, and take the
+variance of the <em>means</em> to get the epistemic part. Both come out of the same <span class="math notranslate nohighlight">\(S\)</span>
+forward passes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">predictive</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Predictive mean, epistemic std and aleatoric std."""</span>
+    <span class="n">means</span><span class="p">,</span> <span class="n">variances</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">):</span>
+        <span class="n">m</span><span class="p">,</span> <span class="n">lv</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">);</span> <span class="n">variances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lv</span><span class="o">.</span><span class="n">exp</span><span class="p">())</span>
+    <span class="n">means</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">means</span><span class="p">);</span> <span class="n">variances</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">variances</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">means</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>            <span class="c1"># predictive mean</span>
+            <span class="n">means</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>             <span class="c1"># epistemic:  std of the means</span>
+            <span class="n">variances</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">sqrt</span><span class="p">())</span>  <span class="c1"># aleatoric: mean of the variances</span>
+
+
+<span class="n">mu</span><span class="p">,</span> <span class="n">epi</span><span class="p">,</span> <span class="n">ale</span> <span class="o">=</span> <span class="n">predictive</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">xgrid_t</span><span class="p">)</span>
+<span class="n">mu</span><span class="p">,</span> <span class="n">epi</span><span class="p">,</span> <span class="n">ale</span> <span class="o">=</span> <span class="n">mu</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">epi</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">ale</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+<span class="n">tot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">epi</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ale</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span><span class="c1">#, sharey=True, sharex=True)</span>
+
+<span class="c1"># (a) draws of the function itself: one curve per weight sample</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">):</span>
+        <span class="n">m</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">xgrid_t</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="s1">'C0-'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">f_true</span><span class="p">(</span><span class="n">xgrid</span><span class="p">),</span> <span class="s1">'k--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'true $\sin(2x)$'</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">'.'</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.3'</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'40 draws of the network, one per weight sample'</span><span class="p">)</span>
+
+<span class="c1"># (b) the same information as a band, split into its two parts</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">mu</span> <span class="o">-</span> <span class="n">tot</span><span class="p">,</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">tot</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'C3'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'$\pm 1\sigma$ total'</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">mu</span> <span class="o">-</span> <span class="n">epi</span><span class="p">,</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">epi</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'C0'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'$\pm 1\sigma$ epistemic'</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">f_true</span><span class="p">(</span><span class="n">xgrid</span><span class="p">),</span> <span class="s1">'k--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="s1">'C3-'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'predictive mean'</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">'.'</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.3'</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'the predictive distribution, decomposed'</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">'upper left'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'$y$'</span><span class="p">);</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">axs</span><span class="p">:</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.9'</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.95'</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.95'</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'$x$'</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'$y$'</span><span class="p">);</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/8b1f1e164e950a91a8a733ce8da17cc6d1527cfef99b251f2efdec69220a8188.png" src="../../../_images/8b1f1e164e950a91a8a733ce8da17cc6d1527cfef99b251f2efdec69220a8188.png" />
+</div>
+</div>
+<p>Three things to look at, one of which is a warning.</p>
+<ol class="arabic simple">
+<li><p><strong>Inside the data</strong> the individual draws lie almost on top of each other and
+the blue epistemic band is thin: many points constrain the weights there. The
+red total band is wider due to the noise. Note
+that it widens towards the right, following <span class="math notranslate nohighlight">\(\sigma_\mathrm{true}\)</span>.</p></li>
+<li><p><strong>In the gap</strong> <span class="math notranslate nohighlight">\([0, 1]\)</span> the draws visibly fan out and the epistemic band
+roughly doubles. Nothing pinned the weights down there, so different draws of
+<span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> disagree about what the function does in between. This is
+the honest statement “I have not been told”, and it is the thing an ordinary
+network trained on the squared error cannot give you: that would be a single
+curve, equally confident in the gap as in the middle of the data.</p></li>
+<li><p><strong>Outside</strong> <span class="math notranslate nohighlight">\([-3, 3]\)</span>, however, the draws <em>converge</em> again and the epistemic
+band gets narrower, not wider. This is not the network becoming certain; it
+is the <code class="docutils literal notranslate"><span class="pre">tanh</span></code> units saturating. A unit saturates once <span class="math notranslate nohighlight">\(|wx+b| \gg 1\)</span>, which
+for a scalar input is unavoidable at large <span class="math notranslate nohighlight">\(|x|\)</span>, so every sampled network
+outputs a near-constant there and the constants differ little. Swap <code class="docutils literal notranslate"><span class="pre">tanh</span></code>
+for <code class="docutils literal notranslate"><span class="pre">relu</span></code> and the extrapolation becomes linear instead of flat, with a
+different but equally arbitrary confidence.</p></li>
+</ol>
+<p>The third point is particularly important. <em>How a network behaves far from its
+training data is a property of the architecture, not of the Bayesian treatment</em>.
+Compare with a Gaussian process (<a class="reference internal" href="../gaussian-processes/demo-intuition-for-gaussian-processes.html#sec-gpintuition"><span class="std std-ref">Demo: Intuition for Gaussian process</span></a>), where the posterior far
+from the data reverts to the prior: the mean goes to zero and the variance to the
+kernel amplitude, both dictated by the kernel we chose. A Bayesian neural network
+does the same, except that its prior over functions is defined implicitly by the
+architecture and the weight prior, and is harder to read off. Epistemic
+uncertainty beyond the data is therefore only as trustworthy as that prior, and
+mean-field variational inference narrows it further <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../../Backmatter/bibliography.html#id66" title="James Odgers, Ben Riegler, Siddharth Swaroop, and Vincent Fortuin. Gaussian mean field variational inference can overestimate predictive variance. 2026. ICML 2026. doi:10.48550/ARXIV.2606.25745.">ORSF26</a>]</span>. It remains a useful warning
+about gaps <em>between</em> data.</p>
+</section>
+<section id="did-it-learn-the-right-noise">
+<h2>Did it learn the right noise?<a class="headerlink" href="#did-it-learn-the-right-noise" title="Link to this heading">#</a></h2>
+<p>Because we generated the data, we can check the aleatoric term against the truth.
+This is the part that would be invisible in a real problem.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="c1"># sigma_true is only defined on the interval the data were drawn from</span>
+<span class="n">data_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">xgrid</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xgrid</span> <span class="o">&lt;=</span> <span class="mf">3.0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xgrid</span><span class="p">[</span><span class="n">data_range</span><span class="p">],</span> <span class="n">sigma_true</span><span class="p">(</span><span class="n">xgrid</span><span class="p">[</span><span class="n">data_range</span><span class="p">]),</span> <span class="s1">'k--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'true $\sigma(x)$'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">ale</span><span class="p">,</span> <span class="s1">'C1-'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'learned aleatoric'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">epi</span><span class="p">,</span> <span class="s1">'C0-'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'epistemic'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.9'</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.95'</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.95'</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'$x$'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\sigma$'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">5e-3</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">'lower right'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="n">inside</span> <span class="o">=</span> <span class="p">(</span><span class="n">xgrid</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xgrid</span> <span class="o">&lt;</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">((</span><span class="n">xgrid</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xgrid</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'where there is data: mean |learned - true| noise = '</span>
+      <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ale</span><span class="p">[</span><span class="n">inside</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">sigma_true</span><span class="p">(</span><span class="n">xgrid</span><span class="p">[</span><span class="n">inside</span><span class="p">]))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'epistemic sigma, inside the data: </span><span class="si">{</span><span class="n">epi</span><span class="p">[</span><span class="n">inside</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'epistemic sigma, in the gap:      '</span>
+      <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">epi</span><span class="p">[(</span><span class="n">xgrid</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">xgrid</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0.8</span><span class="p">)]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>where there is data: mean |learned - true| noise = 0.023
+epistemic sigma, inside the data: 0.036
+epistemic sigma, in the gap:      0.088
+</pre></div>
+</div>
+<img alt="../../../_images/a3f477b8f42d48ca158f08302fd4d689d68f46462606c37d96ef708f2208371a.png" src="../../../_images/a3f477b8f42d48ca158f08302fd4d689d68f46462606c37d96ef708f2208371a.png" />
+</div>
+</div>
+<p>Over most of the interval the learned aleatoric term tracks
+<span class="math notranslate nohighlight">\(\sigma_\mathrm{true}(x)\)</span> and reproduces its growth from left to right: the
+network worked out not just <em>that</em> the data are noisy but <em>where</em> they are
+noisier, which is the whole reason for letting the width depend on the input.</p>
+<p>Where it does not track is also instructive. Towards the left edge, where the true
+noise is smallest, the learned width sits well above it. The noise model is not at fault. The fit is slightly worse there, and a Gaussian likelihood can only account for a residual it cannot remove by calling it noise. <strong>A learned aleatoric term absorbs model discrepancy.</strong></p>
+<p>Notice which term does what. Across the gap it is the <strong>epistemic</strong> curve that
+rises; the aleatoric one simply interpolates, because a predicted noise level is
+a fitted function like any other and has no obligation to behave sensibly where
+it has seen nothing. Whenever you report a single combined error bar you lose
+this distinction, and with it the ability to say whether more data would
+help.</p>
+<p>Finally, outside the data range the epistemic curve falls rather than rises, for
+the reason discussed above: <code class="docutils literal notranslate"><span class="pre">tanh</span></code> saturation, not certainty.</p>
+</section>
+<section id="what-to-take-away">
+<h2>What to take away<a class="headerlink" href="#what-to-take-away" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>A Bayesian neural network by variational inference is a small change to an
+ordinary one: weights carry a distribution, the forward pass samples from it,
+and the cost gains a KL term.</p></li>
+<li><p>The predictive spread separates cleanly, by the law of total variance, into a
+part that reflects noise in the data and a part that reflects ignorance about
+the weights. They behave differently and should be reported separately.</p></li>
+<li><p>Mean-field variational inference is known to <em>underestimate</em> posterior width:
+it assumes the weights are independent, which they are not. Treat the
+epistemic band as a useful warning rather than a calibrated interval, and
+check calibration whenever you can.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "2025-book-env"
+        },
+        kernelOptions: {
+            name: "2025-book-env",
+            path: "./content/Probabilistic-machine-learning/bayesian-neural-nets"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = '2025-book-env'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="sec-bnns-in-practice.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">31.3. </span>Bayesian neural networks in practice</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../gaussian-processes/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">32. </span>Overview of Gaussian processes</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-data">The data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-variational-inference-to-bayes-by-backprop">From variational inference to Bayes by Backprop</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-bayesian-linear-layer">A Bayesian linear layer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-network">The network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cost">The cost</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-predictive-distribution">The predictive distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#did-it-learn-the-right-noise">Did it learn the right noise?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-to-take-away">What to take away</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Forssén, Dick Furnstahl, and Daniel Phillips
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

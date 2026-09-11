@@ -411,11 +411,11 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part V: Probabilistic machine learning</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../Probabilistic-machine-learning/index.html">30. Overview of Part V </a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../Probabilistic-machine-learning/bayesian-neural-nets/index.html">31. Bayesian neural nets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../Probabilistic-machine-learning/bayesian-neural-nets/sec-basic-neural-network.html">31.1. Basic neural network</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../Probabilistic-machine-learning/bayesian-neural-nets/sec-probabilistic-model.html">31.2. Probabilistic model</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../Probabilistic-machine-learning/bayesian-neural-nets/index.html">31. Bayesian neural networks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../Probabilistic-machine-learning/bayesian-neural-nets/sec-probabilistic-neural-network.html">31.1. Probabilistic neural network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Probabilistic-machine-learning/bayesian-neural-nets/sec-bayesian-inference-network-weights.html">31.2. Bayesian inference for network weights</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../Probabilistic-machine-learning/bayesian-neural-nets/sec-bnns-in-practice.html">31.3. Bayesian neural networks in practice</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../Probabilistic-machine-learning/bayesian-neural-nets/demo-variational-inference-and-bnn.html">31.4. Demo: Variational Inference and Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Probabilistic-machine-learning/bayesian-neural-nets/demo-bayes-by-backprop-in-pytorch.html">31.4. Demo: Bayes by Backprop in PyTorch</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../Probabilistic-machine-learning/gaussian-processes/index.html">32. Gaussian processes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -747,13 +747,13 @@ document.write(`
 <section id="adagrad">
 <h2>Adagrad<a class="headerlink" href="#adagrad" title="Link to this heading">#</a></h2>
 <p>Adagrad <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id62" title="John Duchi, Elad Hazan, and Yoram Singer. Adaptive subgradient methods for online learning and stochastic optimization. Journal of Machine Learning Research, 12(61):2121–2159, 2011. URL: http://jmlr.org/papers/v12/duchi11a.html.">DHS11</a>]</span> is a simple algorithm that uses the history of past updates to adapt the learning rate to the different parameters. Let us introduce a shorthand notation <span class="math notranslate nohighlight">\(j_{n,i}\)</span> for the partial derivative of the cost function with respect to parameter <span class="math notranslate nohighlight">\(\para_i\)</span> at the position <span class="math notranslate nohighlight">\(\pars_n\)</span> corresponding to iteration <span class="math notranslate nohighlight">\(n\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-a59c03a4-5679-47e2-a152-5475cb606e19">
-<span class="eqno">(44.5)<a class="headerlink" href="#equation-a59c03a4-5679-47e2-a152-5475cb606e19" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1135bdae-50b2-4cb8-8050-f0d38e275ebf">
+<span class="eqno">(44.5)<a class="headerlink" href="#equation-1135bdae-50b2-4cb8-8050-f0d38e275ebf" title="Permalink to this equation">#</a></span>\[\begin{equation}
 j_{n,i} \equiv \left. \frac{\partial C}{\partial \para_i} \right|_{\pars = \pars_n}.
 \end{equation}\]</div>
 <p>We also introduce a diagonal matrix <span class="math notranslate nohighlight">\(J^2_n \in \mathbb{R}^{N_p \times N_p}\)</span> where the <span class="math notranslate nohighlight">\(i\)</span>th diagonal element</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f157c489-e32a-4699-940c-d6b897655f7d">
-<span class="eqno">(44.6)<a class="headerlink" href="#equation-f157c489-e32a-4699-940c-d6b897655f7d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-398caee5-e4fc-43a6-8a59-a1b18eeb890c">
+<span class="eqno">(44.6)<a class="headerlink" href="#equation-398caee5-e4fc-43a6-8a59-a1b18eeb890c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 J^2_{n,ii} \equiv \sum_{k=1}^{n} j_{k,i}^2
 \end{equation}\]</div>
 <p>is the sum of the squares of the gradients with respect to <span class="math notranslate nohighlight">\(\para_i\)</span> up to iteration <span class="math notranslate nohighlight">\(n\)</span>. In its update rule, at iteration <span class="math notranslate nohighlight">\(n\)</span>, Adagrad modifies the general learning rate <span class="math notranslate nohighlight">\(\eta_n\)</span> for every parameter <span class="math notranslate nohighlight">\(\para_i\)</span> based on the past gradients that have been computed as described by <span class="math notranslate nohighlight">\(J^2_{n,ii}\)</span>. The parameter <span class="math notranslate nohighlight">\(\para_i\)</span> at the next iteration <span class="math notranslate nohighlight">\(n+1\)</span> is then given by</p>
@@ -767,33 +767,33 @@ J^2_{n,ii} \equiv \sum_{k=1}^{n} j_{k,i}^2
 <section id="rmsprop">
 <h2>RMSprop<a class="headerlink" href="#rmsprop" title="Link to this heading">#</a></h2>
 <p>RMSprop is an extension of Adagrad that seeks to reduce its aggressive, monotonically decreasing learning rate. Instead of storing the sum of past squared gradients, the denominator is defined as a decaying average of past squared gradients. Labeling the decaying average at iteration <span class="math notranslate nohighlight">\(n\)</span> by <span class="math notranslate nohighlight">\(\bar{{J}^2}_{n,ii}\)</span>, we introduce a decay variable <span class="math notranslate nohighlight">\(\gamma\)</span> and define</p>
-<div class="amsmath math notranslate nohighlight" id="equation-89c370a1-adca-4b05-afe1-064808d439eb">
-<span class="eqno">(44.8)<a class="headerlink" href="#equation-89c370a1-adca-4b05-afe1-064808d439eb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8664125e-c8ad-4679-af36-40458bed09f0">
+<span class="eqno">(44.8)<a class="headerlink" href="#equation-8664125e-c8ad-4679-af36-40458bed09f0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \bar{J}^2_{n,ii} = \gamma \bar{J}^2_{n-1,ii} + (1-\gamma) j_{n,i}^2.
 \end{equation}\]</div>
 <p>The inventor of RMSprop, Geoff Hinton, suggests setting the decay variable <span class="math notranslate nohighlight">\(\gamma=0.9\)</span> , while a good default value for the learning rate <span class="math notranslate nohighlight">\(\eta\)</span> is 0.001. The update rule in RMSprop is then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b94160d2-2a99-488e-abfd-7ce5377b5cdd">
-<span class="eqno">(44.9)<a class="headerlink" href="#equation-b94160d2-2a99-488e-abfd-7ce5377b5cdd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ff0d62df-27ab-4dec-aa75-5b1e030bef6f">
+<span class="eqno">(44.9)<a class="headerlink" href="#equation-ff0d62df-27ab-4dec-aa75-5b1e030bef6f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\bar{J}^2_{n,ii} + \varepsilon}} j_{n,i}.
 \end{equation}\]</div>
 </section>
 <section id="adam">
 <h2>Adam<a class="headerlink" href="#adam" title="Link to this heading">#</a></h2>
 <p>Adaptive Moment Estimation (Adam) <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id64" title="Diederik P. Kingma and Jimmy Ba. Adam: A Method for Stochastic Optimization. arXiv e-prints, pages arXiv:1412.6980, December 2014. arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">KingmaBa14</a>]</span> also computes adaptive learning rates for each parameter. However, in addition to storing an exponentially decaying average of past squared gradients like Adagrad and RMSprop, Adam also keeps an exponentially decaying average of past gradients similar to a momentum. Describing this latter quantity by the diagonal matrix <span class="math notranslate nohighlight">\(\hat{M}_n\)</span> (at iteration <span class="math notranslate nohighlight">\(n\)</span>) we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1f52e744-9742-43a3-9aab-c498d1420d75">
-<span class="eqno">(44.10)<a class="headerlink" href="#equation-1f52e744-9742-43a3-9aab-c498d1420d75" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-11ceb77d-d3e0-45c6-962e-b8dce704b201">
+<span class="eqno">(44.10)<a class="headerlink" href="#equation-11ceb77d-d3e0-45c6-962e-b8dce704b201" title="Permalink to this equation">#</a></span>\[\begin{align}
 \bar{M}_{n,ii} &amp;= \gamma_1 \bar{M}_{n-1,ii} + (1-\gamma_1) j_{n,i}, \\
 \bar{J}^2_{n,ii} &amp;= \gamma_2 \bar{J}^2_{n-1,ii} + (1-\gamma_2) j_{n,i}^2.
 \end{align}\]</div>
 <p>Both of these quantities are initialized with zero vectors (<span class="math notranslate nohighlight">\(\bar{M}_{0,ii}=0\)</span> and <span class="math notranslate nohighlight">\(\bar{J}^2_{0,ii}=0\)</span> for all <span class="math notranslate nohighlight">\(i\)</span>) which tends to introduce a bias for early time steps. This bias can be large if <span class="math notranslate nohighlight">\(\gamma_1\)</span> and <span class="math notranslate nohighlight">\(\gamma_2\)</span> are close to one. It was therefore proposed to use bias-corrected first and second moment estimates</p>
-<div class="amsmath math notranslate nohighlight" id="equation-46527f7c-457f-4b80-84af-57211e97fd6c">
-<span class="eqno">(44.11)<a class="headerlink" href="#equation-46527f7c-457f-4b80-84af-57211e97fd6c" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-16ba2c90-9646-4367-b4ec-bce1d6ac3ca2">
+<span class="eqno">(44.11)<a class="headerlink" href="#equation-16ba2c90-9646-4367-b4ec-bce1d6ac3ca2" title="Permalink to this equation">#</a></span>\[\begin{align}
 \hat{M}_{n,ii} &amp;= \frac{\bar{M}_{n,ii}}{1 - (\gamma_1)^n}, \\
 \hat{J}^2_{n,ii} &amp;= \frac{\bar{J}^2_{n,ii}}{1 - (\gamma_2)^n}.
 \end{align}\]</div>
 <p>The update rule then becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-22c78774-5e65-4a21-ad16-50d1ab49b58d">
-<span class="eqno">(44.12)<a class="headerlink" href="#equation-22c78774-5e65-4a21-ad16-50d1ab49b58d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6eeddf7d-23c5-42b0-8726-02377f2fe1a1">
+<span class="eqno">(44.12)<a class="headerlink" href="#equation-6eeddf7d-23c5-42b0-8726-02377f2fe1a1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\hat{J}^2_{n,ii}} + \varepsilon} \hat{M} _{n,ii}.
 \end{equation}\]</div>
 <p>Default, recommended values are <span class="math notranslate nohighlight">\(\gamma_1=0.9\)</span>, <span class="math notranslate nohighlight">\(\gamma_2=0.999\)</span>, and <span class="math notranslate nohighlight">\(\varepsilon=10^{-8}\)</span>.</p>
