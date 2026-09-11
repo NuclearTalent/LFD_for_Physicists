@@ -28,6 +28,10 @@
  *
  * Phrase filtering fetches candidate HTML pages in the browser, so quoted
  * searches require HTTP/HTTPS (GitHub Pages or a local web server), not file://.
+ *
+ * The search-box placeholder is changed to:
+ *
+ *   Search (use quotes for phrases)
  */
 
 (function () {
@@ -1218,7 +1222,30 @@
   }
 
   /*
-   * Install before Search.init() launches the query.
+   * ------------------------------------------------------------
+   * Search-box wording
+   * ------------------------------------------------------------
+   */
+
+  function customizeSearchBoxText() {
+    const searchInputs =
+      document.querySelectorAll(
+        'input[type="search"], ' +
+        'input[name="q"], ' +
+        '#search-input'
+      );
+
+    searchInputs.forEach(
+      (input) => {
+        input.placeholder =
+          'Search (use quotes for phrases)';
+      }
+    );
+  }
+
+  /*
+   * Install phrase search and customize the search-box text
+   * once the page DOM is available.
    */
   if (
     document.readyState ===
@@ -1228,7 +1255,14 @@
       "DOMContentLoaded",
       installPhraseSearch
     );
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      customizeSearchBoxText
+    );
   } else {
     installPhraseSearch();
+    customizeSearchBoxText();
   }
+
 })();
