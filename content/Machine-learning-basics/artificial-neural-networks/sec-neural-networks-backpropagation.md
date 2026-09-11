@@ -150,11 +150,11 @@ Defining
 
 \end{equation}
 
-and using the Hadamard product of two vectors we can write this as
+and using the Hadamard product $\odot$ (element-wise product) we can write this as
 
 \begin{equation}
 
-\boldsymbol{\delta}^L = f'(\boldsymbol{z}^L)\circ\frac{\partial {\cal C}}{\partial (\boldsymbol{a}^L)}.
+\boldsymbol{\delta}^L = f'(\boldsymbol{z}^L)\odot\frac{\partial {\cal C}}{\partial (\boldsymbol{a}^L)}.
 
 \end{equation}
 
