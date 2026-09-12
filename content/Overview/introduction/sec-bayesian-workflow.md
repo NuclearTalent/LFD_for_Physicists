@@ -17,7 +17,7 @@ Without a statistical model the chain of rigorous inference is broken. But, once
 These four steps are the way: the "Bayesian workflow". It is the practice by which principled learning from data can be carried out, and the results of that learning validated. Although presented linearly here, in detail there are internal and overall cycles where assumptions and implications are examined and steps are revisited, as discussed in more detail in {ref}`sec:BayesianWorkflow`.
 
 :::{admonition} Four-step Bayesian workflow in brief
-1. Formulate informative priors before new data is used.
+1. Formulate priors based on available background knowledge.
 2. Define a statistical model relating the physics model and data, including all errors.
 3. Compute the posterior probabilities.
 4. Do model checking.
