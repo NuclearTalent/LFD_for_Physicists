@@ -880,8 +880,8 @@ p(k \mid \mu) = \frac{\mu^k e^{-\mu}}{k!} \quad \text{for }k\geq 0 \;.
 p(N \mid D) = \frac{D^N e^{-D}}{N!} \quad \text{for }N\geq 0 \;.
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(N\)</span> is an integer.  The results for the normalization, mean, and variance are:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-715a42a6-10b5-4492-8852-0cc513c3c24e">
-<span class="eqno">(9.1)<a class="headerlink" href="#equation-715a42a6-10b5-4492-8852-0cc513c3c24e" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-4f172aa8-0ead-493b-bb75-a5b986695156">
+<span class="eqno">(9.1)<a class="headerlink" href="#equation-4f172aa8-0ead-493b-bb75-a5b986695156" title="Permalink to this equation">#</a></span>\[\begin{align}
  \langle 1 \rangle &amp;= \sum_0^\infty p(N \mid D) = 1 \\
   \langle N \rangle &amp;= \sum_0^\infty N p(N \mid D) = D \\
   \langle N^2 \rangle - \langle N \rangle^2 &amp;= \sum_0^\infty N^2 p(N \mid D) - D^2 = D 
@@ -1061,12 +1061,10 @@ p(N \mid D) = \frac{D^N e^{-D}}{N!} \quad \text{for }N\geq 0 \;.
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">find_contour_levels</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Compute 1, 2, 3-sigma contour levels for a gridded 2D posterior</span>
-<span class="sd">       Note: taken from BayesianAstronomy but may not work here.</span>
-<span class="sd">    """</span>
+<span class="w">    </span><span class="sd">"""Compute 68%, 95%, 99.7% credible-region contour levels for a gridded 2D posterior"""</span>
     <span class="n">sorted_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">ravel</span><span class="p">())[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">pct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">sorted_</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sorted_</span><span class="p">)</span>
-    <span class="n">cutoffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">pct</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.68</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.997</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">cutoffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">pct</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.68</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.997</span><span class="p">]))</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">sorted_</span><span class="p">[</span><span class="n">cutoffs</span><span class="p">])</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">make_figs</span><span class="p">(</span><span class="n">databins</span><span class="p">,</span> <span class="n">delta_x</span><span class="p">,</span> <span class="n">D_max</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
