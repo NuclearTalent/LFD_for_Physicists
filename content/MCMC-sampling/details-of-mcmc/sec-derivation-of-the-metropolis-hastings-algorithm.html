@@ -744,8 +744,8 @@ document.write(`
 <p>How can we collect random samples from an arbitrary probability distribution <span class="math notranslate nohighlight">\(p(\pars)\)</span>? In particular, how can we perform this task when we might not even have a closed form expression for the PDF? It is common in Bayesian inference that we find ourselves in the situation that we can evaluate <span class="math notranslate nohighlight">\(p(\pars)\)</span> at any position <span class="math notranslate nohighlight">\(\pars\)</span>, but we don’t know beforehand if it will be large or small.</p>
 <p>We will now show that it is possible to construct a Markov chain that has <span class="math notranslate nohighlight">\(p(\pars)\)</span> as its stationary distribution. Once this chain has converged it will provide us with samples from <span class="math notranslate nohighlight">\(p(\pars)\)</span>.</p>
 <p>As we have learned, the evolution of positions is described by the transition density <span class="math notranslate nohighlight">\(T\)</span>. The generalization to continuous variables of the stationary-chain equilibrium described in Eq. <a class="reference internal" href="sec-markov-chains.html#equation-eq-markovchains-discrete-equlibrium">(20.16)</a> is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3bd67600-cf91-41a4-a5ff-cdcee502aa85">
-<span class="eqno">(20.24)<a class="headerlink" href="#equation-3bd67600-cf91-41a4-a5ff-cdcee502aa85" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-76a3d37e-4860-4528-bbc5-6c0d823389d0">
+<span class="eqno">(20.24)<a class="headerlink" href="#equation-76a3d37e-4860-4528-bbc5-6c0d823389d0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(\pars) = \int_{\Omega'} p(\pars')T(\pars',\pars) d\pars'.
 \end{equation}\]</div>
 <p>This equilibrium condition can be replaced with the more stringent <strong>detailed-balance</strong> condition</p>
@@ -754,24 +754,24 @@ p(\pars) = \int_{\Omega'} p(\pars')T(\pars',\pars) d\pars'.
 p(\pars)T(\pars,\pars') = p(\pars') T(\pars',\pars),
 \]</div>
 <p>which can be understood from the integral relation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-47b522f2-bfd3-4828-b8b9-f4c1f174dcd6">
-<span class="eqno">(20.26)<a class="headerlink" href="#equation-47b522f2-bfd3-4828-b8b9-f4c1f174dcd6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1b87cb76-3a3f-4d6b-b81f-3b1c0ccf247f">
+<span class="eqno">(20.26)<a class="headerlink" href="#equation-1b87cb76-3a3f-4d6b-b81f-3b1c0ccf247f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \int d\pars' p(\pars)T(\pars,\pars') = \int d\pars' p(\pars') T(\pars',\pars),
 \end{equation}\]</div>
 <p>that describes the balance between the transitions of probability density out of <span class="math notranslate nohighlight">\(\pars\)</span> and into <span class="math notranslate nohighlight">\(\pars\)</span>. At equilibrium, these integrals must be equal.</p>
 <p>The trick to achieve this for a certain <span class="math notranslate nohighlight">\(p(\pars)\)</span> is to write <span class="math notranslate nohighlight">\(T\)</span> as a product of a simple step proposal function <span class="math notranslate nohighlight">\(S(\pars,\pars')\)</span>, that provides probability densities for steps in <span class="math notranslate nohighlight">\(\pars\)</span>-space, and a function <span class="math notranslate nohighlight">\(A(\pars,\pars')\)</span> that we will call the <strong>acceptance probability</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-1a6190d2-0bd9-410d-bff4-3fd64ba1c7e9">
-<span class="eqno">(20.27)<a class="headerlink" href="#equation-1a6190d2-0bd9-410d-bff4-3fd64ba1c7e9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1bab184b-f83d-4594-a693-b93b78531113">
+<span class="eqno">(20.27)<a class="headerlink" href="#equation-1bab184b-f83d-4594-a693-b93b78531113" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T(\pars,\pars') = A(\pars,\pars') S(\pars,\pars').
 \end{equation}\]</div>
 <p>The step proposal function can be almost anything, but a key property is that it should be easy to draw a sample from it. The probability for proposing a new position <span class="math notranslate nohighlight">\(\pars'\)</span> will depend on the current position <span class="math notranslate nohighlight">\(\pars\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-087bb6ca-e278-46da-95dd-67884b70313d">
-<span class="eqno">(20.28)<a class="headerlink" href="#equation-087bb6ca-e278-46da-95dd-67884b70313d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d8b6966c-48fe-4c09-a7a5-033104561f07">
+<span class="eqno">(20.28)<a class="headerlink" href="#equation-d8b6966c-48fe-4c09-a7a5-033104561f07" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\text{proposing $\pars'$}}{\text{current position}=\pars} = S(\pars,\pars')
 \end{equation}\]</div>
 <p>For example, assuming that <span class="math notranslate nohighlight">\(\pars\)</span> is a vector in a <span class="math notranslate nohighlight">\(D\)</span>-dimensional parameter space we can take <span class="math notranslate nohighlight">\(S(\pars,\pars')\)</span> to be a uniform distribution within a <span class="math notranslate nohighlight">\(D\)</span>-dimensional hypercube with side length <span class="math notranslate nohighlight">\(\Delta\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-7775f48c-07fc-44de-80c9-5600424af152">
-<span class="eqno">(20.29)<a class="headerlink" href="#equation-7775f48c-07fc-44de-80c9-5600424af152" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0823304b-a1c1-4360-9666-1e87f59a64e3">
+<span class="eqno">(20.29)<a class="headerlink" href="#equation-0823304b-a1c1-4360-9666-1e87f59a64e3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 S(\pars,\pars') = \left\{ 
 \begin{array}{ll}
 \frac{1}{\Delta^D} &amp; \text{if $\left| \pars'_i - \pars_i \right| \leq \frac{\Delta}{2}$ for all $i \in \{1, \ldots, D\}$} \\
@@ -782,13 +782,13 @@ S(\pars,\pars') = \left\{
 <p>Alternatively we can use a multivariate Gaussian distribution with a mean that corresponds to the current position <span class="math notranslate nohighlight">\(\pars\)</span> and a covariance matrix that we can specify.</p>
 <p>The probability of actually accepting the proposed step from <span class="math notranslate nohighlight">\(\pars\)</span> to <span class="math notranslate nohighlight">\(\pars'\)</span> will then be given by <span class="math notranslate nohighlight">\(0 \leq A(\pars,\pars') \leq 1\)</span>.</p>
 <p>The detailed balance condition <a class="reference internal" href="#equation-eq-mcmc-detailed-balance">(20.25)</a> can be fulfilled by placing the following condition on the acceptance probability</p>
-<div class="amsmath math notranslate nohighlight" id="equation-73f5180d-0523-4366-859d-e1c2148cd14b">
-<span class="eqno">(20.30)<a class="headerlink" href="#equation-73f5180d-0523-4366-859d-e1c2148cd14b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ddc41336-4fe0-4dd5-967d-64b1256d28e9">
+<span class="eqno">(20.30)<a class="headerlink" href="#equation-ddc41336-4fe0-4dd5-967d-64b1256d28e9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{A(\pars,\pars')}{A(\pars',\pars)} = \frac{p(\pars')S(\pars',\pars)}{p(\pars)S(\pars,\pars')}.
 \end{equation}\]</div>
 <p>The expression for <span class="math notranslate nohighlight">\(A\)</span> that fulfils this condition is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7bb27135-999b-4d7c-8071-2c06ac722f5c">
-<span class="eqno">(20.31)<a class="headerlink" href="#equation-7bb27135-999b-4d7c-8071-2c06ac722f5c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-09dcc6d1-fbb9-4863-8902-3a22f3a3e265">
+<span class="eqno">(20.31)<a class="headerlink" href="#equation-09dcc6d1-fbb9-4863-8902-3a22f3a3e265" title="Permalink to this equation">#</a></span>\[\begin{equation}
 A(\pars,\pars') = \text{min} \left( \frac{p(\pars')S(\pars',\pars)}{p(\pars)S(\pars,\pars')},1\right),
 \end{equation}\]</div>
 <p>and holds the probability by which we decide whether to accept the proposed position <span class="math notranslate nohighlight">\(\pars'\)</span>, or remain in the old one <span class="math notranslate nohighlight">\(\pars\)</span>. The ratio that appears in the acceptance probability is called the Metropolis-Hastings ratio and will here be denoted <span class="math notranslate nohighlight">\(r\)</span>. We note that it gets further simplified for symmetric proposal functions (for which it is sometimes referred to as the Metropolis ratio)</p>

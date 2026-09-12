@@ -263,8 +263,8 @@ for ipr,logpr in enumerate([log_flat_prior,log_jeffreys_prior,log_symmetric_prio
     print(f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction):.3f}",\
         f" (in total {nwalkers*nsteps:.0f} steps)")
 
-    # discard burn-in points and flatten the walkers; the shape of samples is (nwalkers*nsteps, ndim)
-    samples = sampler.chain.reshape((-1, ndim))
+    # flatten the walkers (burn-in was already discarded by sampler.reset()); the shape of samples is (nsteps*nwalkers, ndim)
+    samples = sampler.get_chain(flat=True)
 
     # just keep every ncorr sample
     samples_sparse = samples[::ncorr]

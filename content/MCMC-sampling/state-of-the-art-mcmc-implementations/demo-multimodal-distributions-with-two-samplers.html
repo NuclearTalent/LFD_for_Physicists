@@ -959,9 +959,11 @@ zeus sampling (version: ) 2.5.4
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean acceptance fraction: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ndim</span><span class="p">))</span>
-<span class="n">samples_unflattened</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">chain</span>
-<span class="n">lnposts</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">lnprobability</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="c1"># get_chain() has shape (nsteps, nwalkers, ndim); flat=True merges the first two axes</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">samples_unflattened</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">()</span>
+<span class="n">lnposts</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">lnposts_unflattened</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">()</span>
 
     
 <span class="c1"># make a corner plot with the posterior distribution</span>
@@ -987,7 +989,8 @@ Mean acceptance fraction: 0.508
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fix</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">5</span><span class="o">*</span><span class="n">ndim</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">irow</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">samples</span><span class="p">[:,</span><span class="n">irow</span><span class="p">])</span>
+    <span class="c1"># one line per walker</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">samples_unflattened</span><span class="p">[:,:,</span><span class="n">irow</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
     <span class="n">ax</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\theta_</span><span class="si">{0}</span><span class="s1">$'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">irow</span><span class="p">))</span>
     <span class="n">ax</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">samples</span><span class="p">[:,</span><span class="n">irow</span><span class="p">],</span><span class="n">orientation</span><span class="o">=</span><span class="s1">'horizontal'</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
 
@@ -1041,7 +1044,9 @@ Standard Error of the Mean for theta_1: 8.6e-04
     <span class="nb">print</span><span class="p">(</span><span class="s2">"done"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean acceptance fraction: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="n">chains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="p">)</span>
+    <span class="c1"># Each walker of the GaussianMove sampler is an independent Metropolis chain.</span>
+    <span class="c1"># We keep one walker (index 0) as the chain from this run; shape (nsteps, ndim)</span>
+    <span class="n">chains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">()[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
 </pre></div>
 </div>
 </div>

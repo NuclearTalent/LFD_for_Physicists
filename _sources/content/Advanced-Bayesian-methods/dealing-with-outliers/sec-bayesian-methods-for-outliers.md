@@ -342,8 +342,8 @@ for ilogp,logp in enumerate(logps):
     %time sampler.run_mcmc(pos, nsteps)
     print("done")
 
-    samples = sampler.flatchain
-    lnposts = sampler.lnprobability
+    samples = sampler.get_chain(flat=True)
+    lnposts = sampler.get_log_prob(flat=True)
     
     # Extract mean and 68% CR
     th0_mcmc, th1_mcmc = map(lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
@@ -467,7 +467,7 @@ sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior,
                                 args=[x, y, sig0, 50])
 sampler.run_mcmc(starting_guesses, nsteps)
 
-samples = sampler.chain[:, nburn:, :].reshape(-1, ndim)
+samples = sampler.get_chain(discard=nburn, flat=True)
 
 
 fig, ax = plt.subplots(2,2, figsize=(10,10))

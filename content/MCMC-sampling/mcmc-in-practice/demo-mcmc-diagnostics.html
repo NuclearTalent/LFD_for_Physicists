@@ -865,7 +865,7 @@ It was adapted from the TALENT course on Learning from Data: Bayesian Methods an
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/aedd96d38dca0e689f4283405af0eb74aede2ed0fcc27d939744bbfae84e4582.png" src="../../../_images/aedd96d38dca0e689f4283405af0eb74aede2ed0fcc27d939744bbfae84e4582.png" />
+<img alt="../../../_images/a96475d4248e5dec812bfb6924269c2a0d9e33619c92a51f86b8a39fcec2b38e.png" src="../../../_images/a96475d4248e5dec812bfb6924269c2a0d9e33619c92a51f86b8a39fcec2b38e.png" />
 </div>
 </div>
 </section>
@@ -967,7 +967,7 @@ p(D\mid\theta, I) = \prod_{i=1}^N p(y_i\mid x_i,\theta, I)
 </div>
 </div>
 </div>
-<p>To get the chains below we use <code class="docutils literal notranslate"><span class="pre">sampler.chain</span></code>, which will give a list with the shape (# walkers, # steps, # dimensions). So 10 walkers taking 2000 steps each for a two-dimensional posterior (that is, <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> has two components) has the shape (10, 2000, 2). We can combine the results from all the walkers with <code class="docutils literal notranslate"><span class="pre">sampler.chain.reshape((-1,ndim))</span></code>, which flattens the first two axes of the list. (One reshape dimension can always be <span class="math notranslate nohighlight">\(-1\)</span>, which infers the value from the length of the array. So here the reshaped array will have two axes with the second one having dimension <code class="docutils literal notranslate"><span class="pre">ndim</span></code>.)</p>
+<p>To get the chains below we use <code class="docutils literal notranslate"><span class="pre">sampler.get_chain()</span></code>, which returns an array with the shape (# steps, # walkers, # dimensions). So 10 walkers taking 2000 steps each for a two-dimensional posterior (that is, <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> has two components) gives the shape (2000, 10, 2). We can combine the results from all the walkers with <code class="docutils literal notranslate"><span class="pre">sampler.get_chain(flat=True)</span></code>, which flattens the first two axes so that the array has the shape (# steps <span class="math notranslate nohighlight">\(\times\)</span> # walkers, # dimensions). Note that the flattened samples are ordered step by step (all walkers at step 0, then all walkers at step 1, and so on). The flattened array is therefore fine for histograms and corner plots, but for trace plots we use the unflattened array and draw one line per walker. The log-posterior values are obtained in the same way with <code class="docutils literal notranslate"><span class="pre">sampler.get_log_prob()</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Sample the posterior distribution</span>
@@ -987,9 +987,11 @@ p(D\mid\theta, I) = \prod_{i=1}^N p(y_i\mid x_i,\theta, I)
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean acceptance fraction: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ndim</span><span class="p">))</span>
-<span class="n">samples_unflattened</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">chain</span>
-<span class="n">lnposts</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">lnprobability</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="c1"># get_chain() has shape (nsteps, nwalkers, ndim); flat=True merges the first two axes</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">samples_unflattened</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">()</span>
+<span class="n">lnposts</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">lnposts_unflattened</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">()</span>
 
     
 <span class="c1"># make a corner plot with the posterior distribution</span>
@@ -1005,13 +1007,13 @@ p(D\mid\theta, I) = \prod_{i=1}^N p(y_i\mid x_i,\theta, I)
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MH sampler performing 2000 samples.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 407 ms, sys: 1.15 ms, total: 409 ms
-Wall time: 407 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 526 ms, sys: 106 μs, total: 526 ms
+Wall time: 525 ms
 done
-Mean acceptance fraction: 0.129
+Mean acceptance fraction: 0.105
 </pre></div>
 </div>
-<img alt="../../../_images/ec232ecbce41846d79695a9f4b1f5dc9331c749ee82399ccdca2629e53b5ccd7.png" src="../../../_images/ec232ecbce41846d79695a9f4b1f5dc9331c749ee82399ccdca2629e53b5ccd7.png" />
+<img alt="../../../_images/a46dade640e11d26b3ecf743306a202c8d529aa4018371233dde824d672e78be.png" src="../../../_images/a46dade640e11d26b3ecf743306a202c8d529aa4018371233dde824d672e78be.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1019,13 +1021,15 @@ Mean acceptance fraction: 0.129
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">samples_unflattened</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">lnposts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">lnposts_unflattened</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(20000, 2)
-(10, 2000, 2)
+(2000, 10, 2)
 (20000,)
+(2000, 10)
 </pre></div>
 </div>
 </div>
@@ -1034,13 +1038,15 @@ Mean acceptance fraction: 0.129
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fix</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">5</span><span class="o">*</span><span class="n">ndim</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">irow</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">samples</span><span class="p">[:,</span><span class="n">irow</span><span class="p">])</span>
+    <span class="c1"># one line per walker</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">samples_unflattened</span><span class="p">[:,:,</span><span class="n">irow</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
     <span class="n">ax</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\theta_</span><span class="si">{0}</span><span class="s1">$'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">irow</span><span class="p">))</span>
     <span class="n">ax</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">samples</span><span class="p">[:,</span><span class="n">irow</span><span class="p">],</span><span class="n">orientation</span><span class="o">=</span><span class="s1">'horizontal'</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
     
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">lnposts</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lnposts_unflattened</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">lnposts</span><span class="p">,</span><span class="n">orientation</span><span class="o">=</span><span class="s1">'horizontal'</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\log(p)$'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'step'</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Histogram'</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Trace Plot'</span><span class="p">)</span>
@@ -1050,7 +1056,7 @@ Mean acceptance fraction: 0.129
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/0bedfe0c154c9bb42e069ca05b3480ffd7236c4ebdd72ff7cf1251a259e4fad6.png" src="../../../_images/0bedfe0c154c9bb42e069ca05b3480ffd7236c4ebdd72ff7cf1251a259e4fad6.png" />
+<img alt="../../../_images/fb42792c7fd4a545afa5fec7c39b739a176ed988d87172fddf71fb5a9db4762d.png" src="../../../_images/fb42792c7fd4a545afa5fec7c39b739a176ed988d87172fddf71fb5a9db4762d.png" />
 </div>
 </div>
 </section>
@@ -1076,8 +1082,8 @@ SE({\bar{\theta}}) = \frac{\text{Posterior Standard Deviation}}{\sqrt{N}}
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Standard Error of the Mean for theta_0: 7.2e-04
-Standard Error of the Mean for theta_1: 1.3e-04
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Standard Error of the Mean for theta_0: 6.0e-04
+Standard Error of the Mean for theta_1: 9.8e-05
 </pre></div>
 </div>
 </div>
@@ -1104,7 +1110,7 @@ Standard Error of the Mean for theta_1: 1.3e-04
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/599b4f481c020abd1dae2583035e1a1ab5828f8a1030455da6d63ff972bb1591.png" src="../../../_images/599b4f481c020abd1dae2583035e1a1ab5828f8a1030455da6d63ff972bb1591.png" />
+<img alt="../../../_images/62f14b3e2fd4fdd49e3dfc4c84f5059710111b6db3de88662adccbc951243468.png" src="../../../_images/62f14b3e2fd4fdd49e3dfc4c84f5059710111b6db3de88662adccbc951243468.png" />
 </div>
 </div>
 <p>This is a good sign that our chain is stable, since both the individual samples of <span class="math notranslate nohighlight">\(\theta\)</span> in our chain and the mean of the samples dance around a stable value of <span class="math notranslate nohighlight">\(\theta\)</span>.  The calculation above makes this more concrete.  There are time series versions of this calculation that accounts for the fact that the chain is not iid.</p>
@@ -1147,7 +1153,7 @@ Standard Error of the Mean for theta_1: 1.3e-04
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/5d52ddf7afbbfe7072bdf7a3c26e1dfe0d7c0eef1b5f9dbb9edd53a7ef2f303b.png" src="../../../_images/5d52ddf7afbbfe7072bdf7a3c26e1dfe0d7c0eef1b5f9dbb9edd53a7ef2f303b.png" />
+<img alt="../../../_images/2ec0402118af52fc6041a51eb4ff27194bccb88f8f400a22b0cbaf8c0d8323d2.png" src="../../../_images/2ec0402118af52fc6041a51eb4ff27194bccb88f8f400a22b0cbaf8c0d8323d2.png" />
 </div>
 </div>
 </section>
@@ -1162,7 +1168,7 @@ Standard Error of the Mean for theta_1: 1.3e-04
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Acceptance Rate is: 0.129
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Acceptance Rate is: 0.105
 </pre></div>
 </div>
 </div>
@@ -1250,7 +1256,9 @@ Gelman and Rubin show that when <span class="math notranslate nohighlight">\(\ha
     <span class="nb">print</span><span class="p">(</span><span class="s2">"done"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean acceptance fraction: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="n">chains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">flatchain</span><span class="p">)</span>
+    <span class="c1"># Each walker of the GaussianMove sampler is an independent Metropolis chain.</span>
+    <span class="c1"># We keep one walker (index 0) as the chain from this run; shape (nsteps, ndim)</span>
+    <span class="n">chains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">()[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
 </pre></div>
 </div>
 </div>
@@ -1262,13 +1270,15 @@ Gelman and Rubin show that when <span class="math notranslate nohighlight">\(\ha
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>done
-Mean acceptance fraction: 0.127
+Mean acceptance fraction: 0.104
 Chain 1 performing 1000 warmup iterations.
-MH sampler 1 performing 2000 samples.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MH sampler 1 performing 2000 samples.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>done
-Mean acceptance fraction: 0.147
+Mean acceptance fraction: 0.111
 </pre></div>
 </div>
 </div>
@@ -1296,16 +1306,14 @@ Mean acceptance fraction: 0.147
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/5f41f3fa9b55d95204e6cce6d12bea2e2c6f6af05b7fea2869c0882055ce2a46.png" src="../../../_images/5f41f3fa9b55d95204e6cce6d12bea2e2c6f6af05b7fea2869c0882055ce2a46.png" />
+<img alt="../../../_images/7de20451e3aba90cce355f3a8e89e51ddf1449967cfcc2ae978fc26bb752af0f.png" src="../../../_images/7de20451e3aba90cce355f3a8e89e51ddf1449967cfcc2ae978fc26bb752af0f.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># rewrite of Gelman-Rubin estimation</span>
 <span class="c1"># we only want one of the variables</span>
-<span class="n">Nchain</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nsteps</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># full chain</span>
-
-<span class="n">Nchain</span> <span class="o">=</span> <span class="mi">2500</span>  <span class="c1"># size of each chain to use here</span>
+<span class="n">Nchain</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nsteps</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># maximum size of each half chain</span>
 <span class="n">Mchain</span> <span class="o">=</span> <span class="mi">4</span>   <span class="c1"># total number of chains</span>
 <span class="n">param</span> <span class="o">=</span> <span class="mi">0</span>    <span class="c1"># which parameter to use</span>
 
@@ -1335,19 +1343,18 @@ Mean acceptance fraction: 0.147
     <span class="nb">print</span><span class="p">(</span><span class="sa">fr</span><span class="s2">"Nchain = </span><span class="si">{</span><span class="n">Nchain</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">  Rhat = </span><span class="si">{</span><span class="n">Rhat</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Gelman-Rubin Diagnostic for different chain lengths: "</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">Nchain</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">]:</span>
+<span class="k">for</span> <span class="n">Nchain</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]:</span>
     <span class="n">Gelman_Rubin_diagnostic_calc</span><span class="p">(</span><span class="n">chains</span><span class="p">,</span> <span class="n">Nchain</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Gelman-Rubin Diagnostic for different chain lengths: 
-Nchain =   50  Rhat = 1.445
-Nchain =  100  Rhat = 1.543
-Nchain =  200  Rhat = 1.468
-Nchain =  500  Rhat = 1.182
-Nchain = 1000  Rhat = 1.298
-Nchain = 2000  Rhat = 1.022
+Nchain =   50  Rhat = 2.248
+Nchain =  100  Rhat = 1.060
+Nchain =  200  Rhat = 1.014
+Nchain =  500  Rhat = 1.001
+Nchain = 1000  Rhat = 1.065
 </pre></div>
 </div>
 </div>
