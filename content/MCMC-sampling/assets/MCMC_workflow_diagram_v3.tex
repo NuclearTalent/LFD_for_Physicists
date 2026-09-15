@@ -1,0 +1,233 @@
+\documentclass[tikz,border=2mm]{standalone}
+
+\usepackage{amsmath}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+\usetikzlibrary{arrows.meta,calc,positioning}
+
+% secondary text inside boxes (one \detail per line: \\ must not sit inside a group)
+\newcommand{\detail}[1]{{\footnotesize\itshape #1}}
+
+% ------------------------------------------------------------
+% Colors (same families as the Bayesian-workflow figure)
+% ------------------------------------------------------------
+\definecolor{prepblue}{RGB}{0,112,192}
+\definecolor{warmyellow}{RGB}{255,192,0}
+\definecolor{collgreen}{RGB}{84,130,53}
+\definecolor{anapurple}{RGB}{112,48,160}
+
+\definecolor{preppanel}{RGB}{234,239,247}
+\definecolor{warmpanel}{RGB}{253,249,237}
+\definecolor{collpanel}{RGB}{245,246,244}
+\definecolor{anapanel}{RGB}{243,239,248}
+
+\definecolor{prepbox}{RGB}{203,216,238}
+\definecolor{warmbox}{RGB}{255,239,193}
+\definecolor{collbox}{RGB}{215,224,209}
+\definecolor{anabox}{RGB}{225,214,238}
+
+\definecolor{bordergray}{RGB}{89,89,89}
+\definecolor{discardgray}{RGB}{150,150,150}
+
+% Feedback colors
+\definecolor{resample}{RGB}{190,100,0}    % re-tune / run longer  (short dash)
+\definecolor{resampler}{RGB}{0,112,192}   % change sampler         (long dash)
+
+\begin{document}
+
+\begin{tikzpicture}[
+    x=1cm,
+    y=-1cm,
+    font={\sffamily\fontsize{10pt}{12pt}\selectfont},
+    flow/.style={
+        draw=black,
+        line width=1.15pt,
+        -{Stealth[length=2.7mm,width=1.9mm]}
+    },
+    cycle/.style={
+        draw=black,
+        line width=1.05pt,
+        -{Stealth[length=2.4mm,width=1.7mm]}
+    },
+    panel/.style={
+        draw=bordergray,
+        fill=#1,
+        line width=1.5pt,
+        dash pattern=on 1.1pt off 1.5pt,
+        line cap=round,
+        rounded corners=8mm
+    },
+    phase/.style 2 args={
+        circle,
+        draw=black,
+        fill=#1,
+        line width=1.2pt,
+        minimum size=2.40cm,
+        text=#2,
+        align=center,
+        font=\bfseries\sffamily\fontsize{10pt}{11pt}\selectfont
+    },
+    box/.style={
+        fill=#1,
+        draw=none,
+        align=center,
+        inner sep=2.2mm
+    },
+    panellabel/.style={
+        font=\bfseries\sffamily\fontsize{9.5pt}{11pt}\selectfont,
+        text=bordergray
+    },
+    diag/.style={
+        draw=bordergray,
+        fill=white,
+        line width=1.05pt,
+        rounded corners=1.5mm,
+        align=center,
+        inner sep=2.2mm
+    },
+    discard/.style={
+        draw=discardgray,
+        fill=white,
+        text=discardgray,
+        line width=0.9pt,
+        dash pattern=on 2pt off 1.5pt,
+        rounded corners=1mm,
+        align=center,
+        inner sep=1.6mm,
+        font=\sffamily\fontsize{9pt}{10pt}\selectfont
+    },
+    discardarrow/.style={
+        draw=discardgray,
+        line width=0.9pt,
+        dash pattern=on 2pt off 1.5pt,
+        -{Stealth[length=2.2mm,width=1.6mm]}
+    },
+    fbtune/.style={
+        draw=resample,
+        line width=1.25pt,
+        dash pattern=on 1.5pt off 2.0pt
+    },
+    fbsampler/.style={
+        draw=resampler,
+        line width=1.25pt,
+        dash pattern=on 5pt off 2.5pt
+    },
+    fbtunearrow/.style={fbtune,-{Stealth[length=2.7mm,width=1.9mm]}},
+    fbsamplerarrow/.style={fbsampler,-{Stealth[length=2.7mm,width=1.9mm]}},
+    fbtunelabel/.style={
+        font=\sffamily\bfseries\fontsize{10pt}{11pt}\selectfont,
+        text=resample, fill=white, align=center, inner sep=2pt
+    },
+    fbsamplerlabel/.style={
+        font=\sffamily\bfseries\fontsize{10pt}{11pt}\selectfont,
+        text=resampler, fill=white, align=center, inner sep=2pt
+    }
+]
+
+% ============================================================
+% LEFT-HAND PHASE SEQUENCE
+% ============================================================
+\node[phase={prepblue}{white}]   (prep) at (1.23, 1.55) {1. Prepare};
+\node[phase={warmyellow}{black}] (warm) at (1.23, 5.25) {2. Warm up};
+\node[phase={collgreen}{white}]  (coll) at (1.23, 8.75) {3. Collect};
+\node[phase={anapurple}{white}]  (ana)  at (1.23,12.05) {4. Analyze};
+
+\draw[flow] (prep.south) -- (warm.north);
+\draw[flow] (warm.south) -- (coll.north);
+\draw[flow] (coll.south) -- (ana.north);
+
+% ============================================================
+% 1. PREPARATORY PHASE
+% ============================================================
+\draw[panel=preppanel] (2.67,0.30) rectangle (13.40,3.15);
+\node[panellabel] at (8.03,0.68) {1. Preparatory phase};
+
+\node[box=prepbox, minimum width=3.9cm, minimum height=0.70cm] (p1) at (5.15,1.45) {Characterize the target};
+\node[box=prepbox, minimum width=3.9cm, minimum height=0.70cm] (p2) at (10.90,1.45) {Choose sampler \& software};
+\node[box=prepbox, minimum width=8.4cm, minimum height=0.60cm] (p3) at (8.03,2.55) {Set chains, initial positions, computational budget};
+
+\draw[cycle] (p1.east) -- (p2.west);
+\draw[cycle] (p2.south) .. controls (10.90,2.05) and (10.70,2.15) .. (p3.north -| 10.30,0);
+
+% ============================================================
+% 2. WARMUP PHASE
+% ============================================================
+\draw[panel=warmpanel] (2.67,3.75) rectangle (13.40,6.95);
+\node[panellabel] at (8.03,4.13) {2. Warmup phase};
+
+\node[box=warmbox, minimum width=3.9cm, minimum height=0.70cm] (w1) at (5.15,4.95) {Tune the sampler};
+\node[box=warmbox, minimum width=3.9cm, minimum height=0.70cm] (w2) at (10.90,4.95) {Equilibrate (burn-in)};
+\node[diag, minimum width=3.9cm, minimum height=0.60cm] (w3) at (8.03,6.20) {Early diagnostics};
+
+\draw[cycle] (w1.east) -- (w2.west);
+\draw[cycle] (w2.south) .. controls (10.90,5.70) and (10.40,5.85) .. (w3.north -| 10.00,0);
+\draw[cycle] (w3.north -| 6.05,0) .. controls (5.65,5.85) and (5.15,5.70) .. (w1.south);
+
+% warmup samples are discarded
+\node[discard] (bin) at (8.03,7.25) {warmup samples are discarded};
+
+% ============================================================
+% 3. COLLECTION PHASE
+% ============================================================
+\draw[panel=collpanel] (2.67,7.85) rectangle (13.40,9.85);
+\node[panellabel] at (8.03,8.23) {3. Collection phase};
+
+\node[box=collbox, minimum width=4.4cm, minimum height=0.70cm] (c1) at (5.45,9.05) {Run with fixed configuration};
+\node[box=collbox, minimum width=4.4cm, minimum height=0.70cm] (c2) at (10.60,9.05) {Store the chain(s)};
+
+\draw[cycle] (c1.east) -- (c2.west);
+
+% ============================================================
+% 4. ANALYSIS PHASE
+% ============================================================
+\draw[panel=anapanel] (2.67,10.45) rectangle (13.40,13.65);
+\node[panellabel] at (8.03,10.83) {4. Analysis phase};
+
+\node[diag, minimum width=4.6cm, minimum height=0.60cm] (a1) at (8.03,11.55) {Convergence diagnostics};
+\node[box=anabox, minimum width=3.9cm, minimum height=0.70cm] (a2) at (5.15,12.85) {Extract estimators};
+\node[box=anabox, minimum width=3.9cm, minimum height=0.70cm] (a3) at (10.90,12.85) {Quantify MC error};
+
+% both arrows leave the centre of the lower edge and end at the inner upper corners
+\draw[cycle] (a1.south) .. controls (8.03,12.25) and (7.60,12.25) .. (a2.north east);
+\draw[cycle] (a1.south) .. controls (8.03,12.25) and (8.46,12.25) .. (a3.north west);
+\draw[cycle] (a2.east) -- (a3.west);
+
+% ============================================================
+% FEEDBACK TRACKS
+%  inner (orange, short dash): re-tune -> warmup, run longer -> collection
+%  outer (blue,  long  dash):  change sampler -> preparatory
+% ============================================================
+\coordinate (tunebusbottom)    at ([yshift=-1.5mm]a1.east -| 15.15,0);
+\coordinate (tunebranch)       at (15.15,9.05);    % branch point: run longer (row of the collection boxes)
+\coordinate (tunebustop)       at (15.15,4.95);    % top: re-tune (row of the tuning boxes)
+\coordinate (samplerbusbottom) at ([yshift= 1.5mm]a1.east -| 16.35,0);
+\coordinate (samplerbustop)    at (16.35,2.55);
+
+% from analysis diagnostics
+\draw[fbtune]    ([yshift=-1.5mm]a1.east) -- (tunebusbottom);
+\draw[fbsampler] ([yshift= 1.5mm]a1.east) -- (samplerbusbottom);
+% from warmup diagnostics (change sampler only); arrowhead marks the direction
+\draw[fbsamplerarrow] (w3.east) -- (w3.east -| samplerbusbottom);
+
+% inner track
+\draw[fbtune] (tunebusbottom) -- (tunebustop);
+\draw[fbtunearrow] (15.15,10.10) -- (15.15,9.50);
+\draw[fbtunearrow] (15.15,7.90)  -- (15.15,7.30);
+% branch into the collection phase: run longer
+\draw[fbtunearrow] (tunebranch) -- (13.40,9.05);
+\node[fbtunelabel, anchor=south, inner sep=1pt] at (14.27,8.97) {run longer};
+% top into the warmup phase: re-tune
+\draw[fbtunearrow] (tunebustop) -- (13.40,4.95);
+\node[fbtunelabel, anchor=south, inner sep=1pt] at (14.27,4.87) {re-tune};
+
+% outer track
+\draw[fbsampler] (samplerbusbottom) -- (samplerbustop);
+\draw[fbsamplerarrow] (16.35,10.60) -- (16.35,10.00);
+\draw[fbsamplerarrow] (16.35,4.60) -- (16.35,4.00);
+\node[fbsamplerlabel] at (16.35,7.10) {change\\sampler};
+\draw[fbsamplerarrow] (samplerbustop) -- (13.40,2.55);
+
+\end{tikzpicture}
+
+\end{document}
