@@ -351,7 +351,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-workflow-for-mcmc-sampling.html">21.1. Workflow for MCMC sampling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-diagnostics-for-mcmc-sampling.html">21.2. Diagnostics for MCMC sampling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/demo-mcmc-diagnostics.html">21.3. Demo: MCMC diagnostics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../MCMC-sampling/mcmc-in-practice/sec-best-practices-for-mcmc-sampling.html">21.4. Best practices for MCMC sampling</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../MCMC-sampling/advanced-sampling-algorithms/index.html">22. Advanced sampling algorithms</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -903,14 +902,14 @@ Consider the following example.</p>
 <li><p>The Gaussian error approximation around the peak does not always work.</p></li>
 </ol>
 <p>Consider first the best fit of the signal peak. It implies that the likelihood can be approximated by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-85803965-53f1-410d-8f09-cc48be50c639">
-<span class="eqno">(7.21)<a class="headerlink" href="#equation-85803965-53f1-410d-8f09-cc48be50c639" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b1093cab-5d73-44e5-94df-e2a75b0bed27">
+<span class="eqno">(7.21)<a class="headerlink" href="#equation-b1093cab-5d73-44e5-94df-e2a75b0bed27" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\data}{A,I} \propto \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right].
 \end{equation}\]</div>
 <p>However, the posterior for <span class="math notranslate nohighlight">\(A\)</span> is <span class="math notranslate nohighlight">\(\pdf{A}{{\data},I} \propto \pdf{\data}{A,I} \pdf{A}{I}\)</span> and we should use the fact that we know that <span class="math notranslate nohighlight">\(A \ge 0\)</span>.</p>
 <p>We will incorporate this information through a simple step-function prior</p>
-<div class="amsmath math notranslate nohighlight" id="equation-12f1aa76-9c78-4992-bab0-865453a31b5b">
-<span class="eqno">(7.22)<a class="headerlink" href="#equation-12f1aa76-9c78-4992-bab0-865453a31b5b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8bfe339e-f008-4bb3-bd06-8b3cfa9495b1">
+<span class="eqno">(7.22)<a class="headerlink" href="#equation-8bfe339e-f008-4bb3-bd06-8b3cfa9495b1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{A}{I} = \left\{
 \begin{array}{ll}
 \frac{1}{A_\mathrm{max}}, &amp; 0 \le A \le A_\mathrm{max}, \\
@@ -920,13 +919,13 @@ Consider the following example.</p>
 \end{equation}\]</div>
 <p>This implies that the posterior will be a truncated Gaussian, and its maximum will always be above zero.</p>
 <p>This also implies that we cannot use the Gaussian error propagation approximation. Instead we will do the proper calculation using the transformation <a class="reference internal" href="sec-changing-variables.html#equation-eq-bayesianadvantage-transformation">(7.11)</a></p>
-<div class="amsmath math notranslate nohighlight" id="equation-70c21a93-0932-4215-8d3b-888e075346fa">
-<span class="eqno">(7.23)<a class="headerlink" href="#equation-70c21a93-0932-4215-8d3b-888e075346fa" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-91ae14a8-0720-46fa-9cb3-5978200ee10f">
+<span class="eqno">(7.23)<a class="headerlink" href="#equation-91ae14a8-0720-46fa-9cb3-5978200ee10f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(f|{\data},I) = \pdf{A}{{\data},I} \left| \frac{dA}{df} \right| = 2 f \pdf{A}{{\data},I}
 \end{equation}\]</div>
 <p>In the end we find the proper Bayesian error propagation given by the PDF</p>
-<div class="amsmath math notranslate nohighlight" id="equation-98ffa976-4f6f-4c81-a4c9-bc953f58813d">
-<span class="eqno">(7.24)<a class="headerlink" href="#equation-98ffa976-4f6f-4c81-a4c9-bc953f58813d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-024a5dbf-5895-4481-845b-ad12fadab11f">
+<span class="eqno">(7.24)<a class="headerlink" href="#equation-024a5dbf-5895-4481-845b-ad12fadab11f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(f|{\data},I) \propto \left\{
 \begin{array}{ll}
 f \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right], &amp; 0 \le f \le \sqrt{A_\mathrm{max}}, \\

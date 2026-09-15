@@ -197,7 +197,7 @@ plt.close(fig_slopeSamples)
 
 ### Straight-line example with MCMC sampling
 
-We will define three different priors for the straight line model. Using always a flat prior U(-100,100) for the intercept, and a non-zero pdf range -100 <= slope <= 100.
+We will define three different priors for the straight line model. Using always a flat prior U(-100,100) for the intercept, and a non-zero pdf range -100 <= slope <= 100. For the scale-invariant (Jeffreys) prior we must also exclude a small region around zero slope (here 0.01 < |slope|) since 1/|slope| is not normalizable otherwise.
 
 Let us create 1000 samples from each prior pdf and plot the resulting sample of straight lines.
 Since the intercept is uniformly distributed in all three prior alternatives, we will just consider straight lines with intercept 0 since it makes it easier to compare the distribution of slopes.
@@ -220,7 +220,9 @@ def log_flat_prior(theta):
         return -np.inf  # log(0)
     
 def log_jeffreys_prior(theta):
-    if np.abs(theta[0]) < 100:
+    # The scale prior 1/|theta_1| is not normalizable on its own (it diverges
+    # both at 0 and at infinity), so the slope must be bounded on both sides.
+    if np.abs(theta[0]) < 100 and 1e-2 < np.abs(theta[1]) < 100:
         return -0.5 * np.log(theta[1] ** 2)
     else:
         return -np.inf  # log(0)    
@@ -238,7 +240,7 @@ ndim = 1  # number of parameters in the model
 nwalkers = 10  # number of MCMC walkers
 nburn = 1000  # "burn-in" period to let chains stabilize
 nsteps = 10000  # number of MCMC steps to take
-ncorr = 100 # just keep every ncorr sample
+ncorr = 100 # just keep every ncorr step (thinning)
 
 # we'll start at random locations within the prior volume
 np.random.seed(2020)
@@ -263,14 +265,13 @@ for ipr,logpr in enumerate([log_flat_prior,log_jeffreys_prior,log_symmetric_prio
     print(f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction):.3f}",\
         f" (in total {nwalkers*nsteps:.0f} steps)")
 
-    # flatten the walkers (burn-in was already discarded by sampler.reset()); the shape of samples is (nsteps*nwalkers, ndim)
-    samples = sampler.get_chain(flat=True)
-
-    # just keep every ncorr sample
-    samples_sparse = samples[::ncorr]
+    # keep every ncorr step from each walker and flatten;
+    # (burn-in was already discarded by sampler.reset())
+    # the shape of samples_sparse is (nsteps/ncorr*nwalkers, ndim)
+    samples_sparse = sampler.get_chain(thin=ncorr, flat=True)
     
     for sample in samples_sparse:
-        axs[ipr].plot(x,x*sample,'k',alpha=0.1)
+        axs[ipr].plot(x,x*sample,'k',alpha=0.02)
         axs[ipr].set_title(strprior.split('_')[1]+' prior')
     
 axs[0].set_xlim([0,1]);

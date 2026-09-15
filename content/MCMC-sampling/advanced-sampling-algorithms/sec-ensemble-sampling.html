@@ -351,7 +351,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../mcmc-in-practice/sec-workflow-for-mcmc-sampling.html">21.1. Workflow for MCMC sampling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mcmc-in-practice/sec-diagnostics-for-mcmc-sampling.html">21.2. Diagnostics for MCMC sampling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mcmc-in-practice/demo-mcmc-diagnostics.html">21.3. Demo: MCMC diagnostics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mcmc-in-practice/sec-best-practices-for-mcmc-sampling.html">21.4. Best practices for MCMC sampling</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">22. Advanced sampling algorithms</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -703,7 +702,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -719,6 +720,14 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation-sampling-from-correlated-distributions">Motivation: sampling from correlated distributions</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -734,7 +743,30 @@ document.write(`
 \newcommand\mass{\mathcal{M}}\]</div>
 <section class="tex2jax_ignore mathjax_ignore" id="ensemble-sampling">
 <span id="sec-ensemble-sampling"></span><h1><span class="section-number">22.1. </span>Ensemble sampling<a class="headerlink" href="#ensemble-sampling" title="Link to this heading">#</a></h1>
-<p>Section to be added.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This section is under construction. The motivation below is in place; the description of the stretch move and of the ensemble sampler in practice will be added.</p>
+</div>
+<section id="motivation-sampling-from-correlated-distributions">
+<h2>Motivation: sampling from correlated distributions<a class="headerlink" href="#motivation-sampling-from-correlated-distributions" title="Link to this heading">#</a></h2>
+<p>If our posterior has projections that are slanted, indicating correlations, and we are doing Metropolis-Hastings (MH) sampling, how do we decide on a step size? The problem is that we want to step differently in different directions: a step long enough to explore the long axis will lead to many rejections in the orthogonal direction. <em>So we do not want an isotropic step proposal!</em></p>
+<p>If we propose steps by</p>
+<div class="math notranslate nohighlight">
+\[
+ p(\xvec) = \frac{1}{\sqrt{(2\pi)^N |\Sigma|}}
+   e^{-\xvec^{\intercal}\cdot \Sigma^{-1} \cdot \xvec} ,
+\]</div>
+<p>then we don’t need to take <span class="math notranslate nohighlight">\(\Sigma \propto \sigma^2 \mathbb{1}_N\)</span>!</p>
+<ul class="simple">
+<li><p>We have <span class="math notranslate nohighlight">\(N(N+1)/2\)</span> parameters in <span class="math notranslate nohighlight">\(\Sigma\)</span> to “tune” to reduce the correlation time.</p></li>
+<li><p>However, this is increasingly difficult as <span class="math notranslate nohighlight">\(N\)</span> increases.</p></li>
+</ul>
+<p>One improvement is to do a linear transformation of <span class="math notranslate nohighlight">\(\thetavec \longrightarrow \thetavec' = A\thetavec + B\)</span> such that <span class="math notranslate nohighlight">\(\thetavec'\)</span> is uncorrelated with similar <span class="math notranslate nohighlight">\(\sigma_i\)</span>’s in each direction. Thus effectively to rotate the slanted ellipse.</p>
+<p>Or one could use an “affine invariant” sampler such as <code class="docutils literal notranslate"><span class="pre">emcee</span></code>.
+An affine transformation is an invertible mapping from <span class="math notranslate nohighlight">\(\mathbb{R}^N \rightarrow \mathbb{R}^N\)</span>, namely <span class="math notranslate nohighlight">\(\yvec = A\xvec + B\)</span>, which is a combination of stretching, rotation, and translation.
+“Affine invariant” means that the sampler performs equally well on all affine transformations of a distribution. So <code class="docutils literal notranslate"><span class="pre">emcee</span></code> figures out how to make optimal steps.
+It does this by using the many walkers at time <span class="math notranslate nohighlight">\(t\)</span>, which have sampled the space, to construct an appropriate affine compatible update step for <span class="math notranslate nohighlight">\(t+1\)</span>. This is one reason to make sure there are plenty of walkers.</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -791,6 +823,21 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation-sampling-from-correlated-distributions">Motivation: sampling from correlated distributions</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

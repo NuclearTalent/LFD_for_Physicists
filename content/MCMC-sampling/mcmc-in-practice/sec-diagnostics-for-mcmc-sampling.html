@@ -351,7 +351,6 @@
 <li class="toctree-l2"><a class="reference internal" href="sec-workflow-for-mcmc-sampling.html">21.1. Workflow for MCMC sampling</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">21.2. Diagnostics for MCMC sampling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="demo-mcmc-diagnostics.html">21.3. Demo: MCMC diagnostics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec-best-practices-for-mcmc-sampling.html">21.4. Best practices for MCMC sampling</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../advanced-sampling-algorithms/index.html">22. Advanced sampling algorithms</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -749,9 +748,8 @@ document.write(`
 \newcommand\mass{\mathcal{M}}\]</div>
 <section class="tex2jax_ignore mathjax_ignore" id="diagnostics-for-mcmc-sampling">
 <span id="sec-advancedmcmc"></span><h1><span class="section-number">21.2. </span>Diagnostics for MCMC sampling<a class="headerlink" href="#diagnostics-for-mcmc-sampling" title="Link to this heading">#</a></h1>
-<p>We’ve seen that using MCMC with the Metropolis-Hastings algorithm (or an alternative algorithm) leads to a Markov chain: a set of configurations of the parameters we are sampling. This chain enables inference because they are samples of the posterior of interest.
-MCMC sampling is notoriously difficult to validate. In this section we will discuss some common convergence tests.</p>
-<!--Furthermore, we will consider two very useful sampling methods: Hamiltonian Monte Carlo and Sampling/Importance Resampling. Hamiltonian Monte Carlo is used in [Stan](https://mc-stan.org/), which is a state-of-the-art platform for statistical modeling and high-performance statistical computation. Sampling/Importance Resampling is mot a Markov chain method, but can be very useful for posterior updates and when working with a finite set of samples.-->
+<p>We’ve seen that using MCMC leads to a Markov chain: a set of configurations of the parameters we are sampling. This chain enables inference because they are samples of the posterior of interest.
+MCMC sampling is notoriously difficult to validate. In this section we discuss the common convergence tests that enter the warmup and analysis phases of the workflow in <a class="reference internal" href="sec-workflow-for-mcmc-sampling.html#sec-workflow-for-mcmc"><span class="std std-ref">Workflow for MCMC sampling</span></a>. Keep in mind that none of them can prove convergence; they can only detect certain kinds of failure. Passing all tests is therefore necessary, but not sufficient.</p>
 <section id="convergence-tests-for-mcmc-sampling">
 <span id="sec-advancedmcmc-convergence"></span><h2>Convergence tests for MCMC sampling<a class="headerlink" href="#convergence-tests-for-mcmc-sampling" title="Link to this heading">#</a></h2>
 <p>MCMC sampling can go wrong in (at least) three ways:</p>
@@ -764,22 +762,73 @@ MCMC sampling is notoriously difficult to validate. In this section we will disc
 <ol class="arabic simple">
 <li><p>Design the simulation runs for monitoring of convergence. In particular, run multiple sequences of the Markov chains with starting points dispersed over the sampling space. This is difficult in high dimensions.</p></li>
 <li><p>Monitor the convergence of individual sampling dimensions, as well as predicted quantities of interest, by comparing variations within and between the different sequences (chains). Here you are looking for stationarity (the running means are stable) and mixing (different sequences are sampling the same distribution). The Gelman-Rubin test (see below) is devised for this purpose.
-In the following schematic version of Figure 11.3 in BDA-3, we see on the left two chains that stay in separate regions of <span class="math notranslate nohighlight">\(\theta_0\)</span> (no mixing) while on the right there is mixing but neither chain shows a stationary distribution (the <span class="math notranslate nohighlight">\(\theta_0\)</span> distribution keeps changing with MC steps).</p></li>
+<a class="reference internal" href="#fig-stationarity-mixing"><span class="std std-numref">Fig. 21.2</span></a> illustrates the two failure modes (cf. Figure 11.3 in BDA3 <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id5" title="A. Gelman, J.B. Carlin, H.S. Stern, D.B. Dunson, A. Vehtari, and D.B. Rubin. Bayesian Data Analysis, Third Edition. Chapman &amp; Hall/CRC Texts in Statistical Science. Taylor &amp; Francis, 2013. URL: http://www.stat.columbia.edu/~gelman/book/BDA3.pdf.">GCS+13</a>]</span>): on the left two chains that each look stationary but stay in separate regions of <span class="math notranslate nohighlight">\(\theta_0\)</span> (no mixing), and on the right two chains that mix well but drift together, so that neither samples a stationary distribution (the <span class="math notranslate nohighlight">\(\theta_0\)</span> distribution keeps changing with MC steps).</p></li>
 </ol>
-<a class="bg-primary reference internal image-reference" href="../../../_images/schematic_BDA3_fig11p3.png"><img alt="schematic BDA3 Figure 11.3" class="bg-primary align-center" src="../../../_images/schematic_BDA3_fig11p3.png" style="width: 500px;" />
-</a>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">nsteps</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nsteps</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ar1</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">rng</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Stationary, autocorrelated noise around a mean (AR(1) process)."""</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">phi</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">phi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+<span class="n">fig_mix</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">),</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># left: stationary but not mixing -- two chains in separate regions</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">ar1</span><span class="p">(</span><span class="n">nsteps</span><span class="p">,</span> <span class="o">+</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">rng</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">ar1</span><span class="p">(</span><span class="n">nsteps</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">rng</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'stationary, but not mixing'</span><span class="p">)</span>
+
+<span class="c1"># right: mixing but not stationary -- both chains drift together</span>
+<span class="n">drift</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">nsteps</span><span class="p">))</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">drift</span> <span class="o">+</span> <span class="n">ar1</span><span class="p">(</span><span class="n">nsteps</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">rng</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">drift</span> <span class="o">+</span> <span class="n">ar1</span><span class="p">(</span><span class="n">nsteps</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">rng</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'mixing, but not stationary'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axs</span><span class="p">:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'MC step'</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\theta_0$'</span><span class="p">)</span>
+<span class="n">fig_mix</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myst_nb</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">"stationarity_mixing_fig"</span><span class="p">,</span> <span class="n">fig_mix</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig_mix</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<figure class="align-default" id="fig-stationarity-mixing">
+<img alt="../../../_images/e4db102c87cbb5b0b0663009be354b5b15213aea37b77dd42785e286ef0567c6.png" src="../../../_images/e4db102c87cbb5b0b0663009be354b5b15213aea37b77dd42785e286ef0567c6.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 21.2 </span><span class="caption-text">Two ways in which MCMC chains can fail. Left: two chains that are each stationary but sample different regions of parameter space and never mix. Right: two chains that mix but are not stationary, since both drift with the number of MC steps. Only chains that are both stationary and mixing sample the target distribution.</span><a class="headerlink" href="#fig-stationarity-mixing" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
 <ol class="arabic simple" start="3">
-<li><p>Unacceptably inefficient sampling (too low acceptance rate) implies that the algorithm must be adjusted, or that an altogether different sampling algorithm should be used.</p></li>
+<li><p>Monitor the autocorrelation of the samples (see below), which determines how many effectively independent samples a chain of given length contains. Strong autocorrelation implies that the algorithm must be tuned, or that an altogether different sampling algorithm should be used. A first indicator is the <em>acceptance rate</em> of the sampler: for a random-walk Metropolis sampler an acceptance rate close to one means that the steps are too short (successive samples are almost identical), while a rate close to zero means that almost every proposal is rejected (the chain stands still). The optimal value depends on the algorithm: for random-walk Metropolis proposals values in the range 0.2–0.5 are typically desired in high dimensions; for Hamiltonian Monte Carlo the target is much higher, around 0.65–0.8, since its proposals are informed by the gradient; for the affine-invariant ensemble sampler its authors again recommend 0.2–0.5.</p></li>
 </ol>
 <p>The diagnostics that will be discussed below are all univariate. They work perfectly when there is only one parameter to estimate. In fact, most convergence tests are performed with univariate diagnostics applied to each sampling dimension one by one.</p>
 <section id="variance-of-the-mean">
 <h3>Variance of the mean<a class="headerlink" href="#variance-of-the-mean" title="Link to this heading">#</a></h3>
-<p>Consider the sampling variance of a parameter mean value</p>
+<p>Consider the sampling variance of a parameter mean value. If the <span class="math notranslate nohighlight">\(N\)</span> samples were independent draws from the posterior it would be</p>
 <div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-sampling-variance">
 <span class="eqno">(21.1)<a class="headerlink" href="#equation-eq-advancedmcmc-sampling-variance" title="Link to this equation">#</a></span>\[
 \var{\bar\para} = \frac{\var{\para}}{N},
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(N\)</span> is the length of the chain. This quantity is capturing the simulation error of the mean rather than the underlying uncertainty of the parameter <span class="math notranslate nohighlight">\(\para\)</span>. We can visualize this by examining the moving average of our parameter trace. The trace is the sequence as a function of iteration number.</p>
+<p>where <span class="math notranslate nohighlight">\(N\)</span> is the length of the chain. This quantity is capturing the simulation error of the mean rather than the underlying uncertainty of the parameter <span class="math notranslate nohighlight">\(\para\)</span>. MCMC samples are not independent, however, and we will see below how the formula must be corrected. We can visualize this by examining the moving average of our parameter trace. The trace is the sequence as a function of iteration number.</p>
 </section>
 <section id="autocorrelation">
 <h3>Autocorrelation<a class="headerlink" href="#autocorrelation" title="Link to this heading">#</a></h3>
@@ -787,34 +836,36 @@ In the following schematic version of Figure 11.3 in BDA-3, we see on the left t
 <p>Say that <span class="math notranslate nohighlight">\(X\)</span> is an array of <span class="math notranslate nohighlight">\(N\)</span> samples numbered by the index <span class="math notranslate nohighlight">\(t\)</span>. Then <span class="math notranslate nohighlight">\(X_{+h}\)</span> is a shifted version of <span class="math notranslate nohighlight">\(X\)</span> with elements <span class="math notranslate nohighlight">\(X_{t+h}\)</span>. The integer <span class="math notranslate nohighlight">\(h\)</span> is called the <em>lag</em>. Since we have a finite number of samples, the array <span class="math notranslate nohighlight">\(X_{+h}\)</span> will be <span class="math notranslate nohighlight">\(h\)</span> elements shorter than <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <p>Furthermore, <span class="math notranslate nohighlight">\(\bar{X}\)</span> is the average value of <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <p>We can then define the autocorrelation function <span class="math notranslate nohighlight">\(\rho(h)\)</span> from the list of samples.</p>
-<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-autocorrelation-time">
-<span class="eqno">(21.2)<a class="headerlink" href="#equation-eq-advancedmcmc-autocorrelation-time" title="Link to this equation">#</a></span>\[
+<div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-autocorrelation-function">
+<span class="eqno">(21.2)<a class="headerlink" href="#equation-eq-advancedmcmc-autocorrelation-function" title="Link to this equation">#</a></span>\[
 \rho(h) = \frac{\sum_{t=0}^{N-h-1} \left[ (X_t - \bar{X}) (X_{t+h} - \bar{X})\right]}
 {\sqrt{ \sum_{t=0}^{N-h-1} (X_t - \bar{X})^2 } \sqrt{ \sum_{t=0}^{N-h-1} (X_{t+h} - \bar{X})^2 }}
 \]</div>
 <p>The summation is carried out over the subset of samples that overlap. The autocorrelation is the overlap (scalar product) of the chain of samples (the trace) with a copy of itself shifted by the lag, as a function of the lag. If the lag is short so that nearby samples are close to each other (and have not moved very far) the product of these two vectors is large. If samples are independent, you will have both positive and negative numbers in the overlap that cancel each other.</p>
 <p>The typical example of a highly correlated chain is a random walk with a too short proposal step length.</p>
 <p>It is often observed that <span class="math notranslate nohighlight">\(\rho(h)\)</span> is roughly exponential so that we can define an autocorrelation time <span class="math notranslate nohighlight">\(\tau_\mathrm{a}\)</span> according to <span class="math notranslate nohighlight">\(\rho(h) \sim \exp(-h/\tau_\mathrm{a})\)</span>.</p>
-<p>The integrated autocorrelation time is</p>
+<p>The quantity that enters the error estimates below is instead the <em>integrated</em> autocorrelation time</p>
 <div class="math notranslate nohighlight">
 \[
 \tau = 1 + 2 \lim_{N \to \infty} \sum_{h=1}^N \rho(h).
 \]</div>
+<p>For a purely exponential <span class="math notranslate nohighlight">\(\rho(h)\)</span> the two are related by <span class="math notranslate nohighlight">\(\tau \approx 2\tau_\mathrm{a}\)</span> (for <span class="math notranslate nohighlight">\(\tau_\mathrm{a} \gg 1\)</span>), so one should be careful about which one is quoted.</p>
 <p>With autocorrelated samples, the sampling variance <a class="reference internal" href="#equation-eq-advancedmcmc-sampling-variance">(21.1)</a> becomes</p>
 <div class="math notranslate nohighlight" id="equation-eq-advancedmcmc-sampling-variance-autocorrelated">
 <span class="eqno">(21.3)<a class="headerlink" href="#equation-eq-advancedmcmc-sampling-variance-autocorrelated" title="Link to this equation">#</a></span>\[
 \var{\bar\para} = \tau \frac{\var{\para}}{N},
 \]</div>
-<p>with <span class="math notranslate nohighlight">\(\tau \gg 1\)</span> for highly correlated samples. This motivates us to define the effective sample size (ESS) as</p>
+<p>with <span class="math notranslate nohighlight">\(\tau \gg 1\)</span> for highly correlated samples. This motivates us to define the effective sample size (ESS), or effective number of samples, as</p>
 <div class="math notranslate nohighlight">
 \[
-\text{ESS} = N / \tau.
+N_\mathrm{eff} = N / \tau.
 \]</div>
-<p>To keep ESS high, we must collect many samples and keep the autocorrelation time small.</p>
+<p>To keep <span class="math notranslate nohighlight">\(N_\mathrm{eff}\)</span> high, we must collect many samples and keep the autocorrelation time small.</p>
+<p>In practice <span class="math notranslate nohighlight">\(\tau\)</span> must be estimated from the finite chain, and the naive sum of <span class="math notranslate nohighlight">\(\rho(h)\)</span> over all lags does not work: the estimated <span class="math notranslate nohighlight">\(\rho(h)\)</span> at large lag is pure noise that does not decay, so the sum keeps wandering. The standard remedy, due to Sokal, is to truncate the sum at a window <span class="math notranslate nohighlight">\(M\)</span> chosen self-consistently such that <span class="math notranslate nohighlight">\(M \gtrsim 5\tau\)</span>. This is what <code class="docutils literal notranslate"><span class="pre">emcee.autocorr.integrated_time</span></code> (and thus <code class="docutils literal notranslate"><span class="pre">sampler.get_autocorr_time()</span></code>) implements, averaging the autocorrelation functions of all walkers before integrating. The estimate is only trustworthy when the chain is much longer than the autocorrelation time, <span class="math notranslate nohighlight">\(N \gtrsim 50\tau\)</span> as a rule of thumb; <code class="docutils literal notranslate"><span class="pre">emcee</span></code> raises an error otherwise. Finally, <span class="math notranslate nohighlight">\(\tau\)</span> is a property of the <em>quantity</em> whose time series is analyzed, not of the chain alone: the autocorrelation time of a tail indicator <span class="math notranslate nohighlight">\(\mathbb{1}[\para &gt; q]\)</span> is typically longer than that of <span class="math notranslate nohighlight">\(\para\)</span> itself, so tail quantities have a smaller <span class="math notranslate nohighlight">\(N_\mathrm{eff}\)</span> than the per-parameter value suggests <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../../Backmatter/bibliography.html#id68" title="Aki Vehtari, Andrew Gelman, Daniel Simpson, Bob Carpenter, and Paul-Christian Bürkner. Rank-normalization, folding, and localization: an improved $\widehat R$ for assessing convergence of MCMC (with discussion). Bayesian Analysis, 16(2):667–718, 2021. doi:10.1214/20-BA1221.">VGS+21</a>]</span>.</p>
 </section>
 <section id="the-gelman-rubin-test">
 <h3>The Gelman-Rubin test<a class="headerlink" href="#the-gelman-rubin-test" title="Link to this heading">#</a></h3>
-<p>The Gelman-Rubin diagnostic was constructed to test for stationarity and mixing of different Markov chain sequences <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id53" title="Andrew Gelman and Donald B. Rubin. Inference from iterative simulation using multiple sequences. Statistical Science, 7(4):457–472, 1992. URL: http://www.jstor.org/stable/2246093.">GR92</a>]</span>.</p>
+<p>The Gelman-Rubin diagnostic was constructed to test for stationarity and mixing of different Markov chain sequences <span class="bibtex-citation" id="id3">[<a class="reference internal" href="../../Backmatter/bibliography.html#id53" title="Andrew Gelman and Donald B. Rubin. Inference from iterative simulation using multiple sequences. Statistical Science, 7(4):457–472, 1992. URL: http://www.jstor.org/stable/2246093.">GR92</a>]</span>.</p>
 <div class="proof algorithm admonition" id="algorithm:AdvancedMCMC:gelman-rubin">
 <p class="admonition-title"><span class="caption-number">Algorithm 21.1 </span> (The Gelman-Rubin diagnostic)</p>
 <section class="algorithm-content" id="proof-content">
@@ -833,11 +884,11 @@ In the following schematic version of Figure 11.3 in BDA-3, we see on the left t
 <li><p>Between chain variance:</p>
 <div class="math notranslate nohighlight">
 \[
-     B = \frac{N}{M-1} \sum_{j=1}^M (\bar{\para} - \bar{\bar{\para}})^2
+     B = \frac{N}{M-1} \sum_{j=1}^M (\bar{\para}_j - \bar{\bar{\para}})^2
      \]</div>
 </li>
 </ul>
-<p>where <span class="math notranslate nohighlight">\(\bar{\bar{\para}}\)</span> is the mean of each of the M means.</p>
+<p>where <span class="math notranslate nohighlight">\(\bar{\para}_j\)</span> is the mean of chain <span class="math notranslate nohighlight">\(j\)</span> and <span class="math notranslate nohighlight">\(\bar{\bar{\para}}\)</span> is the mean of the <span class="math notranslate nohighlight">\(M\)</span> chain means.</p>
 </li>
 <li><p>Calculate the estimated variance of <span class="math notranslate nohighlight">\(\theta\)</span> as the weighted sum of between and within chain variance.</p></li>
 </ol>
@@ -853,7 +904,8 @@ In the following schematic version of Figure 11.3 in BDA-3, we see on the left t
 \hat{R} = \sqrt{\frac{\widehat{\var{\para}}}{W}}
 \]</div>
 </section>
-</div><p>We want the <span class="math notranslate nohighlight">\(\hat{R}\)</span> number to be close to 1 since this would indicate that the between chain variance is small.  And a small chain variance means that both chains are mixing around the stationary distribution.  Gelman and Rubin <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../../Backmatter/bibliography.html#id53" title="Andrew Gelman and Donald B. Rubin. Inference from iterative simulation using multiple sequences. Statistical Science, 7(4):457–472, 1992. URL: http://www.jstor.org/stable/2246093.">GR92</a>]</span> showed that stationarity has certainly not been achieved when <span class="math notranslate nohighlight">\(\hat{R}\)</span> is greater than 1.1 or 1.2.</p>
+</div><p>We want the <span class="math notranslate nohighlight">\(\hat{R}\)</span> number to be close to 1 since this would indicate that the between chain variance is small.  And a small between chain variance means that the chains are mixing around the same stationary distribution.  Gelman and Rubin <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../../Backmatter/bibliography.html#id53" title="Andrew Gelman and Donald B. Rubin. Inference from iterative simulation using multiple sequences. Statistical Science, 7(4):457–472, 1992. URL: http://www.jstor.org/stable/2246093.">GR92</a>]</span> showed that stationarity has certainly not been achieved when <span class="math notranslate nohighlight">\(\hat{R}\)</span> is greater than 1.1 or 1.2. Current practice is stricter and uses the <em>split</em> <span class="math notranslate nohighlight">\(\hat{R}\)</span>: each chain is cut into two halves that are treated as separate sequences (so <span class="math notranslate nohighlight">\(M\)</span> chains give <span class="math notranslate nohighlight">\(2M\)</span> sequences), which also detects a chain that is still drifting, and convergence is only accepted for <span class="math notranslate nohighlight">\(\hat{R} &lt; 1.01\)</span> <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../../Backmatter/bibliography.html#id68" title="Aki Vehtari, Andrew Gelman, Daniel Simpson, Bob Carpenter, and Paul-Christian Bürkner. Rank-normalization, folding, and localization: an improved $\widehat R$ for assessing convergence of MCMC (with discussion). Bayesian Analysis, 16(2):667–718, 2021. doi:10.1214/20-BA1221.">VGS+21</a>]</span>.</p>
+<p>Two remarks are in order. First, the test is only meaningful for <em>independent</em> chains started from dispersed positions. The walkers of an ensemble sampler with the default stretch move are not independent (each proposal is constructed from the positions of the other walkers), so <span class="math notranslate nohighlight">\(\hat{R}\)</span> across walkers of a single ensemble is not a valid diagnostic; one has to compare independent ensembles. With a Metropolis move, as in <a class="reference internal" href="demo-mcmc-diagnostics.html#demo-mcmc-diagnostics"><span class="std std-ref">Demo: MCMC Diagnostics</span></a>, each walker is an independent chain and the test can be applied across walkers. Second, like all the diagnostics discussed here <span class="math notranslate nohighlight">\(\hat{R}\)</span> can give a false pass: chains that have all found the same mode of a multimodal posterior, but none of the others, will happily agree with each other.</p>
 </section>
 </section>
 </section>
