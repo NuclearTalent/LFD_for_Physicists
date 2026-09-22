@@ -16,8 +16,8 @@ To robustly construct the ingredients of Bayes' rule and explore its consequence
 
 
 :::{admonition} Four-step Bayesian workflow in brief
-1. Formulate priors based on available background knowledge.
-2. Determine likelihood from a statistical model relating the physics model and data, including all errors and correlations.
+1. Define a statistical model relating the physics model and data, including all errors and correlations.
+2. Formulate priors.
 3. Compute the posterior probabilities.
 4. Do model checking.
 :::
@@ -26,23 +26,62 @@ In this chapter we elaborate on these steps.
 Our discussion is partially based on the more extensive exposition in the "Methods Primer" by Van De Schoot et al. {cite}`Vandeschoot:2021`.
 (Note: discussion of how to use and calculate the evidence is postponed to {ref}`sec:ModelSelection`.) 
 
-These four main steps of a typical Bayesian workflow are indicated on the left in {numref}`fig-BayesianWorkflow-research-cycle`: (1) capture available knowledge about given parameters in a statistical model via the prior distribution (this step is conceptually performed before conditioning on data, and ideally, where practical, before those data are examined); (2) determine the likelihood function using information about the data generating process; (3) combine the prior distribution and the likelihood function using Bayes’ theorem and so obtaining the posterior distribution. The posterior distribution is then used to conduct inferences;
+These four main steps of a typical Bayesian workflow are indicated on the left in {numref}`fig-BayesianWorkflow-research-cycle`: (1) determine the likelihood function using information about the data generating process through a statistical model; (2) capture available knowledge about given parameters in a statistical model via the prior distribution (this step is conceptually performed before conditioning on data, and ideally, where practical, before those data are examined);  (3) combine the prior distribution and the likelihood function using Bayes’ theorem and so obtaining the posterior distribution. The posterior distribution is then used to conduct inferences;
 (4) Use the posterior to check the extent to which aspects of the statistical model are consistent with the data being analyzed.
 While the four numbered steps provide a useful linear skeleton, the actual workflow consists of nested cycles and feedback. 
 
 In the following subsections we expand upon each step, detailing the cycles indicated on the right in {numref}`fig-BayesianWorkflow-research-cycle`.
 
-```{figure} ../assets/Bayesian_workflow_diagram_v10.png
+```{figure} ../assets/Bayesian_workflow_diagram_v15.png
 :height: 520px
 :name: fig-BayesianWorkflow-research-cycle
 
-The Bayesian research cycle. The steps needed for a research cycle using Bayesian statistics include formalizing prior distributions based on background knowledge and prior elicitation; determining the likelihood function by specifying a data-generating model and evaluating the resulting data distribution at the observed data; obtaining the posterior distribution from the product of the specified prior and likelihood function; and performing checks of the statistical model using that posterior. At each stage there is a cycle and the overall inferences that can be made can then be used to start a new research cycle. Loosely based on: Stat math, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0), via Wikimedia Commons. See also {cite}`Vandeschoot:2021`.
+The Bayesian research cycle. The steps needed for a research cycle using Bayesian statistics include determining the likelihood function by specifying a data-generating model and evaluating the resulting data distribution at the observed data; formalizing prior distributions based on background knowledge and prior elicitation; obtaining the posterior distribution from the product of the specified prior and likelihood function; and performing checks of the statistical model using that posterior. At each stage there is a cycle and the overall inferences that can be made can then be used to start a new research cycle.
+(Figure adapted from a diagram in {cite}`Vandeschoot:2021` but note that the details and ordering of steps are different.) 
 ```
 
-## Step 1: Formulating a prior
+## Step 1: Determining the likelihood
 
-The first step in the Bayesian workflow depicted in {numref}`fig-BayesianWorkflow-research-cycle` is to determine prior distributions, shortened to priors. This is an important part of a rigorous inference process. Prior selection and the second step of likelihood determination are sometimes collectively referred to as the (statistical) experimentation phase. 
-After steps 1 and 2, the suitability of the chosen priors can be ascertained using a prior predictive checking process (see {prf:ref}`remark:BayesianWorkflow:predictive-checking`). Ultimately the sensitivity of the results to details of the chosen prior should be assessed as part of the model checking phase of the Bayesian workflow.
+The likelihood is used in both Bayesian and frequentist inference. In both inference paradigms, its role is to quantify the strength of support the observed data lends to possible value(s) for the unknown parameter(s). 
+Since observed data is generated stochastically, through an underlying *data-generating process*, it is appropriately described by a probability distribution. This is the $\text{``data likelihood''}$ that describes the probability distribution for observed data given a specific data-generating process (as indicated by the information on the right-hand side of the conditional). 
+
+
+The first step in formulating the data likelihood is to gather background knowledge and then formulate a physics model $M(\pars)$, which relates the parameter(s) of interest to  model outputs.
+A particular likelihood follows from a statistical model that stochastically generates the data; it incorporates
+the physics model, the data uncertainty $\delta \data$, and the model discrepancy $\delta M$. 
+The additive statistical model from {eq}`eq:DataModelsPredictions:mismatch` combines these elements as random variables:
+
+$$
+\data = M(\pars) + \delta \data + \delta M.
+$$ 
+
+Assigning probability distributions and correlations to $\delta \data$ and $\delta M$ induces the data distribution $\pdf{\data}{\thetavec,I}$.
+The statistical model should account for possible correlations in the outputs (type-y correlations). Such correlations result in a multivariate statistical distribution for the random variable $\output$ that does not simply factor into a product of independent, univariate ones for each datum. 
+
+In the data likelihood distribution the unknown parameters are considered to be given; the likelihood is the conditional probability distribution $\pdf{\output}{\para}$ of the data ($\output$), given fixed parameters ($\para$). This distribution is normalized, i.e., its integral over $y$ is equal to one. 
+One can consider two views on the likelihood:
+
+- Generative view: Assuming specified values of $\pars$, what possible data would the statistical model generate, and with what probabilities? 
+- Likelihood view: Focusing on the observed data $\data_\mathrm{obs}$ that we have; how does the likelihood for this data set depend on the values of the model parameters?
+
+The first view is used for prior and posterior predictive simulation.
+The second view is the one that we adopt when allowing model parameters to be associated with probability distributions in Bayesian inference.
+The likelihood still describes the probability for observing a set of data, but we emphasize its parameter dependence by defining the *likelihood function*
+
+\begin{equation}
+\pdf{\data_\mathrm{obs}}{\pars,\sigma^2,I} \equiv \mathcal{L}(\pars).
+\end{equation}
+
+Note that the likelihood function $\mathcal{L}(\pars)$ is **not** a probability distribution for model parameters (and is not normalized, i.e., its integral over $\pars$ is not equal to one). The parameter posterior regains status as a probability density for $\pars$ through Bayes' rule since the likelihood is multiplied with the prior $\pdf{\pars}{I}$ and normalized by the evidence $\pdf{\data}{I}$.
+
+In some cases, specifying a likelihood function can be very straightforward. A product of normal distributions, one for each output, is a standard choice. However, this assumes that the data generating process for one output is conditionally independent from the data generating process for any other output. In practice there may be correlations between them, e.g., shared analysis tools, electrical noise that is correlated between detectors, etc.  Researchers often naively choose the standard data-generating model out of habit or because they cannot easily change it in the software. The statistical data-generating model is itself a modeling choice--just as much as the prior or the physics model themselves are modeling choices. It therefore needs to be justified and clearly documented, so that the choice made, and the reasons for that choice, are available to the reader. Robustness checks should be performed on the selected likelihood function to verify its influence on the posterior estimates.
+If these checks fail, the background knowledge should be reconsidered and the likelihood cycle revisited.
+
+
+## Step 2: Formulating a prior
+
+The second major step in the Bayesian workflow depicted in {numref}`fig-BayesianWorkflow-research-cycle` is to determine prior distributions, shortened to priors. This is an important part of a rigorous inference process. Prior selection and the first step of likelihood determination are sometimes collectively referred to as the *statistical experimentation* phase. 
+As part of the step 2 cycle, the suitability of the chosen priors can be ascertained using a prior predictive checking process (see {prf:ref}`remark:BayesianWorkflow:predictive-checking`). Ultimately the sensitivity of the results to details of the chosen prior should be assessed as part of the model checking phase of the Bayesian workflow.
 
 
 ### Prior elicitation 
@@ -72,53 +111,16 @@ For convenience, priors are often formulated for each parameter separately and t
 
 ### Checking prior implications
 
-In the first step one should check prior implications to ensure that the prior is not much more restrictive (or much broader) than the background knowledge that is used to motivate it.
+One should always check prior implications to ensure that the prior is not much more restrictive (or much broader) than the background knowledge that is used to motivate it.
 This starts with checking that the scales of parameters (which may be physical observables) are consistent with what is known.
 Because Bayesian inference can be sensitive to poorly chosen priors, it is important to check whether the specified prior produces reasonable (not implausible) values for output quantities as well.
 Even in advance of formulating the data generating distribution from a statistical model, one can draw samples from the prior $\pdf{\thetavec}{I}$ and evaluate the physics model $M(\thetavec)$ alone, looking whether substantial probability is placed on physically impossible or strongly implausible outputs. 
 
 A more definitive assessment of the prior choice is through **prior predictive checking** (see {prf:ref}`remark:BayesianWorkflow:predictive-checking` below).
 The prior predictive distribution is the distribution of all possible data that could be generated given the prior, the statistical model for the data-generating process, and the physics model that relates the parameters of the model to the outputs. 
-Thus, in the workflow diagram in {numref}`fig-BayesianWorkflow-research-cycle`, it comes after step 2 but before confronting new data.
-A prior predictive check assesses whether the combination of these ingredients generates outcomes that are compatible with background knowledge and with the range of data that could reasonably have been anticipated before the data being analyzed are used. The prior predictive distribution will often be broad, since it reflects uncertainty before conditioning on the new data, but it should not place substantial probability on outcomes that are already known to be physically impossible or scientifically implausible. Such behavior signals that one or more ingredients of the analysis—the prior, the physics model, or the assumed statistical relation between model outputs and data—should be reconsidered (indicated by return lines in {numref}`fig-BayesianWorkflow-research-cycle`). We emphasize that the check being conducted here is against output values that are clearly "out of range", e.g., are significantly different than the expected size of the data.
+Thus, in the workflow diagram in {numref}`fig-BayesianWorkflow-research-cycle`, it comes at the end of the step 2 cycle, before confronting new data.
+A prior predictive check assesses whether the combination of these ingredients generates outcomes that are compatible with background knowledge and with the range of data that could reasonably have been anticipated before the data being analyzed are used. The prior predictive distribution will often be broad, since it reflects uncertainty before conditioning on the new data, but it should not place substantial probability on outcomes that are already known to be physically impossible or scientifically implausible. Such behavior signals that one or more ingredients of the analysis—the prior, the physics model, or the assumed statistical relation between model outputs and data—should be reconsidered (indicated by the return line to Step 1 in {numref}`fig-BayesianWorkflow-research-cycle`). We emphasize that the check being conducted here is against output values that are clearly "out of range", e.g., are significantly different than the expected size of the data.
 A prior predictive check absolutely does not mean that the practitioner should adjust the prior until its predictions agree with the particular data set that will subsequently enter the likelihood.
-
-## Step 2: Determining the likelihood
-
-The likelihood is used in both Bayesian and frequentist inference. In both inference paradigms, its role is to quantify the strength of support the observed data lends to possible value(s) for the unknown parameter(s). 
-Since observed data is generated stochastically, through an underlying *data-generating process*, it is appropriately described by a probability distribution. This is the $\text{``data likelihood''}$ that describes the probability distribution for observed data given a specific data-generating process (as indicated by the information on the right-hand side of the conditional). 
-
-
-The first step in formulating the data likelihood is to gather background knowledge and then formulate a physics model $M(\pars)$, which relates the parameter(s) of interest to  model outputs.
-A particular likelihood follows from a statistical model that stochastically generates the data; it incoporates
-the physics model, the data uncertainty $\delta \data$, and the model discrepancy $\delta M$. 
-The additive statistical model from {eq}`eq:DataModelsPredictions:mismatch` combines these elements as random variables:
-
-$$
-\data = M(\pars) + \delta \data + \delta M.
-$$ 
-
-Assigning probability distributions and correlations to $\delta \data$ and $\delta M$ induces the data distribution $\pdf{\data}{\thetavec,I}$.
-The statistical model should account for possible correlations in the outputs (type-y correlations). Such correlations result in a multivariate statistical distribution for the random variable $\output$ that does not simply factor into a product of independent, univariate ones for each datum. 
-
-In the data likelihood distribution the unknown parameters are considered to be given; the likelihood is the conditional probability distribution $\pdf{\output}{\para}$ of the data ($\output$), given fixed parameters ($\para$). This distribution is normalized, i.e., its integral over $y$ is equal to one. 
-One can consider two views on the likelihood:
-
-- Generative view: Assuming specified values of $\pars$, what possible data would the statistical model generate, and with what probabilities? 
-- Likelihood view: Focusing on the observed data $\data_\mathrm{obs}$ that we have; how does the likelihood for this data set depend on the values of the model parameters?
-
-The first view is used for prior and posterior predictive simulation.
-The second view is the one that we adopt when allowing model parameters to be associated with probability distributions in Bayesian inference.
-The likelihood still describes the probability for observing a set of data, but we emphasize its parameter dependence by defining the *likelihood function*
-
-\begin{equation}
-\pdf{\data_\mathrm{obs}}{\pars,\sigma^2,I} \equiv \mathcal{L}(\pars).
-\end{equation}
-
-Note that the likelihood function $\mathcal{L}(\pars)$ is **not** a probability distribution for model parameters (and is not normalized, i.e., its integral over $\pars$ is not equal to one). The parameter posterior regains status as a probability density for $\pars$ since the likelihood is multiplied with the prior $\pdf{\pars}{I}$ and normalized by the evidence $\pdf{\data}{I}$.
-
-In some cases, specifying a likelihood function can be very straightforward. A product of normal distributions, one for each output, is a standard choice. However, this assumes that the data generating process for one output is conditionally independent from the data generating process for any other output. In practice there may be correlations between them, e.g., shared analysis tools, electrical noise that is correlated between detectors, etc.  Researchers often naively choose the standard data-generating model out of habit or because they cannot easily change it in the software. The statistical data-generating model is itself a modeling choice--just as much as the prior or the physics model themselves are modeling choices. It therefore needs to be justified and clearly documented, so that the choice made, and the reasons for that choice, are available to the reader. Robustness checks should be performed on the selected likelihood function to verify its influence on the posterior estimates.
-If these checks fail, the background knowledge should be reconsidered and the likelihood cycle revisited.
 
 
 ## Step 3: Results for the posterior--and other things of interest
@@ -168,7 +170,7 @@ Somewhat analogously, prior predictive checks evaluate what data sets would be c
 
 A prior predictive check is easy to carry out mechanically by sampling the parameter $\para$ (or sampling the parameter vector) from the prior, then generating data according to the data model given the sampled parameters. This allows a check of how the probability mass of prior predictions is distributed. The posterior predictive distribution can be negatively affected by the prior when there is not much observed data and substantial prior mass is concentrated around infeasible values.
 
-Prior predictive checks may motivate revisions of the prior or the generative model, leading back to an earlier step in the workflow, as indicated by the dashed return lines in {numref}`fig-BayesianWorkflow-research-cycle`. Posterior predictive checks primarily diagnose deficiencies in the fitted model and may motivate revised model assumptions (dotted return line). They can also reveal sensitivity to the prior, but prior revisions after examining the data should be reported as part of a sensitivity analysis or become part of a subsequent research cycle.  
+Prior predictive checks may motivate revisions of the prior or the generative model, leading back to an earlier step in the workflow, as indicated by the dashed return line in {numref}`fig-BayesianWorkflow-research-cycle`. Posterior predictive checks primarily diagnose deficiencies in the fitted model and may motivate revised model assumptions (dotted return line). They can also reveal sensitivity to the prior, but prior revisions after examining the data should be reported as part of a sensitivity analysis or become part of a subsequent research cycle.  
 ```
 
 The sensitivity of the posterior to the inclusion of different outputs in the likelihood is reflective of the *information content* of that observable. Sensitivity studies of the posterior based on simulated outputs for different future data is a branch of statistical inference known as *experimental design*. It can help determine which observable(s) to spend resources on measuring to improve the accuracy and precision of a desired inference.
@@ -196,8 +198,8 @@ We end this chapter with two different recommended checklists for statistically 
 1. Interact with the experts (i.e., statisticians, applied mathematicians).
 2. Identify all sources of experimental and theoretical uncertainties in this process.
 3. Formulate statistical models for those uncertainties.
-4. Choose priors that are as informative as you consider reasonable, consistent with background knowledge; check their implications and assess sensitivity to reasonable alternatives.
-5. Account for correlations in observables (type y) when formulating the likelihood.
+4. Account for correlations in observables (type y) when formulating the likelihood.
+5. Choose priors that are as informative as you consider reasonable, consistent with background knowledge; check their implications and assess sensitivity to reasonable alternatives.
 6. Use model checking to assess the adequacy of the analysis and identify possible model deficiencies.
 ```
 
