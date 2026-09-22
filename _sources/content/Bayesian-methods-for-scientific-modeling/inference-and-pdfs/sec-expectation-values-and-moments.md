@@ -278,7 +278,7 @@ Consider now the variance of $\widetilde z$ which is equal to the expectation va
 
 $$
  \langle \widetilde z^2 \rangle = \frac{1}{n^2} (
-  \widetilde y_1^2 + \widetilde y_2^2 + \ldots + \widetilde y_1 \widetilde y_2 + \widetilde y_1 \widetilde y_3 + \widetilde y_2 \widetilde y_3 + \ldots
+  \langle\widetilde y_1^2\rangle + \langle\widetilde y_2^2\rangle + \ldots + \langle\widetilde y_1 \widetilde y_2\rangle + \langle\widetilde y_1 \widetilde y_3\rangle + \langle\widetilde y_2 \widetilde y_3\rangle + \ldots
  ) 
 $$ (eq:variance_n_effective)
 
