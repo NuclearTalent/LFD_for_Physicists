@@ -72,23 +72,23 @@
     <script src="../../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
     <script src="../../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
     <script src="../../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
-    <script src="../../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
     <script src="../../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
+    <script src="../../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
     <script src="../../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
     <script src="../../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
-    <script src="../../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
-    <script src="../../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
-    <script src="../../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
-    <script src="../../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
     <script src="../../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
-    <script src="../../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
     <script src="../../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
-    <script src="../../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
     <script src="../../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
-    <script src="../../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
     <script src="../../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
-    <script src="../../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="43.3. Ordinary linear regression: warmup" href="sec-ordinary-linear-regression-warmup.html" />
@@ -740,13 +740,13 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="regression-analysis-with-linear-models">
 <h1><span class="section-number">43.2. </span>Regression analysis with linear models<a class="headerlink" href="#regression-analysis-with-linear-models" title="Link to this heading">#</a></h1>
 <p>When performing a regression analysis with a linear model, i.e., doing linear regression, we have access to a set of data <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> for the dependent variable, i.e.,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0315e32e-b17d-48b1-aad1-91e1403c5f98">
-<span class="eqno">(43.4)<a class="headerlink" href="#equation-0315e32e-b17d-48b1-aad1-91e1403c5f98" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d2a6aacc-6a4a-48e0-b87f-24f39e0d18b7">
+<span class="eqno">(43.4)<a class="headerlink" href="#equation-d2a6aacc-6a4a-48e0-b87f-24f39e0d18b7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \data = [y_1, y_2,\dots, y_{N_d}]^T.
 \end{equation}\]</div>
 <p>For each datum there is an independent variable <span class="math notranslate nohighlight">\(x_i\)</span>, and our model for each datum <span class="math notranslate nohighlight">\(y_i\)</span> is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dff6e807-34d3-4649-aeb7-02ec19588fb1">
-<span class="eqno">(43.5)<a class="headerlink" href="#equation-dff6e807-34d3-4649-aeb7-02ec19588fb1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f524f95b-9e64-4cf2-b224-4f7d24a4ff7f">
+<span class="eqno">(43.5)<a class="headerlink" href="#equation-f524f95b-9e64-4cf2-b224-4f7d24a4ff7f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 M_i \equiv M(\pars;x_i) = \sum_{j=0}^{N_p-1} \para_j f_j(x_i).
 \end{equation}\]</div>
 <p>We can collect the basis function evaluated at each independent variable <span class="math notranslate nohighlight">\(x_i\)</span> in a matrix <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> of dimension <span class="math notranslate nohighlight">\(N_d \times N_p\)</span></p>
@@ -765,8 +765,8 @@ M_i \equiv M(\pars;x_i) = \sum_{j=0}^{N_p-1} \para_j f_j(x_i).
 <p class="admonition-title"><span class="caption-number">Example 43.3 </span> (The design matrix for polynomial models)</p>
 <section class="example-content" id="proof-content">
 <p>The design matrix for a linear model with polynomial basis functions becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2c26d851-5937-4856-9d1f-f5707134b694">
-<span class="eqno">(43.7)<a class="headerlink" href="#equation-2c26d851-5937-4856-9d1f-f5707134b694" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-469a0960-b929-4aab-b2e3-474534bd4c47">
+<span class="eqno">(43.7)<a class="headerlink" href="#equation-469a0960-b929-4aab-b2e3-474534bd4c47" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \dmat =
 \begin{bmatrix} 
 1&amp; x_{1}^1 &amp;x_{1}^2&amp; \dots &amp; \dots &amp;x_{1}^{p-1}\\
@@ -779,18 +779,18 @@ M_i \equiv M(\pars;x_i) = \sum_{j=0}^{N_p-1} \para_j f_j(x_i).
 <p>where we are considering a polynomial of degree <span class="math notranslate nohighlight">\(p-1\)</span> which implies a model with <span class="math notranslate nohighlight">\(p\)</span> features (including the intercept). It is also known within linear algebra as a <a class="reference external" href="https://en.wikipedia.org/wiki/Vandermonde_matrix">Vandermonde matrix</a>.</p>
 </section>
 </div><p>Next, we introduce a column vector for the parameters</p>
-<div class="amsmath math notranslate nohighlight" id="equation-01d7f39b-5fb8-4cab-9184-398569af904a">
-<span class="eqno">(43.8)<a class="headerlink" href="#equation-01d7f39b-5fb8-4cab-9184-398569af904a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4a0567e1-7737-4267-969b-ada2d3fde584">
+<span class="eqno">(43.8)<a class="headerlink" href="#equation-4a0567e1-7737-4267-969b-ada2d3fde584" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pars = [\para_0,\para_1, \para_2,\dots, \para_{N_p-1}]^T,
 \end{equation}\]</div>
 <p>and we arrive at the matrix equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-104e68fa-cc8b-4ac1-88ce-d11effcd64e2">
-<span class="eqno">(43.9)<a class="headerlink" href="#equation-104e68fa-cc8b-4ac1-88ce-d11effcd64e2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0d21e27f-b1e4-420c-9d93-38f427eac31c">
+<span class="eqno">(43.9)<a class="headerlink" href="#equation-0d21e27f-b1e4-420c-9d93-38f427eac31c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \data = \dmat \pars+\boldsymbol{\epsilon}.
 \end{equation}\]</div>
 <p>The last term <span class="math notranslate nohighlight">\(\boldsymbol{\epsilon}\)</span> is a column vector of so-called <strong>residuals</strong>. This term expresses the part of the dependent variable, for which we have data, that we cannot describe using a linear model. Formally, we can therefore write <span class="math notranslate nohighlight">\(\epsilon_i = y_i - M_i\)</span> and define the vector as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3a27897d-c924-49ff-b86d-bec79d06ca33">
-<span class="eqno">(43.10)<a class="headerlink" href="#equation-3a27897d-c924-49ff-b86d-bec79d06ca33" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b8bba62c-04b2-468b-98a8-26a8dce9b508">
+<span class="eqno">(43.10)<a class="headerlink" href="#equation-b8bba62c-04b2-468b-98a8-26a8dce9b508" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \residuals = [\residual_1,\residual_2, \residual_3,\dots, \residual_{N_d}]^T.
 \end{equation}\]</div>
 <p>It is important to realize that our model <span class="math notranslate nohighlight">\(M\)</span> provides an approximate description of the data. Indeed, <em>all models are wrong</em> and in a realistic setting we have no guarantee that the data is generated by a linear process. Of course, based on physics insight, or other assumptions, there might exists very good reasons for using a linear model to explain the data.</p>
@@ -819,15 +819,15 @@ C(\pars)\equiv \sum_{i=1}^{N_d} \epsilon_i^2 = \sum_{i=1}^{N_d}\left(y_i-M_i\rig
 </section>
 </div><div class="proof admonition" id="proof">
 <p>Proof. Due to its quadratic form, the Euclidean norm <span class="math notranslate nohighlight">\(\left| \boldsymbol{\epsilon} \right|_2^2 = \left(\data-\dmat\pars\right)^T\left(\data-\dmat\pars\right) \equiv C(\pars)\)</span> is bounded from below and we just need to find the single extremum. That is we need to solve the problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0003cf54-f17c-4760-88e2-ef7d35951ccc">
-<span class="eqno">(43.14)<a class="headerlink" href="#equation-0003cf54-f17c-4760-88e2-ef7d35951ccc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-42658254-9613-43be-8d55-e0b359c25c42">
+<span class="eqno">(43.14)<a class="headerlink" href="#equation-42658254-9613-43be-8d55-e0b359c25c42" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pars^* =
 {\displaystyle \mathop{\mathrm{arg} \min}_{\pars\in
 {\mathbb{R}}^{N_p}}} \left(\data-\dmat\pars\right)^T\left(\data-\dmat\pars\right).
 \end{equation}\]</div>
 <p>In practical terms it means we will require</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f1770f64-bfbe-4cf0-8ad8-3730c504eba8">
-<span class="eqno">(43.15)<a class="headerlink" href="#equation-f1770f64-bfbe-4cf0-8ad8-3730c504eba8" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-9c0e464a-e21d-4acf-9544-d8ca337e3bda">
+<span class="eqno">(43.15)<a class="headerlink" href="#equation-9c0e464a-e21d-4acf-9544-d8ca337e3bda" title="Permalink to this equation">#</a></span>\[\begin{align}
 \frac{\partial C(\pars)}{\partial \para_j} = \frac{\partial }{\partial \para_j} \Bigg[  \sum_{i=1}^{N_d}\Big(y_i &amp;-\para_0 f_0(x_i)-\para_1f_1(x_i)-\para_2f_2(x_i)-\dots \\
 &amp;-  \para_{N_p-1}f_{N_p-1}(x_i)\Big)^2\Bigg] = 0, 
 \end{align}\]</div>

@@ -72,23 +72,23 @@
     <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
     <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
     <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
-    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
     <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
+    <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
     <script src="../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
     <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
-    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
-    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
-    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
     <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
-    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
     <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
-    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
     <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
-    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
     <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
-    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="31.2. Bayesian inference for network weights" href="sec-bayesian-inference-network-weights.html" />
@@ -744,41 +744,41 @@ document.write(`
 <section id="a-bayesian-binary-classifier">
 <span id="sec-probabilistic-neural-network-bayesian-binary-classifier"></span><h2>A Bayesian binary classifier<a class="headerlink" href="#a-bayesian-binary-classifier" title="Link to this heading">#</a></h2>
 <p>Consider first a classification problem where the single output <span class="math notranslate nohighlight">\(y\)</span> of the final network layer is a real number <span class="math notranslate nohighlight">\(\in [0,1]\)</span> that indicates the (discrete) probability for input <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> belonging to either class <span class="math notranslate nohighlight">\(t=1\)</span> or <span class="math notranslate nohighlight">\(t=0\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8e528ccc-899f-45c2-bc39-2c713d269ba8">
-<span class="eqno">(31.1)<a class="headerlink" href="#equation-8e528ccc-899f-45c2-bc39-2c713d269ba8" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-5eafa793-48cc-4e6b-bb23-d5f010f0a677">
+<span class="eqno">(31.1)<a class="headerlink" href="#equation-5eafa793-48cc-4e6b-bb23-d5f010f0a677" title="Permalink to this equation">#</a></span>\[\begin{align}
 p_{t=1} \equiv p(t=1 | \boldsymbol{w},\boldsymbol{x}) &amp;= y \\
 p_{t=0} \equiv p(t=0 | \boldsymbol{w},\boldsymbol{x}) &amp;= 1-y,
 \end{align}\]</div>
 <p>The output <span class="math notranslate nohighlight">\(y\)</span> is in fact the <em>parameter</em> of a Bernoulli distribution over <span class="math notranslate nohighlight">\(t\)</span>. For a classification task, an optimized-weights network with a single output therefore delivers a complete probability distribution for the datum. The distribution width, <span class="math notranslate nohighlight">\(y(1-y)\)</span>, is already built in. For a regression problem, a probabilistic model might need to output more than one parameter to specify probability distributions for target data. We return to this in <a class="reference internal" href="sec-bnns-in-practice.html#sec-bnns-in-practice"><span class="std std-ref">Bayesian neural networks in practice</span></a>.</p>
 <p>A simple binary classifier can be trained by minimizing the loss function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2274ff74-69a3-4a42-9859-9c377e7c46ee">
-<span class="eqno">(31.2)<a class="headerlink" href="#equation-2274ff74-69a3-4a42-9859-9c377e7c46ee" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2b938b34-a6f8-4814-8dd6-8833e5a56bda">
+<span class="eqno">(31.2)<a class="headerlink" href="#equation-2b938b34-a6f8-4814-8dd6-8833e5a56bda" title="Permalink to this equation">#</a></span>\[\begin{equation}
  C_W(\boldsymbol{w}) = C(\boldsymbol{w}) +  \alpha E_W(\boldsymbol{w}), 
 \end{equation}\]</div>
 <p>made up of an error function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7bd1cbbb-34c7-48a2-a701-a7119927b04c">
-<span class="eqno">(31.3)<a class="headerlink" href="#equation-7bd1cbbb-34c7-48a2-a701-a7119927b04c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-979793de-5c4e-4d51-8620-1a6b2507e61e">
+<span class="eqno">(31.3)<a class="headerlink" href="#equation-979793de-5c4e-4d51-8620-1a6b2507e61e" title="Permalink to this equation">#</a></span>\[\begin{equation}
  C(\boldsymbol{w}) = -\sum_n \left[ t^{(n)} \log ( y(\boldsymbol{x}^{(n)},\boldsymbol{w})) + (1 - t^{(n)}) \log (1 - y(\boldsymbol{x}^{(n)},\boldsymbol{w})) \right], 
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(t^{(n)}\)</span> is the training data, and the regularizer</p>
-<div class="amsmath math notranslate nohighlight" id="equation-800f93d0-f27b-4768-b724-65c0f23f6e96">
-<span class="eqno">(31.4)<a class="headerlink" href="#equation-800f93d0-f27b-4768-b724-65c0f23f6e96" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1b46cb28-5968-4eb8-9a89-afeaebf0deab">
+<span class="eqno">(31.4)<a class="headerlink" href="#equation-1b46cb28-5968-4eb8-9a89-afeaebf0deab" title="Permalink to this equation">#</a></span>\[\begin{equation}
  E_W(\boldsymbol{w}) = \frac{1}{2} \sum_i w_i^2, 
 \end{equation}\]</div>
 <p>is designed to avoid overfitting.
 The error function can be interpreted as minus the log likelihood, with the likelihood</p>
-<div class="amsmath math notranslate nohighlight" id="equation-82a15460-9981-4071-8620-783218f8747b">
-<span class="eqno">(31.5)<a class="headerlink" href="#equation-82a15460-9981-4071-8620-783218f8747b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b47295fc-0811-488b-84a9-cfb3cbbf561a">
+<span class="eqno">(31.5)<a class="headerlink" href="#equation-b47295fc-0811-488b-84a9-cfb3cbbf561a" title="Permalink to this equation">#</a></span>\[\begin{equation}
  p(\mathcal{D}|\boldsymbol{w}) \propto \exp\left[ - C(\boldsymbol{w}) \right]. 
 \end{equation}\]</div>
 <p>Similarly the regularizer can be interpreted in terms of a log prior probability distribution over the parameters. With the quadratic <span class="math notranslate nohighlight">\(E_W\)</span> given above, the corresponding prior distribution is a Gaussian with variance <span class="math notranslate nohighlight">\(\sigma_W^2 = 1/\alpha\)</span> and <span class="math notranslate nohighlight">\(1/Z_W = (\alpha/2\pi)^{K/2}\)</span>, where <span class="math notranslate nohighlight">\(K\)</span> is the number of parameters in <span class="math notranslate nohighlight">\(w\)</span>.</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f5be889f-a37a-4f17-bc8d-37e61e81cf3a">
-<span class="eqno">(31.6)<a class="headerlink" href="#equation-f5be889f-a37a-4f17-bc8d-37e61e81cf3a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-63b0914f-b1a5-42af-a49a-0d349d7fda87">
+<span class="eqno">(31.6)<a class="headerlink" href="#equation-63b0914f-b1a5-42af-a49a-0d349d7fda87" title="Permalink to this equation">#</a></span>\[\begin{equation}
  p(\boldsymbol{w} | \alpha) = \frac{1}{Z_W(\alpha)} \exp \left[ -\alpha E_W \right]. 
 \end{equation}\]</div>
 <p>The objective function <span class="math notranslate nohighlight">\(C_W(w)\)</span> then corresponds to a (unnormalized) negative log-posterior for the parameters <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> given the data</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0641713a-6053-49b5-95ec-b7ff6098c366">
-<span class="eqno">(31.7)<a class="headerlink" href="#equation-0641713a-6053-49b5-95ec-b7ff6098c366" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8d55a336-c64d-4695-b067-d027db085f4e">
+<span class="eqno">(31.7)<a class="headerlink" href="#equation-8d55a336-c64d-4695-b067-d027db085f4e" title="Permalink to this equation">#</a></span>\[\begin{equation}
  p(\boldsymbol{w} | \mathcal{D}, \alpha) = \frac{p(D|\boldsymbol{w}) p(\boldsymbol{w}|\alpha)}{p(\mathcal{D}|\alpha)} = \frac{1}{Z_M} \exp [ -C_W(\boldsymbol{w}) ]. 
 \end{equation}\]</div>
 <p>We show the evolution of this probability distribution for a sequence of an increasing number of training data (<span class="math notranslate nohighlight">\(N\)</span>) in <a class="reference internal" href="#fig-scatter-joint-bnn-plot"><span class="std std-numref">Fig. 31.1</span></a>. The targets are either 0 or 1, as indicated by red and blue markers. The network parameters <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> that are found by minimizing <span class="math notranslate nohighlight">\(C_W(\boldsymbol{w})\)</span> can be interpreted as the most probable parameter vector <span class="math notranslate nohighlight">\(\boldsymbol{w}^*\)</span>.</p>

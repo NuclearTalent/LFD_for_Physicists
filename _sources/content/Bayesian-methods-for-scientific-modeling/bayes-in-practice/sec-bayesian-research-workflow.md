@@ -42,7 +42,7 @@ The Bayesian research cycle. The steps needed for a research cycle using Bayesia
 
 ## Step 1: Determining the likelihood
 
-The likelihood is used in both Bayesian and frequentist inference. In both inference paradigms, its role is to quantify the strength of support the observed data lends to possible value(s) for the unknown parameter(s). 
+The likelihood is common to both Bayesian and frequentist approaches, where it quantifies the degree to which observed data implies possible values for the unknown parameters. 
 Since observed data is generated stochastically, through an underlying *data-generating process*, it is appropriately described by a probability distribution. This is the $\text{``data likelihood''}$ that describes the probability distribution for observed data given a specific data-generating process (as indicated by the information on the right-hand side of the conditional). 
 
 
