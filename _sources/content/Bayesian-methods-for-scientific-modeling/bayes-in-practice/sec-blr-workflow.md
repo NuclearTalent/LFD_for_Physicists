@@ -10,16 +10,16 @@ jupytext:
 (sec:blr-workflow)=
 # BLR-II: Workflow
 
-In following the four-step workflow for Bayesian inference (see {numref}`sec:Intro:Workflow`), we need to
-1. Identify the observable and unobservable quantities and formulate appropriately informative priors before new data is used.
-2. Set up a full statistical model relating the physics model and data, including all errors. We need to consistently build in our knowledge of the underlying physics and of the data measurement process. 
+In following the workflow for Bayesian inference (see {numref}`sec:Intro:Workflow` and {numref}`sec:BayesianWorkflow`), we need to
+1. Set up a full statistical model relating the physics model and data, including all errors. We need to consistently build in our knowledge of the underlying physics and of the data measurement process. 
+2. Formulate appropriately informative priors before new data is used.
 3. Calculate and interpret the relevant posterior distributions.  This is the conditional probability distribution of the unobserved quantities of interest, given the observed data.
 4. Do model checking: assess the fit of the model and the reasonableness of the conclusions, testing the sensitivity to model assumptions in steps 1 and 2. From this assessment we modify the model appropriately and repeat all four steps. 
 
 
 To carry out this workflow for BLR, 
 we note that our goal is to relate data $\data$ to the output of a linear model expressed in terms of its design matrix $\dmat$ and its model parameters $\parsLR$ by $M = \dmat \parsLR$.
-We consider the special case of one dependent response variable ($\output$) and a single independent variable ($\inputt$), for which the data set ($\data$) and the residual vector ($\residuals$) are both $N_d \times 1$ column vectors with $N_d$ the length of the data set. The design matrix ($\dmat$) has dimension $N_d \times N_p$ and the parameter vector ($\parsLR$) is $N_p \times 1$.
+We consider the special case of one dependent response variable ($\output$) and a single independent variable ($\inputt$), for which the data set $(\data)$ and the residual vector ($\residuals$) are both $N_d \times 1$ column vectors with $N_d$ the length of the data set. The design matrix ($\dmat$) has dimension $N_d \times N_p$ and the parameter vector ($\parsLR$) is $N_p \times 1$.
 
 For the residuals, consider a statistical model that describes the mismatch between our model and observations as in Eq. {eq}`eq:BayesianLinearRegression:eq_StatModel` (recall that we assume here that $\delta M = 0$). Knowledge (and/or assumptions) concerning measurement uncertainties, or modeling errors, then allows to describe the residuals as a vector of random variables that are distributed according to a PDF
 
@@ -37,7 +37,7 @@ $$ (eq:BayesianLinearRegression:ResidualErrors)
 
 Recall that the notation for the multivariate normal distribution $\mathcal{N}$ here is that the mean is $\zeros$ and the covariance matrix is $\covres$.
 
-To carry out step 2. we adapt Bayes' theorem to the current problem
+In carrying out the workflow, we adapt Bayes' theorem to the current problem
 
 $$
 \pdf{\pars}{\data,I} = \frac{\pdf{\data}{\pars,I}\pdf{\pars}{I}}{\pdf{\data}{I}}
@@ -48,7 +48,7 @@ $$ (eq:BayesianLinearRegression:eq_bayes)
 which is the conditioned probability of the quantities of interest, namely the model parameters, on the observed measurements with known covariance for the measurement errors. 
 In most realistic data analyses we will then have to resort to numerical evaluation or sampling of the posterior. However, certain combinations of likelihoods and priors facilitate analytical derivation of the posterior. In this chapter we will explore one such situation and also demonstrate how we can recover the results from an ordinary least squares approach with certain assumptions. A slightly more general approach involves so called **conjugate priors**. This class of probability distributions have clever functional relationships with corresponding likelihood distributions that facilitate analytical derivation. 
 
-To evaluate this posterior we must have expressions for both factors in the numerator on the right-hand side (following the Bayesian research workflow in {numref}`sec:BayesianWorkflow`): the prior $\pdf{\parsLR}{I}$ and the likelihood $\pdf{\data}{\parsLR,\covres,I}$. Note that the prior does not depend on the data or the error model. The denominator $\pdf{\data}{I}$, sometimes known as the evidence, becomes irrelevant for the task of parameter estimation since it does not depend on $\parsLR$. It is typically quite challenging, if not impossible, to evaluate the evidence for a multivariate inference problem except for some very special cases. In this chapter we will only be dealing with analytically tractable problems and will therefore (in principle) be able to evaluate also the evidence.
+To evaluate this posterior we must have expressions for both factors in the numerator on the right-hand side (following the Bayesian research workflow in {numref}`sec:BayesianWorkflow`): the likelihood $\pdf{\data}{\parsLR,\covres,I}$ and the prior $\pdf{\parsLR}{I}$. Note that the prior does not depend on the data or the error model. The denominator $\pdf{\data}{I}$, sometimes known as the evidence, becomes irrelevant for the task of parameter estimation since it does not depend on $\parsLR$. It is typically quite challenging, if not impossible, to evaluate the evidence for a multivariate inference problem except for some very special cases. In this chapter we will only be dealing with analytically tractable problems and will therefore (in principle) be able to evaluate also the evidence.
 
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
@@ -81,76 +81,6 @@ Having such a statistical model for the errors makes it possible to derive an ex
 <!--
 ## Bayes' theorem for the normal linear model
 -->
-
-
-## The prior
-
-First we assign a prior probability $\pdf{\parsLR}{I}$ for the model parameters. In order to facilitate analytical expressions we will explore two options: (i) a very broad, uniform prior, and (ii) a Gaussian prior. For simplicity, we consider both these priors to have zero mean and with all model parameters being i.i.d. 
-
-As discussed earlier, we rarely want to use a truly uniform prior, preferring a wide beta  or Gaussian distribution instead. 
-We will assume that the width is large enough that it will be effectively flat where our Bayesian linear regression likelihood is not negligible.
-Then for the analytic calculations here we can take the uniform prior for the $N_p$ parameters to be
-
-$$
-\pdf{\parsLR}{I} = \frac{1}{(\Delta\paraLR)^{N_p}} \left\{ 
-\begin{array}{ll}
-1 & \text{if all } \paraLR_i \in [-\Delta\paraLR/2, +\Delta\paraLR/2] \\
-0 & \text{else},
-\end{array}
-\right.
-$$ (eq:BayesianLinearRegression:uniform_iid_prior)
-
-with $\Delta\paraLR$ the width of the prior range in all parameter directions (this assumes we have standardized the data so that it has roughly the same extent in all directions). 
-
-The Gaussian prior that we will also be exploring is
-
-$$
-\pdf{\parsLR}{I} = \left(\frac{1}{2\pi\sigma_\paraLR^2}\right)^{N_p/2} \exp\left[ -\frac{1}{2}\frac{\parsLR^T\parsLR}{\sigma_\paraLR^2} \right],
-$$ (eq:BayesianLinearRegression:gaussian_iid_prior)
-
-with $\sigma_\paraLR$ the standard deviation of the prior for all parameters.
-
-::::{admonition} Checkpoint question
-:class: my-checkpoint
-Are these priors normalized?
-:::{admonition} Hint-1
-:class: dropdown, my-hint 
-Integrate both sides over $\parsLR$ to check normalization, remembering that $\parsLR$ is a vector, so this is a multidimensional integral.
-:::
-:::{admonition} Hint-2
-:class: dropdown, my-hint 
-Both normalization integrals in this case can be *factorized* into the product of one-dimensional integrals. This is true here for the Gaussian prior because the covariance matrix is taken to be diagonal.
-:::
-:::{admonition} Answer
-:class: dropdown, my-answer
-Yes, they are normalized.
-:::
-::::
-
-
-::::{admonition} Checkpoint question
-:class: my-checkpoint
-In what limit are the uniform and Gaussian priors (as defined here) effectively equivalent?
-:::{admonition} Answer
-:class: dropdown, my-answer
-The limit where $\Delta\paraLR/2$ and $\sigma_\paraLR$ are both so large that the priors are effectively flat where the likelihood is not negligible.
-:::
-::::
-
-
-
-::::{admonition} Checkpoint question
-:class: my-checkpoint
-What is implied (i.e., what are you assuming) if you use a truly uniform prior for model parameters?
-:::{admonition} Hint
-:class: dropdown, my-hint 
-Is it possible that the parameters could be arbitrarily large?
-:::
-:::{admonition} Answer
-:class: dropdown, my-answer
-It is implied that not only is any magnitude possible for the model parameters, but all values for a given parameter are equally likely. This is very unlikely to be true.
-:::
-::::
 
 
 
@@ -234,19 +164,88 @@ For computational performance it is always better (if possible) to write sums, s
 ```
 
 ```{admonition} Two views on the likelihood
-Since observed data is generated stochastically, through an underlying $\text{``data-generating process''}$, it is appropriately described by a probabibility distribution. This is the $\text{``data likelihood''}$ that describes the probability distribution for observed data given a specific data-generating process (as indicated by the information on the right-hand side of the conditional). 
+Let us recall from  {numref}`sec:BayesianWorkflow` the two views on the likelihood.
+- Generative view: Assuming fixed values of $\parsLR$; what are long-term frequencies of future data observations as described by the likelihood? 
+- Likelihood view: Focusing on the data $\data_\mathrm{obs}$ that we have; how does the likelihood for this data set depend on the values of the model parameters?
 
-- View 1: Assuming fixed values of $\parsLR$; what are long-term frequencies of future data observations as described by the likelihood? 
-- View 2: Focusing on the data $\data_\mathrm{obs}$ that we have; how does the likelihood for this data set depend on the values of the model parameters?
-
-This second view is the one that we will be adopting when allowing model parameters to be associated with probability distributions. The likelihood still describes the probability for observing a set of data, but we emphasize its parameter dependence by writing
+As previously noted, this second view is the one that we will be adopting when allowing model parameters to be associated with probability distributions. The likelihood still describes the probability for observing a set of data, but we emphasize its parameter dependence by writing
 
 \begin{equation}
 \pdf{\data}{\parsLR,\sigma^2,I} = \mathcal{L}(\parsLR).
 \end{equation}
 
-This function is **not** a probability distribution for model parameters. The parameter posterior, left-hand side of Eq. {eq}`eq:BayesianLinearRegression:eq_bayes`, regains status as a probability density for $\parsLR$ since the likelihood is multiplied with the prior $\pdf{\parsLR}{I}$ and normalized by the evidence $\pdf{\data}{I}$.
+This function is **not** a probability distribution for model parameters. The parameter posterior, left-hand side of Eq. {eq}`eq:BayesianLinearRegression:eq_bayes`, regains status as a probability density for $\parsLR$ through Bayes' rule since the likelihood is multiplied with the prior $\pdf{\parsLR}{I}$ and normalized by the evidence $\pdf{\data}{I}$.
 ```
+
+
+## The prior
+
+In the second step of the workflow we assign a prior probability $\pdf{\parsLR}{I}$ for the model parameters. In order to facilitate analytical expressions we will explore two options: (i) a very broad, uniform prior, and (ii) a Gaussian prior. For simplicity, we consider both these priors to have zero mean and with all model parameters being i.i.d. 
+
+As discussed earlier, we rarely want to use a truly uniform prior, preferring a wide beta  or Gaussian distribution instead. 
+We will assume that the width is large enough that it will be effectively flat where our Bayesian linear regression likelihood is not negligible.
+Then for the analytic calculations here we can take the uniform prior for the $N_p$ parameters to be
+
+$$
+\pdf{\parsLR}{I} = \frac{1}{(\Delta\paraLR)^{N_p}} \left\{ 
+\begin{array}{ll}
+1 & \text{if all } \paraLR_i \in [-\Delta\paraLR/2, +\Delta\paraLR/2] \\
+0 & \text{else},
+\end{array}
+\right.
+$$ (eq:BayesianLinearRegression:uniform_iid_prior)
+
+with $\Delta\paraLR$ the width of the prior range in all parameter directions (this assumes we have standardized the data so that it has roughly the same extent in all directions). 
+
+The Gaussian prior that we will also be exploring is
+
+$$
+\pdf{\parsLR}{I} = \left(\frac{1}{2\pi\sigma_\paraLR^2}\right)^{N_p/2} \exp\left[ -\frac{1}{2}\frac{\parsLR^T\parsLR}{\sigma_\paraLR^2} \right],
+$$ (eq:BayesianLinearRegression:gaussian_iid_prior)
+
+with $\sigma_\paraLR$ the standard deviation of the prior for all parameters.
+
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+Are these priors normalized?
+:::{admonition} Hint-1
+:class: dropdown, my-hint 
+Integrate both sides over $\parsLR$ to check normalization, remembering that $\parsLR$ is a vector, so this is a multidimensional integral.
+:::
+:::{admonition} Hint-2
+:class: dropdown, my-hint 
+Both normalization integrals in this case can be *factorized* into the product of one-dimensional integrals. This is true here for the Gaussian prior because the covariance matrix is taken to be diagonal.
+:::
+:::{admonition} Answer
+:class: dropdown, my-answer
+Yes, they are normalized.
+:::
+::::
+
+
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+In what limit are the uniform and Gaussian priors (as defined here) effectively equivalent?
+:::{admonition} Answer
+:class: dropdown, my-answer
+The limit where $\Delta\paraLR/2$ and $\sigma_\paraLR$ are both so large that the priors are effectively flat where the likelihood is not negligible.
+:::
+::::
+
+
+
+::::{admonition} Checkpoint question
+:class: my-checkpoint
+What is implied (i.e., what are you assuming) if you use a truly uniform prior for model parameters?
+:::{admonition} Hint
+:class: dropdown, my-hint 
+Is it possible that the parameters could be arbitrarily large?
+:::
+:::{admonition} Answer
+:class: dropdown, my-answer
+It is implied that not only is any magnitude possible for the model parameters, but all values for a given parameter are equally likely. This is very unlikely to be true.
+:::
+::::
 
 
 

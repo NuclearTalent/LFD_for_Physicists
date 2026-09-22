@@ -72,23 +72,23 @@
     <script src="../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
     <script src="../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
     <script src="../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
-    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
     <script src="../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
+    <script src="../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
     <script src="../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
     <script src="../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
-    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
-    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
-    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
-    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
-    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
-    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
     <script src="../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
     <script src="../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
-    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
-    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
     <script src="../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
+    <script src="../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
     <script src="../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
     <script src="../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="8.5. BLR-III: Demo" href="sec-blr-demo.html" />
@@ -725,8 +725,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prior">The prior</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-likelihood">The likelihood</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prior">The prior</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-posterior">The posterior</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rewriting-the-likelihood">Rewriting the likelihood</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-with-a-uniform-prior">Posterior with a uniform prior</a></li>
@@ -749,19 +749,19 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="blr-ii-workflow">
 <span id="sec-blr-workflow"></span><h1><span class="section-number">8.4. </span>BLR-II: Workflow<a class="headerlink" href="#blr-ii-workflow" title="Link to this heading">#</a></h1>
-<p>In following the four-step workflow for Bayesian inference (see <a class="reference internal" href="../../Overview/introduction/sec-bayesian-workflow.html#sec-intro-workflow"><span class="std std-numref">Section 2.2</span></a>), we need to</p>
+<p>In following the workflow for Bayesian inference (see <a class="reference internal" href="../../Overview/introduction/sec-bayesian-workflow.html#sec-intro-workflow"><span class="std std-numref">Section 2.2</span></a> and <a class="reference internal" href="sec-bayesian-research-workflow.html#sec-bayesianworkflow"><span class="std std-numref">Section 8.2</span></a>), we need to</p>
 <ol class="arabic simple">
-<li><p>Identify the observable and unobservable quantities and formulate appropriately informative priors before new data is used.</p></li>
 <li><p>Set up a full statistical model relating the physics model and data, including all errors. We need to consistently build in our knowledge of the underlying physics and of the data measurement process.</p></li>
+<li><p>Formulate appropriately informative priors before new data is used.</p></li>
 <li><p>Calculate and interpret the relevant posterior distributions.  This is the conditional probability distribution of the unobserved quantities of interest, given the observed data.</p></li>
 <li><p>Do model checking: assess the fit of the model and the reasonableness of the conclusions, testing the sensitivity to model assumptions in steps 1 and 2. From this assessment we modify the model appropriately and repeat all four steps.</p></li>
 </ol>
 <p>To carry out this workflow for BLR,
 we note that our goal is to relate data <span class="math notranslate nohighlight">\(\data\)</span> to the output of a linear model expressed in terms of its design matrix <span class="math notranslate nohighlight">\(\dmat\)</span> and its model parameters <span class="math notranslate nohighlight">\(\parsLR\)</span> by <span class="math notranslate nohighlight">\(M = \dmat \parsLR\)</span>.
-We consider the special case of one dependent response variable (<span class="math notranslate nohighlight">\(\output\)</span>) and a single independent variable (<span class="math notranslate nohighlight">\(\inputt\)</span>), for which the data set (<span class="math notranslate nohighlight">\(\data\)</span>) and the residual vector (<span class="math notranslate nohighlight">\(\residuals\)</span>) are both <span class="math notranslate nohighlight">\(N_d \times 1\)</span> column vectors with <span class="math notranslate nohighlight">\(N_d\)</span> the length of the data set. The design matrix (<span class="math notranslate nohighlight">\(\dmat\)</span>) has dimension <span class="math notranslate nohighlight">\(N_d \times N_p\)</span> and the parameter vector (<span class="math notranslate nohighlight">\(\parsLR\)</span>) is <span class="math notranslate nohighlight">\(N_p \times 1\)</span>.</p>
+We consider the special case of one dependent response variable (<span class="math notranslate nohighlight">\(\output\)</span>) and a single independent variable (<span class="math notranslate nohighlight">\(\inputt\)</span>), for which the data set <span class="math notranslate nohighlight">\((\data)\)</span> and the residual vector (<span class="math notranslate nohighlight">\(\residuals\)</span>) are both <span class="math notranslate nohighlight">\(N_d \times 1\)</span> column vectors with <span class="math notranslate nohighlight">\(N_d\)</span> the length of the data set. The design matrix (<span class="math notranslate nohighlight">\(\dmat\)</span>) has dimension <span class="math notranslate nohighlight">\(N_d \times N_p\)</span> and the parameter vector (<span class="math notranslate nohighlight">\(\parsLR\)</span>) is <span class="math notranslate nohighlight">\(N_p \times 1\)</span>.</p>
 <p>For the residuals, consider a statistical model that describes the mismatch between our model and observations as in Eq. <a class="reference internal" href="sec-blr-background.html#equation-eq-bayesianlinearregression-eq-statmodel">(8.13)</a> (recall that we assume here that <span class="math notranslate nohighlight">\(\delta M = 0\)</span>). Knowledge (and/or assumptions) concerning measurement uncertainties, or modeling errors, then allows to describe the residuals as a vector of random variables that are distributed according to a PDF</p>
-<div class="amsmath math notranslate nohighlight" id="equation-410e7dc9-b245-47da-8cfc-2f44c9342a9f">
-<span class="eqno">(8.26)<a class="headerlink" href="#equation-410e7dc9-b245-47da-8cfc-2f44c9342a9f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-500ada97-4e46-4c67-8863-5b83c0d25e27">
+<span class="eqno">(8.26)<a class="headerlink" href="#equation-500ada97-4e46-4c67-8863-5b83c0d25e27" title="Permalink to this equation">#</a></span>\[\begin{equation}
   \residuals \sim \pdf{\residuals}{I},
 \end{equation}\]</div>
 <p>where we introduce the relation <span class="math notranslate nohighlight">\(\sim\)</span> to indicate how a (random) variable is <em>distributed</em>.
@@ -771,7 +771,7 @@ A very common assumption is that errors are normally distributed with zero mean.
 \pdf{\residuals}{\covres, I} = \mathcal{N}(\zeros,\covres).
 \]</div>
 <p>Recall that the notation for the multivariate normal distribution <span class="math notranslate nohighlight">\(\mathcal{N}\)</span> here is that the mean is <span class="math notranslate nohighlight">\(\zeros\)</span> and the covariance matrix is <span class="math notranslate nohighlight">\(\covres\)</span>.</p>
-<p>To carry out step 2. we adapt Bayes’ theorem to the current problem</p>
+<p>In carrying out the workflow, we adapt Bayes’ theorem to the current problem</p>
 <div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-eq-bayes">
 <span class="eqno">(8.28)<a class="headerlink" href="#equation-eq-bayesianlinearregression-eq-bayes" title="Link to this equation">#</a></span>\[
 \pdf{\pars}{\data,I} = \frac{\pdf{\data}{\pars,I}\pdf{\pars}{I}}{\pdf{\data}{I}}
@@ -780,7 +780,7 @@ A very common assumption is that errors are normally distributed with zero mean.
 \]</div>
 <p>which is the conditioned probability of the quantities of interest, namely the model parameters, on the observed measurements with known covariance for the measurement errors.
 In most realistic data analyses we will then have to resort to numerical evaluation or sampling of the posterior. However, certain combinations of likelihoods and priors facilitate analytical derivation of the posterior. In this chapter we will explore one such situation and also demonstrate how we can recover the results from an ordinary least squares approach with certain assumptions. A slightly more general approach involves so called <strong>conjugate priors</strong>. This class of probability distributions have clever functional relationships with corresponding likelihood distributions that facilitate analytical derivation.</p>
-<p>To evaluate this posterior we must have expressions for both factors in the numerator on the right-hand side (following the Bayesian research workflow in <a class="reference internal" href="sec-bayesian-research-workflow.html#sec-bayesianworkflow"><span class="std std-numref">Section 8.2</span></a>): the prior <span class="math notranslate nohighlight">\(\pdf{\parsLR}{I}\)</span> and the likelihood <span class="math notranslate nohighlight">\(\pdf{\data}{\parsLR,\covres,I}\)</span>. Note that the prior does not depend on the data or the error model. The denominator <span class="math notranslate nohighlight">\(\pdf{\data}{I}\)</span>, sometimes known as the evidence, becomes irrelevant for the task of parameter estimation since it does not depend on <span class="math notranslate nohighlight">\(\parsLR\)</span>. It is typically quite challenging, if not impossible, to evaluate the evidence for a multivariate inference problem except for some very special cases. In this chapter we will only be dealing with analytically tractable problems and will therefore (in principle) be able to evaluate also the evidence.</p>
+<p>To evaluate this posterior we must have expressions for both factors in the numerator on the right-hand side (following the Bayesian research workflow in <a class="reference internal" href="sec-bayesian-research-workflow.html#sec-bayesianworkflow"><span class="std std-numref">Section 8.2</span></a>): the likelihood <span class="math notranslate nohighlight">\(\pdf{\data}{\parsLR,\covres,I}\)</span> and the prior <span class="math notranslate nohighlight">\(\pdf{\parsLR}{I}\)</span>. Note that the prior does not depend on the data or the error model. The denominator <span class="math notranslate nohighlight">\(\pdf{\data}{I}\)</span>, sometimes known as the evidence, becomes irrelevant for the task of parameter estimation since it does not depend on <span class="math notranslate nohighlight">\(\parsLR\)</span>. It is typically quite challenging, if not impossible, to evaluate the evidence for a multivariate inference problem except for some very special cases. In this chapter we will only be dealing with analytically tractable problems and will therefore (in principle) be able to evaluate also the evidence.</p>
 <div class="my-checkpoint admonition">
 <p class="admonition-title">Checkpoint question</p>
 <p>Why is it possible to perform parameter estimation without computing the evidence?</p>
@@ -807,14 +807,94 @@ Having such a statistical model for the errors makes it possible to derive an ex
 <!--
 ## Bayes' theorem for the normal linear model
 -->
+<section id="the-likelihood">
+<h2>The likelihood<a class="headerlink" href="#the-likelihood" title="Link to this heading">#</a></h2>
+<p>Assuming normally distributed residuals, as we have done, it turns out to be straightforward to express the data likelihood. In the following we will make the further assumption that errors are <em>independent</em>. This implies that the covariance matrix <span class="math notranslate nohighlight">\(\covres\)</span> is diagonal and given by a vector <span class="math notranslate nohighlight">\(\sigmas\)</span>,</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-independent-errors">
+<span class="eqno">(8.29)<a class="headerlink" href="#equation-eq-bayesianlinearregression-independent-errors" title="Link to this equation">#</a></span>\[\begin{split}
+\covres &amp;= \mathrm{diag}(\sigmas^2), \, \text{where} \\ 
+\sigmas^2 &amp;= \left( \sigma_0^2, \sigma_1^2, \ldots, \sigma_{N_d-1}^2\right),
+\end{split}\]</div>
+<p>and <span class="math notranslate nohighlight">\(\sigmai^2\)</span> is the variance for residual <span class="math notranslate nohighlight">\(\residual_i\)</span>.</p>
+<p>Let’s first consider a single datum <span class="math notranslate nohighlight">\(\data_i\)</span> and the corresponding model prediction <span class="math notranslate nohighlight">\(M_i = \left( \dmat \parsLR \right)_i\)</span>. We are interested in the likelihood for this single data point</p>
+<div class="amsmath math notranslate nohighlight" id="equation-e9d3228c-134a-44f4-9196-61f6dd846f5f">
+<span class="eqno">(8.30)<a class="headerlink" href="#equation-e9d3228c-134a-44f4-9196-61f6dd846f5f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\pdf{\data_i}{\parsLR,\sigmai^2,I}.
+\end{equation}\]</div>
+<p>Since the relation between data and residual is a simple additive transformation <span class="math notranslate nohighlight">\(\data_i = \modeloutput_i + \residual_i\)</span>,
+we can use the standard probability rules to obtain</p>
+<!--(alternatively we can apply the recipe for changing variables *(add reference)*)--> 
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-likelihood-eq-1">
+<span class="eqno">(8.31)<a class="headerlink" href="#equation-eq-bayesianlinearregression-likelihood-eq-1" title="Link to this equation">#</a></span>\[\begin{split}
+\begin{align}
+\pdf{\data_i}{\parsLR,\sigmai^2,I} &amp;= \int d\residual_i\, \pdf{\data_i, \residual_i}{\parsLR,\sigmai^2,I} \\
+  &amp;= \int d\residual_i\, \pdf{\data_i}{\residual_i, \parsLR, I}\, \pdf{\residual_i}{\sigmai^2} \\
+  &amp;= \int d\residual_i\, \delta\bigl(\data_i - (\modeloutput_i + \residual_i)\bigr)
+     \frac{1}{\sqrt{2\pi}\sigmai} e^{-\residual_i^2/2\sigmai^2} \\
+&amp;= \frac{1}{\sqrt{2\pi}\sigmai} \exp \left[ -\frac{(\data_i - \modeloutput_i)^2}{2\sigmai^2} \right]
+\end{align}
+\end{split}\]</div>
+<p>where we used that <span class="math notranslate nohighlight">\(\residual_i \sim \mathcal{N}(0,\sigmai^2)\)</span>. Note that the parameter dependence sits in <span class="math notranslate nohighlight">\(\modeloutput_i \equiv \modeloutput(\parsLR, \inputs_i)\)</span>.</p>
+<div class="my-checkpoint admonition">
+<p class="admonition-title">Checkpoint question</p>
+<p>Fill in the details for the steps in <a class="reference internal" href="#equation-eq-bayesianlinearregression-likelihood-eq-1">(8.31)</a>.</p>
+<div class="dropdown my-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>Review the probability rules in <a class="reference internal" href="../inference-and-pdfs/index.html#ch-inferenceandpdfs"><span class="std std-numref">Chapter 4</span></a>. The first step integrates in <span class="math notranslate nohighlight">\(\residual_i\)</span>.</p>
+</div>
+<div class="dropdown my-answer admonition">
+<p class="admonition-title">Answer</p>
+<ol class="arabic simple">
+<li><p>Apply the sum rule to integrate in <span class="math notranslate nohighlight">\(\residual_i\)</span>.</p></li>
+<li><p>Apply the product rule, taking into account that <span class="math notranslate nohighlight">\(\residual_i\)</span> depends only on <span class="math notranslate nohighlight">\(\sigmai\)</span>.</p></li>
+<li><p>Use <span class="math notranslate nohighlight">\(\data_i = \modeloutput_i + \residual_i\)</span> to evaluate the first pdf; it is a <span class="math notranslate nohighlight">\(\delta\)</span> function because <span class="math notranslate nohighlight">\(\data_i\)</span> is exactly specified given <span class="math notranslate nohighlight">\(\modeloutput_i \equiv \modeloutput(\parsLR, \inputs_i)\)</span> and <span class="math notranslate nohighlight">\(\epsilon_i\)</span>.</p></li>
+<li><p>Evaluate the integral using the <span class="math notranslate nohighlight">\(\delta\)</span> function and <span class="math notranslate nohighlight">\(\delta\bigl(\data_i - (\modeloutput_i + \residual_i)\bigr) = \delta\bigl(\epsilon_i - (\data_i - \modeloutput_i)\bigr)\)</span>.</p></li>
+</ol>
+</div>
+</div>
+<p>Furthermore, since we assume that the residuals are independent we find that the total likelihood becomes a product of the individual ones for each element of <span class="math notranslate nohighlight">\(\data\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-normal-likelihood">
+<span class="eqno">(8.32)<a class="headerlink" href="#equation-eq-bayesianlinearregression-normal-likelihood" title="Link to this equation">#</a></span>\[\begin{split}
+\pdf{\data}{\parsLR,\sigmas^2,I} &amp;= \prod_{i=0}^{N_d-1} \pdf{\data_i}{\parsLR,\sigmai^2,I} \\
+&amp;= \left(\frac{1}{2\pi}\right)^{N_d/2} \frac{1}{\left| \covres \right|^{1/2}} \exp\left[ -\frac{1}{2} (\data - \dmat \parsLR)^T \covres^{-1} (\data - \dmat \parsLR) \right],
+\end{split}\]</div>
+<p>where we note that the diagonal form of <span class="math notranslate nohighlight">\(\covres\)</span> implies that <span class="math notranslate nohighlight">\(\left| \covres \right|^{1/2} = \prod_{i=0}^{N_d-1} \sigmai\)</span> and that the exponent becomes a sum of squared and weighted residual terms</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-lr-likelihood-exponent">
+<span class="eqno">(8.33)<a class="headerlink" href="#equation-eq-bayesianlinearregression-lr-likelihood-exponent" title="Link to this equation">#</a></span>\[
+-\frac{1}{2} (\data - \dmat \parsLR)^T \covres^{-1} (\data - \dmat \parsLR) = -\frac{1}{2} \sum_{i=0}^{N_d - 1} \frac{(\data_i - (\dmat \parsLR)_i)^2}{\sigma_i^2}.
+\]</div>
+<p>In the special case that all residuals are both <em>independent and identically distributed</em> (i.i.d.) we have that all variances are the same, <span class="math notranslate nohighlight">\(\sigmai^2 = \sigmares^2\)</span>, and the full covariance matrix is completely specified by a single parameter <span class="math notranslate nohighlight">\(\sigmares^2\)</span>. For this special case, the likelihood becomes</p>
+<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-normal-iid-likelihood">
+<span class="eqno">(8.34)<a class="headerlink" href="#equation-eq-bayesianlinearregression-normal-iid-likelihood" title="Link to this equation">#</a></span>\[
+\pdf{\data}{\parsLR,\sigmares^2,I} = \left(\frac{1}{2\pi\sigmares^2}\right)^{N_d/2} \exp\left[ -\frac{1}{2\sigmares^2} \sum_{i=0}^{N_d - 1} (\data_i - (\dmat \parsLR)_i)^2 \right].
+\]</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>For computational performance it is always better (if possible) to write sums, such as the one in the exponent of <a class="reference internal" href="#equation-eq-bayesianlinearregression-normal-iid-likelihood">(8.34)</a>, in the form of vector-matrix operations rather than as for-loops. This particular sum should therefore be implemented as <span class="math notranslate nohighlight">\((\data - \dmat \parsLR)^T (\data - \dmat \parsLR)\)</span> to employ powerful optimization for vectorized operations in existing numerical libraries (such as <a class="reference external" href="https://numpy.org/"><code class="docutils literal notranslate"><span class="pre">numpy</span></code></a> in <code class="docutils literal notranslate"><span class="pre">python</span></code> and <a class="reference external" href="https://www.gnu.org/software/gsl/"><code class="docutils literal notranslate"><span class="pre">gsl</span></code></a>, <a class="reference external" href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html"><code class="docutils literal notranslate"><span class="pre">mkl</span></code></a> for C and other compiled programming languages).</p>
+</div>
+<div class="admonition-two-views-on-the-likelihood admonition">
+<p class="admonition-title">Two views on the likelihood</p>
+<p>Let us recall from  <a class="reference internal" href="sec-bayesian-research-workflow.html#sec-bayesianworkflow"><span class="std std-numref">Section 8.2</span></a> the two views on the likelihood.</p>
+<ul class="simple">
+<li><p>Generative view: Assuming fixed values of <span class="math notranslate nohighlight">\(\parsLR\)</span>; what are long-term frequencies of future data observations as described by the likelihood?</p></li>
+<li><p>Likelihood view: Focusing on the data <span class="math notranslate nohighlight">\(\data_\mathrm{obs}\)</span> that we have; how does the likelihood for this data set depend on the values of the model parameters?</p></li>
+</ul>
+<p>As previously noted, this second view is the one that we will be adopting when allowing model parameters to be associated with probability distributions. The likelihood still describes the probability for observing a set of data, but we emphasize its parameter dependence by writing</p>
+<div class="amsmath math notranslate nohighlight" id="equation-856dbb34-2565-4375-b434-08b940c9348f">
+<span class="eqno">(8.35)<a class="headerlink" href="#equation-856dbb34-2565-4375-b434-08b940c9348f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\pdf{\data}{\parsLR,\sigma^2,I} = \mathcal{L}(\parsLR).
+\end{equation}\]</div>
+<p>This function is <strong>not</strong> a probability distribution for model parameters. The parameter posterior, left-hand side of Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-eq-bayes">(8.28)</a>, regains status as a probability density for <span class="math notranslate nohighlight">\(\parsLR\)</span> through Bayes’ rule since the likelihood is multiplied with the prior <span class="math notranslate nohighlight">\(\pdf{\parsLR}{I}\)</span> and normalized by the evidence <span class="math notranslate nohighlight">\(\pdf{\data}{I}\)</span>.</p>
+</div>
+</section>
 <section id="the-prior">
 <h2>The prior<a class="headerlink" href="#the-prior" title="Link to this heading">#</a></h2>
-<p>First we assign a prior probability <span class="math notranslate nohighlight">\(\pdf{\parsLR}{I}\)</span> for the model parameters. In order to facilitate analytical expressions we will explore two options: (i) a very broad, uniform prior, and (ii) a Gaussian prior. For simplicity, we consider both these priors to have zero mean and with all model parameters being i.i.d.</p>
+<p>In the second step of the workflow we assign a prior probability <span class="math notranslate nohighlight">\(\pdf{\parsLR}{I}\)</span> for the model parameters. In order to facilitate analytical expressions we will explore two options: (i) a very broad, uniform prior, and (ii) a Gaussian prior. For simplicity, we consider both these priors to have zero mean and with all model parameters being i.i.d.</p>
 <p>As discussed earlier, we rarely want to use a truly uniform prior, preferring a wide beta  or Gaussian distribution instead.
 We will assume that the width is large enough that it will be effectively flat where our Bayesian linear regression likelihood is not negligible.
 Then for the analytic calculations here we can take the uniform prior for the <span class="math notranslate nohighlight">\(N_p\)</span> parameters to be</p>
 <div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-uniform-iid-prior">
-<span class="eqno">(8.29)<a class="headerlink" href="#equation-eq-bayesianlinearregression-uniform-iid-prior" title="Link to this equation">#</a></span>\[\begin{split}
+<span class="eqno">(8.36)<a class="headerlink" href="#equation-eq-bayesianlinearregression-uniform-iid-prior" title="Link to this equation">#</a></span>\[\begin{split}
 \pdf{\parsLR}{I} = \frac{1}{(\Delta\paraLR)^{N_p}} \left\{ 
 \begin{array}{ll}
 1 &amp; \text{if all } \paraLR_i \in [-\Delta\paraLR/2, +\Delta\paraLR/2] \\
@@ -825,7 +905,7 @@ Then for the analytic calculations here we can take the uniform prior for the <s
 <p>with <span class="math notranslate nohighlight">\(\Delta\paraLR\)</span> the width of the prior range in all parameter directions (this assumes we have standardized the data so that it has roughly the same extent in all directions).</p>
 <p>The Gaussian prior that we will also be exploring is</p>
 <div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-gaussian-iid-prior">
-<span class="eqno">(8.30)<a class="headerlink" href="#equation-eq-bayesianlinearregression-gaussian-iid-prior" title="Link to this equation">#</a></span>\[
+<span class="eqno">(8.37)<a class="headerlink" href="#equation-eq-bayesianlinearregression-gaussian-iid-prior" title="Link to this equation">#</a></span>\[
 \pdf{\parsLR}{I} = \left(\frac{1}{2\pi\sigma_\paraLR^2}\right)^{N_p/2} \exp\left[ -\frac{1}{2}\frac{\parsLR^T\parsLR}{\sigma_\paraLR^2} \right],
 \]</div>
 <p>with <span class="math notranslate nohighlight">\(\sigma_\paraLR\)</span> the standard deviation of the prior for all parameters.</p>
@@ -866,89 +946,9 @@ Then for the analytic calculations here we can take the uniform prior for the <s
 </div>
 </div>
 </section>
-<section id="the-likelihood">
-<h2>The likelihood<a class="headerlink" href="#the-likelihood" title="Link to this heading">#</a></h2>
-<p>Assuming normally distributed residuals, as we have done, it turns out to be straightforward to express the data likelihood. In the following we will make the further assumption that errors are <em>independent</em>. This implies that the covariance matrix <span class="math notranslate nohighlight">\(\covres\)</span> is diagonal and given by a vector <span class="math notranslate nohighlight">\(\sigmas\)</span>,</p>
-<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-independent-errors">
-<span class="eqno">(8.31)<a class="headerlink" href="#equation-eq-bayesianlinearregression-independent-errors" title="Link to this equation">#</a></span>\[\begin{split}
-\covres &amp;= \mathrm{diag}(\sigmas^2), \, \text{where} \\ 
-\sigmas^2 &amp;= \left( \sigma_0^2, \sigma_1^2, \ldots, \sigma_{N_d-1}^2\right),
-\end{split}\]</div>
-<p>and <span class="math notranslate nohighlight">\(\sigmai^2\)</span> is the variance for residual <span class="math notranslate nohighlight">\(\residual_i\)</span>.</p>
-<p>Let’s first consider a single datum <span class="math notranslate nohighlight">\(\data_i\)</span> and the corresponding model prediction <span class="math notranslate nohighlight">\(M_i = \left( \dmat \parsLR \right)_i\)</span>. We are interested in the likelihood for this single data point</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dcd78b33-3a96-4b31-a459-9c3f39b4993f">
-<span class="eqno">(8.32)<a class="headerlink" href="#equation-dcd78b33-3a96-4b31-a459-9c3f39b4993f" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\pdf{\data_i}{\parsLR,\sigmai^2,I}.
-\end{equation}\]</div>
-<p>Since the relation between data and residual is a simple additive transformation <span class="math notranslate nohighlight">\(\data_i = \modeloutput_i + \residual_i\)</span>,
-we can use the standard probability rules to obtain</p>
-<!--(alternatively we can apply the recipe for changing variables *(add reference)*)--> 
-<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-likelihood-eq-1">
-<span class="eqno">(8.33)<a class="headerlink" href="#equation-eq-bayesianlinearregression-likelihood-eq-1" title="Link to this equation">#</a></span>\[\begin{split}
-\begin{align}
-\pdf{\data_i}{\parsLR,\sigmai^2,I} &amp;= \int d\residual_i\, \pdf{\data_i, \residual_i}{\parsLR,\sigmai^2,I} \\
-  &amp;= \int d\residual_i\, \pdf{\data_i}{\residual_i, \parsLR, I}\, \pdf{\residual_i}{\sigmai^2} \\
-  &amp;= \int d\residual_i\, \delta\bigl(\data_i - (\modeloutput_i + \residual_i)\bigr)
-     \frac{1}{\sqrt{2\pi}\sigmai} e^{-\residual_i^2/2\sigmai^2} \\
-&amp;= \frac{1}{\sqrt{2\pi}\sigmai} \exp \left[ -\frac{(\data_i - \modeloutput_i)^2}{2\sigmai^2} \right]
-\end{align}
-\end{split}\]</div>
-<p>where we used that <span class="math notranslate nohighlight">\(\residual_i \sim \mathcal{N}(0,\sigmai^2)\)</span>. Note that the parameter dependence sits in <span class="math notranslate nohighlight">\(\modeloutput_i \equiv \modeloutput(\parsLR, \inputs_i)\)</span>.</p>
-<div class="my-checkpoint admonition">
-<p class="admonition-title">Checkpoint question</p>
-<p>Fill in the details for the steps in <a class="reference internal" href="#equation-eq-bayesianlinearregression-likelihood-eq-1">(8.33)</a>.</p>
-<div class="dropdown my-hint admonition">
-<p class="admonition-title">Hint</p>
-<p>Review the probability rules in <a class="reference internal" href="../inference-and-pdfs/index.html#ch-inferenceandpdfs"><span class="std std-numref">Chapter 4</span></a>. The first step integrates in <span class="math notranslate nohighlight">\(\residual_i\)</span>.</p>
-</div>
-<div class="dropdown my-answer admonition">
-<p class="admonition-title">Answer</p>
-<ol class="arabic simple">
-<li><p>Apply the sum rule to integrate in <span class="math notranslate nohighlight">\(\residual_i\)</span>.</p></li>
-<li><p>Apply the product rule, taking into account that <span class="math notranslate nohighlight">\(\residual_i\)</span> depends only on <span class="math notranslate nohighlight">\(\sigmai\)</span>.</p></li>
-<li><p>Use <span class="math notranslate nohighlight">\(\data_i = \modeloutput_i + \residual_i\)</span> to evaluate the first pdf; it is a <span class="math notranslate nohighlight">\(\delta\)</span> function because <span class="math notranslate nohighlight">\(\data_i\)</span> is exactly specified given <span class="math notranslate nohighlight">\(\modeloutput_i \equiv \modeloutput(\parsLR, \inputs_i)\)</span> and <span class="math notranslate nohighlight">\(\epsilon_i\)</span>.</p></li>
-<li><p>Evaluate the integral using the <span class="math notranslate nohighlight">\(\delta\)</span> function and <span class="math notranslate nohighlight">\(\delta\bigl(\data_i - (\modeloutput_i + \residual_i)\bigr) = \delta\bigl(\epsilon_i - (\data_i - \modeloutput_i)\bigr)\)</span>.</p></li>
-</ol>
-</div>
-</div>
-<p>Furthermore, since we assume that the residuals are independent we find that the total likelihood becomes a product of the individual ones for each element of <span class="math notranslate nohighlight">\(\data\)</span>:</p>
-<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-normal-likelihood">
-<span class="eqno">(8.34)<a class="headerlink" href="#equation-eq-bayesianlinearregression-normal-likelihood" title="Link to this equation">#</a></span>\[\begin{split}
-\pdf{\data}{\parsLR,\sigmas^2,I} &amp;= \prod_{i=0}^{N_d-1} \pdf{\data_i}{\parsLR,\sigmai^2,I} \\
-&amp;= \left(\frac{1}{2\pi}\right)^{N_d/2} \frac{1}{\left| \covres \right|^{1/2}} \exp\left[ -\frac{1}{2} (\data - \dmat \parsLR)^T \covres^{-1} (\data - \dmat \parsLR) \right],
-\end{split}\]</div>
-<p>where we note that the diagonal form of <span class="math notranslate nohighlight">\(\covres\)</span> implies that <span class="math notranslate nohighlight">\(\left| \covres \right|^{1/2} = \prod_{i=0}^{N_d-1} \sigmai\)</span> and that the exponent becomes a sum of squared and weighted residual terms</p>
-<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-lr-likelihood-exponent">
-<span class="eqno">(8.35)<a class="headerlink" href="#equation-eq-bayesianlinearregression-lr-likelihood-exponent" title="Link to this equation">#</a></span>\[
--\frac{1}{2} (\data - \dmat \parsLR)^T \covres^{-1} (\data - \dmat \parsLR) = -\frac{1}{2} \sum_{i=0}^{N_d - 1} \frac{(\data_i - (\dmat \parsLR)_i)^2}{\sigma_i^2}.
-\]</div>
-<p>In the special case that all residuals are both <em>independent and identically distributed</em> (i.i.d.) we have that all variances are the same, <span class="math notranslate nohighlight">\(\sigmai^2 = \sigmares^2\)</span>, and the full covariance matrix is completely specified by a single parameter <span class="math notranslate nohighlight">\(\sigmares^2\)</span>. For this special case, the likelihood becomes</p>
-<div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-normal-iid-likelihood">
-<span class="eqno">(8.36)<a class="headerlink" href="#equation-eq-bayesianlinearregression-normal-iid-likelihood" title="Link to this equation">#</a></span>\[
-\pdf{\data}{\parsLR,\sigmares^2,I} = \left(\frac{1}{2\pi\sigmares^2}\right)^{N_d/2} \exp\left[ -\frac{1}{2\sigmares^2} \sum_{i=0}^{N_d - 1} (\data_i - (\dmat \parsLR)_i)^2 \right].
-\]</div>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>For computational performance it is always better (if possible) to write sums, such as the one in the exponent of <a class="reference internal" href="#equation-eq-bayesianlinearregression-normal-iid-likelihood">(8.36)</a>, in the form of vector-matrix operations rather than as for-loops. This particular sum should therefore be implemented as <span class="math notranslate nohighlight">\((\data - \dmat \parsLR)^T (\data - \dmat \parsLR)\)</span> to employ powerful optimization for vectorized operations in existing numerical libraries (such as <a class="reference external" href="https://numpy.org/"><code class="docutils literal notranslate"><span class="pre">numpy</span></code></a> in <code class="docutils literal notranslate"><span class="pre">python</span></code> and <a class="reference external" href="https://www.gnu.org/software/gsl/"><code class="docutils literal notranslate"><span class="pre">gsl</span></code></a>, <a class="reference external" href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html"><code class="docutils literal notranslate"><span class="pre">mkl</span></code></a> for C and other compiled programming languages).</p>
-</div>
-<div class="admonition-two-views-on-the-likelihood admonition">
-<p class="admonition-title">Two views on the likelihood</p>
-<p>Since observed data is generated stochastically, through an underlying <span class="math notranslate nohighlight">\(\text{``data-generating process''}\)</span>, it is appropriately described by a probabibility distribution. This is the <span class="math notranslate nohighlight">\(\text{``data likelihood''}\)</span> that describes the probability distribution for observed data given a specific data-generating process (as indicated by the information on the right-hand side of the conditional).</p>
-<ul class="simple">
-<li><p>View 1: Assuming fixed values of <span class="math notranslate nohighlight">\(\parsLR\)</span>; what are long-term frequencies of future data observations as described by the likelihood?</p></li>
-<li><p>View 2: Focusing on the data <span class="math notranslate nohighlight">\(\data_\mathrm{obs}\)</span> that we have; how does the likelihood for this data set depend on the values of the model parameters?</p></li>
-</ul>
-<p>This second view is the one that we will be adopting when allowing model parameters to be associated with probability distributions. The likelihood still describes the probability for observing a set of data, but we emphasize its parameter dependence by writing</p>
-<div class="amsmath math notranslate nohighlight" id="equation-623a8d1a-4ccb-4d5e-86cf-86b20bad5eea">
-<span class="eqno">(8.37)<a class="headerlink" href="#equation-623a8d1a-4ccb-4d5e-86cf-86b20bad5eea" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\pdf{\data}{\parsLR,\sigma^2,I} = \mathcal{L}(\parsLR).
-\end{equation}\]</div>
-<p>This function is <strong>not</strong> a probability distribution for model parameters. The parameter posterior, left-hand side of Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-eq-bayes">(8.28)</a>, regains status as a probability density for <span class="math notranslate nohighlight">\(\parsLR\)</span> since the likelihood is multiplied with the prior <span class="math notranslate nohighlight">\(\pdf{\parsLR}{I}\)</span> and normalized by the evidence <span class="math notranslate nohighlight">\(\pdf{\data}{I}\)</span>.</p>
-</div>
-</section>
 <section id="the-posterior">
 <h2>The posterior<a class="headerlink" href="#the-posterior" title="Link to this heading">#</a></h2>
-<p>Given the likelihood with i.i.d. errors <a class="reference internal" href="#equation-eq-bayesianlinearregression-normal-iid-likelihood">(8.36)</a> and the two alternative priors, <a class="reference internal" href="#equation-eq-bayesianlinearregression-uniform-iid-prior">(8.29)</a> and <a class="reference internal" href="#equation-eq-bayesianlinearregression-gaussian-iid-prior">(8.30)</a>, we will derive the corresponding two different expressions for the posterior (up to multiplicative normalization constants).</p>
+<p>Given the likelihood with i.i.d. errors <a class="reference internal" href="#equation-eq-bayesianlinearregression-normal-iid-likelihood">(8.34)</a> and the two alternative priors, <a class="reference internal" href="#equation-eq-bayesianlinearregression-uniform-iid-prior">(8.36)</a> and <a class="reference internal" href="#equation-eq-bayesianlinearregression-gaussian-iid-prior">(8.37)</a>, we will derive the corresponding two different expressions for the posterior (up to multiplicative normalization constants).</p>
 <section id="rewriting-the-likelihood">
 <h3>Rewriting the likelihood<a class="headerlink" href="#rewriting-the-likelihood" title="Link to this heading">#</a></h3>
 <p>First, let us rewrite the likelihood in a way that is made possible by the fact that we are considering a linear model. In particular, this implies quadratic dependence on model parameters in the exponent, which means one can show (by performing a Taylor expansion of the log likelihood around the mode) that the likelihood becomes proportional to the functional form of a multivariate normal distribution for the model parameters:</p>
@@ -981,7 +981,7 @@ we can use the standard probability rules to obtain</p>
 
 <p class="admonition-title"><span class="caption-number">Exercise 8.4 </span> (Generalized normal equation)</p>
 <section id="exercise-content">
-<p>Prove for the case of the general exponent in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-normal-likelihood">(8.34)</a> that the position of the mode <span class="math notranslate nohighlight">\(\optparsLR\)</span> is given by</p>
+<p>Prove for the case of the general exponent in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-normal-likelihood">(8.32)</a> that the position of the mode <span class="math notranslate nohighlight">\(\optparsLR\)</span> is given by</p>
 <div class="math notranslate nohighlight">
 \[
    \optparsLR(\data) = \bigl[\dmat^T \covres^{-1} \dmat\bigr]^{-1} \bigl[\dmat^T \covres^{-1} \data\bigr] 
@@ -1001,9 +1001,9 @@ we can use the standard probability rules to obtain</p>
 </section>
 <section id="posterior-with-a-uniform-prior">
 <h3>Posterior with a uniform prior<a class="headerlink" href="#posterior-with-a-uniform-prior" title="Link to this heading">#</a></h3>
-<p>Let us first consider a uniform prior as expressed in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-uniform-iid-prior">(8.29)</a>. The prior can be considered very broad if its boundaries <span class="math notranslate nohighlight">\(\pm \Delta\para/2\)</span> are very far from the mode of the likelihood <a class="reference internal" href="#equation-eq-bayesianlinearregression-likelihood-pars-b">(8.38)</a>. “Distance” in this context is measured in terms of standard deviations. A “far distance”, therefore, implies that <span class="math notranslate nohighlight">\(\pdf{\data}{\parsLR,\sigmares^2,I}\)</span> is very close to zero. This implies that the posterior</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7bbd6c3d-a757-44f5-80c5-beceafedcee7">
-<span class="eqno">(8.40)<a class="headerlink" href="#equation-7bbd6c3d-a757-44f5-80c5-beceafedcee7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>Let us first consider a uniform prior as expressed in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-uniform-iid-prior">(8.36)</a>. The prior can be considered very broad if its boundaries <span class="math notranslate nohighlight">\(\pm \Delta\para/2\)</span> are very far from the mode of the likelihood <a class="reference internal" href="#equation-eq-bayesianlinearregression-likelihood-pars-b">(8.38)</a>. “Distance” in this context is measured in terms of standard deviations. A “far distance”, therefore, implies that <span class="math notranslate nohighlight">\(\pdf{\data}{\parsLR,\sigmares^2,I}\)</span> is very close to zero. This implies that the posterior</p>
+<div class="amsmath math notranslate nohighlight" id="equation-37ca4f7f-f69f-444c-b7a1-a7cc29f84fb9">
+<span class="eqno">(8.40)<a class="headerlink" href="#equation-37ca4f7f-f69f-444c-b7a1-a7cc29f84fb9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pdf{\parsLR}{\data,\sigmares^2,I} \propto \pdf{\data}{\parsLR,\sigmares^2,I} \pdf{\parsLR}{I},
 \end{equation}\]</div>
 <p>simply becomes proportional to the data likelihood (with the prior just truncating the distribution at very large distances). Thus we find from Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-likelihood-pars-b">(8.38)</a></p>
@@ -1027,7 +1027,7 @@ we can use the standard probability rules to obtain</p>
 </section>
 <section id="posterior-with-a-gaussian-prior">
 <h3>Posterior with a Gaussian prior<a class="headerlink" href="#posterior-with-a-gaussian-prior" title="Link to this heading">#</a></h3>
-<p>Assigning instead a Gaussian prior for the model parameters, as expressed in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-gaussian-iid-prior">(8.30)</a>, we find that the posterior is proportional to the product of two exponential functions</p>
+<p>Assigning instead a Gaussian prior for the model parameters, as expressed in Eq. <a class="reference internal" href="#equation-eq-bayesianlinearregression-gaussian-iid-prior">(8.37)</a>, we find that the posterior is proportional to the product of two exponential functions</p>
 <div class="math notranslate nohighlight" id="equation-eq-bayesianlinearregression-posterior-with-iid-gaussian-prior">
 <span class="eqno">(8.42)<a class="headerlink" href="#equation-eq-bayesianlinearregression-posterior-with-iid-gaussian-prior" title="Link to this equation">#</a></span>\[\begin{split}
 \pdf{\parsLR}{\data,\sigmares^2,I} &amp;\propto \exp\left[ -\frac{1}{2} (\parsLR-\optparsLR)^T \covparsLR^{-1} (\parsLR-\optparsLR) \right] \exp\left[ -\frac{1}{2}\frac{\parsLR^T\parsLR}{\sigma_{\paraLR}^2} \right] \\
@@ -1225,8 +1225,8 @@ L(\parsLR) = L(\optparsLR) + \frac{1}{2} (\parsLR-\optparsLR)^T \frac{\dmat^T\dm
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prior">The prior</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-likelihood">The likelihood</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prior">The prior</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-posterior">The posterior</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rewriting-the-likelihood">Rewriting the likelihood</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-with-a-uniform-prior">Posterior with a uniform prior</a></li>
