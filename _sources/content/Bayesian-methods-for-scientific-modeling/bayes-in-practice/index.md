@@ -9,4 +9,4 @@ In this chapter we finish Part I with some topics addressing aspects of Bayesian
 
 * {ref}`sec:BayesianLinearRegression`, {ref}`sec:BLR-workflow`, and {ref}`sec:BLR-demo`, provide a complete treatment of an important class of problems for Bayesian inference: Bayesian Linear Regression (or BLR).
 
-* {ref}`demo:BiasVarianceTradeoff` provides an introduction to the bias-variance trade-off and how it relates to underfitting and overfitting in regression.
+* {ref}`sec:bayesian-bias-variance` gives a Bayesian view of bias and variance, and of underfitting and overfitting in regression.
