@@ -23,7 +23,7 @@ The frequentist analysis of an estimator imagines a fixed, true parameter vector
 
 Consider the polynomial data-generating process from the addendum of {numref}`sec:BayesianLinearRegression`: a cubic function with random coefficients, measured at $N_d=10$ points with noise $\sigmares = 1$. We fit it with polynomials of degree 1, 3 and 9; note that the degree-9 model has $N_p = N_d$ parameters. The figure below demonstrates two different data fitting scenarios.
 
-* *Top row:* ordinary least squares, repeated for five independent noisy data sets from the same data-generating process. Each fit is a single curve, a point estimate; the spread among the five curves shows how much that estimate depends on which data set we happened to get.
+* *Top row:* ordinary least squares (OLS), repeated for five independent noisy data sets from the same data-generating process. Each fit is a single curve, a point estimate; the spread among the five curves shows how much that estimate depends on which data set we happened to get.
 * *Bottom row:* Bayesian linear regression with a broad Gaussian prior, $\sigma_{\paraLR}=10$, applied to *one* data set. The result is a distribution over curves, summarised by the posterior predictive mean and its $2\sigma$ band.
 
 ```{code-cell} python3
