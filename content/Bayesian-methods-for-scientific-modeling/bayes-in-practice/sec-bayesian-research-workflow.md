@@ -99,7 +99,7 @@ Critics of Bayesian methods often point to the subjectivity of priors as a major
 
 ### Turn what you know into a pdf
 
-Priors can come in many different distributional forms, such as a normal, uniform or Poisson distribution, etc. The choice of distributional form for the prior (as needed for a full Bayesian analysis) typically involves extra assumptions. Say that you wish to assign to a model parameter a prior with a specific mean value and standard deviation. In this scenario you are still left with the choice between many different distributional forms that fulfill those constraints. Fortunately,  arguments based on the maximum entropy principle can help translate a finite set of pieces of prior information into a probability distribution such that as little additional information as possible is smuggled into the prior. These ideas are presented in {numref}`sec:MaxEnt` {ref}`sec:MaxEnt`.
+The choice of distributional form for the prior (as needed for a full Bayesian analysis) typically involves extra assumptions. Say that you wish to assign to a model parameter a prior with a specific mean value and standard deviation. In this scenario you are still left with the choice between many different distributional forms that fulfill those constraints. Fortunately,  arguments based on the maximum entropy principle can help translate a finite set of pieces of prior information into a probability distribution such that as little additional information as possible is smuggled into the prior. These ideas are presented in {numref}`sec:MaxEnt` {ref}`sec:MaxEnt`.
 
 But the most important thing about a prior is its level of informativeness. The information reflected in a prior distribution can range from total uncertainty to near certainty. 
 The degree of (un)certainty that a prior encodes is typically described as informative, weakly informative, or diffuse. 
@@ -128,9 +128,10 @@ Once the prior and likeilhood have been combined and the posterior computed the 
 
 ## Step 3: Results for the posterior--and other things of interest
 
-In the Bayesian Research Workflow, after defining the statistical model and the deriving the associated likelihood function, the next step is to combine the likelihood with the prior and use the resulting posterior to estimate the unknown parameters of the model. 
+In the Bayesian Research Workflow, after determining the likelihood function and formulating the prior, the next step is to combine them following Bayes' rule and use the resulting posterior to estimate the unknown parameters of the model. 
 
-In contrast, the frequentist framework as typically applied for model fitting focuses on the expected long-term outcomes of an experiment with the intent of producing a single point estimate for model parameters such as the maximum likelihood estimate and associated confidence interval. Within the Bayesian Research Workflow, probability distributions are assigned to the model parameters. Remember: in Bayesian statistics, the focus is on estimating the entire posterior distribution of the model parameters, even if this distribution is ultimately summarized with associated point estimates, such as the posterior mean or median, and a credible interval.
+In contrast, when doing model fitting in the frequentist framework, one typically focuses on the expected long-term outcomes of an experiment.
+The goal is a point estimate for model parameters, such as the maximum likelihood estimate and associated frequentist confidence interval. Within the Bayesian Research Workflow, the model parameters will have probability distributions. The goal in Bayesian statistics is to estimate the full posterior distribution of the model parameters, even if in the end one summarizes the distribution with point estimates, such as the posterior mean or median, and a Bayesian credible interval.
 
 In these lecture notes, we frequently use Markov Chain Monte Carlo (MCMC) for posterior inference, see  {ref}`sec:RootMCMC`---although more advanced sampling algorithms are also discussed, see {numref}`sec:advanced-sampling-algorithms`. 
 MCMC has two basic outcomes from the Markov chain and Monte Carlo integration: a set of parameter values sampled according to the posterior distribution and an estimate of that distribution (and its statistics). 
@@ -165,7 +166,8 @@ $$  (eq:priorpd_formal)
 
 As implied by this formula, a prior predictive check is carried out in practice by sampling the parameters $\para$ from the prior, then generating data according to the data model given those sampled parameters. 
 This allows a check of how the probability mass of prior predictions is distributed, in particular whether there is significant prior mass concentrated in implausible regions of the parameter space.
-Note, however, that data sets simulated from the prior should not be compared to the actual data $D$; instead examining if the simulated outputs take on extreme values will help diagnose priors that are  too strong, too weak, poorly shaped, or poorly located.
+Note, however, that data sets simulated from the prior should not be compared to the actual data $D$; instead examining if the simulated outputs take on extreme values, which
+can reveal priors that are overly restrictive, excessively broad, centered in unreasonable regions, or otherwise poorly matched to the available background knowledge
 
 
 The posterior predictive distribution is given formally by:
@@ -178,9 +180,8 @@ where the first pdf under the integral is defined by the statistical model that 
 Note that it is conditioned on the observed data, unlike the prior predictive distribution.
 (We see that the prior predictive distribution {eq}`eq:priorpd_formal` is just a special case of the posterior predictive distribution with no observed data.)
 
-Posterior predictive checking works by simulating data sets based on the fitted model parameters according to {eq}`eq:ppd_formal` and then comparing (with appropriate statistics) this distribution to the original data set.
-For example, one could make histograms of the simulated and original data sets for a visual comparison. 
-If the model is good, various summary statistics (e.g., the sample mean and variance) should be the same in the original and simulated data sets.
+
+Posterior predictive checking instead draws replicated data from the model after conditioning on the observations. Features of these replicates—such as their distributions, means, variances, or other relevant summaries—can then be compared with corresponding features of the observed data. Systematic discrepancies point to ways in which the fitted model fails to reproduce the data.
 
 
 Prior predictive checks may motivate revisions of the prior or the generative model, leading back to an earlier step in the workflow, as indicated by the dashed return line in {numref}`fig-BayesianWorkflow-research-cycle`. 
