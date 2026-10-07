@@ -13,7 +13,7 @@ In this chapter we collect various hands-on problems to build intuition or gain 
 
 * [](./problem-fitting-a-straight-line-i.ipynb) is a simple Bayesian parameter estimation example in the context of the familiar problem of fitting a straight line to noisy data.
 
-The final exercises introduce the use of Markov Chain Monte Carlo (MCMC) sampling in basic parameter estimation problems, but in a black-box mode. This first exposure to MCMC is focused on the visualization and interpretation of sampled posteriors, without delving into the details of how the MCMC algorithm that creates them works. Those latter details are explored in {ref}`sec:RootMCMC`, which develops intuition, provides technical details, and introduces diagnostics for troubleshooting and validation.
+The final exercises introduce the use of Markov Chain Monte Carlo (MCMC) sampling in basic parameter estimation problems, but in a black-box mode. This first exposure to MCMC is focused on the visualization and interpretation of sampled posteriors, without delving into the details of how the MCMC algorithm that creates them works. Those latter details are explored in {ref}`Part III <sec:RootMCMC>`, which develops intuition, provides technical details, and introduces diagnostics for troubleshooting and validation.
 
 * [](./problem-gaussian-noise-and-averages-ii.ipynb) revisits the problem considered in [](./problem-gaussian-mean-and-variance.ipynb) but now determines the posterior via MCMC sampling. 
 

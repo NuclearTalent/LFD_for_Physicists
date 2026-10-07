@@ -1,5 +1,5 @@
 (sec:RootML)=
-# Machine Learning basics
+# Overview of Part IV: Machine learning basics
 
 ```{epigraph} Machine learning (ML) is the study of computer algorithms that can improve automatically through experience and by the use of data. ... 
 A subset of machine learning is closely related to computational statistics, which focuses on making predictions using computers; but not all machine learning is statistical learning. ... 

@@ -1,5 +1,5 @@
 (sec:RootGettingStarted)=
-# Overview of getting started materials
+# Overview of Appendix C: Getting started
 
 Appendix C has various materials to set you up for Learning from Data. You may have the option to run the Jupyter notebooks on a cloud server, but eventually you will likely want to set up an environment on your own machine. 
 
