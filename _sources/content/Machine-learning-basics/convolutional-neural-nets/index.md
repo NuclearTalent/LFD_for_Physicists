@@ -1,5 +1,5 @@
 (sec:CNN)=
-# \*Convolutional Neural Networks
+# \*Convolutional neural networks
 
 <!--<div class="highlight-section">-->
 
