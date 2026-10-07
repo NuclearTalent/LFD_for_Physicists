@@ -16,9 +16,10 @@ Machine learning and statistics are closely related fields in terms of methods, 
 
 We will be selective in our coverage, focusing on aspects that will ultimately connect to our Bayesian perspective. 
 The chapters here are:
-* {ref}`sec:MachineLearning`, which has a general overview of machine learning and artificial neural networks (ANNs), with demonstration notebooks. Also included is an introduction to a non-empirical, field-theory-based treatment of ANNs that expands around the large-width limit of networks.
-* {ref}`sec:LogisticRegression`
-* {ref}`sec:CNN` (or CNNs)
+* {ref}`sec:MachineLearning` gives a general overview of machine learning: types of learning, data handling and ethical aspects, model validation, and data bias and fairness.
+* {ref}`sec:LogisticRegression` introduces binary and multi-class classification, with first machine-learning examples.
+* {ref}`sec:ANNsInPractice` covers the architecture of artificial neural networks (ANNs), the mathematical model of feed-forward networks, and training with back-propagation, with PyTorch demonstration notebooks.
+* {ref}`sec:CNN` (or CNNs) are networks designed for image data.
 * {ref}`ch:PartIVProblems`.
 
-
+A non-empirical, field-theory-based treatment of ANNs that expands around the large-width limit is presented in Part V, see {ref}`sec:ANNFT`.

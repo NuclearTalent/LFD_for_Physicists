@@ -19,3 +19,15 @@ biological neural system, wherein neurons interact by sending signals to each ot
 :align: center
 :alt: from Machine Learning for Artists [](https://ml4a.github.io/)
 ```
+
+The chapter is organized as follows:
+
+* {ref}`sec:NeuralNet` introduces the terminology, the main types of neural networks and their architecture, and discusses some limitations of supervised learning with deep networks.
+
+* {ref}`sec:NeuralNetFFNN` formulates fully-connected feed-forward networks mathematically. It introduces the matrix-vector notation, common activation functions, and the ingredients of the learning algorithm, and ends with exercises.
+
+* {ref}`sec:NeuralNetBackProp` derives the back-propagation algorithm for computing the gradient of the cost function, and discusses vanishing and exploding gradients.
+
+* {ref}`demo:ann-simple-function-using-pytorch` trains a network in PyTorch to approximate a simple one-dimensional function.
+
+* {ref}`demo:mnist-classifier-in-pytorch` builds a PyTorch classifier for handwritten digits (MNIST).
