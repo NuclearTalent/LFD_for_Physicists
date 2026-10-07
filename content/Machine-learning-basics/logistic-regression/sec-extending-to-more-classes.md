@@ -16,7 +16,7 @@ Until now we have focused on binary classification involving just a decision bet
 Actually, we would only need $K-1$ outputs to create a soft classifier for $K$ classes. Why?
 ```
 
-Let us for the sake of simplicity assume we have only one feature. The activations are (suppressing the index $i$)
+Let us for the sake of simplicity assume we have only one feature. The preactivations are (suppressing the index $i$)
 
 \begin{equation}
 

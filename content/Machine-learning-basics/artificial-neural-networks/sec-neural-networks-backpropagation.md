@@ -1,343 +1,139 @@
 (sec:NeuralNetBackProp)=
 # Neural networks: Backpropagation
 
-As we have seen the final output of a feed-forward network can be expressed in terms of basic matrix-vector multiplications.
-The unknowwn quantities are our weights $w_{ij}$ and we need to find an algorithm for changing them so that our errors are as small as possible.
+As we have seen, the final output of a feed-forward network can be expressed in terms of basic matrix-vector multiplications.
+The unknown quantities are the weights $w_{ij}^l$ and biases $b_j^l$, and we need an algorithm for changing them so that our errors are as small as possible.
 This leads us to the famous back propagation algorithm {cite}`Rumelhart1986`.
 
-## Deriving the back propagation code for a multilayer perceptron model
+## Deriving the back propagation equations for a feed-forward network
 
-The questions we want to ask are how do changes in the biases and the
-weights in our network change the cost function and how can we use the
-final output to modify the weights?
+The questions we want to ask are how changes in the biases and the
+weights of our network change the cost function, and how we can use the
+final output to modify the weights.
 
-To derive these equations let us start with a plain regression problem
-and define our cost function as
+### Notation
 
-\begin{equation}
-
-{\cal C}(\boldsymbol{W})  =  \frac{1}{2}\sum_{i=1}^n\left(y_i - t_i\right)^2, 
-
-\end{equation}
-
-where the $t_i$s are our $n$ targets (the values we want to
-reproduce), while the outputs of the network after having propagated
-all inputs $\boldsymbol{x}$ are given by $y_i$.  Other cost functions can also be considered.
-
-### Definitions
-
-With our definition of the targets $\boldsymbol{t}$, the outputs of the
-network $\boldsymbol{y}$ and the inputs $\boldsymbol{x}$ we
-define now the activation $z_j^l$ of node/neuron/unit $j$ of the
-$l$-th layer as a function of the bias, the weights which add up from
-the previous layer $l-1$ and the forward passes/outputs
-$\boldsymbol{a}^{l-1}$ from the previous layer as
-
+We use the notation of {ref}`sec:NeuralNet`. Consider an $L$-layer network, i.e., $L-1$ hidden layers and an output layer $l=L$. Node $j$ in layer $l$ has the preactivation
 
 \begin{equation}
-
-z_j^l = \sum_{i=1}^{M_{l-1}}w_{ij}^la_i^{l-1}+b_j^l,
-
+z_j^l = \sum_{i=1}^{N_{l-1}} w_{ij}^l y_i^{l-1} + b_j^l,
 \end{equation}
 
-where $b_j^l$ are the biases from layer $l$.  Here $M_{l-1}$
-represents the total number of nodes/neurons/units of layer $l-1$. 
+and the output $y_j^l = f^l(z_j^l)$. Here $N_{l-1}$ is the number of nodes in layer $l-1$, and $w_{ij}^l$ connects node $i$ in layer $l-1$ to node $j$ in layer $l$. The input layer performs no computation; we simply set $\boldsymbol{y}^0 \equiv \boldsymbol{x}$. The network output is $\boldsymbol{y}^L$.
 
-```{admonition} Activation outputs
-:class: tip
-In this derivation we will denote the output of neuron $j$ in layer $l$ as a_j^{l}. Collectively, all outputs from layer $l$ corresponds to the vector $\boldsymbol{a}^l$.
-```
-
-```{admonition} Final outputs
-:class: tip
-We will reserve the output notation $y$ exclusively for the final layer such that an $L$-layer network has final output $\boldsymbol{y} \equiv \boldsymbol{a}^L$. Note that it is quite common to use a different activation function for the final outputs as compared with the inner layers.
-```
-
-We can rewrite this *(figure to be inserted)* in a more
-compact form as the matrix-vector products we discussed earlier,
+In matrix-vector form, with signals as row vectors and $\boldsymbol{W}^l$ an $N_{l-1} \times N_l$ matrix,
 
 \begin{equation}
-
-\boldsymbol{z}^l = \left(\boldsymbol{W}^l\right)^T\boldsymbol{a}^{l-1}+\boldsymbol{b}^l.
-
+\boldsymbol{z}^l = \boldsymbol{y}^{l-1} \boldsymbol{W}^l + \boldsymbol{b}^l, \qquad \boldsymbol{y}^l = f^l(\boldsymbol{z}^l).
 \end{equation}
 
-With the activation values $\boldsymbol{z}^l$ we can in turn define the
-output of layer $l$ as $\boldsymbol{a}^l = f(\boldsymbol{z}^l)$ where $f$ is our
-activation function. In the examples here we will use the sigmoid
-function discussed in the logistic regression lecture. We will also use the same activation function $f$ for all layers
-and their nodes.  It means we have
+### Cost function
+
+To derive the equations, let us start with a plain regression problem. For a single data instance with targets $\boldsymbol{t} = (t_1, \ldots, t_{N_L})$ we use the cost function
 
 \begin{equation}
-
-a_j^l = f(z_j^l) = \frac{1}{1+\exp{-(z_j^l)}}.
-
+{\cal C} = \frac{1}{2}\sum_{j=1}^{N_L}\left(y_j^L - t_j\right)^2.
 \end{equation}
 
+For a batch of training data $\{ (\inputs_i, \targets_i) \}$ (see {ref}`sec:NeuralNet:learning-algorithm`), the cost is a sum over instances and so are its gradients. Other cost functions can also be considered; only the derivative $\partial {\cal C} / \partial y_j^L$ changes.
 
 ### Derivatives and the chain rule
 
-From the definition of the activation $z_j^l$ we have
+From the definition of the preactivation $z_j^l$ we have
 
 \begin{equation}
-
-\frac{\partial z_j^l}{\partial w_{ij}^l} = a_i^{l-1},
-
+\frac{\partial z_j^l}{\partial w_{ij}^l} = y_i^{l-1}, \qquad
+\frac{\partial z_j^l}{\partial b_j^l} = 1, \qquad
+\frac{\partial z_j^l}{\partial y_i^{l-1}} = w_{ij}^l.
 \end{equation}
 
-and
+The output of a node depends only on its own preactivation, $\partial y_j^l / \partial z_j^l = f^{l\prime}(z_j^l)$. For the sigmoid function, $f(z) = 1/(1+e^{-z})$, this derivative is particularly simple
 
 \begin{equation}
-
-\frac{\partial z_j^l}{\partial a_i^{l-1}} = w_{ji}^l. 
-
+f'(z_j^l) = f(z_j^l)\left[1 - f(z_j^l)\right] = y_j^l\left(1-y_j^l\right).
 \end{equation}
 
-With our definition of the activation function we have (note that this function depends only on $z_j^l$)
+### The error signal $\delta$
+
+The key quantity is the derivative of the cost function with respect to the preactivation of node $j$ in layer $l$
 
 \begin{equation}
-
-\frac{\partial a_j^l}{\partial z_j^{l}} = a_j^l(1-a_j^l)=f(z_j^l) \left[ 1-f(z_j^l) \right]. 
-
+\delta_j^l \equiv \frac{\partial {\cal C}}{\partial z_j^l}.
 \end{equation}
 
-
-### Derivative of the cost function
-
-With these definitions we can now compute the derivative of the cost function in terms of the weights.
-
-Let us specialize to the output layer $l=L$. Our cost function is
+Since $w_{ij}^l$ and $b_j^l$ affect the cost only through $z_j^l$, the chain rule immediately gives the gradients
 
 \begin{equation}
-
-{\cal C}(\boldsymbol{W^L})  =  \frac{1}{2}\sum_{i=1}^n\left(y_i - t_i\right)^2=\frac{1}{2}\sum_{i=1}^n\left(a_i^L - t_i\right)^2, 
-
+\frac{\partial {\cal C}}{\partial w_{ij}^l} = y_i^{l-1}\, \delta_j^l, \qquad
+\frac{\partial {\cal C}}{\partial b_j^l} = \delta_j^l.
 \end{equation}
 
-The derivative of this function with respect to the weights is
+The weight gradient is the product of the signal entering the connection and the error signal at its end. In matrix form, $\partial {\cal C} / \partial \boldsymbol{W}^l = (\boldsymbol{y}^{l-1})^T \boldsymbol{\delta}^l$, which is an outer product with the same $N_{l-1} \times N_l$ shape as $\boldsymbol{W}^l$.
+
+### Output layer
+
+At the output layer the error signal follows directly from the cost function
 
 \begin{equation}
-
-\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \left(a_j^L - t_j\right)\frac{\partial a_j^L}{\partial w_{jk}^{L}}, 
-
+\delta_j^L = \frac{\partial {\cal C}}{\partial y_j^L}\frac{\partial y_j^L}{\partial z_j^L} = \left(y_j^L - t_j\right) f^{L\prime}(z_j^L),
 \end{equation}
 
-The last partial derivative can easily be computed and reads (by applying the chain rule)
+or, using the Hadamard (element-wise) product $\odot$,
 
 \begin{equation}
-
-\frac{\partial a_j^L}{\partial w_{jk}^{L}} = \frac{\partial a_j^L}{\partial z_{j}^{L}}\frac{\partial z_j^L}{\partial w_{jk}^{L}}=a_j^L(1-a_j^L)a_k^{L-1},  
-
+\boldsymbol{\delta}^L = \frac{\partial {\cal C}}{\partial \boldsymbol{y}^L} \odot f^{L\prime}(\boldsymbol{z}^L).
 \end{equation}
 
+The first factor measures how fast the cost changes with output $j$. If the cost does not depend much on a particular output node, then $\delta_j^L$ will be small. The second factor measures how fast the activation function changes at $z_j^L$, which is a cheap by-product of the forward pass.
 
+```{admonition} Linear output for regression
+:class: tip
+Regression networks usually have a linear output layer, $f^L(z) = z$. Then $f^{L\prime} = 1$ and the output error is simply the residual, $\boldsymbol{\delta}^L = \boldsymbol{y}^L - \boldsymbol{t}$.
+```
 
-### Bringing it together, first back propagation equation
+Two consequences of the gradient expressions are worth noting. When the incoming signal $y_i^{l-1}$ is small, the gradient with respect to $w_{ij}^l$ is also small and the weight learns slowly. The same happens when a sigmoid node saturates, i.e., when its output approaches $0$ or $1$, since then $f'(z) \approx 0$.
 
-We have thus
+### Back-propagating the error
+
+We need one more equation: the error signal in layer $l$ expressed in terms of the errors in layer $l+1$. Since $z_j^l$ affects the cost through all preactivations $z_k^{l+1}$ of the next layer, the chain rule gives
 
 \begin{equation}
-
-\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \left(a_j^L - t_j\right)a_j^L(1-a_j^L)a_k^{L-1}, 
-
+\delta_j^l = \sum_{k=1}^{N_{l+1}} \frac{\partial {\cal C}}{\partial z_k^{l+1}}\frac{\partial z_k^{l+1}}{\partial z_j^{l}} = \sum_{k=1}^{N_{l+1}} \delta_k^{l+1}\frac{\partial z_k^{l+1}}{\partial z_j^{l}}.
 \end{equation}
 
-Defining
+With $z_k^{l+1} = \sum_{i} w_{ik}^{l+1} y_i^{l} + b_k^{l+1}$ and $y_i^l = f^l(z_i^l)$ we find $\partial z_k^{l+1} / \partial z_j^l = w_{jk}^{l+1} f^{l\prime}(z_j^l)$, so that
 
 \begin{equation}
-
-\delta_j^L = a_j^L(1-a_j^L)\left(a_j^L - t_j\right) = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)},
-
+\delta_j^l = f^{l\prime}(z_j^l) \sum_{k=1}^{N_{l+1}} w_{jk}^{l+1}\, \delta_k^{l+1},
+\qquad\text{i.e.,}\qquad
+\boldsymbol{\delta}^l = \left(\boldsymbol{\delta}^{l+1} \left(\boldsymbol{W}^{l+1}\right)^T\right) \odot f^{l\prime}(\boldsymbol{z}^l).
 \end{equation}
 
-and using the Hadamard product $\odot$ (element-wise product) we can write this as
+The error signal travels backwards through the same weights as the forward signal, but with the transposed matrix.
+
+## The back-propagation algorithm
+
+The equations above provide the gradient of the cost function with respect to all weights and biases.
+
+*Summary.*
+1. Set $\boldsymbol{y}^0 = \boldsymbol{x}$.
+2. Forward pass: for $l = 1, 2, \ldots, L$ compute and store $\boldsymbol{z}^l = \boldsymbol{y}^{l-1} \boldsymbol{W}^l + \boldsymbol{b}^l$ and $\boldsymbol{y}^l = f^l(\boldsymbol{z}^l)$.
+3. Output error: $\boldsymbol{\delta}^L = \dfrac{\partial {\cal C}}{\partial \boldsymbol{y}^L} \odot f^{L\prime}(\boldsymbol{z}^L)$.
+4. Backward pass: for $l = L-1, L-2, \ldots, 1$ compute $\boldsymbol{\delta}^l = \left(\boldsymbol{\delta}^{l+1} (\boldsymbol{W}^{l+1})^T\right) \odot f^{l\prime}(\boldsymbol{z}^l)$.
+5. Gradient-descent update for all layers $l = 1, 2, \ldots, L$
 
 \begin{equation}
-
-\boldsymbol{\delta}^L = f'(\boldsymbol{z}^L)\odot\frac{\partial {\cal C}}{\partial (\boldsymbol{a}^L)}.
-
+\boldsymbol{W}^l \leftarrow \boldsymbol{W}^l - \eta \left(\boldsymbol{y}^{l-1}\right)^T \boldsymbol{\delta}^l, \qquad
+\boldsymbol{b}^l \leftarrow \boldsymbol{b}^l - \eta\, \boldsymbol{\delta}^l.
 \end{equation}
-
-This is an important expression. The second term on the right handside
-measures how fast the cost function is changing as a function of the $j$th
-output activation.  If, for example, the cost function doesn't depend
-much on a particular output node $j$, then $\delta_j^L$ will be small,
-which is what we would expect. The first term on the right, measures
-how fast the activation function $f$ is changing at a given activation
-value $z_j^L$.
-
-Notice that everything in the above equations is easily computed.  In
-particular, we compute $z_j^L$ while computing the behaviour of the
-network, and it is only a small additional overhead to compute
-$f'(z^L_j)$.  The exact form of the derivative with respect to the
-output depends on the form of the cost function.
-However, provided the cost function is known there should be little
-trouble in calculating
-
-\begin{equation}
-
-\frac{\partial {\cal C}}{\partial (a_j^L)}
-
-\end{equation}
-
-With the definition of $\delta_j^L$ we have a more compact definition of the derivative of the cost function in terms of the weights, namely
-
-\begin{equation}
-
-\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \delta_j^La_k^{L-1}.
-
-\end{equation}
-
-### Derivatives in terms of $z_j^L$
-
-It is also easy to see that our previous equation can be written as
-
-\begin{equation}
-
-\delta_j^L =\frac{\partial {\cal C}}{\partial z_j^L}= \frac{\partial {\cal C}}{\partial a_j^L}\frac{\partial a_j^L}{\partial z_j^L},
-
-\end{equation}
-
-which can also be interpreted as the partial derivative of the cost function with respect to the biases $b_j^L$, namely
-
-\begin{equation}
-
-\delta_j^L = \frac{\partial {\cal C}}{\partial b_j^L}\frac{\partial b_j^L}{\partial z_j^L}=\frac{\partial {\cal C}}{\partial b_j^L},
-
-\end{equation}
-That is, the error $\delta_j^L$ is exactly equal to the rate of change of the cost function as a function of the bias. 
-
-<!-- !split -->
-
-We have now three equations that are essential for the computations of the derivatives of the cost function at the output layer. These equations are needed to start the algorithm and they are
-
-*The starting equations.* 
-
-
-\begin{equation}
-\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \delta_j^La_k^{L-1},
-\end{equation}
-
-and
-
-\begin{equation}
-\delta_j^L = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)},
-\end{equation}
-
-and
-
-
-\begin{equation}
-\delta_j^L = \frac{\partial {\cal C}}{\partial b_j^L},
-\end{equation}
-
-
-
-
-
-An interesting consequence of the above equations is that when the
-activation $a_k^{L-1}$ is small, the gradient term, that is the
-derivative of the cost function with respect to the weights, will also
-tend to be small. We say then that the weight learns slowly, meaning
-that it changes slowly when we minimize the weights via say gradient
-descent. In this case we say the system learns slowly.
-
-Another interesting feature is that is when the activation function,
-represented by the sigmoid function here, is rather flat when we move towards
-its end values $0$ and $1$. In these
-cases, the derivatives of the activation function will also be close
-to zero, meaning again that the gradients will be small and the
-network learns slowly again.
-
-
-
-We need a fourth equation and we are set. We are going to propagate
-backwards in order to determine the weights and biases. In order
-to do so we need to represent the error in the layer before the final
-one $L-1$ in terms of the errors in the final output layer.
-
-### Final back-propagating equation
-
-We have that (replacing $L$ with a general layer $l$)
-
-\begin{equation}
-
-\delta_j^l =\frac{\partial {\cal C}}{\partial z_j^l}.
-
-\end{equation}
-
-We want to express this in terms of the equations for layer $l+1$. Using the chain rule and summing over all $k$ entries we have
-
-\begin{equation}
-
-\delta_j^l =\sum_k \frac{\partial {\cal C}}{\partial z_k^{l+1}}\frac{\partial z_k^{l+1}}{\partial z_j^{l}}=\sum_k \delta_k^{l+1}\frac{\partial z_k^{l+1}}{\partial z_j^{l}},
-
-\end{equation}
-
-and recalling that
-
-\begin{equation}
-
-z_j^{l+1} = \sum_{i=1}^{M_{l}}w_{ij}^{l+1}a_i^{l}+b_j^{l+1},
-
-\end{equation}
-
-with $M_l$ being the number of nodes in layer $l$, we obtain
-
-\begin{equation}
-
-\delta_j^l =\sum_k \delta_k^{l+1}w_{kj}^{l+1}f'(z_j^l),
-
-\end{equation}
-
-This is our final equation.
-
-We are now ready to set up the algorithm for back propagation and learning the weights and biases.
-
-## Setting up the back-propagation algorithm
-
-
-
-The four equations  provide us with a way of computing the gradient of the cost function. Let us write this out in the form of an algorithm.
-
-*Summary.* 
-* First, we set up the input data $\boldsymbol{x}$ and the activations $\boldsymbol{z}_1$ of the input layer and compute the activation function and the outputs $\boldsymbol{a}^1$.
-* Secondly, perform the feed-forward until we reach the output layer. I.e., compute all activation functions and the pertinent outputs $\boldsymbol{a}^l$ for $l=2,3,\dots,L$.
-* Compute the ouput error $\boldsymbol{\delta}^L$ by
-
-\begin{equation}
-
-\delta_j^L = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)}.
-
-\end{equation}
-
-* Back-propagate the error for each $l=L-1,L-2,\dots,2$ as
-
-\begin{equation}
-
-\delta_j^l = \sum_k \delta_k^{l+1}w_{kj}^{l+1}f'(z_j^l).
-
-\end{equation}
-
-* Finally, update the weights and the biases using gradient descent for each $l=L-1,L-2,\dots,2$ and update the weights and biases according to the rules
-
-\begin{equation}
-
-w_{jk}^l\leftarrow  w_{jk}^l- \eta \delta_j^la_k^{l-1},
-
-\end{equation}
-
-\begin{equation}
-
-b_j^l \leftarrow b_j^l-\eta \frac{\partial {\cal C}}{\partial b_j^l}=b_j^l-\eta \delta_j^l,
-
-\end{equation}
-
-
 
 The parameter $\eta$ is the learning rate.
-Here it is convenient to use stochastic gradient descent with mini-batches and an outer loop that steps through multiple epochs of training.
+In practice one uses stochastic gradient descent with mini-batches and an outer loop that steps through multiple epochs of training. With $N$ instances stacked as rows of $\boldsymbol{Y}^{l-1}$ and $\boldsymbol{\Delta}^l$, the batch gradients are $\partial {\cal C} / \partial \boldsymbol{W}^l = (\boldsymbol{Y}^{l-1})^T \boldsymbol{\Delta}^l$ and $\partial {\cal C} / \partial \boldsymbol{b}^l = $ the sum of the rows of $\boldsymbol{\Delta}^l$. The matrix product performs the sum over the batch.
 
+```{admonition} Weight conventions in code
+:class: tip
+The row-vector convention $\boldsymbol{Z} = \boldsymbol{X} \boldsymbol{W} + \boldsymbol{b}$ matches `X @ W + b` in NumPy. Note that PyTorch's `nn.Linear` stores the transposed matrix, with shape $N_l \times N_{l-1}$, such that `layer.weight.T` corresponds to $\boldsymbol{W}^l$.
+```
 
 ## Learning challenges
 
@@ -346,7 +142,7 @@ the output layer to the input layer, propagating the error gradient. The learnin
 gradients to update each parameter with a Gradient Descent (GD) step.
 
 Unfortunately, the gradients often get smaller and smaller as the
-algorithm progresses down to the first hidden layers. As a result, the
+algorithm progresses down to the first hidden layers. Each step of the backward pass multiplies by a factor $f^{l\prime}(z^l_j)$, which is at most $1/4$ for the sigmoid. As a result, the
 GD update step leaves the lower layer connection weights
 virtually unchanged, and training never converges to a good
 solution. This is known in the literature as 
