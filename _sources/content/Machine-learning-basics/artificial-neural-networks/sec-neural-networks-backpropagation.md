@@ -13,7 +13,7 @@ final output to modify the weights.
 
 ### Notation
 
-We use the notation of {ref}`sec:NeuralNet`. Consider an $L$-layer network, i.e., $L-1$ hidden layers and an output layer $l=L$. Node $j$ in layer $l$ has the preactivation
+We use the notation of {ref}`sec:NeuralNetFFNN`. Consider an $L$-layer network, i.e., $L-1$ hidden layers and an output layer $l=L$. Node $j$ in layer $l$ has the preactivation
 
 \begin{equation}
 z_j^l = \sum_{i=1}^{N_{l-1}} w_{ij}^l y_i^{l-1} + b_j^l,
@@ -35,7 +35,7 @@ To derive the equations, let us start with a plain regression problem. For a sin
 {\cal C} = \frac{1}{2}\sum_{j=1}^{N_L}\left(y_j^L - t_j\right)^2.
 \end{equation}
 
-For a batch of training data $\{ (\inputs_i, \targets_i) \}$ (see {ref}`sec:NeuralNet:learning-algorithm`), the cost is a sum over instances and so are its gradients. Other cost functions can also be considered; only the derivative $\partial {\cal C} / \partial y_j^L$ changes.
+For a batch of training data $\{ (\inputs_i, \targets_i) \}$ (see {ref}`sec:NeuralNetFFNN:learning-algorithm`), the cost is a sum over instances and so are its gradients. Other cost functions can also be considered; only the derivative $\partial {\cal C} / \partial y_j^L$ changes.
 
 ### Derivatives and the chain rule
 
