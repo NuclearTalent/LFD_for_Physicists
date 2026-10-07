@@ -218,7 +218,7 @@ $$
 \MLoutput(z) = \prob(\output(\inputs)=1) = \frac{1}{1+e^{-z}} = \frac{e^z}{1+e^z},
 $$ (eq:MLexamples:sigmoid)
 
-where the so called *activation* $z = \inputs \cdot \weights$. 
+where the so-called *preactivation* $z = \inputs \cdot \weights$. 
 
 * Note that $1-\MLoutput(z)= \MLoutput(-z)$.
 * The sigmoid function can be motivated in several different ways. E.g. in information theory this function represents the probability of a signal $s=1$ rather than $s=0$ when transmission occurs over a noisy channel.
@@ -226,7 +226,7 @@ where the so called *activation* $z = \inputs \cdot \weights$.
 ```{glue:figure} fig_linear_classifier
 :name: "fig:MLexamples:fig_linear_classifier"
 
-Results of the hard (perceptron) and soft (sigmoid) linear classifier on the data from {prf:ref}`example:MLexamples:binary-classification`. The model predictions for the hard classifier are represented by the red and blue regions on either side of the sharp decision boundary (left panel). For the soft classifier (right panel) the colors represent the model prediction for the probability of belonging to the red class. The black line marks the decision boundary where the model gives no preference for either class $\prob(\MLtestoutput=\text{Red}) = 0.5$. See also {numref}`fig:MLexamples:fig_linear_classifier_plane` for the corresponding activation $z$ from the linear regression model.
+Results of the hard (perceptron) and soft (sigmoid) linear classifier on the data from {prf:ref}`example:MLexamples:binary-classification`. The model predictions for the hard classifier are represented by the red and blue regions on either side of the sharp decision boundary (left panel). For the soft classifier (right panel) the colors represent the model prediction for the probability of belonging to the red class. The black line marks the decision boundary where the model gives no preference for either class $\prob(\MLtestoutput=\text{Red}) = 0.5$. See also {numref}`fig:MLexamples:fig_linear_classifier_plane` for the corresponding preactivation $z$ from the linear regression model.
 ```
 
 
@@ -439,7 +439,7 @@ glue("fig_kNN_classifier", fig_kNN_classifier, display=False);
 ```{exercise} Sigmoid decision boundary
 :label: exercise:MLexamples:sigmoid-decision-boundary
 
-Consider the sigmoid classifier {eq}`eq:MLexamples:sigmoid` with the activation determmined by the scalar product of predictor variables and model parameters and the output providing the probability $\prob(\output(\inputs)=1)$.
+Consider the sigmoid classifier {eq}`eq:MLexamples:sigmoid` with the preactivation determined by the scalar product of predictor variables and model parameters and the output providing the probability $\prob(\output(\inputs)=1)$.
 - Explain why the sigmoid classifier can be considered a non-linear model.
 - Explain why the decision boundary of a sigmoid classifier is still a straight line despite the non-linear dependence on the model parameters.
 ```

@@ -725,16 +725,16 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deriving-the-back-propagation-code-for-a-multilayer-perceptron-model">Deriving the back propagation code for a multilayer perceptron model</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions">Definitions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deriving-the-back-propagation-equations-for-a-feed-forward-network">Deriving the back propagation equations for a feed-forward network</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#notation">Notation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cost-function">Cost function</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-and-the-chain-rule">Derivatives and the chain rule</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-the-cost-function">Derivative of the cost function</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bringing-it-together-first-back-propagation-equation">Bringing it together, first back propagation equation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-in-terms-of-z-j-l">Derivatives in terms of <span class="math notranslate nohighlight">\(z_j^L\)</span></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-back-propagating-equation">Final back-propagating equation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-error-signal-delta">The error signal <span class="math notranslate nohighlight">\(\delta\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#output-layer">Output layer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#back-propagating-the-error">Back-propagating the error</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-the-back-propagation-algorithm">Setting up the back-propagation algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-back-propagation-algorithm">The back-propagation algorithm</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-challenges">Learning challenges</a></li>
 </ul>
             </nav>
@@ -749,295 +749,125 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="neural-networks-backpropagation">
 <span id="sec-neuralnetbackprop"></span><h1><span class="section-number">27.2. </span>Neural networks: Backpropagation<a class="headerlink" href="#neural-networks-backpropagation" title="Link to this heading">#</a></h1>
-<p>As we have seen the final output of a feed-forward network can be expressed in terms of basic matrix-vector multiplications.
-The unknowwn quantities are our weights <span class="math notranslate nohighlight">\(w_{ij}\)</span> and we need to find an algorithm for changing them so that our errors are as small as possible.
+<p>As we have seen, the final output of a feed-forward network can be expressed in terms of basic matrix-vector multiplications.
+The unknown quantities are the weights <span class="math notranslate nohighlight">\(w_{ij}^l\)</span> and biases <span class="math notranslate nohighlight">\(b_j^l\)</span>, and we need an algorithm for changing them so that our errors are as small as possible.
 This leads us to the famous back propagation algorithm <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../Backmatter/bibliography.html#id36" title="David E. Rumelhart, Geoffrey E. Hinton, and Ronald J. Williams. Learning representations by back-propagating errors. Nature, 323(6088):533-536, October 1986. doi:10.1038/323533a0.">RumelhartHintonWilliams86</a>]</span>.</p>
-<section id="deriving-the-back-propagation-code-for-a-multilayer-perceptron-model">
-<h2>Deriving the back propagation code for a multilayer perceptron model<a class="headerlink" href="#deriving-the-back-propagation-code-for-a-multilayer-perceptron-model" title="Link to this heading">#</a></h2>
-<p>The questions we want to ask are how do changes in the biases and the
-weights in our network change the cost function and how can we use the
-final output to modify the weights?</p>
-<p>To derive these equations let us start with a plain regression problem
-and define our cost function as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cfba60e9-8e4c-427c-952b-87b3142bb8cc">
-<span class="eqno">(27.13)<a class="headerlink" href="#equation-cfba60e9-8e4c-427c-952b-87b3142bb8cc" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-{\cal C}(\boldsymbol{W})  =  \frac{1}{2}\sum_{i=1}^n\left(y_i - t_i\right)^2, 
-
+<section id="deriving-the-back-propagation-equations-for-a-feed-forward-network">
+<h2>Deriving the back propagation equations for a feed-forward network<a class="headerlink" href="#deriving-the-back-propagation-equations-for-a-feed-forward-network" title="Link to this heading">#</a></h2>
+<p>The questions we want to ask are how changes in the biases and the
+weights of our network change the cost function, and how we can use the
+final output to modify the weights.</p>
+<section id="notation">
+<h3>Notation<a class="headerlink" href="#notation" title="Link to this heading">#</a></h3>
+<p>We use the notation of <a class="reference internal" href="sec-artificial-neural-networks.html#sec-neuralnet"><span class="std std-ref">ANN details</span></a>. Consider an <span class="math notranslate nohighlight">\(L\)</span>-layer network, i.e., <span class="math notranslate nohighlight">\(L-1\)</span> hidden layers and an output layer <span class="math notranslate nohighlight">\(l=L\)</span>. Node <span class="math notranslate nohighlight">\(j\)</span> in layer <span class="math notranslate nohighlight">\(l\)</span> has the preactivation</p>
+<div class="amsmath math notranslate nohighlight" id="equation-890617d9-cbe6-4c7d-af99-c7115781b284">
+<span class="eqno">(27.13)<a class="headerlink" href="#equation-890617d9-cbe6-4c7d-af99-c7115781b284" title="Permalink to this equation">#</a></span>\[\begin{equation}
+z_j^l = \sum_{i=1}^{N_{l-1}} w_{ij}^l y_i^{l-1} + b_j^l,
 \end{equation}\]</div>
-<p>where the <span class="math notranslate nohighlight">\(t_i\)</span>s are our <span class="math notranslate nohighlight">\(n\)</span> targets (the values we want to
-reproduce), while the outputs of the network after having propagated
-all inputs <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> are given by <span class="math notranslate nohighlight">\(y_i\)</span>.  Other cost functions can also be considered.</p>
-<section id="definitions">
-<h3>Definitions<a class="headerlink" href="#definitions" title="Link to this heading">#</a></h3>
-<p>With our definition of the targets <span class="math notranslate nohighlight">\(\boldsymbol{t}\)</span>, the outputs of the
-network <span class="math notranslate nohighlight">\(\boldsymbol{y}\)</span> and the inputs <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> we
-define now the activation <span class="math notranslate nohighlight">\(z_j^l\)</span> of node/neuron/unit <span class="math notranslate nohighlight">\(j\)</span> of the
-<span class="math notranslate nohighlight">\(l\)</span>-th layer as a function of the bias, the weights which add up from
-the previous layer <span class="math notranslate nohighlight">\(l-1\)</span> and the forward passes/outputs
-<span class="math notranslate nohighlight">\(\boldsymbol{a}^{l-1}\)</span> from the previous layer as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e5e6d757-1512-45c5-87e1-75f081d20f82">
-<span class="eqno">(27.14)<a class="headerlink" href="#equation-e5e6d757-1512-45c5-87e1-75f081d20f82" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-z_j^l = \sum_{i=1}^{M_{l-1}}w_{ij}^la_i^{l-1}+b_j^l,
-
+<p>and the output <span class="math notranslate nohighlight">\(y_j^l = f^l(z_j^l)\)</span>. Here <span class="math notranslate nohighlight">\(N_{l-1}\)</span> is the number of nodes in layer <span class="math notranslate nohighlight">\(l-1\)</span>, and <span class="math notranslate nohighlight">\(w_{ij}^l\)</span> connects node <span class="math notranslate nohighlight">\(i\)</span> in layer <span class="math notranslate nohighlight">\(l-1\)</span> to node <span class="math notranslate nohighlight">\(j\)</span> in layer <span class="math notranslate nohighlight">\(l\)</span>. The input layer performs no computation; we simply set <span class="math notranslate nohighlight">\(\boldsymbol{y}^0 \equiv \boldsymbol{x}\)</span>. The network output is <span class="math notranslate nohighlight">\(\boldsymbol{y}^L\)</span>.</p>
+<p>In matrix-vector form, with signals as row vectors and <span class="math notranslate nohighlight">\(\boldsymbol{W}^l\)</span> an <span class="math notranslate nohighlight">\(N_{l-1} \times N_l\)</span> matrix,</p>
+<div class="amsmath math notranslate nohighlight" id="equation-d25e7364-da35-46b4-be1c-54d7dbcec8a5">
+<span class="eqno">(27.14)<a class="headerlink" href="#equation-d25e7364-da35-46b4-be1c-54d7dbcec8a5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\boldsymbol{z}^l = \boldsymbol{y}^{l-1} \boldsymbol{W}^l + \boldsymbol{b}^l, \qquad \boldsymbol{y}^l = f^l(\boldsymbol{z}^l).
 \end{equation}\]</div>
-<p>where <span class="math notranslate nohighlight">\(b_j^l\)</span> are the biases from layer <span class="math notranslate nohighlight">\(l\)</span>.  Here <span class="math notranslate nohighlight">\(M_{l-1}\)</span>
-represents the total number of nodes/neurons/units of layer <span class="math notranslate nohighlight">\(l-1\)</span>.</p>
-<div class="tip admonition">
-<p class="admonition-title">Activation outputs</p>
-<p>In this derivation we will denote the output of neuron <span class="math notranslate nohighlight">\(j\)</span> in layer <span class="math notranslate nohighlight">\(l\)</span> as a_j^{l}. Collectively, all outputs from layer <span class="math notranslate nohighlight">\(l\)</span> corresponds to the vector <span class="math notranslate nohighlight">\(\boldsymbol{a}^l\)</span>.</p>
-</div>
-<div class="tip admonition">
-<p class="admonition-title">Final outputs</p>
-<p>We will reserve the output notation <span class="math notranslate nohighlight">\(y\)</span> exclusively for the final layer such that an <span class="math notranslate nohighlight">\(L\)</span>-layer network has final output <span class="math notranslate nohighlight">\(\boldsymbol{y} \equiv \boldsymbol{a}^L\)</span>. Note that it is quite common to use a different activation function for the final outputs as compared with the inner layers.</p>
-</div>
-<p>We can rewrite this <em>(figure to be inserted)</em> in a more
-compact form as the matrix-vector products we discussed earlier,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3c3e2137-a16b-4772-a001-790a9ec4361f">
-<span class="eqno">(27.15)<a class="headerlink" href="#equation-3c3e2137-a16b-4772-a001-790a9ec4361f" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\boldsymbol{z}^l = \left(\boldsymbol{W}^l\right)^T\boldsymbol{a}^{l-1}+\boldsymbol{b}^l.
-
+</section>
+<section id="cost-function">
+<h3>Cost function<a class="headerlink" href="#cost-function" title="Link to this heading">#</a></h3>
+<p>To derive the equations, let us start with a plain regression problem. For a single data instance with targets <span class="math notranslate nohighlight">\(\boldsymbol{t} = (t_1, \ldots, t_{N_L})\)</span> we use the cost function</p>
+<div class="amsmath math notranslate nohighlight" id="equation-703e2e3b-b43e-4fdd-982f-a0c0648dca6d">
+<span class="eqno">(27.15)<a class="headerlink" href="#equation-703e2e3b-b43e-4fdd-982f-a0c0648dca6d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+{\cal C} = \frac{1}{2}\sum_{j=1}^{N_L}\left(y_j^L - t_j\right)^2.
 \end{equation}\]</div>
-<p>With the activation values <span class="math notranslate nohighlight">\(\boldsymbol{z}^l\)</span> we can in turn define the
-output of layer <span class="math notranslate nohighlight">\(l\)</span> as <span class="math notranslate nohighlight">\(\boldsymbol{a}^l = f(\boldsymbol{z}^l)\)</span> where <span class="math notranslate nohighlight">\(f\)</span> is our
-activation function. In the examples here we will use the sigmoid
-function discussed in the logistic regression lecture. We will also use the same activation function <span class="math notranslate nohighlight">\(f\)</span> for all layers
-and their nodes.  It means we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f876103a-4b95-4a44-a03b-2cf82aa652a6">
-<span class="eqno">(27.16)<a class="headerlink" href="#equation-f876103a-4b95-4a44-a03b-2cf82aa652a6" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-a_j^l = f(z_j^l) = \frac{1}{1+\exp{-(z_j^l)}}.
-
-\end{equation}\]</div>
+<p>For a batch of training data <span class="math notranslate nohighlight">\(\{ (\inputs_i, \targets_i) \}\)</span> (see <a class="reference internal" href="sec-artificial-neural-networks.html#sec-neuralnet-learning-algorithm"><span class="std std-ref">Learning algorithm</span></a>), the cost is a sum over instances and so are its gradients. Other cost functions can also be considered; only the derivative <span class="math notranslate nohighlight">\(\partial {\cal C} / \partial y_j^L\)</span> changes.</p>
 </section>
 <section id="derivatives-and-the-chain-rule">
 <h3>Derivatives and the chain rule<a class="headerlink" href="#derivatives-and-the-chain-rule" title="Link to this heading">#</a></h3>
-<p>From the definition of the activation <span class="math notranslate nohighlight">\(z_j^l\)</span> we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a2eb5c36-12f5-46b4-892e-bea24067bf9f">
-<span class="eqno">(27.17)<a class="headerlink" href="#equation-a2eb5c36-12f5-46b4-892e-bea24067bf9f" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\frac{\partial z_j^l}{\partial w_{ij}^l} = a_i^{l-1},
-
+<p>From the definition of the preactivation <span class="math notranslate nohighlight">\(z_j^l\)</span> we have</p>
+<div class="amsmath math notranslate nohighlight" id="equation-6713e094-ffee-42d3-b531-d89c271df998">
+<span class="eqno">(27.16)<a class="headerlink" href="#equation-6713e094-ffee-42d3-b531-d89c271df998" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\frac{\partial z_j^l}{\partial w_{ij}^l} = y_i^{l-1}, \qquad
+\frac{\partial z_j^l}{\partial b_j^l} = 1, \qquad
+\frac{\partial z_j^l}{\partial y_i^{l-1}} = w_{ij}^l.
 \end{equation}\]</div>
-<p>and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f59553a4-4260-48c9-a4ba-c70431c605a3">
-<span class="eqno">(27.18)<a class="headerlink" href="#equation-f59553a4-4260-48c9-a4ba-c70431c605a3" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\frac{\partial z_j^l}{\partial a_i^{l-1}} = w_{ji}^l. 
-
-\end{equation}\]</div>
-<p>With our definition of the activation function we have (note that this function depends only on <span class="math notranslate nohighlight">\(z_j^l\)</span>)</p>
-<div class="amsmath math notranslate nohighlight" id="equation-faf45015-8c08-415f-b263-242da583913e">
-<span class="eqno">(27.19)<a class="headerlink" href="#equation-faf45015-8c08-415f-b263-242da583913e" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\frac{\partial a_j^l}{\partial z_j^{l}} = a_j^l(1-a_j^l)=f(z_j^l) \left[ 1-f(z_j^l) \right]. 
-
+<p>The output of a node depends only on its own preactivation, <span class="math notranslate nohighlight">\(\partial y_j^l / \partial z_j^l = f^{l\prime}(z_j^l)\)</span>. For the sigmoid function, <span class="math notranslate nohighlight">\(f(z) = 1/(1+e^{-z})\)</span>, this derivative is particularly simple</p>
+<div class="amsmath math notranslate nohighlight" id="equation-c3f71f55-4a5b-4959-a23d-249ea9927b6a">
+<span class="eqno">(27.17)<a class="headerlink" href="#equation-c3f71f55-4a5b-4959-a23d-249ea9927b6a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+f'(z_j^l) = f(z_j^l)\left[1 - f(z_j^l)\right] = y_j^l\left(1-y_j^l\right).
 \end{equation}\]</div>
 </section>
-<section id="derivative-of-the-cost-function">
-<h3>Derivative of the cost function<a class="headerlink" href="#derivative-of-the-cost-function" title="Link to this heading">#</a></h3>
-<p>With these definitions we can now compute the derivative of the cost function in terms of the weights.</p>
-<p>Let us specialize to the output layer <span class="math notranslate nohighlight">\(l=L\)</span>. Our cost function is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-96cc8331-6758-4d66-9e20-8f34f45119da">
-<span class="eqno">(27.20)<a class="headerlink" href="#equation-96cc8331-6758-4d66-9e20-8f34f45119da" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-{\cal C}(\boldsymbol{W^L})  =  \frac{1}{2}\sum_{i=1}^n\left(y_i - t_i\right)^2=\frac{1}{2}\sum_{i=1}^n\left(a_i^L - t_i\right)^2, 
-
+<section id="the-error-signal-delta">
+<h3>The error signal <span class="math notranslate nohighlight">\(\delta\)</span><a class="headerlink" href="#the-error-signal-delta" title="Link to this heading">#</a></h3>
+<p>The key quantity is the derivative of the cost function with respect to the preactivation of node <span class="math notranslate nohighlight">\(j\)</span> in layer <span class="math notranslate nohighlight">\(l\)</span></p>
+<div class="amsmath math notranslate nohighlight" id="equation-27813d08-229e-4f53-bb5e-05c0e28805d3">
+<span class="eqno">(27.18)<a class="headerlink" href="#equation-27813d08-229e-4f53-bb5e-05c0e28805d3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\delta_j^l \equiv \frac{\partial {\cal C}}{\partial z_j^l}.
 \end{equation}\]</div>
-<p>The derivative of this function with respect to the weights is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-706bd0ec-1fab-427c-a6bf-782b477b2bc6">
-<span class="eqno">(27.21)<a class="headerlink" href="#equation-706bd0ec-1fab-427c-a6bf-782b477b2bc6" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \left(a_j^L - t_j\right)\frac{\partial a_j^L}{\partial w_{jk}^{L}}, 
-
+<p>Since <span class="math notranslate nohighlight">\(w_{ij}^l\)</span> and <span class="math notranslate nohighlight">\(b_j^l\)</span> affect the cost only through <span class="math notranslate nohighlight">\(z_j^l\)</span>, the chain rule immediately gives the gradients</p>
+<div class="amsmath math notranslate nohighlight" id="equation-30ce84e0-c9cd-4991-9364-dea0b887437b">
+<span class="eqno">(27.19)<a class="headerlink" href="#equation-30ce84e0-c9cd-4991-9364-dea0b887437b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\frac{\partial {\cal C}}{\partial w_{ij}^l} = y_i^{l-1}\, \delta_j^l, \qquad
+\frac{\partial {\cal C}}{\partial b_j^l} = \delta_j^l.
 \end{equation}\]</div>
-<p>The last partial derivative can easily be computed and reads (by applying the chain rule)</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b7e837e1-ccd5-477b-81d5-f035807a29ab">
-<span class="eqno">(27.22)<a class="headerlink" href="#equation-b7e837e1-ccd5-477b-81d5-f035807a29ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\frac{\partial a_j^L}{\partial w_{jk}^{L}} = \frac{\partial a_j^L}{\partial z_{j}^{L}}\frac{\partial z_j^L}{\partial w_{jk}^{L}}=a_j^L(1-a_j^L)a_k^{L-1},  
-
-\end{equation}\]</div>
+<p>The weight gradient is the product of the signal entering the connection and the error signal at its end. In matrix form, <span class="math notranslate nohighlight">\(\partial {\cal C} / \partial \boldsymbol{W}^l = (\boldsymbol{y}^{l-1})^T \boldsymbol{\delta}^l\)</span>, which is an outer product with the same <span class="math notranslate nohighlight">\(N_{l-1} \times N_l\)</span> shape as <span class="math notranslate nohighlight">\(\boldsymbol{W}^l\)</span>.</p>
 </section>
-<section id="bringing-it-together-first-back-propagation-equation">
-<h3>Bringing it together, first back propagation equation<a class="headerlink" href="#bringing-it-together-first-back-propagation-equation" title="Link to this heading">#</a></h3>
-<p>We have thus</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b13ecdfb-4c25-41de-ba20-b25b8d66e17a">
-<span class="eqno">(27.23)<a class="headerlink" href="#equation-b13ecdfb-4c25-41de-ba20-b25b8d66e17a" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \left(a_j^L - t_j\right)a_j^L(1-a_j^L)a_k^{L-1}, 
-
+<section id="output-layer">
+<h3>Output layer<a class="headerlink" href="#output-layer" title="Link to this heading">#</a></h3>
+<p>At the output layer the error signal follows directly from the cost function</p>
+<div class="amsmath math notranslate nohighlight" id="equation-1beb9e03-5ab2-401b-955b-9b85d8888da6">
+<span class="eqno">(27.20)<a class="headerlink" href="#equation-1beb9e03-5ab2-401b-955b-9b85d8888da6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\delta_j^L = \frac{\partial {\cal C}}{\partial y_j^L}\frac{\partial y_j^L}{\partial z_j^L} = \left(y_j^L - t_j\right) f^{L\prime}(z_j^L),
 \end{equation}\]</div>
-<p>Defining</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a3f69211-fd83-4c5c-807f-e4a12898875d">
-<span class="eqno">(27.24)<a class="headerlink" href="#equation-a3f69211-fd83-4c5c-807f-e4a12898875d" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\delta_j^L = a_j^L(1-a_j^L)\left(a_j^L - t_j\right) = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)},
-
+<p>or, using the Hadamard (element-wise) product <span class="math notranslate nohighlight">\(\odot\)</span>,</p>
+<div class="amsmath math notranslate nohighlight" id="equation-e3d2a98f-7b1c-448d-ac2e-136270704188">
+<span class="eqno">(27.21)<a class="headerlink" href="#equation-e3d2a98f-7b1c-448d-ac2e-136270704188" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\boldsymbol{\delta}^L = \frac{\partial {\cal C}}{\partial \boldsymbol{y}^L} \odot f^{L\prime}(\boldsymbol{z}^L).
 \end{equation}\]</div>
-<p>and using the Hadamard product <span class="math notranslate nohighlight">\(\odot\)</span> (element-wise product) we can write this as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9e122039-aad9-44f4-a760-cabfbcf1ca9e">
-<span class="eqno">(27.25)<a class="headerlink" href="#equation-9e122039-aad9-44f4-a760-cabfbcf1ca9e" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\boldsymbol{\delta}^L = f'(\boldsymbol{z}^L)\odot\frac{\partial {\cal C}}{\partial (\boldsymbol{a}^L)}.
-
-\end{equation}\]</div>
-<p>This is an important expression. The second term on the right handside
-measures how fast the cost function is changing as a function of the <span class="math notranslate nohighlight">\(j\)</span>th
-output activation.  If, for example, the cost function doesn’t depend
-much on a particular output node <span class="math notranslate nohighlight">\(j\)</span>, then <span class="math notranslate nohighlight">\(\delta_j^L\)</span> will be small,
-which is what we would expect. The first term on the right, measures
-how fast the activation function <span class="math notranslate nohighlight">\(f\)</span> is changing at a given activation
-value <span class="math notranslate nohighlight">\(z_j^L\)</span>.</p>
-<p>Notice that everything in the above equations is easily computed.  In
-particular, we compute <span class="math notranslate nohighlight">\(z_j^L\)</span> while computing the behaviour of the
-network, and it is only a small additional overhead to compute
-<span class="math notranslate nohighlight">\(f'(z^L_j)\)</span>.  The exact form of the derivative with respect to the
-output depends on the form of the cost function.
-However, provided the cost function is known there should be little
-trouble in calculating</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9789bb3f-0f9f-4ff2-9e1c-00189115b1e8">
-<span class="eqno">(27.26)<a class="headerlink" href="#equation-9789bb3f-0f9f-4ff2-9e1c-00189115b1e8" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\frac{\partial {\cal C}}{\partial (a_j^L)}
-
-\end{equation}\]</div>
-<p>With the definition of <span class="math notranslate nohighlight">\(\delta_j^L\)</span> we have a more compact definition of the derivative of the cost function in terms of the weights, namely</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7d637299-78e3-4621-be10-99f2ad221cd2">
-<span class="eqno">(27.27)<a class="headerlink" href="#equation-7d637299-78e3-4621-be10-99f2ad221cd2" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \delta_j^La_k^{L-1}.
-
-\end{equation}\]</div>
+<p>The first factor measures how fast the cost changes with output <span class="math notranslate nohighlight">\(j\)</span>. If the cost does not depend much on a particular output node, then <span class="math notranslate nohighlight">\(\delta_j^L\)</span> will be small. The second factor measures how fast the activation function changes at <span class="math notranslate nohighlight">\(z_j^L\)</span>, which is a cheap by-product of the forward pass.</p>
+<div class="tip admonition">
+<p class="admonition-title">Linear output for regression</p>
+<p>Regression networks usually have a linear output layer, <span class="math notranslate nohighlight">\(f^L(z) = z\)</span>. Then <span class="math notranslate nohighlight">\(f^{L\prime} = 1\)</span> and the output error is simply the residual, <span class="math notranslate nohighlight">\(\boldsymbol{\delta}^L = \boldsymbol{y}^L - \boldsymbol{t}\)</span>.</p>
+</div>
+<p>Two consequences of the gradient expressions are worth noting. When the incoming signal <span class="math notranslate nohighlight">\(y_i^{l-1}\)</span> is small, the gradient with respect to <span class="math notranslate nohighlight">\(w_{ij}^l\)</span> is also small and the weight learns slowly. The same happens when a sigmoid node saturates, i.e., when its output approaches <span class="math notranslate nohighlight">\(0\)</span> or <span class="math notranslate nohighlight">\(1\)</span>, since then <span class="math notranslate nohighlight">\(f'(z) \approx 0\)</span>.</p>
 </section>
-<section id="derivatives-in-terms-of-z-j-l">
-<h3>Derivatives in terms of <span class="math notranslate nohighlight">\(z_j^L\)</span><a class="headerlink" href="#derivatives-in-terms-of-z-j-l" title="Link to this heading">#</a></h3>
-<p>It is also easy to see that our previous equation can be written as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f63f01e4-97f9-4e53-9bac-91634215ffc9">
-<span class="eqno">(27.28)<a class="headerlink" href="#equation-f63f01e4-97f9-4e53-9bac-91634215ffc9" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\delta_j^L =\frac{\partial {\cal C}}{\partial z_j^L}= \frac{\partial {\cal C}}{\partial a_j^L}\frac{\partial a_j^L}{\partial z_j^L},
-
+<section id="back-propagating-the-error">
+<h3>Back-propagating the error<a class="headerlink" href="#back-propagating-the-error" title="Link to this heading">#</a></h3>
+<p>We need one more equation: the error signal in layer <span class="math notranslate nohighlight">\(l\)</span> expressed in terms of the errors in layer <span class="math notranslate nohighlight">\(l+1\)</span>. Since <span class="math notranslate nohighlight">\(z_j^l\)</span> affects the cost through all preactivations <span class="math notranslate nohighlight">\(z_k^{l+1}\)</span> of the next layer, the chain rule gives</p>
+<div class="amsmath math notranslate nohighlight" id="equation-e0ee3c46-8d53-4ab3-af3e-f5e1e44229f6">
+<span class="eqno">(27.22)<a class="headerlink" href="#equation-e0ee3c46-8d53-4ab3-af3e-f5e1e44229f6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\delta_j^l = \sum_{k=1}^{N_{l+1}} \frac{\partial {\cal C}}{\partial z_k^{l+1}}\frac{\partial z_k^{l+1}}{\partial z_j^{l}} = \sum_{k=1}^{N_{l+1}} \delta_k^{l+1}\frac{\partial z_k^{l+1}}{\partial z_j^{l}}.
 \end{equation}\]</div>
-<p>which can also be interpreted as the partial derivative of the cost function with respect to the biases <span class="math notranslate nohighlight">\(b_j^L\)</span>, namely</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3a526ae9-4c47-4c5a-b672-4f3a56a74ab5">
-<span class="eqno">(27.29)<a class="headerlink" href="#equation-3a526ae9-4c47-4c5a-b672-4f3a56a74ab5" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\delta_j^L = \frac{\partial {\cal C}}{\partial b_j^L}\frac{\partial b_j^L}{\partial z_j^L}=\frac{\partial {\cal C}}{\partial b_j^L},
-
+<p>With <span class="math notranslate nohighlight">\(z_k^{l+1} = \sum_{i} w_{ik}^{l+1} y_i^{l} + b_k^{l+1}\)</span> and <span class="math notranslate nohighlight">\(y_i^l = f^l(z_i^l)\)</span> we find <span class="math notranslate nohighlight">\(\partial z_k^{l+1} / \partial z_j^l = w_{jk}^{l+1} f^{l\prime}(z_j^l)\)</span>, so that</p>
+<div class="amsmath math notranslate nohighlight" id="equation-371852d0-f677-4708-a618-db158a5c65d5">
+<span class="eqno">(27.23)<a class="headerlink" href="#equation-371852d0-f677-4708-a618-db158a5c65d5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\delta_j^l = f^{l\prime}(z_j^l) \sum_{k=1}^{N_{l+1}} w_{jk}^{l+1}\, \delta_k^{l+1},
+\qquad\text{i.e.,}\qquad
+\boldsymbol{\delta}^l = \left(\boldsymbol{\delta}^{l+1} \left(\boldsymbol{W}^{l+1}\right)^T\right) \odot f^{l\prime}(\boldsymbol{z}^l).
 \end{equation}\]</div>
-<p>That is, the error <span class="math notranslate nohighlight">\(\delta_j^L\)</span> is exactly equal to the rate of change of the cost function as a function of the bias.</p>
-<!-- !split -->
-<p>We have now three equations that are essential for the computations of the derivatives of the cost function at the output layer. These equations are needed to start the algorithm and they are</p>
-<p><em>The starting equations.</em></p>
-<div class="amsmath math notranslate nohighlight" id="equation-14669913-cd29-451f-ac19-d97654049c4f">
-<span class="eqno">(27.30)<a class="headerlink" href="#equation-14669913-cd29-451f-ac19-d97654049c4f" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\frac{\partial{\cal C}(\boldsymbol{W^L})}{\partial w_{jk}^L}  =  \delta_j^La_k^{L-1},
-\end{equation}\]</div>
-<p>and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-259dc46b-9278-4e56-844f-86a8bb0061e9">
-<span class="eqno">(27.31)<a class="headerlink" href="#equation-259dc46b-9278-4e56-844f-86a8bb0061e9" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\delta_j^L = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)},
-\end{equation}\]</div>
-<p>and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-512c74f8-6ca9-429c-ad74-fb0d6c766249">
-<span class="eqno">(27.32)<a class="headerlink" href="#equation-512c74f8-6ca9-429c-ad74-fb0d6c766249" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\delta_j^L = \frac{\partial {\cal C}}{\partial b_j^L},
-\end{equation}\]</div>
-<p>An interesting consequence of the above equations is that when the
-activation <span class="math notranslate nohighlight">\(a_k^{L-1}\)</span> is small, the gradient term, that is the
-derivative of the cost function with respect to the weights, will also
-tend to be small. We say then that the weight learns slowly, meaning
-that it changes slowly when we minimize the weights via say gradient
-descent. In this case we say the system learns slowly.</p>
-<p>Another interesting feature is that is when the activation function,
-represented by the sigmoid function here, is rather flat when we move towards
-its end values <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>. In these
-cases, the derivatives of the activation function will also be close
-to zero, meaning again that the gradients will be small and the
-network learns slowly again.</p>
-<p>We need a fourth equation and we are set. We are going to propagate
-backwards in order to determine the weights and biases. In order
-to do so we need to represent the error in the layer before the final
-one <span class="math notranslate nohighlight">\(L-1\)</span> in terms of the errors in the final output layer.</p>
-</section>
-<section id="final-back-propagating-equation">
-<h3>Final back-propagating equation<a class="headerlink" href="#final-back-propagating-equation" title="Link to this heading">#</a></h3>
-<p>We have that (replacing <span class="math notranslate nohighlight">\(L\)</span> with a general layer <span class="math notranslate nohighlight">\(l\)</span>)</p>
-<div class="amsmath math notranslate nohighlight" id="equation-39840809-6307-44e9-95f6-8b7c5f8ca368">
-<span class="eqno">(27.33)<a class="headerlink" href="#equation-39840809-6307-44e9-95f6-8b7c5f8ca368" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\delta_j^l =\frac{\partial {\cal C}}{\partial z_j^l}.
-
-\end{equation}\]</div>
-<p>We want to express this in terms of the equations for layer <span class="math notranslate nohighlight">\(l+1\)</span>. Using the chain rule and summing over all <span class="math notranslate nohighlight">\(k\)</span> entries we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-98affe04-7eab-486e-82ad-dd3a29cd65ce">
-<span class="eqno">(27.34)<a class="headerlink" href="#equation-98affe04-7eab-486e-82ad-dd3a29cd65ce" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\delta_j^l =\sum_k \frac{\partial {\cal C}}{\partial z_k^{l+1}}\frac{\partial z_k^{l+1}}{\partial z_j^{l}}=\sum_k \delta_k^{l+1}\frac{\partial z_k^{l+1}}{\partial z_j^{l}},
-
-\end{equation}\]</div>
-<p>and recalling that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-24858c50-dc52-4857-ad63-8189df3b18c3">
-<span class="eqno">(27.35)<a class="headerlink" href="#equation-24858c50-dc52-4857-ad63-8189df3b18c3" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-z_j^{l+1} = \sum_{i=1}^{M_{l}}w_{ij}^{l+1}a_i^{l}+b_j^{l+1},
-
-\end{equation}\]</div>
-<p>with <span class="math notranslate nohighlight">\(M_l\)</span> being the number of nodes in layer <span class="math notranslate nohighlight">\(l\)</span>, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3e9107ba-2be9-4351-9559-abfe3f5bf749">
-<span class="eqno">(27.36)<a class="headerlink" href="#equation-3e9107ba-2be9-4351-9559-abfe3f5bf749" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\delta_j^l =\sum_k \delta_k^{l+1}w_{kj}^{l+1}f'(z_j^l),
-
-\end{equation}\]</div>
-<p>This is our final equation.</p>
-<p>We are now ready to set up the algorithm for back propagation and learning the weights and biases.</p>
+<p>The error signal travels backwards through the same weights as the forward signal, but with the transposed matrix.</p>
 </section>
 </section>
-<section id="setting-up-the-back-propagation-algorithm">
-<h2>Setting up the back-propagation algorithm<a class="headerlink" href="#setting-up-the-back-propagation-algorithm" title="Link to this heading">#</a></h2>
-<p>The four equations  provide us with a way of computing the gradient of the cost function. Let us write this out in the form of an algorithm.</p>
+<section id="the-back-propagation-algorithm">
+<h2>The back-propagation algorithm<a class="headerlink" href="#the-back-propagation-algorithm" title="Link to this heading">#</a></h2>
+<p>The equations above provide the gradient of the cost function with respect to all weights and biases.</p>
 <p><em>Summary.</em></p>
-<ul class="simple">
-<li><p>First, we set up the input data <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> and the activations <span class="math notranslate nohighlight">\(\boldsymbol{z}_1\)</span> of the input layer and compute the activation function and the outputs <span class="math notranslate nohighlight">\(\boldsymbol{a}^1\)</span>.</p></li>
-<li><p>Secondly, perform the feed-forward until we reach the output layer. I.e., compute all activation functions and the pertinent outputs <span class="math notranslate nohighlight">\(\boldsymbol{a}^l\)</span> for <span class="math notranslate nohighlight">\(l=2,3,\dots,L\)</span>.</p></li>
-<li><p>Compute the ouput error <span class="math notranslate nohighlight">\(\boldsymbol{\delta}^L\)</span> by</p></li>
-</ul>
-<div class="amsmath math notranslate nohighlight" id="equation-9e1a5d62-52e8-4f71-abbd-486208716e5a">
-<span class="eqno">(27.37)<a class="headerlink" href="#equation-9e1a5d62-52e8-4f71-abbd-486208716e5a" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\delta_j^L = f'(z_j^L)\frac{\partial {\cal C}}{\partial (a_j^L)}.
-
-\end{equation}\]</div>
-<ul class="simple">
-<li><p>Back-propagate the error for each <span class="math notranslate nohighlight">\(l=L-1,L-2,\dots,2\)</span> as</p></li>
-</ul>
-<div class="amsmath math notranslate nohighlight" id="equation-1e8683d5-b234-4f1b-8b2a-7b1e1a3b17bb">
-<span class="eqno">(27.38)<a class="headerlink" href="#equation-1e8683d5-b234-4f1b-8b2a-7b1e1a3b17bb" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-\delta_j^l = \sum_k \delta_k^{l+1}w_{kj}^{l+1}f'(z_j^l).
-
-\end{equation}\]</div>
-<ul class="simple">
-<li><p>Finally, update the weights and the biases using gradient descent for each <span class="math notranslate nohighlight">\(l=L-1,L-2,\dots,2\)</span> and update the weights and biases according to the rules</p></li>
-</ul>
-<div class="amsmath math notranslate nohighlight" id="equation-5ca2cdce-a9c2-461a-a33c-8e177817e931">
-<span class="eqno">(27.39)<a class="headerlink" href="#equation-5ca2cdce-a9c2-461a-a33c-8e177817e931" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-w_{jk}^l\leftarrow  w_{jk}^l- \eta \delta_j^la_k^{l-1},
-
-\end{equation}\]</div>
-<div class="amsmath math notranslate nohighlight" id="equation-69e189fb-113d-4280-8290-e714493d2738">
-<span class="eqno">(27.40)<a class="headerlink" href="#equation-69e189fb-113d-4280-8290-e714493d2738" title="Permalink to this equation">#</a></span>\[\begin{equation}
-
-b_j^l \leftarrow b_j^l-\eta \frac{\partial {\cal C}}{\partial b_j^l}=b_j^l-\eta \delta_j^l,
-
+<ol class="arabic simple">
+<li><p>Set <span class="math notranslate nohighlight">\(\boldsymbol{y}^0 = \boldsymbol{x}\)</span>.</p></li>
+<li><p>Forward pass: for <span class="math notranslate nohighlight">\(l = 1, 2, \ldots, L\)</span> compute and store <span class="math notranslate nohighlight">\(\boldsymbol{z}^l = \boldsymbol{y}^{l-1} \boldsymbol{W}^l + \boldsymbol{b}^l\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{y}^l = f^l(\boldsymbol{z}^l)\)</span>.</p></li>
+<li><p>Output error: <span class="math notranslate nohighlight">\(\boldsymbol{\delta}^L = \dfrac{\partial {\cal C}}{\partial \boldsymbol{y}^L} \odot f^{L\prime}(\boldsymbol{z}^L)\)</span>.</p></li>
+<li><p>Backward pass: for <span class="math notranslate nohighlight">\(l = L-1, L-2, \ldots, 1\)</span> compute <span class="math notranslate nohighlight">\(\boldsymbol{\delta}^l = \left(\boldsymbol{\delta}^{l+1} (\boldsymbol{W}^{l+1})^T\right) \odot f^{l\prime}(\boldsymbol{z}^l)\)</span>.</p></li>
+<li><p>Gradient-descent update for all layers <span class="math notranslate nohighlight">\(l = 1, 2, \ldots, L\)</span></p></li>
+</ol>
+<div class="amsmath math notranslate nohighlight" id="equation-ea5068eb-de1a-4448-912f-b41d9f5ad506">
+<span class="eqno">(27.24)<a class="headerlink" href="#equation-ea5068eb-de1a-4448-912f-b41d9f5ad506" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\boldsymbol{W}^l \leftarrow \boldsymbol{W}^l - \eta \left(\boldsymbol{y}^{l-1}\right)^T \boldsymbol{\delta}^l, \qquad
+\boldsymbol{b}^l \leftarrow \boldsymbol{b}^l - \eta\, \boldsymbol{\delta}^l.
 \end{equation}\]</div>
 <p>The parameter <span class="math notranslate nohighlight">\(\eta\)</span> is the learning rate.
-Here it is convenient to use stochastic gradient descent with mini-batches and an outer loop that steps through multiple epochs of training.</p>
+In practice one uses stochastic gradient descent with mini-batches and an outer loop that steps through multiple epochs of training. With <span class="math notranslate nohighlight">\(N\)</span> instances stacked as rows of <span class="math notranslate nohighlight">\(\boldsymbol{Y}^{l-1}\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{\Delta}^l\)</span>, the batch gradients are <span class="math notranslate nohighlight">\(\partial {\cal C} / \partial \boldsymbol{W}^l = (\boldsymbol{Y}^{l-1})^T \boldsymbol{\Delta}^l\)</span> and <span class="math notranslate nohighlight">\(\partial {\cal C} / \partial \boldsymbol{b}^l = \)</span> the sum of the rows of <span class="math notranslate nohighlight">\(\boldsymbol{\Delta}^l\)</span>. The matrix product performs the sum over the batch.</p>
+<div class="tip admonition">
+<p class="admonition-title">Weight conventions in code</p>
+<p>The row-vector convention <span class="math notranslate nohighlight">\(\boldsymbol{Z} = \boldsymbol{X} \boldsymbol{W} + \boldsymbol{b}\)</span> matches <code class="docutils literal notranslate"><span class="pre">X</span> <span class="pre">&#64;</span> <span class="pre">W</span> <span class="pre">+</span> <span class="pre">b</span></code> in NumPy. Note that PyTorch’s <code class="docutils literal notranslate"><span class="pre">nn.Linear</span></code> stores the transposed matrix, with shape <span class="math notranslate nohighlight">\(N_l \times N_{l-1}\)</span>, such that <code class="docutils literal notranslate"><span class="pre">layer.weight.T</span></code> corresponds to <span class="math notranslate nohighlight">\(\boldsymbol{W}^l\)</span>.</p>
+</div>
 </section>
 <section id="learning-challenges">
 <h2>Learning challenges<a class="headerlink" href="#learning-challenges" title="Link to this heading">#</a></h2>
@@ -1045,7 +875,7 @@ Here it is convenient to use stochastic gradient descent with mini-batches and a
 the output layer to the input layer, propagating the error gradient. The learning algorithm uses these
 gradients to update each parameter with a Gradient Descent (GD) step.</p>
 <p>Unfortunately, the gradients often get smaller and smaller as the
-algorithm progresses down to the first hidden layers. As a result, the
+algorithm progresses down to the first hidden layers. Each step of the backward pass multiplies by a factor <span class="math notranslate nohighlight">\(f^{l\prime}(z^l_j)\)</span>, which is at most <span class="math notranslate nohighlight">\(1/4\)</span> for the sigmoid. As a result, the
 GD update step leaves the lower layer connection weights
 virtually unchanged, and training never converges to a good
 solution. This is known in the literature as
@@ -1120,16 +950,16 @@ weights and the learning algorithm diverges. This is the <strong>exploding gradi
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deriving-the-back-propagation-code-for-a-multilayer-perceptron-model">Deriving the back propagation code for a multilayer perceptron model</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions">Definitions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deriving-the-back-propagation-equations-for-a-feed-forward-network">Deriving the back propagation equations for a feed-forward network</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#notation">Notation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cost-function">Cost function</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-and-the-chain-rule">Derivatives and the chain rule</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-the-cost-function">Derivative of the cost function</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bringing-it-together-first-back-propagation-equation">Bringing it together, first back propagation equation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-in-terms-of-z-j-l">Derivatives in terms of <span class="math notranslate nohighlight">\(z_j^L\)</span></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-back-propagating-equation">Final back-propagating equation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-error-signal-delta">The error signal <span class="math notranslate nohighlight">\(\delta\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#output-layer">Output layer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#back-propagating-the-error">Back-propagating the error</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-the-back-propagation-algorithm">Setting up the back-propagation algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-back-propagation-algorithm">The back-propagation algorithm</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-challenges">Learning challenges</a></li>
 </ul>
   </nav></div>

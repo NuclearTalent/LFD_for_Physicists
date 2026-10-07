@@ -744,41 +744,41 @@ document.write(`
 <section id="a-bayesian-binary-classifier">
 <span id="sec-probabilistic-neural-network-bayesian-binary-classifier"></span><h2>A Bayesian binary classifier<a class="headerlink" href="#a-bayesian-binary-classifier" title="Link to this heading">#</a></h2>
 <p>Consider first a classification problem where the single output <span class="math notranslate nohighlight">\(y\)</span> of the final network layer is a real number <span class="math notranslate nohighlight">\(\in [0,1]\)</span> that indicates the (discrete) probability for input <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> belonging to either class <span class="math notranslate nohighlight">\(t=1\)</span> or <span class="math notranslate nohighlight">\(t=0\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3a02fbb0-65cc-4477-a674-89076ea13563">
-<span class="eqno">(31.1)<a class="headerlink" href="#equation-3a02fbb0-65cc-4477-a674-89076ea13563" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-81b7aecb-e589-420d-88b8-8c03af2189ca">
+<span class="eqno">(31.1)<a class="headerlink" href="#equation-81b7aecb-e589-420d-88b8-8c03af2189ca" title="Permalink to this equation">#</a></span>\[\begin{align}
 p_{t=1} \equiv p(t=1 | \boldsymbol{w},\boldsymbol{x}) &amp;= y \\
 p_{t=0} \equiv p(t=0 | \boldsymbol{w},\boldsymbol{x}) &amp;= 1-y,
 \end{align}\]</div>
 <p>The output <span class="math notranslate nohighlight">\(y\)</span> is in fact the <em>parameter</em> of a Bernoulli distribution over <span class="math notranslate nohighlight">\(t\)</span>. For a classification task, an optimized-weights network with a single output therefore delivers a complete probability distribution for the datum. The distribution width, <span class="math notranslate nohighlight">\(y(1-y)\)</span>, is already built in. For a regression problem, a probabilistic model might need to output more than one parameter to specify probability distributions for target data. We return to this in <a class="reference internal" href="sec-bnns-in-practice.html#sec-bnns-in-practice"><span class="std std-ref">Bayesian neural networks in practice</span></a>.</p>
 <p>A simple binary classifier can be trained by minimizing the loss function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d1e58673-9f79-4edd-8366-c30fa891661e">
-<span class="eqno">(31.2)<a class="headerlink" href="#equation-d1e58673-9f79-4edd-8366-c30fa891661e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c6b76c5e-3229-467e-af62-51ebede0c9ad">
+<span class="eqno">(31.2)<a class="headerlink" href="#equation-c6b76c5e-3229-467e-af62-51ebede0c9ad" title="Permalink to this equation">#</a></span>\[\begin{equation}
  C_W(\boldsymbol{w}) = C(\boldsymbol{w}) +  \alpha E_W(\boldsymbol{w}), 
 \end{equation}\]</div>
 <p>made up of an error function</p>
-<div class="amsmath math notranslate nohighlight" id="equation-35d6f95e-67ca-46e1-8d9a-b5c227d62e08">
-<span class="eqno">(31.3)<a class="headerlink" href="#equation-35d6f95e-67ca-46e1-8d9a-b5c227d62e08" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7ba0f92a-beba-475e-ba96-57d1fb43ea0c">
+<span class="eqno">(31.3)<a class="headerlink" href="#equation-7ba0f92a-beba-475e-ba96-57d1fb43ea0c" title="Permalink to this equation">#</a></span>\[\begin{equation}
  C(\boldsymbol{w}) = -\sum_n \left[ t^{(n)} \log ( y(\boldsymbol{x}^{(n)},\boldsymbol{w})) + (1 - t^{(n)}) \log (1 - y(\boldsymbol{x}^{(n)},\boldsymbol{w})) \right], 
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(t^{(n)}\)</span> is the training data, and the regularizer</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6d132260-793c-4872-8885-6cac1769d188">
-<span class="eqno">(31.4)<a class="headerlink" href="#equation-6d132260-793c-4872-8885-6cac1769d188" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3d43d36d-5fe6-4a00-a159-91603add73a5">
+<span class="eqno">(31.4)<a class="headerlink" href="#equation-3d43d36d-5fe6-4a00-a159-91603add73a5" title="Permalink to this equation">#</a></span>\[\begin{equation}
  E_W(\boldsymbol{w}) = \frac{1}{2} \sum_i w_i^2, 
 \end{equation}\]</div>
 <p>is designed to avoid overfitting.
 The error function can be interpreted as minus the log likelihood, with the likelihood</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4103cefc-cfb4-46b9-8408-9671ab52c3c7">
-<span class="eqno">(31.5)<a class="headerlink" href="#equation-4103cefc-cfb4-46b9-8408-9671ab52c3c7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-65f32331-8858-48ca-b17e-7e36d9cf56bd">
+<span class="eqno">(31.5)<a class="headerlink" href="#equation-65f32331-8858-48ca-b17e-7e36d9cf56bd" title="Permalink to this equation">#</a></span>\[\begin{equation}
  p(\mathcal{D}|\boldsymbol{w}) \propto \exp\left[ - C(\boldsymbol{w}) \right]. 
 \end{equation}\]</div>
 <p>Similarly the regularizer can be interpreted in terms of a log prior probability distribution over the parameters. With the quadratic <span class="math notranslate nohighlight">\(E_W\)</span> given above, the corresponding prior distribution is a Gaussian with variance <span class="math notranslate nohighlight">\(\sigma_W^2 = 1/\alpha\)</span> and <span class="math notranslate nohighlight">\(1/Z_W = (\alpha/2\pi)^{K/2}\)</span>, where <span class="math notranslate nohighlight">\(K\)</span> is the number of parameters in <span class="math notranslate nohighlight">\(w\)</span>.</p>
-<div class="amsmath math notranslate nohighlight" id="equation-30c88aa6-76b5-4ccc-b052-bac33ff25910">
-<span class="eqno">(31.6)<a class="headerlink" href="#equation-30c88aa6-76b5-4ccc-b052-bac33ff25910" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-53362681-a32c-4062-ba29-ff901ca345e7">
+<span class="eqno">(31.6)<a class="headerlink" href="#equation-53362681-a32c-4062-ba29-ff901ca345e7" title="Permalink to this equation">#</a></span>\[\begin{equation}
  p(\boldsymbol{w} | \alpha) = \frac{1}{Z_W(\alpha)} \exp \left[ -\alpha E_W \right]. 
 \end{equation}\]</div>
 <p>The objective function <span class="math notranslate nohighlight">\(C_W(w)\)</span> then corresponds to a (unnormalized) negative log-posterior for the parameters <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> given the data</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3bb9ef27-e3f1-49ef-9ea0-c559d4535f4e">
-<span class="eqno">(31.7)<a class="headerlink" href="#equation-3bb9ef27-e3f1-49ef-9ea0-c559d4535f4e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bee8a8aa-f98e-4246-88a2-d50c7188fb26">
+<span class="eqno">(31.7)<a class="headerlink" href="#equation-bee8a8aa-f98e-4246-88a2-d50c7188fb26" title="Permalink to this equation">#</a></span>\[\begin{equation}
  p(\boldsymbol{w} | \mathcal{D}, \alpha) = \frac{p(D|\boldsymbol{w}) p(\boldsymbol{w}|\alpha)}{p(\mathcal{D}|\alpha)} = \frac{1}{Z_M} \exp [ -C_W(\boldsymbol{w}) ]. 
 \end{equation}\]</div>
 <p>We show the evolution of this probability distribution for a sequence of an increasing number of training data (<span class="math notranslate nohighlight">\(N\)</span>) in <a class="reference internal" href="#fig-scatter-joint-bnn-plot"><span class="std std-numref">Fig. 31.1</span></a>. The targets are either 0 or 1, as indicated by red and blue markers. The network parameters <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> that are found by minimizing <span class="math notranslate nohighlight">\(C_W(\boldsymbol{w})\)</span> can be interpreted as the most probable parameter vector <span class="math notranslate nohighlight">\(\boldsymbol{w}^*\)</span>.</p>

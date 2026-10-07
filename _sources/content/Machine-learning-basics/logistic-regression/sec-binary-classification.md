@@ -59,7 +59,7 @@ In logistic regression, we will use the so-called *logit* function
 y(\boldsymbol{x}; \boldsymbol{w}) = y(z) = \frac{1}{1+e^{-z}} = \frac{e^z}{1+e^z},
 \end{equation}
 
-with the so called *activation* $z = z(\boldsymbol{x}; \boldsymbol{w})$. 
+with the so-called *preactivation* $z = z(\boldsymbol{x}; \boldsymbol{w})$. 
 This function is no longer linear in the model parameters $\boldsymbol{w}$. It is an example of a S-shape or *Sigmoid* function. 
 
 We let $y^{(i)}$ give the probability that a data point $\boldsymbol{x}^{(i)}$ belongs to category $t^{(i)} = 1$, 
@@ -84,7 +84,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from myst_nb import glue
 
-# Set the relevant activation interval 
+# Set the relevant preactivation interval 
 z = np.linspace(-6,6,num=1201)
 
 # Perceptron model
@@ -106,7 +106,7 @@ ax.plot(z,y_perceptron(z),label='perceptron',lw=2,ls='-.',color='red')
 ax.plot(z,y_logit(z),label='logit',lw=2,ls='-',color='blue')
 ax.plot(z,y_tanh(z),label='tanh (normalized)',lw=2,ls='--',color='black')
 ax.legend(loc='best')
-ax.set_xlabel(r'Activation $z$')
+ax.set_xlabel(r'Preactivation $z$')
 ax.set_ylabel('Activation function')
 
 glue("sigmoid_functions_fig", fig, display=False)
@@ -115,7 +115,7 @@ glue("sigmoid_functions_fig", fig, display=False)
 ```{glue:figure} sigmoid_functions_fig
 :name: "fig-sigmoid-functions"
 
-The sigmoid, step,and (normalized) tanh functions; three common classifier functions used in classification and neural networks. In these lecture notes we use the letter $z$ to denote the activation.
+The sigmoid, step,and (normalized) tanh functions; three common classifier functions used in classification and neural networks. In these lecture notes we use the letter $z$ to denote the preactivation.
 ```
 
 ## A binary classifier with two parameters

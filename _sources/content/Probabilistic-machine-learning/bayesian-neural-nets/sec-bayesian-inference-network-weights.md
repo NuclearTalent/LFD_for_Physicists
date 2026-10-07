@@ -41,7 +41,7 @@ We show an example of such inference, comparing the point estimate $y(x; w^*, \a
 ```{figure} ../assets/bnn_binary_classifier_mean.png
 :name: fig-bnn_binary_classifier_mean
 
-The predictions for a Bayesian (left panel) and regular (right panel) binary classifier that has been learning from ten training data (circles) with a weight decay $\alpha = 1.0$. The decision boundary ($y=0.5$, i.e. the activation $a=0$) is shown together with the levels 0.12,0.27,0.73,0.88 (corresponding to the activation $a=\pm1,\pm2$). Test data is shown as plus symbols.
+The predictions for a Bayesian (left panel) and regular (right panel) binary classifier that has been learning from ten training data (circles) with a weight decay $\alpha = 1.0$. The decision boundary ($y=0.5$, i.e. the preactivation $z=0$) is shown together with the levels 0.12,0.27,0.73,0.88 (corresponding to the preactivation $z=\pm1,\pm2$). Test data is shown as plus symbols.
 ```
 
 The Bayesian classifier is based on sampling a very large ensemble of single neurons with different parameters. The distribution of these samples will be proportional to the posterior pdf for the parameters. The decision boundary shown in the figure is obtained as the mean of the predictions of the sampled neurons evaluated on a grid. It is clear that the Bayesian classifier is more uncertain about its predictions in the lower left and upper right corners, where there is little training data. 

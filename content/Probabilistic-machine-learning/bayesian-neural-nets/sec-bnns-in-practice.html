@@ -779,8 +779,8 @@ document.write(`
 <li><p>if <span class="math notranslate nohighlight">\(q\)</span> is low we don’t care about <span class="math notranslate nohighlight">\(p\)</span> (because of the expectation).</p></li>
 </ul>
 <p>The divergence measure is not symmetric, i.e., <span class="math notranslate nohighlight">\(D_\mathrm{KL}(p||q) \neq D_\mathrm{KL}(q||p)\)</span>. In fact, it is possibly more natural to reverse the arguments and compute <span class="math notranslate nohighlight">\(D_\mathrm{KL}(p||q)\)</span>. However, we choose <span class="math notranslate nohighlight">\(\mathrm{KL}(q||p)\)</span> so that we can take expectations with respect to the known <span class="math notranslate nohighlight">\(q(\boldsymbol{w})\)</span> distribution. In addition, the minimization of this KL divergence will encourage the fit to concentrate on plausible parameters since</p>
-<div class="amsmath math notranslate nohighlight" id="equation-44c31642-25ab-4325-be73-bb8600d5b871">
-<span class="eqno">(31.10)<a class="headerlink" href="#equation-44c31642-25ab-4325-be73-bb8600d5b871" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-a24c18fa-90c8-4a42-909c-ff12c2504b71">
+<span class="eqno">(31.10)<a class="headerlink" href="#equation-a24c18fa-90c8-4a42-909c-ff12c2504b71" title="Permalink to this equation">#</a></span>\[\begin{align}
 D_\mathrm{KL}(q||p) &amp;= \int d \boldsymbol{w} \, q(\boldsymbol{w}\lvert \boldsymbol{\theta}) \log \frac{q(\boldsymbol{w} \lvert \boldsymbol{\theta})}{p(\boldsymbol{w} \lvert \mathcal{D})} \\
 &amp;= -\int d \boldsymbol{w} \, q(\boldsymbol{w}\lvert \boldsymbol{\theta}) \log \, p(\boldsymbol{w} \lvert \mathcal{D}) + \int d \boldsymbol{w} \, q(\boldsymbol{w}\lvert \boldsymbol{\theta}) \log \, q(\boldsymbol{w} \lvert \boldsymbol{\theta}).
 \end{align}\]</div>
@@ -789,8 +789,8 @@ D_\mathrm{KL}(q||p) &amp;= \int d \boldsymbol{w} \, q(\boldsymbol{w}\lvert \bold
 <section id="the-evidence-lower-bound">
 <span id="sec-bnns-in-practice-elbo"></span><h3>The evidence lower bound<a class="headerlink" href="#the-evidence-lower-bound" title="Link to this heading">#</a></h3>
 <p>Let us rewrite the posterior pdf <span class="math notranslate nohighlight">\(p(\boldsymbol{w} \lvert \mathcal{D})\)</span> using Bayes theorem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e0de72be-8471-4bb8-873c-f556caa4a72a">
-<span class="eqno">(31.11)<a class="headerlink" href="#equation-e0de72be-8471-4bb8-873c-f556caa4a72a" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-8bc853fb-629d-4b23-9087-4c5992a03121">
+<span class="eqno">(31.11)<a class="headerlink" href="#equation-8bc853fb-629d-4b23-9087-4c5992a03121" title="Permalink to this equation">#</a></span>\[\begin{align}
 D_\mathrm{KL}(q||p) &amp;= \int d \boldsymbol{w} \, q(\boldsymbol{w}\lvert \boldsymbol{\theta}) \left[ \log \, q(\boldsymbol{w}\lvert \boldsymbol{\theta})  - p( \mathcal{D} \lvert \boldsymbol{w}) - p(\boldsymbol{w}) + p(\mathcal{D}) \right] \\
 &amp;= \mathbb{E}_{q} \left[ \log \, q(\boldsymbol{w} \lvert \boldsymbol{\theta}) \right]
 - \mathbb{E}_{q} \left[ \log \, p(\mathcal{D} \lvert \boldsymbol{w}) \right]
@@ -808,8 +808,8 @@ D_\mathrm{KL}(q||p) &amp;= \int d \boldsymbol{w} \, q(\boldsymbol{w}\lvert \bold
 \]</div>
 <p>Variational inference was originally inspired by work in statistical physics, and with that analogy, <span class="math notranslate nohighlight">\(-J_\mathrm{ELBO}(\boldsymbol{\theta})\)</span> is also called the <strong>variational free energy</strong> and sometimes denoted <span class="math notranslate nohighlight">\(\mathcal{F}(\mathcal{D},\boldsymbol{\theta})\)</span>.</p>
 <p>The task at hand is therefore to find the set of parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}^*\)</span> that maximizes <span class="math notranslate nohighlight">\(J_\mathrm{ELBO}(\boldsymbol{\theta})\)</span>. The hardest term to evaluate is obviously the expectation of the log-likelihood</p>
-<div class="amsmath math notranslate nohighlight" id="equation-85e428b0-564c-4f07-93a2-cd9087241aa3">
-<span class="eqno">(31.13)<a class="headerlink" href="#equation-85e428b0-564c-4f07-93a2-cd9087241aa3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fe9c73a8-4d11-4f6f-a823-7544dbb6c994">
+<span class="eqno">(31.13)<a class="headerlink" href="#equation-fe9c73a8-4d11-4f6f-a823-7544dbb6c994" title="Permalink to this equation">#</a></span>\[\begin{equation}
 
 \mathbb{E}_{q} \left[ \log \, p(\mathcal{D} \lvert \boldsymbol{w}) \right]
 = \sum_{i=1}^N \mathbb{E}_{q} \left[ \log \, p( y^{(i)} \lvert \boldsymbol{x}^{(i)}, \boldsymbol{w}) \right].
