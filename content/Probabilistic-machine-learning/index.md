@@ -1,9 +1,9 @@
 (sec:ProbML)=
-# Probabilistic machine learning and emulation
+# Overview of Part V: Probabilistic machine learning and emulation
 
 In this part we focus on machine learning that 
 we define from a Bayesian perspective as methods that provide probability distributions over functions trained on data (defined broadly). 
-We can think conceptually of the discussion of machine learning in {ref}`sec:RootML` as applying to *point estimates* while now we will consider *distributions*.
+We can think conceptually of the discussion of machine learning in {ref}`Part IV <sec:RootML>` as applying to *point estimates* while now we will consider *distributions*.
 
 The chapters are:
 * {ref}`sec:BNN` (or BNNs) build on a probabilistic interpretation of ANNs.

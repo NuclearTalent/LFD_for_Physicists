@@ -330,7 +330,7 @@ You can also get a preview of the effects of finite *sampling*. Since we can dra
 
 
 :::{note}
-See {ref}`sec:Statistics` in Appendix A for further details on PDFs. You can also consult the  `scipy.stats` manual page on [statistical functions](https://docs.scipy.org/doc/scipy/reference/stats.html).
+See {ref}`Appendix A <sec:Statistics>` for further details on PDFs. You can also consult the  `scipy.stats` manual page on [statistical functions](https://docs.scipy.org/doc/scipy/reference/stats.html).
 :::
 
 The diversity of available distributions should make it clear

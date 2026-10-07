@@ -133,7 +133,7 @@ In the Bayesian Research Workflow, after determining the likelihood function and
 In contrast, when doing model fitting in the frequentist framework, one typically focuses on the expected long-term outcomes of an experiment.
 The goal is a point estimate for model parameters, such as the maximum likelihood estimate and associated frequentist confidence interval. Within the Bayesian Research Workflow, the model parameters will have probability distributions. The goal in Bayesian statistics is to estimate the full posterior distribution of the model parameters, even if in the end one summarizes the distribution with point estimates, such as the posterior mean or median, and a Bayesian credible interval.
 
-In these lecture notes, we frequently use Markov Chain Monte Carlo (MCMC) for posterior inference, see  {ref}`sec:RootMCMC`---although more advanced sampling algorithms are also discussed, see {numref}`sec:advanced-sampling-algorithms`. 
+In these lecture notes, we frequently use Markov Chain Monte Carlo (MCMC) for posterior inference, see {ref}`Part III <sec:RootMCMC>`---although more advanced sampling algorithms are also discussed, see {numref}`sec:advanced-sampling-algorithms`. 
 MCMC has two basic outcomes from the Markov chain and Monte Carlo integration: a set of parameter values sampled according to the posterior distribution and an estimate of that distribution (and its statistics). 
 A workflow for MCMC sampling is detailed in {numref}`sec:workflow-for-mcmc`. We emphasize that posterior computation is not complete until the sampling quality and robustness has been checked with appropriate diagnostics (see {numref}`sec:AdvancedMCMC`).
 

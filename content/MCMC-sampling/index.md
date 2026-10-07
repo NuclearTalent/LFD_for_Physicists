@@ -1,5 +1,5 @@
 (sec:RootMCMC)=
-# Overview of Part III: Sampling
+# Overview of Part III: MCMC sampling
 
 ```{epigraph}
 > "Any one who considers arithmetical methods of producing random digits is, of course, in a state of sin."

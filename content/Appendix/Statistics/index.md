@@ -7,7 +7,7 @@ jupytext:
   name: python3
 ---
 (sec:Statistics)=
-# Notation and overview of statistics material
+# Overview of Appendix A: Statistics
 
 ```{epigraph}
 > “If your result needs a statistician then you should design a better experiment.”

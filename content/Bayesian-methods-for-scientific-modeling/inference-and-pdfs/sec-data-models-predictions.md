@@ -117,7 +117,7 @@ The denominator in Eq. {eq}`eq_bayes` is sometimes referred to as the marginal l
 Often we do not need an absolutely normalized posterior distribution, so we can omit the denominator in Eq. {eq}`eq_bayes`. Indeed, the latter does not explicitly depend on $\pars$. 
 
 
-Bayesian parameter estimation can sometimes be very challenging. In the chapter on {ref}`sec:BayesianLinearRegression` we will see an example of where we can perform analytical calculations throughout. However, in most realistic applications the posterior must be evaluated numerically, and most often by sampling using {ref}`sec:RootMCMC`. This is no silver bullet and to quantify (or characterize) a multi-dimensional posterior, sometimes with a complicated geometry, for an intricate physical model, is by no means guaranteed to succeed. At least not in finite time. Nevertheless, obtaining posterior distributions to represent uncertainties is the gold standard in any inferential analysis.
+Bayesian parameter estimation can sometimes be very challenging. In the chapter on {ref}`sec:BayesianLinearRegression` we will see an example of where we can perform analytical calculations throughout. However, in most realistic applications the posterior must be evaluated numerically, and most often by MCMC sampling (see {ref}`Part III <sec:RootMCMC>`). This is no silver bullet and to quantify (or characterize) a multi-dimensional posterior, sometimes with a complicated geometry, for an intricate physical model, is by no means guaranteed to succeed. At least not in finite time. Nevertheless, obtaining posterior distributions to represent uncertainties is the gold standard in any inferential analysis.
 
 
 (sec:ThePPD)=

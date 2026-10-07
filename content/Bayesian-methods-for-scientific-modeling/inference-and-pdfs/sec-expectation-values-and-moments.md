@@ -12,7 +12,7 @@ jupytext:
 
 In this section we provide a brief introduction to expectation values and moments, summarizing the key discrete and continuous definitions.
 Warning: there are multiple notations in the literature for expectation values and moments!
-In Appendix A there are further details on {ref}`sec:Statistics`, which includes {ref}`sec:ExpectationValuesAndMoments` and {ref}`sec:CentralMoments`.
+{ref}`Appendix A <sec:Statistics>` has further details, including {ref}`sec:ExpectationValuesAndMoments` and {ref}`sec:CentralMoments`.
 
 We also address the question: *Is a continuous PDF determined by its moments?*
 and consider the effective number of samples when the sampling process implies correlation. For independent (and hence uncorrelated) samples, we expect new information with each sample. But this is not the case if there are strong correlations between samples! 

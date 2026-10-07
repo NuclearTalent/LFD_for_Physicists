@@ -1,5 +1,5 @@
 (part:Basics)=
-# Bayesian methods for scientific modeling
+# Overview of Part I: Bayesian methods for scientific modeling
 
 In Part I we introduce the basics of Bayesian statistics.
 We've divided the material into chapters on:
@@ -21,4 +21,4 @@ Good supplementary references for this material that are particularly physicist-
 Many of the examples in Sivia have been implemented in Jupyter notebooks that you should work through as we proceed. You are highly encouraged to answer the questions in the notebooks, play with different values for the parameters, and extend the examples.
 
 ::: note
-Additional material on scientific modeling can be found in Appendix A and Appendix B. See  {ref}`sec:Statistics` and {ref}`sec:RootScientificModeling`.
+Additional material on scientific modeling can be found in {ref}`Appendix A <sec:Statistics>` and {ref}`Appendix B <sec:RootScientificModeling>`.
