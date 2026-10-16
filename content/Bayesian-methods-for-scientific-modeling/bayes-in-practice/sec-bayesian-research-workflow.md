@@ -25,7 +25,7 @@ In this chapter we elaborate on these steps.
 Our discussion is partially based on the more extensive exposition in the "Methods Primer" by Van De Schoot et al. {cite}`Vandeschoot:2021`.
 (Note: discussion of how to use and calculate the evidence is postponed to {ref}`sec:ModelSelection`.) 
 
-These four main steps of a typical Bayesian workflow are indicated on the left in {numref}`fig-BayesianWorkflow-research-cycle`: (1) determine the likelihood function using information about the data generating process through a statistical model; (2) formulate prior distributions that embody knowledge about parameters in the statistical model (this step is conceptually performed before conditioning on data, and ideally, where practical, before those data are examined);  (3) calculate the posterior distribution by using Bayes' rule to combine the prior distribution and the likelihood function. The posterior distribution is then used to conduct inferences;
+These four main steps of a typical Bayesian workflow are indicated on the left in {numref}`fig-BayesianWorkflow-research-cycle`: (1) determine the likelihood function using information about the data-generating process through a statistical model; (2) formulate prior distributions that embody knowledge about parameters in the statistical model (this step is conceptually performed before conditioning on data, and ideally, where practical, before those data are examined);  (3) calculate the posterior distribution by using Bayes' rule to combine the prior distribution and the likelihood function. The posterior distribution is then used to conduct inferences;
 (4) Use the posterior to check the extent to which aspects of the statistical model are consistent with the data being analyzed.
 While the four numbered steps provide a useful linear skeleton, the actual workflow consists of nested cycles and feedback. 
 
@@ -59,7 +59,7 @@ The statistical model should account for possible correlations in the outputs (t
 
 One can consider two views on the likelihood:
 
-- Generative view: Assuming specified values of $\pars$, what possible data would the statistical model generate, and with what probabilities? 
+- Generative view: Assuming specified values of $\pars$, what possible data would the statistical model (i.e., the data-generating process) generate, and with what probabilities? 
 - Likelihood view: Focusing on the observed data $\data_\mathrm{obs}$ that we have; how does the likelihood for this data set depend on the values of the model parameters?
 
 The first view is used for prior and posterior predictive simulation.
@@ -72,7 +72,7 @@ The likelihood still describes the probability for observing a set of data, but 
 
 Note that the likelihood function $\mathcal{L}(\pars)$ is **not** a probability distribution for model parameters (and is not normalized, i.e., its integral over $\pars$ is not equal to one). The parameter posterior regains status as a probability density for $\pars$ through Bayes' rule since the likelihood is multiplied with the prior $\pdf{\pars}{I}$ and normalized by the evidence $\pdf{\data}{I}$.
 
-A product of normal distributions, one for each output, is a standard choice for a likelihood function. However, this choice assumes that the data generating process for one output is conditionally independent from the data generating process for any other output. In practice there may be correlations between them, e.g., shared analysis tools, electrical noise that is correlated between detectors, etc.  
+A product of normal distributions, one for each output, is a standard choice for a likelihood function. However, this choice assumes that the data-generating process for one output is conditionally independent from the data-generating process for any other output. In practice there may be correlations between them, e.g., shared analysis tools, electrical noise that is correlated between detectors, etc.  
 Just like the physics model and the prior, the statistical data-generating model is a modeling choice that needs to be justified, documented, and checked.
 The latter may lead to revisiting the background knowledge and repeating the cycle in Step 1.
 
@@ -109,6 +109,19 @@ Good practical advice on choosing priors can be found in the [Stan Prior Choice 
 
 Finally, there is the question of how to formulate a prior in a multi-dimensional parameter space. 
 For convenience, priors are often formulated for each parameter separately and then combined assuming independence, i.e., the prior $\pdf{\para}{I}$ is taken to be the product of the one-dimensional prior pdfs for each individual parameter. However, if previous data or a theoretical argument indicates that two parameters should be correlated, then that correlation should be incorporated into the prior. Note that correlations derived from the data set being analyzed should _not_ be incorporated into the prior. These will emerge from the posterior when it is formed from the prior and the likelihood. Building them into the prior right from the start of the analysis would be an example of the "double dipping" warned about above. 
+
+```{prf:remark} Possible issues with an improper prior
+:label: remark:BayesianWorkflow:improper-prior
+
+A prior is a probability distribution, which therefore should be normalized to one (at least in principle, even if often it can be normalized to a different constant). An *improper prior* integrates to infinity, so it is not a proper probability density. For example, a prior that is taken to be uniform over an infinite interval. This is sometimes viewed as being the most non-informative prior possible; however, physics will almost always dictate bounds on any parameter, so a fully uniform prior is not appropriate.
+
+Some of the possible issues:
+* If the data is such that the likelihood times the prior results in a posterior that also integrates to infinity, then the posterior cannot be treated as a probability distribution.
+* When doing MCMC sampling, such as with Hamiltonian Monte Carlo, an improper prior may result in the sampler failing to properly sample the relevant space or even wandering toward infinity.
+* If one wants to use evidence ratios to compare two models, as described in the chapter on {ref}`sec:ModelSelection`, using improper priors can result in arbitrary Bayes factors.
+
+A more exhaustive discussion of the issues with improper prior can be found in {cite:t}`WASSERMAN19961`.
+```
 
 ### Checking prior implications
 
@@ -229,7 +242,7 @@ We end this chapter with two different recommended checklists for statistically 
 
 Note that this first checklist matches up quite well with the Bayesian workflow given at the start of this section. 
 
-The second checklist, labeled WAMBS (when to Worry and how to Avoid the Misuse of Bayesian Statistics), originates in work by statistics experts from a wide range of application areas {cite}`Vandeschoot:2021`. Here we have condensed the recommendations of the original WAMBS checklist in regard to monitoring the MCMC convergence since we will provide more details on this in Part III. 
+The second checklist, labeled WAMBS (when to Worry and how to Avoid the Misuse of Bayesian Statistics), originates in work by statistics experts from a wide range of application areas {cite}`Vandeschoot:2021`. Here we have condensed the recommendations of the original WAMBS checklist in regard to monitoring the MCMC convergence since we will provide more details on this in Part III (see {numref}`sec:mcmc-in-practice`). 
 
 ```{prf:remark} An adapted version of the WAMBS checklist
 :label: remark:BayesianWorkflow:wambs-checklist
@@ -240,7 +253,7 @@ Misuse of Bayesian Statistics) checklist. Adapted from {cite}`Vandeschoot:2021`.
 1. Ensure the prior distributions and the model or likelihood are well understood (see checklist above).
 2. Describe them thoroughly in your research output (article, analysis notebook, etc.).
 3. Use prior predictive checking to assess whether the prior and generative model imply scientifically plausible data.
-4. Check convergence of your MCMC chain. (See MCMC Workflow section.)
+4. Check convergence of your MCMC chain. (See the {ref}`sec:mcmc-in-practice` chapter.)
 5. To assess the impact of informative priors, compare the posterior results with an analysis using diffuse priors. This comparison can facilitate a deeper understanding of the impact the informative priors have on findings.
 6. Examine the sensitivity of your results to priors, especially multivariate priors. These priors can be particularly influential on the posterior, even with slight modifications to the hyperparameters. 
 7. It may also be worth testing different forms for the likelihood, in order to see what impact they have on the final results. 
