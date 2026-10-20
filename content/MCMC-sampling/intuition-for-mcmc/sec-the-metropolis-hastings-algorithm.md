@@ -75,16 +75,23 @@ Each of the boxes at $X_A$ had a chance with the next Monte Carlo step to go to 
 What if the only moves accepted were those that went uphill (i.e., to higher probability density)? What would happen to $N_A$ and $N_B$ over time? Is this stationary?
 :::{admonition} Answer
 :class: dropdown, my-answer
-If only uphill move were accepted, then $N_B$ would monotonically increase while $N_A$ would eventually monotonically decrease (it would get some input at first from lower probability values of $X$ but eventually those would all be gone).
-So all of the boxes would end up at $x_B$.
+If only uphill moves were accepted, then $N_B$ would monotonically increase while $N_A$ would eventually monotonically decrease (it would get some input at first from lower probability values of $X$ but eventually those would all be gone).
+So all of the boxes would end up at $X_B$.
 This is stationary but not at the posterior we are sampling!
 :::
 ::::
 
-Ok, so suppose $p(X|X')$ is the transition probability, that we'll move from $X'$ to $X$. 
+Ok, so suppose $p(X|X')$ is the transition probability, that we'll move from $X'$ to $X$ in one step. For $X \neq X'$ this is the probability to propose $X$ times the probability to accept it, which we denote $A(X' \to X)$:
+
+$$
+  p(X|X') = q(X|X')\,A(X' \to X), \qquad X \neq X'.
+$$ (eq:MCMC:transition-probability)
+
+The remaining probability is for staying at $X'$ (a rejected step).
+
 ::::{admonition} Checkpoint question 
 :class: my-checkpoint
-In terms of $p(X_A|X_B)$, $p(X_B|X_A)$, $N_A$, and $N_B$, what is the condition that the exchanges between $A$ and $B$ cancel out? (For now assume a symmetric proposal distribution $q$.)
+In terms of $p(X_A|X_B)$, $p(X_B|X_A)$, $N_A$, and $N_B$, what is the condition that the exchanges between $A$ and $B$ cancel out?
 :::{admonition} Answer
 :class: dropdown, my-answer
 
@@ -102,7 +109,7 @@ How are $N_A$ and $N_B$ related to the total $N$ and the posteriors $p(X_A|D,I)$
 :class: dropdown, my-answer
 
 $$
-   N_A = N \cdot p(X_A|D,I) \qquad N_B = N \cdot p(X_B|D,I)
+   N_A \propto N \cdot p(X_A|D,I) \qquad N_B \propto N \cdot p(X_B|D,I)
 $$
 
 :::
@@ -117,17 +124,17 @@ What is the ratio of $p(X_B|X_A)$ to $p(X_A|X_B)$ in terms of $p(X_A|D,I)$ and $
 
 $$
   \frac{p(X_B|X_A)}{p(X_A|X_B)} = 
-  \frac{N p(X_B|D,I)}{N p(X_A|D,I)} = \frac{p(X_B|D,I)}{p(X_A|D,I)}
+  \frac{N_B}{N_A} = \frac{p(X_B|D,I)}{p(X_A|D,I)}
 $$
 
 :::
 ::::
 
 Now how do we realize a rule that satisfies the condition we just derived? We actually have a lot of freedom in doing so and the Metropolis choice is just one possibility. Let's verify that it works. 
-The Metropolis algorithm says
+The Metropolis algorithm uses a symmetric proposal, $q(X|X') = q(X'|X)$, so $q$ cancels in the ratio of transition probabilities {eq}`eq:MCMC:transition-probability` and only the ratio of acceptance probabilities remains. The Metropolis choice is
 
 $$
-  p(X | X') = 
+  A(X' \to X) = 
   \begin{cases}
      \frac{\displaystyle p(X|D,I)}{\displaystyle p(X'|D,I)} \,, & \text{if } p(X|D,I) \leq p(X'|D,I) \\
      1\,. & \text{if } p(X|D,I) \gt p(X'|D,I)
@@ -136,7 +143,7 @@ $$
 
 Let's check cases and see if it works. Here is a chart:
 
-| | $p(X_B\vert X_A)$  |  $p(X_A\vert X_B)$ |
+| | $A(X_A \to X_B)$  |  $A(X_B \to X_A)$ |
 | :-: | :-: | :-: |
 | $p(X_B\vert D,I) \lt p(X_A\vert D,I)$ | *[fill in here]* | *[fill in here]* |
 | $p(X_A\vert D,I) \lt p(X_B\vert D,I)$ | *[fill in here]* | *[fill in here]* | 
@@ -145,11 +152,11 @@ Let's check cases and see if it works. Here is a chart:
 
 ::::{admonition} Checkpoint question 
 :class: my-checkpoint
-Fill in the chart based on the Metropolis algorithm we are using and verify that the ratio of $p(X_B|X_A)$ to $p(X_A|X_B)$ agrees with the answer derived above. <br>  
+Fill in the chart based on the Metropolis algorithm we are using and verify that the ratio of $A(X_A \to X_B)$ to $A(X_B \to X_A)$, which for symmetric $q$ equals the ratio of $p(X_B|X_A)$ to $p(X_A|X_B)$, agrees with the answer derived above. <br>  
 :::{admonition} Answer
 :class: dropdown, my-answer
 
-| | $p(X_B\vert X_A)$  |  $p(X_A\vert X_B)$ |
+| | $A(X_A \to X_B)$  |  $A(X_B \to X_A)$ |
 | :-: | :-: | :-: |
 | $p(X_B\vert D,I) \lt p(X_A\vert D,I)$ | $\frac{\displaystyle p(X_B\vert D,I)}{\displaystyle p(X_A\vert D,I)}$ | 1 |
 | $p(X_A\vert D,I) \lt p(X_B\vert D,I)$ | 1 | $\frac{\displaystyle p(X_A\vert D,I)}{\displaystyle p(X_B\vert D,I)}$ | 
@@ -159,7 +166,19 @@ Dividing the 2nd by the 3rd columns for the 2nd and 3rd rows each gives the corr
 :::
 ::::
 
-Ok, so it works. What if we have an asymmetric proposal distribution? So $q(X|X') \neq q(X'|X)$. Then we just need to go back to where we were equating rates and add the $q$s to each side of the equation. The bottom line is the Metropolis algorithm with the Metropolis ratio $r$ as we have summarized it at the beginning of this lecture.
+Ok, so it works. What if we have an asymmetric proposal distribution, $q(X|X') \neq q(X'|X)$? Inserting Eq. {eq}`eq:MCMC:transition-probability` into the balance condition gives
+
+$$
+  N_A\, q(X_B|X_A)\, A(X_A \to X_B) = N_B\, q(X_A|X_B)\, A(X_B \to X_A),
+$$
+
+so that
+
+$$
+  \frac{A(X_A \to X_B)}{A(X_B \to X_A)} = \frac{p(X_B|D,I)\, q(X_A|X_B)}{p(X_A|D,I)\, q(X_B|X_A)} \equiv r ,
+$$
+
+which is the Metropolis–Hastings ratio for a move from $X_A$ to $X_B$. The reverse move has ratio $1/r$. The choice $A = \min(1, r)$ therefore satisfies the condition: for $r < 1$ the left-hand side is $r/1$, and for $r \geq 1$ it is $1/(1/r) = r$. This is the Metropolis–Hastings algorithm as summarized at the beginning of this section.
 
 
 ::::{admonition} Checkpoint question
