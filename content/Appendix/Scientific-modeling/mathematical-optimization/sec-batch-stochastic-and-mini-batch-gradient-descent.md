@@ -19,11 +19,11 @@ for i in range(N_epochs):
   params_gradient = evaluate_gradient(cost_function, data, params)
   params = params - learning_rate * params_gradient
 ```
-for a fixed numer of epochs `N_epochs` and a function `evaluate_gradient` that returns the gradient vector of the cost function (that depends on the data `data` and the model parameters `params`) with respect to the parameters. The update step depends on the `learning_rate` hyperparameter.
+for a fixed number of epochs `N_epochs` and a function `evaluate_gradient` that returns the gradient vector of the cost function (that depends on the data `data` and the model parameters `params`) with respect to the parameters. The update step depends on the `learning_rate` hyperparameter.
 
 Depending on the size of the data set, batch gradient descent can be rather inefficient since all data must be processed to perform a single parameter update. Instead, one often employs *stochastic gradient descent* (SGD) for which parameter updates are performed for every data instance $\data_i = (\inputs_i, \outputs_i)$ one at a time. Note that the total number of iterations for SGD is $N_\mathrm{epochs} \times N_d$.
 
-SGD performs frequent and fast updates of the paranmeters. The updates are often characterized by a high variance that can cause the cost function to fluctuate heavily during the iterations. This ultimately complicates convergence to the exact minimum, as SGD will keep overshooting. However, employing a learning rate that slowly decreases with iterations can make SGD more efficient. A typical Python implementation would look something like the following:
+SGD performs frequent and fast updates of the parameters. The updates are often characterized by a high variance that can cause the cost function to fluctuate heavily during the iterations. This ultimately complicates convergence to the exact minimum, as SGD will keep overshooting. However, employing a learning rate that slowly decreases with iterations can make SGD more efficient. A typical Python implementation would look something like the following:
 
 ```python
 # Pseudo-code for stochastic gradient descent
@@ -43,7 +43,7 @@ Finally, *mini-batch gradient descent* (MBGD) combines the best of the previous 
 \pars \mapsto \pars - \eta \boldsymbol{\nabla} C_{i N_\mathrm{mb}:(i+1) N_\mathrm{mb}}(\pars),
 \end{equation}
 
-where $N_\mathrm{mb}$ is the mini-batch size. This way one can make use of highly optimized matrix optimizations for the reasonably sized mini-batch evaluations, and one usually finds much reduced variance of the parameter updates which can lead to more stable convergence. Mini-batch gradient descent is typically the algorithm of choice when training a neural network. The total number of parameter updates for MBGD is $N_\mathrm{epochs} \times N_d / N_{mb}$.
+where $N_\mathrm{mb}$ is the mini-batch size. This way one can make use of highly optimized matrix operations for the reasonably sized mini-batch evaluations, and one usually finds much reduced variance of the parameter updates which can lead to more stable convergence. Mini-batch gradient descent is typically the algorithm of choice when training a neural network. The total number of parameter updates for MBGD is $N_\mathrm{epochs} \times N_d / N_{mb}$.
 
 ```python
 # Pseudo-code for mini-batch gradient descent

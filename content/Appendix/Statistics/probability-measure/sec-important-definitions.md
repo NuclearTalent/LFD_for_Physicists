@@ -19,7 +19,7 @@ Whenever $A$ and $B$ are events that we are interested in, then we can also reas
 ```{prf:definition} Probability measure
 :label: definition:probability-measure
 
-A probability measure is a function $\prob : A \to [0,1]$ satisfying
+A probability measure is a function $\prob$ that assigns a number $\prob(A) \in [0,1]$ to every event $A \subseteq S$, satisfying
   
 * $\prob (S)=1$
 * $\prob (\emptyset)=0$
@@ -104,7 +104,7 @@ We can write $P_X(x)$ where it is necessary to emphasize the role of $X$.
 The joint distribution function of a vector $\boldsymbol{X}$ of random variables $\boldsymbol{X} = (X_1, X_2, \ldots, X_n)$ is the function $P : \mathbb{R}^n \to [0,1]$ given by
 
 \begin{equation}
-P(\boldsymbol{x}) = \prob (\boldsymbol{X} \leq \boldsymbol{x}), \qquad x \in \mathbb{R}^n. 
+P(\boldsymbol{x}) = \prob (\boldsymbol{X} \leq \boldsymbol{x}), \qquad \boldsymbol{x} \in \mathbb{R}^n. 
 \end{equation}
 
 We can write $P_{\boldsymbol{X}}$ where it is necessary to emphasize the role of $\boldsymbol{X}$.
@@ -146,7 +146,7 @@ for some integrable function $p : \mathbb{R} \to [0,\infty)$ called the **probab
 The **joint probability density function** of a random vector $\boldsymbol{X} = (X_1, \ldots, X_n)$ of continuous variables is the function $p : \mathbb{R}^n \to [0,\infty)$ given by
 
 \begin{equation}
-P(x_1, \ldots, x_n) = \int_{u_1=-\infty}^{x_1} \ldots \int_{u_n=-\infty}^{x_n} p(u_1, \ldots, u_n) du_1, \ldots, du_n. 
+P(x_1, \ldots, x_n) = \int_{u_1=-\infty}^{x_1} \ldots \int_{u_n=-\infty}^{x_n} p(u_1, \ldots, u_n) du_1 \ldots du_n. 
 \end{equation}
 
 ```
@@ -222,7 +222,7 @@ $$ (eq:Statistics:independence)
 
 ```
 
-Suppose that $X$ and $Y$ have the joint distribution function $p(x,y)$. We wish to discuss the conditional probability distribution of $Y$ given that $X$ takes the value $x$. However, we need to be careful since the event $X=x$ has zero probability. Instead, we can consider the event $x \leq X \leq x+dx$ which leads to the following definition
+Suppose that $X$ and $Y$ have the joint probability density $p(x,y)$. We wish to discuss the conditional probability distribution of $Y$ given that $X$ takes the value $x$. However, we need to be careful since the event $X=x$ has zero probability. Instead, we can consider the event $x \leq X \leq x+dx$ which leads to the following definition
 
 ```{prf:definition} Conditional probability-distribution
 :label: definition:conditional-probability-distribution

@@ -18,7 +18,7 @@ Note that the parameters $\pars$ enter linearly although the dependence on $\inp
 Here is a second example that corresponds to a truncated trigonometric series
 
 $$
-\model{\pars}{\inputt} = A_0 + \sum_{n=1}^N A_n \sin(n\inputt) + B_n \cos(n\inputt),
+\model{\pars}{\inputt} = A_0 + \sum_{n=1}^N \left[ A_n \sin(n\inputt) + B_n \cos(n\inputt) \right],
 $$ 
 
 where the model parameters $\pars = \{ A_0, A_1, \ldots, A_N, B_1, \ldots, B_N\}$ again enter linearly.

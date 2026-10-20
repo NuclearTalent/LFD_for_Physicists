@@ -33,17 +33,17 @@ We will encounter several examples (and variations) of these building blocks in 
 ```  
 
 
-Machine learning is an extremely rich field, in spite of its young age. Increases in computational capabilities have been followed by developments of methods and techniques for analyzing and handling large date sets---relying heavily on statistics, computer science and mathematics, but also importing ideas from other disciplines such as physics. The field is rather new and developing rapidly. Popular software packages (many of them written in Python) are freely available at their respective GitHub sites and involve developer communities measured in the thousands or more. And the number of code developers and contributors keeps increasing.
+Machine learning is an extremely rich field, in spite of its young age. Increases in computational capabilities have been followed by developments of methods and techniques for analyzing and handling large data sets---relying heavily on statistics, computer science and mathematics, but also importing ideas from other disciplines such as physics. The field is rather new and developing rapidly. Popular software packages (many of them written in Python) are freely available at their respective GitHub sites and involve developer communities measured in the thousands or more. And the number of code developers and contributors keeps increasing.
 
 ```{admonition} Python for machine learning
 Some very popular Python libraries for machine learning and probabilistic programming are
 
-- [Scikit-learn](http://scikit-learn.org/stable/),
-- [Tensorflow](https://www.tensorflow.org/), 
-- [Keras](https://keras.io/)
-- [PyMC](https://github.com/pymc-devs/pymc),
-- [PyTorch](http://pytorch.org/), 
-- [Edward](http://edwardlib.org/) 
+- [Scikit-learn](https://scikit-learn.org/stable/),
+- [PyTorch](https://pytorch.org/),
+- [TensorFlow](https://www.tensorflow.org/) and [Keras](https://keras.io/) (Keras 3 can also run on top of JAX or PyTorch),
+- [JAX](https://github.com/jax-ml/jax),
+- [PyMC](https://www.pymc.io/),
+- [NumPyro](https://num.pyro.ai/) and [Pyro](https://pyro.ai/).
 
 In addition, Python is an excellent programming language for prototype construction and for data visualization (with extensive galleries of existing examples).
 

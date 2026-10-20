@@ -40,14 +40,14 @@ with $A_1=4.82033$, $x_1=0.5$, $y_1=0.5$, $\sigma_1=0.2$, and $A_2=4.43181$, $x_
 
 Consider the domain $x,y \in [0,1]$ and use relevant python modules / methods to
 - Plot contour levels of this pdf (useful methods: `np.meshgrid` and `plt.contour`);
-- Make a three-dimensional plot of the pdf (useful methods: `plt.subplots(subplot_kw={"projection": "3d"})` and `plt.plot_surface`);
+- Make a three-dimensional plot of the pdf (useful methods: `plt.subplots(subplot_kw={"projection": "3d"})` and `ax.plot_surface`);
 - Compute and plot the marginal pdf $\p{y}$ (useful method: `scipy.integrate.quad`)
 ```
 
 ## Solutions to exercises
 
 ```{solution} exercise:Statistics:scipy-stats
-:label: colution:Statistics:scipy-stats
+:label: solution:Statistics:scipy-stats
 :class: dropdown
 
 See the code example in the hidden code block below.
@@ -62,7 +62,7 @@ import numpy as np
 fig, ax = plt.subplots(1, 1)
 
 # Define a student-t distribution with location=0.0 and scale = 1.0
-# and \nu=2 degreefs of freedom 
+# and \nu=2 degrees of freedom 
 df=2
 my_student_t_rv = stats.t(df, loc=0.0, scale=1.0)
 
@@ -84,7 +84,7 @@ print(my_student_t_rv.rvs(size=5))
 ax.plot(x, my_student_t_rv.pdf(x), 'k-', lw=2, label=f'Student-t (df={df})')
 
 # Define a student-t distribution with location=0.0 and scale = 1.0
-# and \nu=100 degreefs of freedom 
+# and \nu=100 degrees of freedom 
 df=100
 my_student_t_rv = stats.t(df, loc=0.0, scale=1.0)
 

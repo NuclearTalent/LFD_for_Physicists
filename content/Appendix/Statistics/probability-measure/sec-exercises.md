@@ -13,7 +13,7 @@ jupytext:
 :label: exercise:Statistics:colorblind
 
 The gene responsible for color blindness is located on the X chromosome. In other words, red-green color blindness is an X-linked recessive condition and is much more common in males (with only one X chromosome).
-According to the Howard Hughes medical institute about 7% of men and 0.4% of women are red-green colorblind. Furthermore, sccording to SCB, the Swedish population is 50,3% male and 49,7% female. What is the probability that a person selcted at random is colorblind?
+According to the Howard Hughes medical institute about 7% of men and 0.4% of women are red-green colorblind. Furthermore, according to SCB, the Swedish population is 50.3% male and 49.7% female. What is the probability that a person selcted at random is colorblind?
 ```
 
 ```{exercise} Conditional discrete probability mass function
@@ -63,7 +63,7 @@ Let $C$, $M$, $F$ denote the events that a random person is colorblind, male, an
 
 \begin{align*}
 \prob{(C)} &= \cprob{C}{M}\prob{(M)} + \cprob{C}{F}\prob{(F)} \\
-&(0.07)(0.503) + (0.004)(0.497) = 0.037.
+&= (0.07)(0.503) + (0.004)(0.497) = 0.037.
 \end{align*}
 ```
 
@@ -111,7 +111,7 @@ $$
 for $x > 0$. This gives
 
 $$
-p_{Y|X}(y \vert x) = \frac{\p{x,y}}{\p{x}} = \frac{e^{-x}}{x e^{-x}} \frac{1}{x},
+p_{Y|X}(y \vert x) = \frac{\p{x,y}}{\p{x}} = \frac{e^{-x}}{x e^{-x}} = \frac{1}{x},
 $$
 
 for $0 < y < x$. Note that this is a uniform distribution for $y$ given $x$. Therefore

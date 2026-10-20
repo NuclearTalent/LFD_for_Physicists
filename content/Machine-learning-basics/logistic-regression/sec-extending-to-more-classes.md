@@ -38,7 +38,7 @@ z_{K} = w_{K,0}+w_{K,1}x_1,
 
 \end{equation}
 
-and the model is specified in term of $K$ so-called log-odds or **logit** transformations $y_j^{(i)} = y(z_j^{(i)})$.
+and the model is specified in terms of these $K$ linear functions $z_j^{(i)}$, known as log-odds or **logits**, that are transformed into class probabilities $y_j^{(i)} = y(z_j^{(i)})$.
 
 
 ## Class probabilities: The Softmax function

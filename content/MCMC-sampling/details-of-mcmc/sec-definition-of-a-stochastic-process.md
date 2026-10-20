@@ -162,7 +162,7 @@ class exerciseSP(SP):
         return random_state.uniform()
 
     def update(self, random_state, history):
-      return history[-1] + random_state.uniform())
+      return history[-1] + random_state.uniform()
 ```
 ````
 

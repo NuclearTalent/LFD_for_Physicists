@@ -76,7 +76,7 @@ So far we have only mentioned artificial neural networks where information flows
 
 ### Feedback networks
 
-Artificial neural networks that can perform unsupervised learning typically require some sort of feedback mechanism. Two famous examples of feedback networks are *Hopfield networks* and *Boltzmann machines*. Due to strong analogies with quantum spin systems, the functionality of these networks can be understood with arguments from statistical physics. This discovery was awarded with the 2025 Nobel Prize in physics.
+Artificial neural networks that can perform unsupervised learning typically require some sort of feedback mechanism. Two famous examples of feedback networks are *Hopfield networks* and *Boltzmann machines*. Due to strong analogies with quantum spin systems, the functionality of these networks can be understood with arguments from statistical physics. John Hopfield and Geoffrey Hinton were awarded the 2024 Nobel Prize in physics for these and related foundational contributions to machine learning with artificial neural networks.
 
 ## Neural network architecture
 
@@ -108,5 +108,5 @@ Here we list some of the important limitations of supervised neural network base
 
 * **Need labeled data**. All supervised learning methods require labeled data. Often, labeled data is harder to acquire than unlabeled data (e.g. one must pay for human experts to label images).
 * **Deep neural networks are extremely data hungry**. They perform best when data is plentiful. This is extra problematic for supervised methods where the data must also be labeled. The utility of deep neural networks is extremely limited if data is hard to acquire or the datasets are small (hundreds to a few thousand samples). In this case, the performance of other methods that utilize hand-engineered features can exceed that of deep neural networks.
-* **Homogeneous data**. Almost all deep neural networks deal with homogeneous data of one type. It is very hard to design architectures that mix and match data types (i.e., some continuous and some discrete variables). In some applications, mixed data types is what is required. So called ensemble models, such as random forests or gradient-boosted trees, hare better suited to handle mixed data types.
+* **Homogeneous data**. Almost all deep neural networks deal with homogeneous data of one type. It is very hard to design architectures that mix and match data types (i.e., some continuous and some discrete variables). In some applications, mixed data types is what is required. So called ensemble models, such as random forests or gradient-boosted trees, are better suited to handle mixed data types.
 * **Many problems are not just about prediction**. In the natural sciences we are often interested in learning about the underlying process that generates the data. In this case, it is often difficult to cast hypotheses in a supervised learning setting. While the problems are related, it is possible to make good predictions with a *wrong* model. The model might or might not be useful for understanding the underlying scientific principles. 

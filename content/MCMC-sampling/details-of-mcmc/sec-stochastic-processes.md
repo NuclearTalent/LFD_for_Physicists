@@ -19,7 +19,7 @@ A stochastic (random) process is simply one in which outcomes are uncertain. By 
 
 Stochastic processes are very useful for the modeling of systems that have inherent randomness. This is certainly true in physics, and not the least for quantum systems. We will not delve deep into this topic in these notes. You might encounter stochastic modeling in the future when studying, for example, statistical physics. 
 
-Instead, our specific goal is to become familiar with a special kind of stochastic processes known as Markov chains. Having defined and studied general properties, we will find that such chains be designed to produce samples from a stationary probability distribution of our choice. 
+Instead, our specific goal is to become familiar with a special kind of stochastic processes known as Markov chains. Having defined and studied general properties, we will find that such chains can be designed to produce samples from a stationary probability distribution of our choice. 
 
 ```{admonition} Discuss
 Why is it so useful in Bayesian inference to be able to produce samples from a user-specified probability distrbution?
@@ -42,7 +42,7 @@ y(t) = y_0 \exp(\lambda t),
 \end{equation} 
 
 from which the population is precisely determined. For example, with $y_0 = 10$ and $\lambda = 0.25$ per minute we find that the population has almost doubled four times
-after 11 minutes (since $y(11) = 15.6 \approx 16$). 
+after 11 minutes (since $y(11)/y_0 = 15.6 \approx 2^4$). 
 
 This model, however, does not take into account the randomness of the reproduction of individual organisms. This can be considered in a stochastic growth model where we assign the probability $\lambda \Delta t$ for a single bacteria to split once during a (very short) time interval $\Delta t$. This random process can be simulated using a short python script (click below to show the code). Ten different realizations of the stochastic model are visualized in {numref}`fig-bacterial-growth` and compared with the deterministic one. Questions that might be of scientific interest include:
 
@@ -112,7 +112,7 @@ glue("growth_question", f"{fraction_100_after_10min:.0f}")
 ```{glue:figure} bacterial-growth_fig
 :name: "fig-bacterial-growth"
 
-Growth of a bacteria population. The deterministic exponential growth curve is plotted against a number of realizations of a stochastic growth process. We find for example that {glue:text}`growth_question`% of the processes give 100 bacteria after ten minutes.
+Growth of a bacteria population. The deterministic exponential growth curve is plotted against a number of realizations of a stochastic growth process. We find for example that {glue:text}`growth_question`% of the processes exceed 100 bacteria after ten minutes.
 ```
 
 (sec:DefStochasticProcess)=
@@ -271,7 +271,7 @@ class exerciseSP(SP):
         return random_state.uniform()
 
     def update(self, random_state, history):
-      return history[-1] + random_state.uniform())
+      return history[-1] + random_state.uniform()
 ```
 ````
 

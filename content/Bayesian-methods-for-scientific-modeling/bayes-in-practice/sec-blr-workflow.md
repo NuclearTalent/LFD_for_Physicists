@@ -353,7 +353,7 @@ $$
 \tildecovparsLR^{-1} &= \covparsLR^{-1} + \sigma_{\paraLR}^{-2} \boldsymbol{1} 
 $$ (eq:BayesianLinearRegression:posterior_pars_with_iid_gaussian_prior)
 
-where $\boldsymbol{1}$ is the $N_p \times N_p$ unit matrix. In effect, what has happend is that the prior normal distribution becomes updated to a posterior normal distribution via an inference process that involves a data likelihood. In this particular case, learning from data implies that the mode changes from $\parsLR$ to $\tilde{\parsLR}$ and the covariance from a diagonal structure with $\sigma_{\paraLR}^2$ in all directions to the covariance matrix $\tildecovparsLR$.
+where $\boldsymbol{1}$ is the $N_p \times N_p$ unit matrix. In effect, what has happened is that the prior normal distribution becomes updated to a posterior normal distribution via an inference process that involves a data likelihood. In this particular case, learning from data implies that the mode changes from $\boldsymbol{0}$ to $\tilde{\parsLR}$ and the covariance from a diagonal structure with $\sigma_{\paraLR}^2$ in all directions to the covariance matrix $\tildecovparsLR$.
 
 ```{admonition} Checkpoint question
 :class: my-checkpoint
@@ -372,14 +372,14 @@ $$
 ```{admonition} Transformation property of multivariate normal distributions
 Let $\mathbf{Y}$ be a multivariate normal-distributed random variable of length $N_p$ with mean vector $\boldsymbol{\mu}$ and covariance matrix $\boldsymbol{\Sigma}$. We use the notation $\psub{\mathbf{Y}}{\mathbf{y}} = \mathcal{N} (\mathbf{y} | \mathbf{\mu}, \mathbf{\Sigma})$ to emphasize which variable is normally distributed.
 
-Consider now a general $N_p \times N_p$ matrix $\boldsymbol{A}$ and $N_p \times 1$ vector $\boldsymbol{b}$. Then, the random variable $\mathbf{Z} = \boldsymbol{A} \mathbf{Y} + \boldsymbol{b}$ is also multivariate normal-distributed with the PDF
+Consider now a general $M \times N_p$ matrix $\boldsymbol{A}$ and $M \times 1$ vector $\boldsymbol{b}$. Then, the random variable $\mathbf{Z} = \boldsymbol{A} \mathbf{Y} + \boldsymbol{b}$ is also multivariate normal-distributed with the PDF
 
 $$
 \psub{\mathbf{Z}}{\mathbf{z}} = \mathcal{N} (\mathbf{z} \vert \mathbf{A}\boldsymbol{\mu} + \boldsymbol{b},\boldsymbol{A}\boldsymbol{\Sigma}\boldsymbol{A}^T).
 $$ (eq:BayesianLinearRegression:transformed-normal)
 ```
 
-For multivariate normal distributions we can employ a useful transformation property, shown in Eq. {eq}`eq:BayesianLinearRegression:transformed-normal`. Considering the posterior {eq}`eq:BayesianLinearRegression:posterior_with_iid_gaussian_prior` we partition the parameters $\parsLR^T = [\parsLR_1^T, \parsLR_2^T$] and the mean vector and covariance matrix into $\boldsymbol{\mu}^T = [\boldsymbol{\mu}_1^T,\boldsymbol{\mu}_2^T]$ and
+For multivariate normal distributions we can employ a useful transformation property, shown in Eq. {eq}`eq:BayesianLinearRegression:transformed-normal`. Considering the posterior {eq}`eq:BayesianLinearRegression:posterior_with_iid_gaussian_prior` we partition the parameters $\parsLR^T = [\parsLR_1^T, \parsLR_2^T]$, of dimensions $D_1$ and $D_2$ ($D_1+D_2=N_p$), and the mean vector and covariance matrix into $\boldsymbol{\mu}^T = [\boldsymbol{\mu}_1^T,\boldsymbol{\mu}_2^T]$ and
 
 $$
 \boldsymbol{\Sigma} = \left[
@@ -395,8 +395,7 @@ We can obtain the marginal distribution for $\parsLR_2$ by setting
 $$
 \mathbf{A} = \left[
     \begin{array}{cc}
-        0 & 0 \\
-        0 & \mathbf{1}_{D_2\times D_2}
+        \mathbf{0}_{D_2\times D_1} & \mathbf{1}_{D_2\times D_2}
     \end{array}
 \right], \,\, \mathbf{b} = 0,
 $$
@@ -417,8 +416,8 @@ One can also derive the posterior predictive distribution (PPD), i.e., the proba
 We obtain the posterior predictive distribution by marginalizing over the uncertain model parameters that we just inferred from the given data $\data$.
 
 $$
-\pdf{\widetilde{\boldsymbol{\mathcal{F}}}}{\data}
-\propto \int \pdf{\widetilde{\boldsymbol{\mathcal{F}}}}{\parsLR,\sigmares^2,I}  \pdf{\parsLR}{\data,\sigmares^2,I}\, d\parsLR,
+\pdf{\widetilde{\boldsymbol{\mathcal{F}}}}{\data,\sigmares^2,I}
+= \int \pdf{\widetilde{\boldsymbol{\mathcal{F}}}}{\parsLR,\sigmares^2,I}  \pdf{\parsLR}{\data,\sigmares^2,I}\, d\parsLR,
 $$ (eq:BayesianLinearRegression:ppd_pdf)
 
 where both distributions in the integrand can be expressed as Gaussians. Alternatively, one can express the PPD as the set of model predictions with the model parameters distributed according to the posterior parameter PDF
@@ -427,7 +426,7 @@ $$
 \left\{ \widetilde{\dmat} \parsLR \, : \, \parsLR \sim \pdf{\parsLR}{\data,\sigmares^2,I} \right\}.
 $$ (eq:BayesianLinearRegression:ppd_pdf_set)
 
-This set of predictions can be obtained if we have access to a set of samples from the parameter posterior.
+This set of predictions can be obtained if we have access to a set of samples from the parameter posterior. Note that it describes the uncertainty of the model predictions only. Predictions for new data also include the noise, which is obtained by adding a random draw from $\mathcal{N}(0,\sigmares^2)$ to each prediction.
 
 ::::{admonition} Checkpoint question
 :class: my-checkpoint
@@ -460,10 +459,10 @@ $$
 
   which is zero at $\pars = \optparsLR = \left(\dmat^T\dmat\right)^{-1}\dmat^T\data$ corresponding to the solution of the normal equation.
 
-- We can Taylor expand $L(\parsLR)$ around $\parsLR=\optparsLR$ realizing that the linear (gradient) term is zero. Furthermore, the quadrating term depends on the second derivative (hessian) which is a constant matrix since $L$ only depends quadratically on the parameters
+- We can Taylor expand $L(\parsLR)$ around $\parsLR=\optparsLR$ realizing that the linear (gradient) term is zero. Furthermore, the quadratic term depends on the second derivative (Hessian) which is a constant matrix since $L$ only depends quadratically on the parameters
 
 $$
-H = \Delta L = \nabla_{\parsLR} \cdot (\nabla_{\pars} L(\parsLR)) = \frac{\dmat^T\dmat}{\sigmares^2}
+\boldsymbol{H} = \nabla_{\parsLR} \nabla_{\parsLR}^T L(\parsLR) = \frac{\dmat^T\dmat}{\sigmares^2}
 $$
 
 - Since higher derivatives therefore must be zero, the Taylor expansion actually terminates at second order

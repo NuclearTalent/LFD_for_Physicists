@@ -17,7 +17,7 @@ Let's first elaborate on the structure of the historically very important Metrop
 1. Given $\thetavec_i$, *propose* a value for $\thetavec_{i+1}$, call it the "candidate" $\phivec$, sampled from $q(\phivec|\thetavec_i)$. This $q$ could take many forms, so for concreteness imagine it as a multivariate normal distribution with mean given by $\thetavec_i$ and variance $\sigmavec^2$ (to be specified). 
 This entails a decreased probability to step further away from the current sample and $\sigmavec$ sets scale of the step size.
 1. Decide whether or not to accept candidate $\phivec$ for $\thetavec_{i+1}$. Here we'll use the *Metropolis* condition (later we'll see other ways that may be better).
-This approach dates from the 1950's in physics but didn't become widespread in statistics until almost 1980. With its adoption, it finally enabled Bayesian methods to be much more widely applied.
+This approach dates from the 1950's in physics but didn't become widespread in statistics until around 1990. With its adoption, it finally enabled Bayesian methods to be much more widely applied.
   
 :::{admonition} Metropolis condition
 Calculate Metropolis ratio $r$ given current $\thetavec_i$ and proposed candidate $\phivec$:
