@@ -221,7 +221,7 @@ Imagine the following repeated model calibrations:
 ````{prf:theorem} The bias-variance tradeoff
 :label: theorem:ModelValidation:bias-variance
 
-The expected prediction error of a machine-learning model can be expressed as a sum
+Consider a fixed input $\testinputs$ and the prediction $\MLtestoutput$ of a model that has been trained on a randomly drawn training set. The prediction is compared with a future observation $\testoutput = f^\odot + \epsilon^\odot$, where the noise $\epsilon^\odot$ has zero mean and variance $\sigma^2_\epsilon$, and is independent of the training data. The bias-variance tradeoff theorem states that the expected squared prediction error (with the expectation taken over the randomness in both training sets and the noise $\epsilon^\odot$) can be expressed as a sum
 
 $$
 \expect{\left(\testoutput-\MLtestoutput\right)^2} = \left(f^\odot-\expect{\MLtestoutput}\right)^2 + \var{ \MLtestoutput} + \sigma^2_\epsilon.
@@ -231,51 +231,44 @@ The first of the three terms represents the square of the bias of the machine-le
 ````
 
 ````{prf:proof}
-To derive the {prf:ref}`bias-variance-tradeoff <theorem:ModelValidation:bias-variance>`, we start from
+There are two sources of randomness: the training set, which makes the prediction $\MLtestoutput$ a random variable, and the noise $\epsilon^\odot$ of the future observation. The true value $f^\odot = f(\testinputs)$ is a fixed number, and so is the expected prediction $\expect{\MLtestoutput}$.
 
-\begin{equation}
-\testoutput = f^\odot+\epsilon^\odot
-\end{equation}
+1. *Split the error.* Subtracting and adding $\expect{\MLtestoutput}$, we write the prediction error as a sum of two terms
 
-and realize that the variances of $\testoutput$ and $\epsilon^\odot$ are both equal to $\sigma^2_\epsilon$, since the data-generating process $f^\odot = f(\testinputs)$ is deterministic. The mean value of $\epsilon^\odot$ is equal to zero which means that $\expect{\testoutput} = f^\odot$. The desired expectation value 
+   $$
+   \testoutput - \MLtestoutput = \underbrace{\left( f^\odot - \expect{\MLtestoutput} + \epsilon^\odot \right)}_{a} + \underbrace{\left( \expect{\MLtestoutput} - \MLtestoutput \right)}_{b}.
+   $$
 
-\begin{equation}
-\expect{\left(\testoutput-\MLtestoutput\right)^2} = \expect{\left(f^\odot+\epsilon^\odot-\MLtestoutput\right)^2},
-\end{equation}
+   Squaring and using the linearity of expectation values gives
 
-can be rewritten by subtracting and adding $\expect{\MLtestoutput}$ 
+   $$
+   \expect{\left(\testoutput-\MLtestoutput\right)^2} = \expect{a^2} + \expect{b^2} + 2\expect{ab}.
+   $$
 
-\begin{equation}
-\expect{\left(\testoutput-\MLtestoutput\right)^2}=\expect{\left(f^\odot + \epsilon^\odot - \expect{\MLtestoutput} + \expect{\MLtestoutput}-\MLtestoutput\right)^2}.
-\end{equation}
+2. *First term.* Since $f^\odot - \expect{\MLtestoutput}$ is a fixed number, we have
 
-Using the linearity of expectation values we can rewrite this expression as a sum of three terms:
-* The first one is 
+   $$\begin{align}
+   \expect{a^2} &= \left(f^\odot-\expect{\MLtestoutput}\right)^2 + 2\left(f^\odot-\expect{\MLtestoutput}\right)\expect{\epsilon^\odot} + \expect{(\epsilon^\odot)^2} \\
+      &= \left(f^\odot-\expect{\MLtestoutput}\right)^2 + \sigma^2_\epsilon,
+   \end{align}$$
 
-  \begin{align}
-  \expect{\left(f^\odot-\expect{\MLtestoutput}+\epsilon^\odot\right)^2} &= \expect{\left(f^\odot-\expect{\MLtestoutput}\right)^2} + \expect{{\epsilon^\odot}^2} \\
-  & \qquad + 2 \left(f^\odot-\expect{\MLtestoutput}\right)\expect{\epsilon^\odot} \\
-  &= \left(f^\odot-\expect{\MLtestoutput}\right)^2 + \sigma_\epsilon^2
-  \end{align}
-  
-  where we use the known expectation values, plus the fact that the model bias $f^\odot-\expect{\MLtestoutput}$ is a fixed number. Thus, this term becomes the (squared) model bias plus the irreducible data error $\sigma_\epsilon^2$
+   where we used $\expect{\epsilon^\odot} = 0$, which also implies that $\expect{(\epsilon^\odot)^2} = \var{\epsilon^\odot} = \sigma^2_\epsilon$. This term is the squared bias plus the irreducible error.
 
-* The second term is 
+3. *Second term.* By the definition of the variance,
 
-  \begin{equation}
-  \expect{\left(\expect{\MLtestoutput} - \MLtestoutput\right)^2} = \var{\MLtestoutput}.
-  \end{equation}
-  
-  It corresponds to the variance of model predictions.
+   $$
+   \expect{b^2} = \expect{\left(\MLtestoutput - \expect{\MLtestoutput}\right)^2} = \var{\MLtestoutput}.
+   $$
 
-* The last (mixing) term is zero since the noise $\epsilon^\odot$ of the test datum is independent of the training data, and therefore of $\MLtestoutput$
+4. *Mixing term.* Splitting $a$ into its fixed and random parts gives
 
-  \begin{align}
-  & 2\expect{\left(\testoutput-\expect{\MLtestoutput}\right) \left(\expect{\MLtestoutput}-\MLtestoutput\right)} \\
-  & \quad = 2\expect{\left(\testoutput-\expect{\MLtestoutput}\right)} \left( \expect{\expect{\MLtestoutput}} -  \expect{\MLtestoutput}\right) = 0.
-  \end{align}
-  
-In summary, we have obtained the three terms of Eq. {eq}`eq:ModelValidation:bias-variance` which concludes the proof.
+   $$
+   \expect{ab} = \left(f^\odot-\expect{\MLtestoutput}\right) \expect{\expect{\MLtestoutput} - \MLtestoutput} + \expect{\epsilon^\odot \left(\expect{\MLtestoutput} - \MLtestoutput\right)}.
+   $$
+
+   The first part vanishes since $\expect{\expect{\MLtestoutput} - \MLtestoutput} = \expect{\MLtestoutput} - \expect{\MLtestoutput} = 0$. The second part vanishes because the noise $\epsilon^\odot$ of the future observation is independent of the training data, and therefore of $\MLtestoutput$. The expectation value then factorizes into $\expect{\epsilon^\odot} \expect{\expect{\MLtestoutput} - \MLtestoutput} = 0$.
+
+Adding the three terms gives Eq. {eq}`eq:ModelValidation:bias-variance`.
 ````
 
 

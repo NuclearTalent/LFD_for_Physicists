@@ -191,6 +191,7 @@ fig_corner = pp.corner(example.sequence[:4,:].T,labels=[fr'$X_{{{i}}}$' for i in
 glue("MarkovProcessExample_corner_fig", fig_corner, display=False)
 ```
 
+(sec:MarkovChains:limiting)=
 ## Stationary and limiting distributions
 
 
@@ -368,7 +369,7 @@ $$
 \pi_i T(i,j) = \pi_j T(j,i),
 $$ (eq:MarkovChains:detailed-balance)
 
-for all $j,i$ in $S$. 
+for all states $i$ and $j$. 
 
 ```{exercise} Reversibility
 :label: exercise:MarkovChains:reversibility
@@ -456,58 +457,88 @@ Consider a sequence of outcomes $(i_0, i_1, i_2, \ldots)$ from a stationary Mark
 Dismissing the first $n$ outcomes, for which we have not yet reached equilibrium, we have the sequence $(i_{n+1}, i_{n+2}, \ldots)$. These are, respectively, samples from $\pi^{(n+1)}, \pi^{(n+2)}, \ldots$. Assuming that the Markov chain has reached equilibrium, then all of these distributions are in fact the same. Therefore, our sequence of outcomes after equilibration are samples from the *same* distribution $\pi$.
 `````
 
-Now we would like to *design* a stationary Markov chain, via its transition matrix $T$, such that it has a desired probability distribution $\pi$ as its limiting distribution. Let us first recapitulate some important facts concerning Markov chains. 
+Now we would like to *design* a Markov chain, via its transition matrix $T$, such that it has a desired probability distribution $\pi$ as its limiting distribution. Let us first recapitulate some important facts concerning Markov chains. 
 
-1. A stationary Markov chain is guaranteed to have a limiting distribution when the transition matrix $T$ fulfills certain conditions (irreducibility, etc).
+1. A Markov chain is guaranteed to have a limiting distribution when the transition matrix $T$ fulfills certain conditions (irreducibility and aperiodicity, see {ref}`sec:MarkovChains:limiting`).
 2. A limiting distribution $\pi$ is also a stationary distribution: $\pi = \pi T$.
-3. A distribution $\pi$ that fulfills detailed balance, $\pi_i T(i,j) = \pi_j T(j,i)$, is guaranteed to be a stationary distribution.
+3. A distribution $\pi$ that fulfills detailed balance, $\pi_i T(i,j) = \pi_j T(j,i)$, is guaranteed to be a stationary distribution (this is shown in the proof below).
 
-We utilize these facts in the so called Metropolis design of a Markov chain.
-
-````{prf:remark} The Metropolis design for obtaining a discrete limiting distribution
-:label: remark:MCMC:Metropolis-discrete
-
-We want to design a stationary Markov chain that has a desired distribution $\pi$ as its limiting distribution. To achieve this, we construct the transition matrix in a product form. Its non-diagonal elements are
-
-\begin{equation}
-T(i,j) = A(i,j) S(i,j), \quad \text{for } i \neq j,
-\end{equation}
-
-where $S$ is a (discrete) step proposal matrix and $A$ contains acceptance probabilities. Formally, the elements of these matrices should be interpreted as probabilities
+We utilize these facts in the so called Metropolis design of a Markov chain. The idea is to construct the transition matrix in a product form. Consequently, a transition from position $i$ to a different position $j$ happens in two steps: a new position $j$ is proposed, and the proposal is then either accepted or rejected. The corresponding (conditional) probabilities are collected in a step proposal matrix $S$ and an acceptance matrix $A$ with elements
 
 \begin{align}
 S(i,j) &= \cprob{\text{proposing next position } j}{\text{current position is } i}, \\
 A(i,j) &= \cprob{\text{accepting new position } j}{\text{current position is } i \text{ and } j \text{ is proposed}},
 \end{align}
 
-where we think of outcomes of subsequent random variables as positions in the sample space. Note how the probability of a transition from $i$ to $j$, given by $T(i,j)$, is then (for $j \neq i$) the product of the proposal probability and the conditional acceptance probability.
+where we think of outcomes of subsequent random variables as positions in the sample space. If the proposal is rejected, the chain stays at position $i$. This gives a transition matrix in product form
 
-Constraining $T$ to fulfill detailed balance {eq}`eq:MarkovChains:detailed-balance` we can guarantee that $\pi$ is a stationary distribution. That is, we require
+$$
+T(i,j) = S(i,j) A(i,j), \quad \text{for } i \neq j,
+$$ (eq:MarkovChains:Metropolis-T-offdiagonal)
 
-\begin{equation}
-\pi_i S(i,j) A(i,j) = \pi_j S(j,i) A(j,i).
-\end{equation}
+$$
+T(i,i) = S(i,i) + \sum_{j \neq i} S(i,j) \left( 1 - A(i,j)\right).
+$$ (eq:MarkovChains:Metropolis-T-diagonal)
 
-This condition is fulfilled for any stochastic matrix $S$ (implying non-negative entries and row sums equal to one), with $S(i,j) > 0$ whenever $S(j,i) > 0$, if one sets the acceptance probability
+An off-diagonal element is the probability that position $j$ is proposed *and* accepted. The chain stays at position $i$ either if this position is proposed (the first term of the diagonal element), or if a move to some other position $j$ is proposed (probability $S(i,j)$) and rejected (probability $1 - A(i,j)$).
 
-\begin{equation}
-A(i,j) = \min\left(1, \frac{\pi_j}{\pi_i}\frac{S(j,i)}{S(i,j)} \right),
-\end{equation}
+The question is now how to choose the acceptance probabilities such that the chain samples the desired distribution $\pi$.
 
-where the second argument to the min-function is known as the *Metropolis ratio*.
+````{prf:theorem} The Metropolis design for obtaining a discrete limiting distribution
+:label: remark:MCMC:Metropolis-discrete
 
-Finally, the diagonal entries of the transition matrix are
+Let $\pi$ be a desired probability distribution with $\pi_i > 0$ for all positions $i$ in a discrete sample space, and let $S$ be a stochastic matrix (non-negative entries and row sums equal to one) with $S(i,j) > 0$ whenever $S(j,i) > 0$. A Markov chain with transition matrix $T$, whose off-diagonal elements are written in the product form $T(i,j) = S(i,j) A(i,j)$ with acceptance probabilities $A(i,j)$, can then be designed such that it has $\pi$ as a stationary distribution. If the chain is also irreducible and aperiodic, then $\pi$ is its unique limiting distribution.
+````
 
-\begin{equation}
-T(i,i) = S(i,i) + \sum_{j \neq i} S(i,j) \left( 1 - A(i,j)\right),
-\end{equation}
+````{prf:proof} We will prove the theorem in four steps:
 
-which can be understood by the fact that transitions to the same position can be triggered by a proposed move (the first term; note that $A(i,i)=1$), or by a non-accepted, proposed move to any other position (the sum in the second term). 
+1. *$T$ must be a stochastic matrix.* We let a rejected proposal leave the chain at position $i$, which gives the diagonal elements in Eq. {eq}`eq:MarkovChains:Metropolis-T-diagonal`. Every proposed move from $i$ to $j \neq i$ is then either accepted, with probability $S(i,j)A(i,j)$, or rejected, with probability $S(i,j)\left(1 - A(i,j)\right)$. These two terms appear in the off-diagonal and the diagonal elements, respectively, and add up to $S(i,j)$. Summing over a row therefore gives
 
-Different choices of $S$ can be considered. As long as the chain is irreducible, positively recurrent, and aperiodic then it is guaranteed that $\pi$ is a limiting distribution.
+   $$
+   \begin{aligned}
+   \sum_j T(i,j) &= \sum_{j \neq i} S(i,j) A(i,j) + \underbrace{S(i,i) + \sum_{j \neq i} S(i,j) \left( 1 - A(i,j)\right)}_{T(i,i)} \\
+   &= \sum_j S(i,j) = 1,
+   \end{aligned}
+   $$
+
+   since $S$ is a stochastic matrix. In addition, since $0 \leq A(i,j) \leq 1$ and $S(i,j) \geq 0$, all elements of $T$ are non-negative.
+
+2. *Detailed balance dictates acceptance probabilities.* We demand that $T$ fulfills detailed balance with the target distribution $\pi$. That is, $\pi_i T(i,j) = \pi_j T(j,i)$. This is trivially fulfilled for $i = j$. For $i \neq j$ the product form {eq}`eq:MarkovChains:Metropolis-T-offdiagonal` gives the condition
+
+   $$
+   \pi_i S(i,j) A(i,j) = \pi_j S(j,i) A(j,i).
+   $$
+
+   If $S(i,j) = 0$, then also $S(j,i) = 0$ and the condition holds for any acceptance probabilities. Otherwise, it only constrains the ratio
+
+   $$
+   \frac{A(i,j)}{A(j,i)} = \frac{\pi_j S(j,i)}{\pi_i S(i,j)} \equiv r_{ij},
+   $$
+
+   where $r_{ij}$ is known as the *Metropolis ratio* for a move from $i$ to $j$. Note that $r_{ji} = 1/r_{ij}$. The acceptance probabilities must be in $[0,1]$, and we want them as large as possible such that the chain moves efficiently. For each pair of positions we therefore set the larger of $A(i,j)$ and $A(j,i)$ equal to one:
+   - If $r_{ij} \leq 1$, then $A(i,j) = r_{ij}$ and $A(j,i) = 1$.
+   - If $r_{ij} > 1$, then $A(i,j) = 1$ and $A(j,i) = 1/r_{ij} = r_{ji}$.
+
+   Both cases are summarized by the *Metropolis acceptance probability*
+
+   $$
+   A(i,j) = \min\left(1, r_{ij} \right) = \min\left(1, \frac{\pi_j}{\pi_i}\frac{S(j,i)}{S(i,j)} \right).
+   $$ (eq:MarkovChains:Metropolis-acceptance)
+
+3. *Detailed balance implies stationarity.* With this choice, $\pi_i T(i,j) = \pi_j T(j,i)$ for all $i, j$. Summing over $i$ gives
+
+   $$
+   \sum_i \pi_i T(i,j) = \sum_i \pi_j T(j,i) = \pi_j \sum_i T(j,i) = \pi_j,
+   $$
+
+   where the last step uses that the rows of $T$ sum to one (step 1). This equality implies that $\pi = \pi T$ and consequently that $\pi$ is a stationary distribution.
+
+4. *Limiting distribution.* According to the limit theorem in {ref}`sec:MarkovChains:limiting`, an irreducible and aperiodic chain that has a stationary distribution converges to it from any starting point. (An irreducible chain with a stationary distribution is automatically positively recurrent.) The stationary distribution $\pi$ is then the unique limiting distribution.
+````
+
+In practice, irreducibility must be ensured by the choice of the proposal matrix $S$, such that all positions can be reached. Aperiodicity is usually not a problem: an irreducible chain is aperiodic if $T(i,i) > 0$ for some $i$, which is the case as soon as some proposal can be rejected.
 
 See {numref}`exercise:MCMC:discrete-metropolis` for an explicit example.
-````
 
 
 ## Additional exercises

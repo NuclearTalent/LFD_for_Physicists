@@ -12,7 +12,7 @@ For each datum there is an independent variable $x_i$, and our model for each da
 M_i \equiv M(\pars;x_i) = \sum_{j=0}^{N_p-1} \para_j f_j(x_i).
 \end{equation}
 
-We can collect the basis function evaluated at each independent variable $x_i$ in a matrix $\mathbf{X}$ of dimension $N_d \times N_p$
+We can collect the basis function evaluated at each independent variable $x_i$ in a matrix $\dmat$ of dimension $N_d \times N_p$
 
 $$
 \dmat = 
@@ -86,53 +86,46 @@ $$
 \dmat^T\data = \dmat^T\dmat\pars^*.  
 $$ (eq:NormalEquation)
 
-Given that the **normal matrix** $\dmat^T\dmat$ is invertible, the solution to the normal equation is given by 
+Given that the **normal matrix** $\dmat^T\dmat$ is invertible (which is the case if $\dmat$ has full column rank), the solution to the normal equation is given by 
 
 $$
 \pars^* =\left(\dmat^T\dmat\right)^{-1}\dmat^T\data.
 $$ (eq:LinearModels:OLS_optimum)
 ````
 
-````{prf:proof}
-Due to its quadratic form, the Euclidean norm $\left| \boldsymbol{\epsilon} \right|_2^2 = \left(\data-\dmat\pars\right)^T\left(\data-\dmat\pars\right) \equiv C(\pars)$ is bounded from below. Since the normal matrix $\dmat^T\dmat$ is invertible, and therefore positive definite, there is a single extremum which is the minimum. That is we need to solve the problem
+````{prf:proof} We will derive the normal equation in four steps:
 
-\begin{equation}
-\pars^* =
-{\displaystyle \mathop{\mathrm{arg} \min}_{\pars\in
-{\mathbb{R}}^{N_p}}} \left(\data-\dmat\pars\right)^T\left(\data-\dmat\pars\right).
-\end{equation}
+1. *Cost function.* The cost function is the squared Euclidean norm of the residual vector. Expanding the product gives
 
-In practical terms it means we will require
+   $$
+   C(\pars) = \left(\data-\dmat\pars\right)^T\left(\data-\dmat\pars\right) = \data^T\data - 2\pars^T\dmat^T\data + \pars^T\dmat^T\dmat\pars,
+   $$
 
-\begin{align}
-\frac{\partial C(\pars)}{\partial \para_j} = \frac{\partial }{\partial \para_j} \Bigg[  \sum_{i=1}^{N_d}\Big(y_i &-\para_0 f_0(x_i)-\para_1f_1(x_i)-\para_2f_2(x_i)-\dots \\
-&-  \para_{N_p-1}f_{N_p-1}(x_i)\Big)^2\Bigg] = 0, 
-\end{align}
+   where we used that $\data^T\dmat\pars = \pars^T\dmat^T\data$ since it is a scalar. This is a quadratic function of the parameters.
 
-where $y_i$ and $f_j(x_i)$ are the elements of $\data$ and $\dmat$, respectively. Performing the derivative results in
+2. *Gradient.* With the matrix elements $X_{ij} = f_j(x_i)$ of the design matrix, the cost function reads $C(\pars) = \sum_{i=1}^{N_d} \left( y_i - \sum_{k=0}^{N_p-1} X_{ik}\para_k \right)^2$. Its partial derivative with respect to $\para_j$ is
 
-$$
-\frac{\partial C(\pars)}{\partial \para_j} = -2\Bigg[ \sum_{i=1}^{N_d}f_j(x_i)\Big(y_i &-\para_0 f_0(x_i)-\para_1f_1(x_i)-\para_2f_2(x_i)-\dots \\
-&-\para_{N_p-1}f_{N_p-1}(x_i)\Big)\Bigg]=0,
-$$ (eq:LinearModels:gradient-elements)
+   $$
+   \frac{\partial C(\pars)}{\partial \para_j} = -2 \sum_{i=1}^{N_d} X_{ij} \left( y_i - \sum_{k=0}^{N_p-1} X_{ik}\para_k \right) = -2 \left[ \dmat^T \left( \data - \dmat\pars \right) \right]_j,
+   $$ (eq:LinearModels:gradient-elements)
 
-which is one element of the full gradient vector. This gradient vector can be succinctly expressed in matrix-vector form as
+   where the last step follows since the $j$:th element of $\dmat^T \boldsymbol{v}$ is $\sum_i X_{ij} v_i$ for any vector $\boldsymbol{v}$. Collecting all elements gives the gradient vector
 
-$$
-\boldsymbol{\nabla}_{\pars} C(\pars) = -2 \dmat^T\left( \data-\dmat\pars\right).  
-$$ (eq:LinearRegression:gradient)
+   $$
+   \boldsymbol{\nabla}_{\pars} C(\pars) = -2 \dmat^T\left( \data-\dmat\pars\right).
+   $$ (eq:LinearRegression:gradient)
 
-The minimum of $C$, where $\boldsymbol{\nabla}_{\pars} C(\pars) = 0$, then corresponds to 
+3. *Normal equation.* A minimum of $C$ must be a stationary point, $\boldsymbol{\nabla}_{\pars} C(\pars^*) = 0$, which gives
 
-$$
-\dmat^T\data = \dmat^T\dmat\pars^*,  
-$$
+   $$
+   \dmat^T\data = \dmat^T\dmat\pars^*.
+   $$
 
-which is the normal equation. Finally, if the matrix $\dmat^T\dmat$ is invertible then we have the solution
+4. *Minimum.* The second derivatives, $\partial^2 C / \partial\para_j \partial\para_k = 2 \left(\dmat^T\dmat\right)_{jk}$, form a constant Hessian matrix $2\dmat^T\dmat$. It is positive semi-definite since $\boldsymbol{v}^T\dmat^T\dmat\boldsymbol{v} = \left| \dmat\boldsymbol{v} \right|_2^2 \geq 0$ for any vector $\boldsymbol{v}$. The cost function is therefore convex, and any solution of the normal equation is a global minimum. If $\dmat$ has full column rank, then $\dmat\boldsymbol{v} \neq 0$ for all $\boldsymbol{v} \neq 0$. The normal matrix $\dmat^T\dmat$ is then positive definite, and therefore invertible, and the minimum is unique
 
-$$
-\pars^* =\left(\dmat^T\dmat\right)^{-1}\dmat^T\data.
-$$
+   $$
+   \pars^* =\left(\dmat^T\dmat\right)^{-1}\dmat^T\data.
+   $$
 ````
 
 We note also that since our design matrix is defined as $\dmat\in
