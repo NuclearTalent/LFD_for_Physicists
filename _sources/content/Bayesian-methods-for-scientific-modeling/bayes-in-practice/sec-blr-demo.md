@@ -90,7 +90,7 @@ We can plot the posterior probability distribution for $\pars$, i.e., by plottin
 
 from scipy.stats import multivariate_normal
 
-mu = np.array([0.992,1.992])
+mu = np.array([0.992,1.994])
 Sigma = np.linalg.inv(4 * np.array([[2.01,-1.0],[-1.0,5.01]]))
 
 posterior = multivariate_normal(mean=mu, cov=Sigma)

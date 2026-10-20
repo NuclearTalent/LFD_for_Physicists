@@ -223,7 +223,7 @@ In the end we find the proper Bayesian error propagation given by the PDF
 \begin{equation}
 p(f|{\data},I) \propto \left\{
 \begin{array}{ll}
-f \exp \left[ -\frac{(A-A_0)^2}{2\sigma_A^2} \right], & 0 \le f \le \sqrt{A_\mathrm{max}}, \\
+f \exp \left[ -\frac{(f^2-A_0)^2}{2\sigma_A^2} \right], & 0 \le f \le \sqrt{A_\mathrm{max}}, \\
 0, & \mathrm{otherwise}.
 \end{array}
 \right.
@@ -289,7 +289,7 @@ glue(f"Af_fig", fig_Af, display=False)
 :label: solution:BayesianAdvantages:gaussian-sum-of-errors
 :class: dropdown
 
-The PDF $\pdf{Z}{I}$ is Gaussian with mean $\expect{Z} = \mu_Z = a \mu_X + b \mu_Y$ and variance $\var{Z} = \sigma_Z^2 = a^2\sigma_Z^2 + b^2\sigma_Z^2$, where $\mu_X,\mu_Y$ and $\sigma_X^2, \sigma_Y^2$ are the means and variances of $X$ and $Y$, respectively.
+The PDF $\pdf{Z}{I}$ is Gaussian with mean $\expect{Z} = \mu_Z = a \mu_X + b \mu_Y$ and variance $\var{Z} = \sigma_Z^2 = a^2\sigma_X^2 + b^2\sigma_Y^2$, where $\mu_X,\mu_Y$ and $\sigma_X^2, \sigma_Y^2$ are the means and variances of $X$ and $Y$, respectively.
 
 For $a=b=1$ this is the same result as in {prf:ref}`example:BayesianAdvantage:Z=X+Y`, which should not be surprising since the errors were in fact Gaussian.
 ```

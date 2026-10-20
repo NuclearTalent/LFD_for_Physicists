@@ -14,7 +14,7 @@ We will use PDFs to quantify the strength of our inference processes. However, o
 
 ## Mean, median, mode
 
-The values of the **mode**, **mean**, and **median** can all be used as point estimates for the "most probable" value of $X$. The mode is the position of the peak of the PDF, the mean was defined in Eq. {eq}`eq:Statistics:mean`, while the median is the value $\mu_{1/2}$ for which $P(\mu_{1/2}) = 0.5$. For some PDFs, these metrics will all be the same as exemplified in the first and last panel of {numref}`fig-pdfs`. For others, such as exemplified in the middle panel, they will not.
+The values of the **mode**, **mean**, and **median** can all be used as point estimates for a "typical" value of $X$. The mode is the position of the peak of the PDF (the most probable value), the mean was defined in Eq. {eq}`eq:Statistics:mean`, while the median is the value $\mu_{1/2}$ for which $P(\mu_{1/2}) = 0.5$. For some PDFs, these metrics will all be the same as exemplified in the first and last panel of {numref}`fig-pdfs`. For others, such as exemplified in the middle panel, they will not.
 
 Let us consider three example PDFs that illustrate some of the features of the different point estimates and the problems that might occur. 
 
@@ -54,7 +54,7 @@ plt.close(fig_point)
 ```{glue:figure} pointestimates_fig
 :name: "fig-pdfs"
 
-The mean, median and modes(s) for some exampls PDFs. For some PDFs, several or all of these metrics are the same. For others they are not. The position of the mean is largely affected by long tails as illustrated in the middle panel. The PDF in the right panel has two modes (it is bimodal). Although no shuch example is shown here, there are PDFs for which the mean is not defined.
+The mean, median and mode(s) for some example PDFs. For some PDFs, several or all of these metrics are the same. For others they are not. The position of the mean is largely affected by long tails as illustrated in the middle panel. The PDF in the right panel has two modes (it is bimodal). Although no shuch example is shown here, there are PDFs for which the mean is not defined.
 ```
 
 ```{admonition} Discuss
@@ -70,7 +70,7 @@ The integration of the PDF over some domain translates into a probability. It is
   P = \int_{\mathbb{D}_P} p(x_1, x_2, \ldots) dx_1 dx_2 \ldots
 \end{equation}
 
-This allows to make statements such as: "There is a 50% probability that the parameters are found within the domain $\mathbb{D}_{0.5}$"". However, the identification of such a domain is not unique. Two popular choices are
+This allows to make statements such as: "There is a 50% probability that the parameters are found within the domain $\mathbb{D}_{0.5}$". However, the identification of such a domain is not unique. Two popular choices are
 
 1. **Highest-density regions** (HDR)
 
@@ -85,7 +85,7 @@ This allows to make statements such as: "There is a 50% probability that the par
    For a univariate PDF we can define an interval $[a,b]$ such that $\int_a^b p(x) dx = P$ and the probability mass on either side (the tails) are equal. The end points of this ETI fulfil
    
    \begin{equation}
-   P(a) = 1-P(b) = \frac{1-P}{2}.
+   \int_{-\infty}^{a} p(x) dx = \int_{b}^{\infty} p(x) dx = \frac{1-P}{2}.
    \end{equation}
 
 

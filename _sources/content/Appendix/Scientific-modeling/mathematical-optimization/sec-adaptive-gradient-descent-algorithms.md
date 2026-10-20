@@ -2,7 +2,7 @@
 
 {{ sub_extra_tif385_admonition }}
 
-As outlined above, there are several convergence challenges for the standard gradient-descent methods. These are in general connected with the difficulty of navigating complicated cost function surfaces using only pointwise information on the gradient. The use of the history of past updates can help to adapt the learning schedule and has been shown to significantly increase the efficiency of gradient descent. Somewhat simplified, the adaptive versions improves the parameter update by adding a fraction of the past update vector to the current one.
+As outlined above, there are several convergence challenges for the standard gradient-descent methods. These are in general connected with the difficulty of navigating complicated cost function surfaces using only pointwise information on the gradient. The use of the history of past updates can help to adapt the learning schedule and has been shown to significantly increase the efficiency of gradient descent. Two ideas are central. With *momentum*, a fraction $\gamma$ of the past update vector is added to the current one, $\boldsymbol{v}_n = \gamma \boldsymbol{v}_{n-1} + \eta \boldsymbol{\nabla} C_n$ and $\pars_{n+1} = \pars_n - \boldsymbol{v}_n$, which dampens oscillations and speeds up progress along directions with a persistent gradient. With *adaptive learning rates*, the step size for each parameter is adjusted based on the history of past (squared) gradients.
 
 Some examples of commonly employed, adaptive methods are Adagrad {cite}`Duchi:2011`, Adadelta {cite}`Zeiler:2012`, RMSprop, and Adam {cite}`Kingma:2014`. 
 
@@ -17,13 +17,13 @@ j_{n,i} \equiv \left. \frac{\partial C}{\partial \para_i} \right|_{\pars = \pars
 We also introduce a diagonal matrix $J^2_n \in \mathbb{R}^{N_p \times N_p}$ where the $i$th diagonal element 
 
 \begin{equation}
-J^2_{n,ii} \equiv \sum_{k=1}^{n} j_{k,i}^2
+J^2_{n,ii} \equiv \sum_{k=0}^{n} j_{k,i}^2
 \end{equation}
 
 is the sum of the squares of the gradients with respect to $\para_i$ up to iteration $n$. In its update rule, at iteration $n$, Adagrad modifies the general learning rate $\eta_n$ for every parameter $\para_i$ based on the past gradients that have been computed as described by $J^2_{n,ii}$. The parameter $\para_i$ at the next iteration $n+1$ is then given by
 
 $$
-\para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{J^2_{n,ii} + \varepsilon}} j_{n,i},
+\para_{n+1,i} = \para_{n,i} - \frac{\eta}{\sqrt{J^2_{n,ii} + \varepsilon}} j_{n,i},
 $$ (eq:MathematicalOptimization:adagrad)
 
 with $\varepsilon$ a small, positive number to avoid division by zero.
@@ -41,12 +41,12 @@ RMSprop is an extension of Adagrad that seeks to reduce its aggressive, monotoni
 The inventor of RMSprop, Geoff Hinton, suggests setting the decay variable $\gamma=0.9$ , while a good default value for the learning rate $\eta$ is 0.001. The update rule in RMSprop is then
 
 \begin{equation}
-\para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\bar{J}^2_{n,ii} + \varepsilon}} j_{n,i}.
+\para_{n+1,i} = \para_{n,i} - \frac{\eta}{\sqrt{\bar{J}^2_{n,ii} + \varepsilon}} j_{n,i}.
 \end{equation}
 
 ## Adam
 
-Adaptive Moment Estimation (Adam) {cite}`Kingma:2014` also computes adaptive learning rates for each parameter. However, in addition to storing an exponentially decaying average of past squared gradients like Adagrad and RMSprop, Adam also keeps an exponentially decaying average of past gradients similar to a momentum. Describing this latter quantity by the diagonal matrix $\hat{M}_n$ (at iteration $n$) we have
+Adaptive Moment Estimation (Adam) {cite}`Kingma:2014` also computes adaptive learning rates for each parameter. However, in addition to storing an exponentially decaying average of past squared gradients like RMSprop, Adam also keeps an exponentially decaying average of past gradients similar to a momentum. Describing this latter quantity by the diagonal matrix $\bar{M}_n$ (at iteration $n$) we have
 
 \begin{align}
 \bar{M}_{n,ii} &= \gamma_1 \bar{M}_{n-1,ii} + (1-\gamma_1) j_{n,i}, \\
@@ -63,7 +63,7 @@ Both of these quantities are initialized with zero vectors ($\bar{M}_{0,ii}=0$ a
 The update rule then becomes
 
 \begin{equation}
-\para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\hat{J}^2_{n,ii}} + \varepsilon} \hat{M} _{n,ii}.
+\para_{n+1,i} = \para_{n,i} - \frac{\eta}{\sqrt{\hat{J}^2_{n,ii}} + \varepsilon} \hat{M} _{n,ii}.
 \end{equation}
 
 

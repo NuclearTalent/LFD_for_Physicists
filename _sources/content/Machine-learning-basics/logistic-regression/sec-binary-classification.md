@@ -53,14 +53,14 @@ outputs the probability of being in a category $k$.
 
 Logistic regression is the simplest example of the use of such a soft classifier. Let us assume that we have two classes such that $t^{(i)}$ is either $0$ or $1$. 
 
-In logistic regression, we will use the so-called *logit* function
+In logistic regression, we will use the *logistic* function
 
 \begin{equation}
 y(\boldsymbol{x}; \boldsymbol{w}) = y(z) = \frac{1}{1+e^{-z}} = \frac{e^z}{1+e^z},
 \end{equation}
 
 with the so-called *preactivation* $z = z(\boldsymbol{x}; \boldsymbol{w})$. 
-This function is no longer linear in the model parameters $\boldsymbol{w}$. It is an example of a S-shape or *Sigmoid* function. 
+This function is no longer linear in the model parameters $\boldsymbol{w}$. It is an example of an S-shaped or *sigmoid* function. Its inverse, $z = \ln \left[ y / (1-y) \right]$, is known as the *logit* (or log-odds) function. 
 
 We let $y^{(i)}$ give the probability that a data point $\boldsymbol{x}^{(i)}$ belongs to category $t^{(i)} = 1$, 
 
@@ -91,19 +91,19 @@ z = np.linspace(-6,6,num=1201)
 def y_perceptron(z):
     return (np.sign(z)+1)/2
     
-# logit model
-def y_logit(z):
+# logistic model
+def y_logistic(z):
     return 1 / (1+np.exp(-z))
     
 # tanh model
-def y_tanh(x):
+def y_tanh(z):
     return (np.tanh(z)+1)/2
     
     
 # Create a visualization
 fig, ax = plt.subplots(nrows=1, ncols=1, sharey=True, **{"figsize":(6,4)})
 ax.plot(z,y_perceptron(z),label='perceptron',lw=2,ls='-.',color='red')
-ax.plot(z,y_logit(z),label='logit',lw=2,ls='-',color='blue')
+ax.plot(z,y_logistic(z),label='logistic',lw=2,ls='-',color='blue')
 ax.plot(z,y_tanh(z),label='tanh (normalized)',lw=2,ls='--',color='black')
 ax.legend(loc='best')
 ax.set_xlabel(r'Preactivation $z$')

@@ -95,7 +95,7 @@ This is not just a convenient and compact notation, but also a useful and intuit
 
 A property that characterizes a neural network, other than its connectivity, is the choice of activation function(s). In general, these are non-linear functions. In fact, a FFNN with only linear activation functions would imply that each layer simply performs a linear transformation of its inputs and the output would be an unnecessarily complicated linear mapping of the input.
 
-*Logistic and Hyperbolic activation functions*. The archetypical example of activation functions is the family of S-shaped (sigmoid) functions. In particular, the logistic (logit) sigmoid function is
+*Logistic and Hyperbolic activation functions*. The archetypical example of activation functions is the family of S-shaped (sigmoid) functions. In particular, the logistic sigmoid function is
 
 \begin{equation}
  f_\mathrm{sigmoid}(z) = \frac{1}{1 + e^{-z}},
@@ -141,7 +141,7 @@ The learning phase (network training) aims to optimize the weights to minimize a
      - Momentum SGD (to incorporate a moving average)
      - AdaGrad (with per-parameter learning rates)
      - RMSprop (adapting the learning rates based on RMS gradients)
-     - Adam (a combination of AdaGrad and RMSprop that employs also the second moment of weight gradients).
+     - Adam (a combination of momentum and RMSprop that employs estimates of both the first and second moments of weight gradients).
 3. Splits of data
    * Training data: used for training.
    * Validation data: used to monitor learning and to adjust hyperparameters.
@@ -257,7 +257,7 @@ w^{1}_{21} & w^{1}_{22} & w^{1}_{23}
 - c) In this case, the input, $\boldsymbol{X}$, becomes an $N \times 3$ matrix.
 The linear algebra expressions would look the same with the data instances representing one more dimension. That is $\boldsymbol{Y} = \boldsymbol{Y}^1 \boldsymbol{W}^2 + \boldsymbol{b}^2$, with $\text{dim}(\boldsymbol{Y}) = N \times 2$,
 and $\boldsymbol{Y}^1 = f(\boldsymbol{Z}^1)$. Here, 
-$\boldsymbol{Z}^{1} = \boldsymbol{X} \boldsymbol{W}^{1} + \boldsymbol{b}^{1}$ is now an $N \times 3$ matrix with each row containing the hidden layer node preactivations for the corresponding instance of input data (row in $\boldsymbol{X}$). Furthermore, signals $\boldsymbol{Y}^1$ and preactivations $\boldsymbol{Z}^2$ are both matrices with $N$ rows. Note, however, that the weight and bias matrices are the same.
+$\boldsymbol{Z}^{1} = \boldsymbol{X} \boldsymbol{W}^{1} + \boldsymbol{b}^{1}$ is now an $N \times 100$ matrix with each row containing the hidden layer node preactivations for the corresponding instance of input data (row in $\boldsymbol{X}$). Furthermore, signals $\boldsymbol{Y}^1$ and preactivations $\boldsymbol{Z}^2$ are both matrices with $N$ rows. Note, however, that the weight and bias matrices are the same.
 ```
 
 ```{solution} exercise:NeuralNet:linear-signal
@@ -277,7 +277,7 @@ In the following, superscripts denote the layer with $l=1$ the hidden layer and 
 - b) The final output is $y = w^2_{01} + \sum_{l=1}^L w^2_{l1} y^1_l$. The signals $y^1_l$ from the hidden layer are given by (a). We arrive at the linear signal
 
   $$
-  y = k_0 + k_1 x_1 + k_2 x_2 + \ldots + k_L x_L
+  y = k_0 + k_1 x_1 + k_2 x_2 + \ldots + k_p x_p
   $$
 
   with 
@@ -305,7 +305,7 @@ The input is $\inputs = (\inputt_1, \inputt_2, \ldots, \inputt_p)$ and the node'
 - b) The distribution of the output can be obtained via a transformation $y = 1 / (1 + e^{-z})$, or rather $z = \ln (y / (1-y))$. One finds
 
   $$
-  p_Y(y) &= p_Z (z(y)) \left| \frac{d z}{z y} \right| \\
+  p_Y(y) &= p_Z (z(y)) \left| \frac{d z}{d y} \right| \\
   &= \frac{1}{\sqrt{2\pi\sigma_z^2}} \frac{1}{y(1-y)} \exp \left[ -\frac{\left( \ln (y / (1-y)) \right)^2}{2 \sigma_z^2} \right]
   $$
   

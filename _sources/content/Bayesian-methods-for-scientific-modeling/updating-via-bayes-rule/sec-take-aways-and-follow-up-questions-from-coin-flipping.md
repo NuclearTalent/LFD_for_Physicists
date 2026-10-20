@@ -80,7 +80,7 @@ Let the results of the first $k$ tosses be $D = \{D_k\}$ (in practice take 0's a
          &\propto p(D_2|p_H,D_1,I)\times p(D_1|p_H, I)\times p(p_H|I) \\
          &\propto p(D_2|p_H,D_1,I)\times p(p_H|D_1,I) \\
          &\propto p(D_2|p_H,I)\times p(p_H|D_1,I) \\
-         &\propto p(D_2|p_H,I)\times p(D_1|p_H,I) \times p(p_H,I)
+         &\propto p(D_2|p_H,I)\times p(D_1|p_H,I) \times p(p_H|I)
     \end{align}$$ (eq:k_eq_2)
 
     ::::{admonition} Checkpoint question
@@ -134,7 +134,7 @@ $$\begin{align}
 
 Suppose $D_1$ was 0, then $[p(\text{tails}|p_H,I)]^N \propto (1-p_H)^N p(p_H|I) \overset{N\rightarrow\infty}{\longrightarrow} \delta(p_H)$ (i.e., the posterior is only at $p_H=0$!). 
 
-Similarly, if $D_1$ was 1, then $[p(\text{tails}|p_H,I)]^N \propto p_H^N p(p_H|I) \overset{N\rightarrow\infty}{\longrightarrow} \delta(1-p_H)$ (i.e., the posterior is only at $p_H=1$.)
+Similarly, if $D_1$ was 1, then $[p(\text{heads}|p_H,I)]^N \propto p_H^N p(p_H|I) \overset{N\rightarrow\infty}{\longrightarrow} \delta(1-p_H)$ (i.e., the posterior is only at $p_H=1$.)
 
 More generally, this bootstrapping procedure would cause the posterior to get narrower and narrower with each iteration so you think you are getting more and more certain, with no new data!
 ```{image} ../assets/bootstrapping_cartoon.png
@@ -173,6 +173,6 @@ What would your standard be for deciding the coin was so unfair that you would w
 The frequentist point estimate is $p_H^* = \frac{H}{N}$. It actually corresponds to one of the point estimates from the Bayesian analysis for a specific prior. Which point estimate and what prior?
 :::{admonition} Answer 
 :class: dropdown, my-answer 
-For a flat prior this is the mean, median, and mode of the posterior. 
+For a flat prior this is the mode (maximum) of the posterior. The posterior mean is $(H+1)/(N+2)$, which approaches $H/N$ for large $N$. 
 :::
 ::::

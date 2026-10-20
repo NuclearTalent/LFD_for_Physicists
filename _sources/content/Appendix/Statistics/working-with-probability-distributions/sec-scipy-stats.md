@@ -16,7 +16,7 @@ Follow the link for any of the distributions (your choice!) to find its mathemat
  * `median()` - Median of the distribution.
  * `pdf(x)` - Value of the probability density function at x.
  * `rvs(size=numpts)` - generate numpts random values of the pdf.
- * `interval(alpha)` - Endpoints of the range that contains alpha percent of the distribution.
+ * `interval(alpha)` - Endpoints of the range that contains the fraction alpha of the probability mass.
  
  ## Code example
  ```{code-cell} python3

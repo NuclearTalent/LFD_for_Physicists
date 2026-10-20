@@ -91,14 +91,14 @@ and the $R2$ score, also known as *coefficient of determination*
 \mathrm{R2}(\weights) = 1 - \frac{\sum_{i=1}^N \left( \output_{i} - \MLoutput_{i} \right)^2}{\sum_{i=1}^N \left( \output_{i} - \bar{y} \right)^2},
 \end{equation}
 
-where $\bar{y} = \frac{1}{N} \sum_{i=1}^N \MLoutput_{i}$ is the mean of the model predictions.
+where $\bar{y} = \frac{1}{N} \sum_{i=1}^N \output_{i}$ is the mean of the data.
 
 For classification tasks one might also use the misclassification cost function (see {numref}`exercise:MLexamples:misclassification-cost-function`) or cross entropy. Misclassification is the relative number of misclassified instances in a data set and is therefore the same as $1-\alpha$, where $\alpha$ is the accuracy.
 
 ````{prf:example} Binary classification
 :label: example:MLexamples:binary-classification
 
-Figure {numref}`fig-example-MLexamples-binary_classification_data` shows a scatterplot of training data that is a function of two predictor variables $\inputs_i = (x_1, x_2)_i$. The output $y$ is a class that can be either Blue or Red. 
+{numref}`fig-example-MLexamples-binary_classification_data` shows a scatterplot of training data that is a function of two predictor variables $\inputs_i = (x_1, x_2)_i$. The output $y$ is a class that can be either Blue or Red. 
 
 The procedure and code that generate this data is included in the hidden code cell below. However, here we assume that we don't know the underlying data-generating process. Our aim is to construct machine learning algorithms that can be trained on the collected data and make predictions for future data. The task can then be expressed as: Develop a computer program that can learn from labeled data $\trainingdata = \{ \inputs_i, \output_i\}_{i=1}^N$ and make a prediction of the class $\testoutput$ that a new input $\testinputs$ belongs to.
 
@@ -195,7 +195,7 @@ We can achieve a mapping from the continuous output $z$ of the linear regressor 
 \MLoutput = \frac{\mathrm{sign}(z)+1}{2}.
 \end{equation}
 
-A binary classifier, providing a discrete output, can then be obtained accoring to the simple rule
+A binary classifier, providing a discrete output, can then be obtained according to the simple rule
 
 $$
 \MLoutput = \MLoutput(z) = \left\{ 
@@ -212,7 +212,7 @@ The two predicted classes will be separated by a *decision boundary* $\left\{ \i
 ### The soft classifier
 
 In many cases, it is more favorable to have a "soft" classifier that outputs a probability for an output to belong to a given category rather than providing a hard decision. Logistic regression is the most common example of such a soft classifier. In logistic
-regression, the probability that input $\inputs$ belongs to the class $c=1$ is given by the so-called *logit* function (an example of a S-shape or *Sigmoid* function) , 
+regression, the probability that input $\inputs$ belongs to the class $c=1$ is given by the *logistic* function (an example of an S-shaped or *sigmoid* function), 
 
 $$
 \MLoutput(z) = \prob(\output(\inputs)=1) = \frac{1}{1+e^{-z}} = \frac{e^z}{1+e^z},
@@ -232,13 +232,13 @@ Results of the hard (perceptron) and soft (sigmoid) linear classifier on the dat
 
 ## $k$ nearest neighbors classification
 
-Nearest-neighbor methods use the closest observations in the training data $\trainingdata$ to make a prediction. Usually, the definition of "closest" is usually the Euclidean distance in the input space, i.e., the length $\left| \testinputs - \inputs_i \right|$. Specifically, the $k$ nearest neighbor prediction for a target would be given by the average
+Nearest-neighbor methods use the closest observations in the training data $\trainingdata$ to make a prediction. The definition of "closest" is usually the Euclidean distance in the input space, i.e., the length $\left| \testinputs - \inputs_i \right|$. Specifically, the $k$ nearest neighbor prediction for a target would be given by the average
 
 \begin{equation}
 \tilde\output(\testinputs) = \frac{1}{k} \sum_{\inputs_i \in N_k(\testinputs)} \output_i,
 \end{equation}
 
-where $ N_k(\testinputs)$ is the neighborhood of $\testinputs$ defined by the $k$ nearest points $\testinputs_i$ in the training data set. Forced to make a hard decision we would use the majority vote and assign $\MLtestoutput = 1$ if $\tilde\output(\testinputs) > 0.5$, and $\MLtestoutput = 0$ if $\tilde\output(\testinputs) \leq 0.5$.
+where $ N_k(\testinputs)$ is the neighborhood of $\testinputs$ defined by the $k$ nearest points $\inputs_i$ in the training data set. Forced to make a hard decision we would use the majority vote and assign $\MLtestoutput = 1$ if $\tilde\output(\testinputs) > 0.5$, and $\MLtestoutput = 0$ if $\tilde\output(\testinputs) \leq 0.5$.
 
 As shown in Fig. {numref}`fig:MLexamples:fig_kNN_classifier` there are much fewer misclassifications in the training data set when using the $k$ nearest neighbor method, than when using the linear classifier. However, one should also note that none(!) of the training data will be misclassified when using $k=1$, while the number will be an increasing function of $k$. Is it always best to use $k=1$ nearest neighbors? No, that cannot be. One realizes that the decision boundaries will vary greatly when using a different training set, giving very different predictions for a validation set of data. This is an example of overfitting, but this time in the context of a classification problem.
 
@@ -251,7 +251,7 @@ Results of $k$NN classifier, with $k=1,5,15$, on the data from {prf:ref}`example
 ```{admonition} Data normalization
 The $k$-nearest neighbor classifier is an example of a method for which it becomes very important to normalize the input data. Imagine that one of the two inputs, $x_1$, varies in a range $[100,1000]$ whereas the other one, $x_2$, is limited to $[0,1]$. It is then obvious that the Euclidean distance will be dominated by the distance in $x_1$ and our model will be almost insensitive to $x_2$.
 
-We can solve this by normalizing the input parameters by some transformation and scaling. For example, we could consider instead $(\tilde{x}_1, x_2)$, where $\tilde{x}_1 \equiv \frac{x_1 - 100}{1000}$. Now both parameters will be in the $[0,1]$ range and the method will work much better.
+We can solve this by normalizing the input parameters by some transformation and scaling. For example, we could consider instead $(\tilde{x}_1, x_2)$, where $\tilde{x}_1 \equiv \frac{x_1 - 100}{900}$. Now both parameters will be in the $[0,1]$ range and the method will work much better.
 
 Another common normalization scheme is known as standardization
 
@@ -259,7 +259,7 @@ Another common normalization scheme is known as standardization
 \tilde{x}_i = \frac{x_i - \bar{x}_i}{\sigma_i},
 \end{equation}
 
-where $\bar{x}_i$ and $\sigma_i$ is the mean and the variance, respectively, for each input variable evaluated over the training datat set.
+where $\bar{x}_i$ and $\sigma_i$ are the mean and the standard deviation, respectively, for each input variable evaluated over the training data set.
 
 Data normalization is a common procedure before any machine learning task. In fact, it is common to also normalize the output. However, remember that:
 
@@ -447,7 +447,7 @@ Consider the sigmoid classifier {eq}`eq:MLexamples:sigmoid` with the preactivati
 ```{exercise} Misclassification cost function
 :label: exercise:MLexamples:misclassification-cost-function
 
-The perfomance of a hard classifier can be evluated using a misclassification cost function
+The performance of a hard classifier can be evaluated using a misclassification cost function
 
 $$
 C(\weights) = \frac{1}{N} \sum_{i=1}^N ( 1 - \delta_{\MLoutput_i,\output_i}),

@@ -67,7 +67,7 @@ The liquid drop model is useful for a phenomenological description of nuclear bi
 \text{BE}(A,N,Z) = a_0+a_1A+a_2A^{2/3}+a_3 Z^2 A^{-1/3}+a_4 (N-Z)^2 A^{-1}.
 \end{equation}
 
-We have five features: the intercept (constant term, bias), the $A$ dependent volume term, the $A^{2/3}$ surface term and the Coulomb $Z^2 A^{-1/3}$ and pairing $(N-Z)^2 A^{-1}$ terms. Although the features are somewhat complicated functions of the independent variables $A,N,Z$, we note that the $p=5$ regression parameters $\parsLR = (a_0, a_1, a_2, a_3, a_4)$ enter linearly. 
+We have five features: the intercept (constant term, bias), the $A$ dependent volume term, the $A^{2/3}$ surface term and the Coulomb $Z^2 A^{-1/3}$ and asymmetry $(N-Z)^2 A^{-1}$ terms. Although the features are somewhat complicated functions of the independent variables $A,N,Z$, we note that the $p=5$ regression parameters $\parsLR = (a_0, a_1, a_2, a_3, a_4)$ enter linearly. 
 ```
 
 <!--
@@ -274,7 +274,7 @@ $$ (eq:BayesianLinearRegression:OLS_optimum_b)
 ````
 
 ````{prf:proof}
-Due to its quadratic form, the Euclidean norm $\left| \residuals \right|_2^2 = \left(\data-\dmat\parsLR\right)^T\left(\data-\dmat\parsLR\right) \equiv C(\parsLR)$ is bounded from below and we just need to find the single extremum. That is we need to solve the problem
+Due to its quadratic form, the Euclidean norm $\left| \residuals \right|_2^2 = \left(\data-\dmat\parsLR\right)^T\left(\data-\dmat\parsLR\right) \equiv C(\parsLR)$ is bounded from below. Since the normal matrix $\dmat^T\dmat$ is invertible, and therefore positive definite, there is a single extremum which is the minimum. That is we need to solve the problem
 
 \begin{equation}
 \parsLR^* =
@@ -318,7 +318,7 @@ $$ (eq:BayesianLinearRegression:normal_equation_solution)
 ```{admonition} The pseudo-inverse (or Moore-Penrose inverse)
 We note that since our design matrix is defined as $\dmat\in
 {\mathbb{R}}^{N_d\times N_p}$, the combination $\dmat^T\dmat \in
-{\mathbb{R}}^{N_p\times N_p}$ is a square matrix. The product $\left(\dmat^T\dmat\right)^{-1}\dmat^T$ is called the pseudo-inverse of the design matrix $\dmat$. The pseudo-inverse is a generalization of the usual matrix inverse. The former can be defined also for non-square matrices that are not necessarily full rank. In the case of full-rank and square matrices the pseudo-inverse is equal to the usual inverse.
+{\mathbb{R}}^{N_p\times N_p}$ is a square matrix. If $\dmat$ has full column rank, i.e., $N_p$ linearly independent columns (which requires $N_d \geq N_p$), the product $\left(\dmat^T\dmat\right)^{-1}\dmat^T$ is called the pseudo-inverse of the design matrix $\dmat$. It generalizes the usual matrix inverse to non-square matrices, and for a square, full-rank matrix it is equal to the usual inverse. The more general Moore-Penrose pseudo-inverse is defined also for matrices that are not full rank.
 ```
 
 ::::{admonition} Spot the error!
@@ -549,7 +549,7 @@ Increase the number of data to 1000. Do the OLS values of the model parameters a
 
 ```{exercise}
 :label: exercise:ols_example_5_b
-Set the data-generating process to be a 3rd-order polynomial and set limits of the the predictor variable to [-3,3]. Analyze the data using a 2nd-order polynomial model.
+Set the data-generating process to be a 3rd-order polynomial and set limits of the predictor variable to [-3,3]. Analyze the data using a 2nd-order polynomial model.
 
 Explore the limit of $N_d \rightarrow \infty$ by setting $N_d = 500$ or so. Will the OLS values of the model parameters and the sample variance approach the (true) values for some of the parameters? 
 ```

@@ -1,6 +1,6 @@
 # Regression analysis: optimization versus inference
 
-Assuming that we have access to $N_d$ instances of data corresponding to measured responses $\{ \output_1, \output_2, \ldots \output_{N_d} \}$ and the corresponding values for the independent variable $\{ \inputt_1, \inputt_2, \ldots \inputt_{N_d} \}$. Let us define a *cost function* $C(\pars)$ that quantifies how well our model $\model{\pars}{\inputt}$ reproduces the training data,
+Assume that we have access to $N_d$ instances of data corresponding to measured responses $\{ \output_1, \output_2, \ldots \output_{N_d} \}$ and the corresponding values for the independent variable $\{ \inputt_1, \inputt_2, \ldots \inputt_{N_d} \}$. Let us define a *cost function* $C(\pars)$ that quantifies how well our model $\model{\pars}{\inputt}$ reproduces the training data,
 
 \begin{equation}
 C(\pars) = \sum_{i=1}^{N_d} \frac{(\output_i - \model{\pars}{\inputt_i})^2}{\sigma_i^2},

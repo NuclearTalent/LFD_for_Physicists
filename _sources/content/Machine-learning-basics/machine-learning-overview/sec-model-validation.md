@@ -10,7 +10,7 @@ In this lecture we will continue to explore linear regression and we will encoun
   
 The lecture is based and inspired by material in several good textbooks: in particular chapter 4 in [Hands‑On Machine Learning with Scikit‑Learn and TensorFlow](http://shop.oreilly.com/product/0636920052289.do) {cite}`Geron2017` by Aurelien Geron, chapter 5 in the 
 [Python Data Science Handbook](http://shop.oreilly.com/product/0636920034919.do) {cite}`Vanderplas2016` by Jake VanderPlas and chapters 2-4 in [The Elements of
-Statistical Learning](https://link.springer.com/book/10.1007/978-0-387-84858-7) {cite}`Hastie2009`} by Trevor Hastie et al.
+Statistical Learning](https://link.springer.com/book/10.1007/978-0-387-84858-7) {cite}`Hastie2009` by Trevor Hastie et al.
 
 ## Over- and underfitting
 
@@ -50,7 +50,7 @@ $$ (eq:ModelValidation:Etrain-Eval)
 Several training and validation scores are commonly used in machine learning applications.  First we have the **Mean-Squared Error** (MSE)
 
 $$
-\mathrm{MSE} = \frac{1}{N} \sum_{i=1}^N \left( \MLoutput(\inputs_i) - \output_i) \right)^2,
+\mathrm{MSE} = \frac{1}{N} \sum_{i=1}^N \left( \MLoutput(\inputs_i) - \output_i \right)^2,
 $$ (eq:ModelValidation:MSE)
 
 where we have $N$ training data and our model is a function of the parameter vector $\pars$. Note that this is the metric that we are minimizing when solving the normal equation Eq. {eq}`eq:NormalEquation`.
@@ -58,13 +58,13 @@ where we have $N$ training data and our model is a function of the parameter vec
 Furthermore, we have the **mean absolute error** (MAE) defined as.
 
 $$
-\mathrm{MAE} = \frac{1}{N} \sum_{i=1}^N \left| \MLoutput(\inputs_i) - \output_i) \right|,
+\mathrm{MAE} = \frac{1}{N} \sum_{i=1}^N \left| \MLoutput(\inputs_i) - \output_i \right|,
 $$ (eq:ModelValidation:MAE)
 
 And the $R2$ score, also known as *coefficient of determination* is
 
 $$
-\mathrm{R2} = 1 - \frac{\sum_{i=1}^N \left( \MLoutput(\inputs_i) - \output_i) \right)^2}{\sum_{i=1}^N \left( \output_i - \bar{\output} \right)^2},
+\mathrm{R2} = 1 - \frac{\sum_{i=1}^N \left( \MLoutput(\inputs_i) - \output_i \right)^2}{\sum_{i=1}^N \left( \output_i - \bar{\output} \right)^2},
 $$ (eq:ModelValidation:R2)
 
 where $\bar{\output} = \frac{1}{N} \sum_{i=1}^N \output_i$ is the mean of the data. This metric therefore represents the proportion of variance (of $\data$) that has been explained by the independent variables in the model.
@@ -74,10 +74,10 @@ An underfit model has a *high bias*, which means that it gives a rather poor fit
 
 An overfit model will depend sensitively on the choice of training data. A different split into training and validation sets will give very different predictions. We therefore say that the model displays a *high variance*. While the overfit model usually reproduces training data very well (low bias), it does not generalize well and gives a poor reproduction of validation data. The average values for the error function are therefore very different for the training and validation sets. 
 
-Another sign of overfitting is the appearance of very large fit parameters that are needed for the fine tunings of cancellations of different terms in the model. The fits from our example has the following root-mean-square parameters
+Another sign of overfitting is the appearance of very large fit parameters that are needed for the fine tunings of cancellations of different terms in the model. Polynomial fits of different orders to the data in {numref}`fig-over_under_fitting` give the following root-mean-square parameter values
 
 \begin{equation}
-\para_\mathrm{rms} \equiv \frac{1}{p} \sqrt{ \sum_{i=0}^{p-1} \theta_i^2 } \equiv \| \pars \|_2^2 / p.
+\para_\mathrm{rms} \equiv \sqrt{ \frac{1}{p} \sum_{i=0}^{p-1} \theta_i^2 } = \| \pars \|_2 / \sqrt{p}.
 \end{equation}
 
 
@@ -124,15 +124,17 @@ defining a new cost function to be minimized, that is
 
 \begin{equation}
 C_{\lambda,2} \left( \pars \right) \equiv
-\frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\theta}\vert\vert_2^2 
+\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\theta}\vert\vert_2^2 
 \end{equation}
+
+(the normalization factor $1/n$ of the MSE has been absorbed into $\lambda$),
 
 which leads to the *Ridge regression* minimization problem where we
 constrain the parameters via $\vert\vert \boldsymbol{\theta}\vert\vert_2^2$ and the optimization equation becomes
 
 \begin{equation}
 \boldsymbol{\theta}^* = \underset{\boldsymbol{\theta}\in {\mathbb{R}}^{p}}{\operatorname{argmin}}
-C_{\lambda,2}\left( \boldsymbol{X}, \boldsymbol{\theta} \right)
+C_{\lambda,2}\left( \boldsymbol{\theta} \right)
 .
 \end{equation}
 
@@ -140,7 +142,7 @@ Alternatively, *Lasso regularization* can be performed by defining
 
 \begin{equation}
 C_{\lambda,1} \left( \boldsymbol{\theta} \right) \equiv
-\frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\theta}\vert\vert_1.
+\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\theta}\vert\vert_1.
 \end{equation}
 
 Here we have defined the norm-1 as 
@@ -163,7 +165,7 @@ Ridge regularization with different penalty parameters $\lambda$ for different p
 Using the matrix-vector expression for Ridge regression,
 
 \begin{equation}
-C(\boldsymbol{X},\boldsymbol{\theta})=\frac{1}{n}\left\{(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta})^T(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta})\right\}+\lambda\boldsymbol{\theta}^T\boldsymbol{\theta},
+C_{\lambda,2}(\boldsymbol{\theta})=(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta})^T(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta})+\lambda\boldsymbol{\theta}^T\boldsymbol{\theta},
 \end{equation}
 
 by taking the derivatives with respect to $\boldsymbol{\theta}$ we obtain then
@@ -199,7 +201,7 @@ Consider observations that are related to the true data-generating process $f$ v
 \output_i = f({\inputs_i}) + {\epsilon}_{i},
 \end{equation}
 
-where ${\epsilon}_{i}$ is an irreducible error described by a random variable. That is, even if we could find the deta-generating process $f$ we would not reproduce the data more accurately than $\epsilon$ permits. Let us assume that these errors are i.i.d. with expectation value $\expect{\epsilon} = 0$ and variance $\var{\epsilon} = \sigma^2_\epsilon$[^variance]. 
+where ${\epsilon}_{i}$ is an irreducible error described by a random variable. That is, even if we could find the data-generating process $f$ we would not reproduce the data more accurately than $\epsilon$ permits. Let us assume that these errors are i.i.d. with expectation value $\expect{\epsilon} = 0$ and variance $\var{\epsilon} = \sigma^2_\epsilon$[^variance]. 
 [^variance]: Remember that $\expect{t}$ denotes the expectation value for the random variable $t$. Furthermore, the variance is given by $\var{t} = \expect{\left(t -  \expect{t}\right)^2}$.
 
 Our model $\MLoutput(\inputs)$ is an approximation to the function $f(\inputs)$. We will arrive at the final model after calibration (training) and there is always a risk of either under- or overfitting. Let us now consider the following scenario:
@@ -244,7 +246,7 @@ and realize that the variances of $\testoutput$ and $\epsilon^\odot$ are both eq
 can be rewritten by subtracting and adding $\expect{\MLtestoutput}$ 
 
 \begin{equation}
-\expect{\left(\testoutput-\MLtestoutput)^2}=\expect{(f^\odot + \epsilon^\odot - \expect{\MLtestoutput} + \expect{\MLtestoutput}-\MLtestoutput\right)^2}.
+\expect{\left(\testoutput-\MLtestoutput\right)^2}=\expect{\left(f^\odot + \epsilon^\odot - \expect{\MLtestoutput} + \expect{\MLtestoutput}-\MLtestoutput\right)^2}.
 \end{equation}
 
 Using the linearity of expectation values we can rewrite this expression as a sum of three terms:
@@ -252,7 +254,7 @@ Using the linearity of expectation values we can rewrite this expression as a su
 
   \begin{align}
   \expect{\left(f^\odot-\expect{\MLtestoutput}+\epsilon^\odot\right)^2} &= \expect{\left(f^\odot-\expect{\MLtestoutput}\right)^2} + \expect{{\epsilon^\odot}^2} \\
-  & \qquad + 2 \left(f^\odot-\expect{\MLtestoutput}\right)\expect{\epsilon} \\
+  & \qquad + 2 \left(f^\odot-\expect{\MLtestoutput}\right)\expect{\epsilon^\odot} \\
   &= \left(f^\odot-\expect{\MLtestoutput}\right)^2 + \sigma_\epsilon^2
   \end{align}
   
@@ -266,7 +268,7 @@ Using the linearity of expectation values we can rewrite this expression as a su
   
   It corresponds to the variance of model predictions.
 
-* The last (mixing) term is zero
+* The last (mixing) term is zero since the noise $\epsilon^\odot$ of the test datum is independent of the training data, and therefore of $\MLtestoutput$
 
   \begin{align}
   & 2\expect{\left(\testoutput-\expect{\MLtestoutput}\right) \left(\expect{\MLtestoutput}-\MLtestoutput\right)} \\
@@ -308,7 +310,7 @@ The above equations tell us that in
 order to minimize the expected validation error, we need to select a
 statistical learning method that simultaneously achieves low variance
 and low bias. Note that variance is inherently a nonnegative quantity,
-and squared bias is also nonnegative. Hence, we see that the prediction error can never lie below $\var{\epsilon}) \equiv \sigma^2_\epsilon$, the irreducible error.
+and squared bias is also nonnegative. Hence, we see that the prediction error can never lie below $\var{\epsilon} \equiv \sigma^2_\epsilon$, the irreducible error.
 
 
 ## Model validation
@@ -339,11 +341,11 @@ Several features in the learning curves shown in {numref}`fig:ModelValidation:le
 
 1. The performance on both training and validation sets is very poor in the beginning of the training.
 2. The error on the training set then decreases steadily as more training iterations are performed. 
-3. The training error decreases quickly in th ebeginning, and much more slowly as the model parameters are becoming optimized.
+3. The training error decreases quickly in the beginning, and much more slowly as the model parameters are becoming optimized.
 4. The validation error is initially very high but decreases as the model becomes better.
 5. The validation error eventually reaches a plateau. If the training proceeds much longer than this, the model can become overfit and the validation error will eventually start increasing.
 
-For models with a high degree of complexity there will usually be a gap between the curves which implies that the model performs significantly better on the training data than on the validation set. This demonstrates the *bias-variance tradeoff*.
+For models with a high degree of complexity there will usually be a gap between the curves which implies that the model performs significantly better on the training data than on the validation set. This is a sign of high variance, see the discussion of the *bias-variance tradeoff* above.
 
 ### Cross-validation
 
@@ -362,10 +364,10 @@ the best prediction performance is to be preferred.
 
 The validation set approach is conceptually simple and is easy to implement. But it has two potential drawbacks:
 
-* The validation estimate of the validation error rate can be highly variable, depending on precisely which observations are included in the training set and which observations are included in the validation set. There might be data points that are critical for training the model, and the performance metric will be very bad if those happen to be excluded from the training set.
-* In the validation approach, only a subset of the observations, those that are included in the training set rather than in the validation set are used to fit the model. Since statistical methods tend to perform worse when trained on fewer observations, this suggests that the validation set error rate may tend to overestimate the validation error rate for the model fit on the entire data set.
+* The validation estimate of the test error rate can be highly variable, depending on precisely which observations are included in the training set and which observations are included in the validation set. There might be data points that are critical for training the model, and the performance metric will be very bad if those happen to be excluded from the training set.
+* In the validation approach, only a subset of the observations, those that are included in the training set rather than in the validation set are used to fit the model. Since statistical methods tend to perform worse when trained on fewer observations, this suggests that the validation set error rate may tend to overestimate the test error rate for the model fit on the entire data set.
 
-To reduce the sensitivity on a particular data split, one can use perform several different splits. For each split the model is fit using the training data and
+To reduce the sensitivity on a particular data split, one can perform several different splits. For each split the model is fit using the training data and
 evaluated on the corresponding validation set. The hyperparameter that performs best on average (in some sense) is then selected.
 
 To avoid unbalanced influence of important training samples one can use $k$-fold cross-validation to structure the data splitting. The samples are divided into $k$ more or less equally sized, exhaustive and mutually exclusive subsets. At each fold one of these subsets plays the role of the validation set while the union of the remaining subsets constitutes the training set. Such a splitting warrants a balanced representation of each sample in both training and validation set over the splits. Still the division into the $k$ subsets involves a degree of randomness. This may be fully excluded when choosing $k=n$. This particular case is referred to as leave-one-out cross-validation (LOOCV). 
@@ -377,7 +379,7 @@ To avoid unbalanced influence of important training samples one can use $k$-fold
 2. Divide the training data set $\data$ into $k$ exhaustive and mutually exclusive subsets $\data_{i} \subset \data$ for $i=1,\ldots,k$, and $\data_{i} \cap \data_{j} = \emptyset$ for $i \neq j$.
 3. For $m \in \{1, \ldots, M\}$:
    1. For $i \in \{1, \ldots, k\}$:
-      - Use $\data_{i}$ as the validation set and all other data $\data_{-i} = \left( \data \cap \data_i\right)^c$ as the training set.
+      - Use $\data_{i}$ as the validation set and all other data $\data_{-i} = \data \setminus \data_i$ as the training set.
       - Train the model with hyperparameter(s) $\boldsymbol{\lambda}_m$ using the training set $\data_{-i}$, which will give a best fit $\pars^*_{i}(\boldsymbol{\lambda}_m)$.
       - Evaluate the prediction performance with $\pars^*_{i}(\boldsymbol{\lambda}_m)$.
    2. Average the prediction performances on all folds. This is known as the *cross-validated error* $\mathrm{CV}_k(\boldsymbol{\lambda}_m)$. 
@@ -410,7 +412,7 @@ Draw a simple figure to illustrate the under-and overfitting regions of a $k$NN 
 
 Perform your own study of the bias-variance tradeoff by revisiting the linear regression problem in [](sec:ols_in_practice). 
 
-- Create one validation set and ten different training sets using different seeds in the `data_generating_process()` method call within the `measurement()` method. 
+- Create one validation set and ten different training sets using different random number generators (`rng` argument) in the `data_generating_process_measurement()` function. 
 - Train linear regression models of different polynomial degrees for each training set. Evaluate both the training error and the validation error for each model.
 - Plot all ten degree-0 models in a single figure (using the same color for each line, but make them slightly transparent such that they don't block the view) together with the validation data and with the true, underlying model. Plot also the ten degree-5 models in the same figure (in a different color). Now try to understand why the former family can be described as having large bias but small variance, whereas the latter has large variance.
 
@@ -427,7 +429,7 @@ Use either the linear regression example, or the binary classification one, to i
 :label: exercise:ModelValidation:large-training-error
 
 - Explain why $E_\mathrm{train}$ is a poor metric for estimating the prediction error.
-- Consider the situation when $E_\mathrm{train}$ is larger than the prediction error that you are aiming for. Explain why it then becomes a waste of time to implement cross vaiidation or other techniques to estimate the actual prediction error.
+- Consider the situation when $E_\mathrm{train}$ is larger than the prediction error that you are aiming for. Explain why it then becomes a waste of time to implement cross validation or other techniques to estimate the actual prediction error.
 - What could help to reduce the training error?
 ```
 
@@ -446,7 +448,7 @@ $E_\mathrm{train} = 0$ for $k$NN models with $k=1$.
 
 The effective number of parameters in a $k$NN model goes something like $N/k$. Think about how many effective parameters the training data corresponds to in the extreme situations with $k=1$ and $k=N$. In between, you can imagine non-overlapping regions of $k$ sized clusters.
 
-In effect, this implies that the $k=1$ model is the one with the largest number of effective parameters and hence the most comples one (explaining the overfitting), whereas the $k=N$ model has effectively a single parameter and will underfit.
+In effect, this implies that the $k=1$ model is the one with the largest number of effective parameters and hence the most complex one (explaining the overfitting), whereas the $k=N$ model has effectively a single parameter and will underfit.
 ```
 
 ```{solution} exercise:ModelValidation:study-model-bias-variance
@@ -470,7 +472,7 @@ Note you are interested in $\mathrm{CV}_k(\lambda)$ where the hyperparameter is 
 :class: dropdown
 
 - $E_\mathrm{train}$ will always decrease with increasing model complexity as it is tuned to the data (and higher model complexity implies more model flexibility).
-- $E_\mathrm{new} > E_\mathrm{train}$ in general. This is the generalization gap. So it is better to invest your time in improving the model, or collecting more data, before actually attempting to estimate the prediction error.
+- The error on new data, $E_\mathrm{new}$, is in general larger than $E_\mathrm{train}$. This is the generalization gap. So it is better to invest your time in improving the model, or collecting more data, before actually attempting to estimate the prediction error.
 - See the above answer.
 ```
 

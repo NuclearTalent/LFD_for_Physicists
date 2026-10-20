@@ -211,7 +211,7 @@ Increase the number of data to 1000. Do the OLS values of the model parameters a
 
 ```{exercise}
 :label: exercise:ols_example_5
-Set the data-generating process to be a 3rd-order polynomial and set limits of the the predictor variable to [-3,3]. Analyze the data using a 2nd-order polynomial model.
+Set the data-generating process to be a 3rd-order polynomial and set limits of the predictor variable to [-3,3]. Analyze the data using a 2nd-order polynomial model.
 
 Explore the limit of $N_d \rightarrow \infty$ by setting $N_d = 500$ or so. Will the OLS values of the model parameters and the sample variance approach the (true) values for some of the parameters? 
 ```

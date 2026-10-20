@@ -17,7 +17,7 @@ The first one is the most basic PDF; namely the uniform distribution. This distr
 
 \begin{equation}
 \mathcal{U}\left( [a,b]\right) = \frac{1}{b-a}\theta(x-a)\theta(b-x).
-\label{eq:Statistics:unifromPDF}
+\label{eq:Statistics:uniformPDF}
 \end{equation}
 
 For $a=0$ and $b=1$ we have the standard uniform distribution

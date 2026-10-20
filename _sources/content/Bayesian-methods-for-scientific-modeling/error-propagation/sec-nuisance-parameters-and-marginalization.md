@@ -47,11 +47,13 @@ In this situation we can use marginalization and the product rule.
 We first realize that $\pdf{z}{x,y,I} = \delta(z-f(x,y))$ due to the deterministic functional relationship between the parameters.
 
 
-The joint PDF for $X$ and $Y$ becomes a product if the errors are independent $\pdf{x,y}{I} = \pdf{x}{I} \pdf{y}{I}$ . Then the delta function can be used to evaluate one of the integrals, giving some inverse transformation $y=g(x,z)$, and the PDF for $Z$ becomes a convolution
+The joint PDF for $X$ and $Y$ becomes a product if the errors are independent $\pdf{x,y}{I} = \pdf{x}{I} \pdf{y}{I}$ . Then the delta function can be used to evaluate one of the integrals. Assuming that $z = f(x,y)$ can be solved for $y$, giving the inverse transformation $y=g(x,z)$, we get
 
 $$
-\pdf{z}{I} = \int \pdf{x}{I}\, \pdf{y=g(x,z)}{I}\,dx.
+\pdf{z}{I} = \int \pdf{x}{I}\, \pdf{y=g(x,z)}{I} \left| \frac{\partial g(x,z)}{\partial z} \right| dx.
 $$ (eq:BayesianAdvantage:marginalization)
+
+The Jacobian factor appears since $\delta(z-f(x,y)) = \delta(y-g(x,z)) \left| \partial g(x,z) / \partial z \right|$. For a sum or a difference, $Z = X \pm Y$, this factor equals one and the PDF for $Z$ becomes a convolution.
 
 
 ```{prf:example} $Z = X + Y$
@@ -179,7 +181,7 @@ $$
 v_\mathrm{measured} = H d + \delta\mathcal{D},
 $$
 
-where $H d$ represents our model for the velocity and $\delta\mathcal{D}$ is the observational error, which is a random variable. We know that $\expect{v_\mathrm{measured}} = v_0$ and $\text{Var}(v_\mathrm{measured}) = \sigma_v^2$. Given this information it is motivated to use a Gaussian PDF (with this mean and variance) for the likelihood
+where $H d$ represents our model for the velocity and $\delta\mathcal{D}$ is the observational error, which is a random variable. We assume that $\expect{\delta\mathcal{D}} = 0$ and $\text{Var}(\delta\mathcal{D}) = \sigma_v^2$, such that $\expect{v_\mathrm{measured}} = Hd$ and $\text{Var}(v_\mathrm{measured}) = \sigma_v^2$. Given this information it is motivated to use a Gaussian PDF (with this mean and variance) for the likelihood
 
 $$
 \pdf{\data}{d,H,I} = \frac{1}{\sqrt{2\pi}\sigma_v} \exp\left( - \frac{(v_0 - Hd)^2}{2\sigma_v^2} \right).

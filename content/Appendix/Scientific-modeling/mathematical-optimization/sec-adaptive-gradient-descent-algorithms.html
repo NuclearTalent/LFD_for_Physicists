@@ -67,28 +67,28 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/Appendix/Scientific-modeling/mathematical-optimization/sec-adaptive-gradient-descent-algorithms';</script>
     <script src="../../../../_static/custom.js?v=33f35b7a"></script>
     <script src="../../../../_static/phrase-search.js?v=97a9d95f"></script>
+    <script src="../../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
+    <script src="../../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
     <script src="../../../../_static/chi-feng/lib/canvas-5-polyfill.js?v=746022bf"></script>
     <script src="../../../../_static/chi-feng/lib/linalg.opt.js?v=8609d5ed"></script>
-    <script src="../../../../_static/chi-feng/lib/conrec.min.js?v=14f8c200"></script>
     <script src="../../../../_static/chi-feng/lib/linalg.core.js?v=fd88b94a"></script>
-    <script src="../../../../_static/chi-feng/lib/dat.gui.min.js?v=c2b0a302"></script>
-    <script src="../../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
-    <script src="../../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
-    <script src="../../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
-    <script src="../../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
-    <script src="../../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
-    <script src="../../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
-    <script src="../../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
-    <script src="../../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
-    <script src="../../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
-    <script src="../../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
-    <script src="../../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
     <script src="../../../../_static/chi-feng/algorithms/H2MC.js?v=7d0bd478"></script>
-    <script src="../../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
-    <script src="../../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
-    <script src="../../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
-    <script src="../../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../../_static/chi-feng/algorithms/HamiltonianMC.js?v=1e431707"></script>
+    <script src="../../../../_static/chi-feng/algorithms/RandomWalkMH.js?v=75499348"></script>
+    <script src="../../../../_static/chi-feng/algorithms/EfficientNUTS.js?v=3609ed3e"></script>
     <script src="../../../../_static/chi-feng/algorithms/NaiveNUTS.js?v=1e7b0747"></script>
+    <script src="../../../../_static/chi-feng/algorithms/AdaptiveMH.js?v=9105116c"></script>
+    <script src="../../../../_static/chi-feng/algorithms/DE-MCMC-Z.js?v=07177b2c"></script>
+    <script src="../../../../_static/chi-feng/algorithms/DualAveragingNUTS.js?v=2487c776"></script>
+    <script src="../../../../_static/chi-feng/algorithms/NSRadFriends.js?v=db4ab26f"></script>
+    <script src="../../../../_static/chi-feng/algorithms/DualAveragingHMC.js?v=dea6ea58"></script>
+    <script src="../../../../_static/chi-feng/algorithms/MALA.js?v=50726976"></script>
+    <script src="../../../../_static/chi-feng/algorithms/GibbsSampling.js?v=baaeee05"></script>
+    <script src="../../../../_static/chi-feng/algorithms/SVGD.js?v=30e2871f"></script>
+    <script src="../../../../_static/chi-feng/main/MCMC.js?v=1e249349"></script>
+    <script src="../../../../_static/chi-feng/main/Visualizer.js?v=d1b96509"></script>
+    <script src="../../../../_static/chi-feng/main/MultivariateNormal.js?v=df85d41b"></script>
+    <script src="../../../../_static/chi-feng/main/Simulation.js?v=c4c0c463"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="45. Overview of Appendix C: Getting started" href="../../Getting-started/index.html" />
@@ -742,24 +742,24 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="adaptive-gradient-descent-algorithms">
 <h1><span class="section-number">44.3. </span>Adaptive gradient descent algorithms<a class="headerlink" href="#adaptive-gradient-descent-algorithms" title="Link to this heading">#</a></h1>
-<p>As outlined above, there are several convergence challenges for the standard gradient-descent methods. These are in general connected with the difficulty of navigating complicated cost function surfaces using only pointwise information on the gradient. The use of the history of past updates can help to adapt the learning schedule and has been shown to significantly increase the efficiency of gradient descent. Somewhat simplified, the adaptive versions improves the parameter update by adding a fraction of the past update vector to the current one.</p>
+<p>As outlined above, there are several convergence challenges for the standard gradient-descent methods. These are in general connected with the difficulty of navigating complicated cost function surfaces using only pointwise information on the gradient. The use of the history of past updates can help to adapt the learning schedule and has been shown to significantly increase the efficiency of gradient descent. Two ideas are central. With <em>momentum</em>, a fraction <span class="math notranslate nohighlight">\(\gamma\)</span> of the past update vector is added to the current one, <span class="math notranslate nohighlight">\(\boldsymbol{v}_n = \gamma \boldsymbol{v}_{n-1} + \eta \boldsymbol{\nabla} C_n\)</span> and <span class="math notranslate nohighlight">\(\pars_{n+1} = \pars_n - \boldsymbol{v}_n\)</span>, which dampens oscillations and speeds up progress along directions with a persistent gradient. With <em>adaptive learning rates</em>, the step size for each parameter is adjusted based on the history of past (squared) gradients.</p>
 <p>Some examples of commonly employed, adaptive methods are Adagrad <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id62" title="John Duchi, Elad Hazan, and Yoram Singer. Adaptive subgradient methods for online learning and stochastic optimization. Journal of Machine Learning Research, 12(61):2121–2159, 2011. URL: http://jmlr.org/papers/v12/duchi11a.html.">DHS11</a>]</span>, Adadelta <span class="bibtex-citation" id="id2">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id63" title="Matthew D. Zeiler. ADADELTA: An Adaptive Learning Rate Method. arXiv e-prints, pages arXiv:1212.5701, December 2012. arXiv:1212.5701, doi:10.48550/arXiv.1212.5701.">Zeiler12</a>]</span>, RMSprop, and Adam <span class="bibtex-citation" id="id3">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id64" title="Diederik P. Kingma and Jimmy Ba. Adam: A Method for Stochastic Optimization. arXiv e-prints, pages arXiv:1412.6980, December 2014. arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">KingmaBa14</a>]</span>.</p>
 <section id="adagrad">
 <h2>Adagrad<a class="headerlink" href="#adagrad" title="Link to this heading">#</a></h2>
 <p>Adagrad <span class="bibtex-citation" id="id4">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id62" title="John Duchi, Elad Hazan, and Yoram Singer. Adaptive subgradient methods for online learning and stochastic optimization. Journal of Machine Learning Research, 12(61):2121–2159, 2011. URL: http://jmlr.org/papers/v12/duchi11a.html.">DHS11</a>]</span> is a simple algorithm that uses the history of past updates to adapt the learning rate to the different parameters. Let us introduce a shorthand notation <span class="math notranslate nohighlight">\(j_{n,i}\)</span> for the partial derivative of the cost function with respect to parameter <span class="math notranslate nohighlight">\(\para_i\)</span> at the position <span class="math notranslate nohighlight">\(\pars_n\)</span> corresponding to iteration <span class="math notranslate nohighlight">\(n\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-e722d2d9-a6b7-4544-b581-3ab8eb3ede85">
-<span class="eqno">(44.5)<a class="headerlink" href="#equation-e722d2d9-a6b7-4544-b581-3ab8eb3ede85" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4782b84a-bb6e-43c6-bd86-aba77f130b6c">
+<span class="eqno">(44.5)<a class="headerlink" href="#equation-4782b84a-bb6e-43c6-bd86-aba77f130b6c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 j_{n,i} \equiv \left. \frac{\partial C}{\partial \para_i} \right|_{\pars = \pars_n}.
 \end{equation}\]</div>
 <p>We also introduce a diagonal matrix <span class="math notranslate nohighlight">\(J^2_n \in \mathbb{R}^{N_p \times N_p}\)</span> where the <span class="math notranslate nohighlight">\(i\)</span>th diagonal element</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2887f2c5-2573-4560-9024-571d54ce6cc5">
-<span class="eqno">(44.6)<a class="headerlink" href="#equation-2887f2c5-2573-4560-9024-571d54ce6cc5" title="Permalink to this equation">#</a></span>\[\begin{equation}
-J^2_{n,ii} \equiv \sum_{k=1}^{n} j_{k,i}^2
+<div class="amsmath math notranslate nohighlight" id="equation-9d4c44d2-a9ad-4d45-976c-dd329e66348b">
+<span class="eqno">(44.6)<a class="headerlink" href="#equation-9d4c44d2-a9ad-4d45-976c-dd329e66348b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+J^2_{n,ii} \equiv \sum_{k=0}^{n} j_{k,i}^2
 \end{equation}\]</div>
 <p>is the sum of the squares of the gradients with respect to <span class="math notranslate nohighlight">\(\para_i\)</span> up to iteration <span class="math notranslate nohighlight">\(n\)</span>. In its update rule, at iteration <span class="math notranslate nohighlight">\(n\)</span>, Adagrad modifies the general learning rate <span class="math notranslate nohighlight">\(\eta_n\)</span> for every parameter <span class="math notranslate nohighlight">\(\para_i\)</span> based on the past gradients that have been computed as described by <span class="math notranslate nohighlight">\(J^2_{n,ii}\)</span>. The parameter <span class="math notranslate nohighlight">\(\para_i\)</span> at the next iteration <span class="math notranslate nohighlight">\(n+1\)</span> is then given by</p>
 <div class="math notranslate nohighlight" id="equation-eq-mathematicaloptimization-adagrad">
 <span class="eqno">(44.7)<a class="headerlink" href="#equation-eq-mathematicaloptimization-adagrad" title="Link to this equation">#</a></span>\[
-\para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{J^2_{n,ii} + \varepsilon}} j_{n,i},
+\para_{n+1,i} = \para_{n,i} - \frac{\eta}{\sqrt{J^2_{n,ii} + \varepsilon}} j_{n,i},
 \]</div>
 <p>with <span class="math notranslate nohighlight">\(\varepsilon\)</span> a small, positive number to avoid division by zero.</p>
 <p>Using Eq. <a class="reference internal" href="#equation-eq-mathematicaloptimization-adagrad">(44.7)</a> the learning schedule does not have to be tuned by the user as it is adapted by the history of past gradients. This is the main advantage of this algorithm. At the same time, its main weakness is the accumulation of the squared gradients in the denominator which implies that the learning rate eventually becomes infinitesimally small, at which point the convergence halts.</p>
@@ -767,34 +767,34 @@ J^2_{n,ii} \equiv \sum_{k=1}^{n} j_{k,i}^2
 <section id="rmsprop">
 <h2>RMSprop<a class="headerlink" href="#rmsprop" title="Link to this heading">#</a></h2>
 <p>RMSprop is an extension of Adagrad that seeks to reduce its aggressive, monotonically decreasing learning rate. Instead of storing the sum of past squared gradients, the denominator is defined as a decaying average of past squared gradients. Labeling the decaying average at iteration <span class="math notranslate nohighlight">\(n\)</span> by <span class="math notranslate nohighlight">\(\bar{{J}^2}_{n,ii}\)</span>, we introduce a decay variable <span class="math notranslate nohighlight">\(\gamma\)</span> and define</p>
-<div class="amsmath math notranslate nohighlight" id="equation-88f5035c-f07b-4317-9d49-6633b5e77bb2">
-<span class="eqno">(44.8)<a class="headerlink" href="#equation-88f5035c-f07b-4317-9d49-6633b5e77bb2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a9e8f319-2278-408c-8195-0ef1cd3a6912">
+<span class="eqno">(44.8)<a class="headerlink" href="#equation-a9e8f319-2278-408c-8195-0ef1cd3a6912" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \bar{J}^2_{n,ii} = \gamma \bar{J}^2_{n-1,ii} + (1-\gamma) j_{n,i}^2.
 \end{equation}\]</div>
 <p>The inventor of RMSprop, Geoff Hinton, suggests setting the decay variable <span class="math notranslate nohighlight">\(\gamma=0.9\)</span> , while a good default value for the learning rate <span class="math notranslate nohighlight">\(\eta\)</span> is 0.001. The update rule in RMSprop is then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2072bda6-9be9-4379-9ea0-688e13c64930">
-<span class="eqno">(44.9)<a class="headerlink" href="#equation-2072bda6-9be9-4379-9ea0-688e13c64930" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\bar{J}^2_{n,ii} + \varepsilon}} j_{n,i}.
+<div class="amsmath math notranslate nohighlight" id="equation-f9b3cdcc-f70b-412c-ac05-5d1e32eb7648">
+<span class="eqno">(44.9)<a class="headerlink" href="#equation-f9b3cdcc-f70b-412c-ac05-5d1e32eb7648" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\para_{n+1,i} = \para_{n,i} - \frac{\eta}{\sqrt{\bar{J}^2_{n,ii} + \varepsilon}} j_{n,i}.
 \end{equation}\]</div>
 </section>
 <section id="adam">
 <h2>Adam<a class="headerlink" href="#adam" title="Link to this heading">#</a></h2>
-<p>Adaptive Moment Estimation (Adam) <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id64" title="Diederik P. Kingma and Jimmy Ba. Adam: A Method for Stochastic Optimization. arXiv e-prints, pages arXiv:1412.6980, December 2014. arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">KingmaBa14</a>]</span> also computes adaptive learning rates for each parameter. However, in addition to storing an exponentially decaying average of past squared gradients like Adagrad and RMSprop, Adam also keeps an exponentially decaying average of past gradients similar to a momentum. Describing this latter quantity by the diagonal matrix <span class="math notranslate nohighlight">\(\hat{M}_n\)</span> (at iteration <span class="math notranslate nohighlight">\(n\)</span>) we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a9f524a8-19c9-4350-bb8a-21e08a377e40">
-<span class="eqno">(44.10)<a class="headerlink" href="#equation-a9f524a8-19c9-4350-bb8a-21e08a377e40" title="Permalink to this equation">#</a></span>\[\begin{align}
+<p>Adaptive Moment Estimation (Adam) <span class="bibtex-citation" id="id5">[<a class="reference internal" href="../../../Backmatter/bibliography.html#id64" title="Diederik P. Kingma and Jimmy Ba. Adam: A Method for Stochastic Optimization. arXiv e-prints, pages arXiv:1412.6980, December 2014. arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">KingmaBa14</a>]</span> also computes adaptive learning rates for each parameter. However, in addition to storing an exponentially decaying average of past squared gradients like RMSprop, Adam also keeps an exponentially decaying average of past gradients similar to a momentum. Describing this latter quantity by the diagonal matrix <span class="math notranslate nohighlight">\(\bar{M}_n\)</span> (at iteration <span class="math notranslate nohighlight">\(n\)</span>) we have</p>
+<div class="amsmath math notranslate nohighlight" id="equation-daeda66e-a0af-4039-8d9a-8750b6e3a3f7">
+<span class="eqno">(44.10)<a class="headerlink" href="#equation-daeda66e-a0af-4039-8d9a-8750b6e3a3f7" title="Permalink to this equation">#</a></span>\[\begin{align}
 \bar{M}_{n,ii} &amp;= \gamma_1 \bar{M}_{n-1,ii} + (1-\gamma_1) j_{n,i}, \\
 \bar{J}^2_{n,ii} &amp;= \gamma_2 \bar{J}^2_{n-1,ii} + (1-\gamma_2) j_{n,i}^2.
 \end{align}\]</div>
 <p>Both of these quantities are initialized with zero vectors (<span class="math notranslate nohighlight">\(\bar{M}_{0,ii}=0\)</span> and <span class="math notranslate nohighlight">\(\bar{J}^2_{0,ii}=0\)</span> for all <span class="math notranslate nohighlight">\(i\)</span>) which tends to introduce a bias for early time steps. This bias can be large if <span class="math notranslate nohighlight">\(\gamma_1\)</span> and <span class="math notranslate nohighlight">\(\gamma_2\)</span> are close to one. It was therefore proposed to use bias-corrected first and second moment estimates</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b51cb979-cec1-4632-87b4-6b780a49a633">
-<span class="eqno">(44.11)<a class="headerlink" href="#equation-b51cb979-cec1-4632-87b4-6b780a49a633" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-03dfe5e1-2692-433a-bba6-d8a52dc97074">
+<span class="eqno">(44.11)<a class="headerlink" href="#equation-03dfe5e1-2692-433a-bba6-d8a52dc97074" title="Permalink to this equation">#</a></span>\[\begin{align}
 \hat{M}_{n,ii} &amp;= \frac{\bar{M}_{n,ii}}{1 - (\gamma_1)^n}, \\
 \hat{J}^2_{n,ii} &amp;= \frac{\bar{J}^2_{n,ii}}{1 - (\gamma_2)^n}.
 \end{align}\]</div>
 <p>The update rule then becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ea92bfef-4e88-4375-9233-78e361a1e436">
-<span class="eqno">(44.12)<a class="headerlink" href="#equation-ea92bfef-4e88-4375-9233-78e361a1e436" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\para_{n+1,i} = \pars_{n,i} - \frac{\eta}{\sqrt{\hat{J}^2_{n,ii}} + \varepsilon} \hat{M} _{n,ii}.
+<div class="amsmath math notranslate nohighlight" id="equation-55618ad3-086e-496c-82e6-c3a836fa1deb">
+<span class="eqno">(44.12)<a class="headerlink" href="#equation-55618ad3-086e-496c-82e6-c3a836fa1deb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\para_{n+1,i} = \para_{n,i} - \frac{\eta}{\sqrt{\hat{J}^2_{n,ii}} + \varepsilon} \hat{M} _{n,ii}.
 \end{equation}\]</div>
 <p>Default, recommended values are <span class="math notranslate nohighlight">\(\gamma_1=0.9\)</span>, <span class="math notranslate nohighlight">\(\gamma_2=0.999\)</span>, and <span class="math notranslate nohighlight">\(\varepsilon=10^{-8}\)</span>.</p>
 <p>Adam has become the method of choice in many machine-learning implementations. An explanation and comparison of different gradient-descent algorithms is presented in a <a class="reference external" href="https://www.ruder.io/optimizing-gradient-descent">blog post</a> by Sebastian Ruder.</p>

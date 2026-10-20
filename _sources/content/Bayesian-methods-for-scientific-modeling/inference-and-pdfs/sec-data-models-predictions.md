@@ -111,7 +111,7 @@ Here, we must formulate a likelihood of the data $\pdf{\data}{\pars,I}$ and a pr
 The denominator in Eq. {eq}`eq_bayes` is sometimes referred to as the marginal likelihood or the evidence and normalizes the left-hand side such that it integrates to unity, i.e., we have
 
 \begin{equation}
-\pdf{\data}{I} = \int_{\Omega} \pdf{\data}{\pars} \pdf{\pars}{I}\, {\rm d}\pars.
+\pdf{\data}{I} = \int_{\Omega} \pdf{\data}{\pars,I} \pdf{\pars}{I}\, {\rm d}\pars.
 \end{equation}
 
 Often we do not need an absolutely normalized posterior distribution, so we can omit the denominator in Eq. {eq}`eq_bayes`. Indeed, the latter does not explicitly depend on $\pars$. 

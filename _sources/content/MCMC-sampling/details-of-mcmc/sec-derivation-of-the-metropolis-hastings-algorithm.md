@@ -113,7 +113,7 @@ The basic structure of the Metropolis (and Metropolis-Hastings) algorithm is the
    4. Iterate until the chain has reached a predetermined length or passes some convergence tests.
    ```
 
-* The Metropolis algorithm dates back to the 1950s in physics, but didn't become widespread in statistics until almost 1980.
+* The Metropolis algorithm dates back to the 1950s in physics, but didn't become widespread in statistics until around 1990.
 * It enabled Bayesian methods to become feasible.
 * Note, however, that nowadays there are much more sophisticated samplers than the original Metropolis one.
 

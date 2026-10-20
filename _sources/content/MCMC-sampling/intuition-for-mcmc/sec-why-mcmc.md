@@ -83,7 +83,7 @@ where $\{ \pars_i \}_{i=1}^N$ are $N$ uniformly distributed points in the $D$ di
 where $\langle f \rangle$ is the sample mean, and becomes
 
 \begin{equation}
-\text{Var}(I_N)) = V_D^2 \frac{\sigma_N^2}{N}.
+\text{Var}(I_N) = V_D^2 \frac{\sigma_N^2}{N}.
 \end{equation}
 
 
@@ -155,7 +155,7 @@ num_samples=[int(10**i) for i in np.linspace(1,5,50)]
 I_num = []
 I_rel_error = []
 for num in num_samples:
-    max_I_num = 0.
+    max_I_num, max_err = 0., -1.
     # We will do ten simulations and find the largest error that is made
     for iexp in range(10):
         # `num` bivariate samples from a uniform distribution [-1,1]**2
@@ -165,8 +165,10 @@ for num in num_samples:
         inside = samples[0,:]**2 + samples[1,:]**2 <= 1
         # We can evaluate the Monte Carlo sum
         iexp_I_num = 4.0 * np.sum(inside) / num
-        # We keep the largest error that we find in all experiments
-        max_I_num = max(max_I_num,iexp_I_num)
+        # We keep the result with the largest error that we find in all experiments
+        if np.abs(iexp_I_num-np.pi) > max_err:
+            max_err = np.abs(iexp_I_num-np.pi)
+            max_I_num = iexp_I_num
         
     I_num.append(max_I_num)
     # And the (absolute value) of the relative error
@@ -209,7 +211,7 @@ where you should note that the volume factor has disappeared and that you only e
 ## Sampling from a PDF
 
 We have seen that the ability to draw samples from a probability distribution is very useful. If $p(\pars)$ is of a standard form then it is straightforward to sample from it using available algorithms, most of which are based on nonlinear transformations of uniformly distributed random numbers. For example, a set of samples $\{ u_i\}_{i=1}^N$ from the one-dimensional standard uniform distribution $\mathcal{U}([0,1])$ 
-can be tuned to a a set of samples $\{ \para_i \}_{i=1}^N$ from the standard Gaussian distribution $\mathcal{N}(0,1)$ via the transformation
+can be transformed to a set of samples $\{ \para_i \}_{i=1}^N$ from the standard Gaussian distribution $\mathcal{N}(0,1)$ via the transformation
 
 \begin{equation}
 \para_i = F^{-1}_{\mathcal{N}}(u_i),
@@ -217,7 +219,7 @@ can be tuned to a a set of samples $\{ \para_i \}_{i=1}^N$ from the standard Gau
 
 where $F^{-1}_{\mathcal{N}}$ is the *inverse* distribution function of the standard normal distribution. That is, we interpret $u_i$ as a probability sample and use the above transformation to find the solution to $u_i = F(\para_i)$.
 
-This works well for many standard distributions. However, for the generation of random samples from nonstandard, arbitrary distributions (such as the ones that we might encounter in a realistic Bayesian analysis), no algorithms are available. This is where custom-built Markov chains enter.
+This works well for many standard distributions. However, for the generation of random samples from nonstandard, arbitrary distributions (such as the ones that we might encounter in a realistic Bayesian analysis), standard algorithms (such as the inverse transformation above) are usually not applicable. This is where custom-built Markov chains enter.
 
 
 

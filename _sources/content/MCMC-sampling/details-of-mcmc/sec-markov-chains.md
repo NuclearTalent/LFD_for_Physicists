@@ -93,6 +93,10 @@ For continuous variables we use (conditional) distribution functions and we intr
 
 ```  
 
+```{admonition} Terminology
+Markov chains with this property are also known as *(time-)homogeneous*. This meaning of "stationary" should not be confused with the *stationary distribution* of a chain, which is introduced below.
+```
+
 Be aware since the transition density is sometimes denoted $T(x_j \leftarrow x_i)$ or even $T_{j,i}$. 
 
 ```{exercise} Stochastic matrix
@@ -137,7 +141,7 @@ First 50 variables in four realisations of the chain.
 ```{glue:figure} MarkovProcessExample_corner_fig
 :name: fig-example-MarkovProcessExample_corner_fig
 
-Joint bivariate and univariate probability distributions. The statistics to produce these plots were gathered from 20,000 realisations of the Markov chains.
+Joint bivariate and univariate probability distributions. The statistics to produce these plots were gathered from 40,000 realisations of the Markov chains.
 ```
 
 ```{code-cell} python3
@@ -180,7 +184,7 @@ glue("MarkovProcessExample_runs_fig", fig_runs, display=False)
 # Marginal, joint distrubtions 
 import prettyplease as pp
 
-# Here we instead create 20,000 runs (to collect statistics), each of length 13.
+# Here we instead create 40,000 runs (to collect statistics), each of length 13.
 example.create_multiple_processes(13,40000)
 # but we just plot the first four variables
 fig_corner = pp.corner(example.sequence[:4,:].T,labels=[fr'$X_{{{i}}}$' for i in range(4)])
@@ -192,7 +196,7 @@ glue("MarkovProcessExample_corner_fig", fig_corner, display=False)
 
 We will now explore the long-time evolution of a Markov chain. We will, for simplicity, consider a countable sample space although our final application will be to continuous probability distributions. 
 
-First, we note that even the Markov process with its very short memory (dependence on just the previous value) will maintain an imprint of earlier positions. This imprint, however, will be finite. Let us explore the first few steps pf the chain. The conditional probability of being in state $k$ at position 2 given that we started in position $i$ at $t=0$ can be obtained using the product rule {eq}`eq:Statistics:product-rule`
+First, we note that even the Markov process with its very short memory (dependence on just the previous value) will maintain an imprint of earlier positions. This imprint, however, will be finite. Let us explore the first few steps of the chain. The conditional probability of being in state $k$ at position 2 given that we started in position $i$ at $t=0$ can be obtained using the product rule {eq}`eq:Statistics:product-rule`
 
 $$
 \cprob{X_{2}=k}{X_{0}=i} &= \sum_j  \cprob{X_{2}=k, X_{1}=j}{X_{0}=i} \\
@@ -296,22 +300,22 @@ See {numref}`exercise:limiting-distribution` to complete the proof.
 
 This implies that the random variable $X_n$ will be distributed according to $\pi$ for large enough $n$ and that it will be stationary as time passes. 
 
-The extra, required properties for such a **limiting distribution** to occur are 
+A chain has a unique **stationary distribution** if it fulfills
 
 irreducibility
 : all states *communicate* with each other which basically implies that all parts of the state space can be reached regardless of starting position;
 
-and that all states are 
+and if all states are 
 
 positively recurrent
-: the probability of eventually returning to position $i$, having started from $i$, is 1 for all $i$. 
+: the probability of eventually returning to position $i$, having started from $i$, is 1 and the expected return time is finite for all $i$ (for an irreducible chain with a finite state space this is always the case). 
 
 In addition, with the additional property of
 
 aperiodicity
-: the recurrence of any position $i$ does not follow a simple periodic pattern;
+: returns to any position $i$ are not restricted to multiples of some period $d > 1$;
 
-it can be shown that the stationary Markov chain will reach its unique limiting distribution regardless of starting point. This is the so called **limit theorem**. Henceforth we will only deal with irreducible, positively recurrent, aperiodic chains unless otherwise indicated.
+it can be shown that the stationary Markov chain will converge to this stationary distribution regardless of starting point. It is then also the unique **limiting distribution**. This is the so called **limit theorem**. Henceforth we will only deal with irreducible, positively recurrent, aperiodic chains unless otherwise indicated.
 
 ````{prf:example} Stationary distribution of "A simple Markov process"
 :label: example:stationary-simple-markov-process
@@ -348,12 +352,12 @@ Show that {prf:ref}`definition:stationary-distribution` implies that there is a 
 
 ## Reversibility
 
-Another important property that some Markov chains can have is reversability. This property can also be seen as an invariance under reversal of time. Let us consider $X$, an irreducible, positive recurrent Markov chain of length $N$, $\{ X_N \, : \, 0 \leq n \leq N \}$, with transition matrix $T_X$ and stationary distribution $\boldsymbol{\pi}$. Suppose further that $X_0$ has the distribution $\boldsymbol{\pi}$ such that all $X_n$ also have the same distribution.
+Another important property that some Markov chains can have is reversability. This property can also be seen as an invariance under reversal of time. Let us consider $X$, an irreducible, positive recurrent Markov chain of length $N$, $\{ X_n \, : \, 0 \leq n \leq N \}$, with transition matrix $T_X$ and stationary distribution $\boldsymbol{\pi}$. Suppose further that $X_0$ has the distribution $\boldsymbol{\pi}$ such that all $X_n$ also have the same distribution.
 
 Define the reversed chain $Y$ with elements $Y_n = X_{N-n}$. One can show that this sequence will also be a Markov chain, and that its transition matrix $T_Y$ will be given by
 
 $$
-T_Y(i,j) = \prob_{Y_{n+1 \vert Y_n}}(j \vert i) = \frac{\pi_j}{\pi_i} T_X(j,i).
+T_Y(i,j) = \prob_{Y_{n+1} \vert Y_n}(j \vert i) = \frac{\pi_j}{\pi_i} T_X(j,i).
 $$ (eq:MarkovChains:T_Y_vs_T_X)
 
 The chain $Y$ is called the *time-reversal* of $X$, and we say that $X$ is *reversible* if $T_X = T_Y$.
@@ -447,7 +451,7 @@ A Markov chain that reaches an equilibrium with a stationary distribution $\pi$ 
 Consider a sequence of outcomes $(i_0, i_1, i_2, \ldots)$ from a stationary Markov chain. 
 1. The first outcome, $i_0$, is in practice a sample from the initial probability distribution $\pi^{(0)}$. Note that $\pi^{(0)}_i = \prob_{X_0}(i)$.
 2. The second outcome, $i_1$, is a sample from $\pi^{(1)} = \pi^{(0)} T$. In practice, since we have the first outcome $i_0$, we obtain this second outcome as a sample from the conditional distribution for $X_1$ given $X_0$, i.e., a distribution with elements $\prob_{X_1 \vert X_0}(i \vert i_0) = T(i_0, i)$.
-3. Continuing the process of drawing samples from conditional distributions we find that the $n$:th outcome $i_n$ is a sample from $\pi^{(n)} \pi^{(0)} T^n$, but in practice we obtain it as a draw from $\prob_{X_n \vert X_{n-1}}(i \vert i_{n-1}) = T(i_{n-1}, i)$.
+3. Continuing the process of drawing samples from conditional distributions we find that the $n$:th outcome $i_n$ is a sample from $\pi^{(n)} = \pi^{(0)} T^n$, but in practice we obtain it as a draw from $\prob_{X_n \vert X_{n-1}}(i \vert i_{n-1}) = T(i_{n-1}, i)$.
 
 Dismissing the first $n$ outcomes, for which we have not yet reached equilibrium, we have the sequence $(i_{n+1}, i_{n+2}, \ldots)$. These are, respectively, samples from $\pi^{(n+1)}, \pi^{(n+2)}, \ldots$. Assuming that the Markov chain has reached equilibrium, then all of these distributions are in fact the same. Therefore, our sequence of outcomes after equilibration are samples from the *same* distribution $\pi$.
 `````
@@ -473,10 +477,10 @@ where $S$ is a (discrete) step proposal matrix and $A$ contains acceptance proba
 
 \begin{align}
 S(i,j) &= \cprob{\text{proposing next position } j}{\text{current position is } i}, \\
-A(i,j) &= \cprob{\text{accepting new position } j}{\text{current position is } i},
+A(i,j) &= \cprob{\text{accepting new position } j}{\text{current position is } i \text{ and } j \text{ is proposed}},
 \end{align}
 
-where we think of outcomes of subsequent random variables as positions in the sample space. Note how the probability of a transition from $i$ to $j$, given by $T(i,j)$, is then the product of these two independent (proposal and acceptance) probabilities.
+where we think of outcomes of subsequent random variables as positions in the sample space. Note how the probability of a transition from $i$ to $j$, given by $T(i,j)$, is then (for $j \neq i$) the product of the proposal probability and the conditional acceptance probability.
 
 Constraining $T$ to fulfill detailed balance {eq}`eq:MarkovChains:detailed-balance` we can guarantee that $\pi$ is a stationary distribution. That is, we require
 
@@ -484,7 +488,7 @@ Constraining $T$ to fulfill detailed balance {eq}`eq:MarkovChains:detailed-balan
 \pi_i S(i,j) A(i,j) = \pi_j S(j,i) A(j,i).
 \end{equation}
 
-This condition is fulfilled for any stochastic matrix $S$ (impying non-negative entries and row sums equal to one) if one sets the acceptance probability
+This condition is fulfilled for any stochastic matrix $S$ (implying non-negative entries and row sums equal to one), with $S(i,j) > 0$ whenever $S(j,i) > 0$, if one sets the acceptance probability
 
 \begin{equation}
 A(i,j) = \min\left(1, \frac{\pi_j}{\pi_i}\frac{S(j,i)}{S(i,j)} \right),
@@ -692,7 +696,7 @@ The marginal distribution $\p{x_2}$ is shown in the third panel on the diagonal 
 - A plot of $\pdf{x_2}{x_1}$, or any $\pdf{x_{n+1}}{x_n}$ would look identical since this is the definition of a stationary Markov chain. 
 - A conditional probability $\pdf{\alpha}{\beta}$ is normalized along $\alpha$, with the value of $\beta$ considered fixed. In other words, a `numpy` array of values `P[n,m]` tabulating $\pdf{x_m}{x_n}$ on a grid satisfies:
 ```{code-block} python
-np.sum(P, axis=1) = 1
+np.sum(P, axis=1) == 1
 ```
 - This plot only shows the update rule and does not depend on how we chose an initial value for the Markov chain.
 
@@ -708,7 +712,7 @@ $$
 \begin{aligned}
 \prob \left( X_{n}=i \right) &= \sum_j \prob \left( X_{n}=i, X_{n-1}=j  \right) \\
 &= \sum_j \cprob{X_{n}=i}{X_{n-1}=j} \prob \left( X_{n-1}=j \right) \\
-&= \sum_j \pi_j T(i,j) = \pi_i.
+&= \sum_j \pi_j T(j,i) = \pi_i.
 \end{aligned}
 $$
 ```
@@ -725,7 +729,7 @@ $$
 :class: dropdown
 
 - The first panel, $\pdf{x_1}{x_0}$, shows the transition density.
-- A reversible Markov chain has $\pdf{x_{n+1}}{x_n} = \pdf{x_n}{x_{n+1}}$. Here we can study the first panel which indeed is symmetric under the interchange of its axes. In other words, mirroring the plot along the diagonal should not change its appearance.
+- A reversible Markov chain fulfills detailed balance, $\pi(x_n)\pdf{x_{n+1}}{x_n} = \pi(x_{n+1})\pdf{x_n}{x_{n+1}}$. With a uniform stationary distribution, as here, this implies a symmetric transition density $\pdf{x_{n+1}}{x_n} = \pdf{x_n}{x_{n+1}}$. Here we can study the first panel which indeed is symmetric under the interchange of its axes. In other words, mirroring the plot along the diagonal should not change its appearance.
 - The equilibrium seem to provide samples from a uniform distribution $\mathcal{U}([0,1])$.
 ```
 
@@ -736,7 +740,7 @@ $$
 Solve the system of equations
 
 $$
-\sum_i \pi_i T_{ij} = \pi_i, \quad \forall j
+\sum_i \pi_i T_{ij} = \pi_j, \quad \forall j
 $$
 subject to the constraint $\pi_1 + \pi_2 = 1$. The solution is
 
@@ -825,7 +829,7 @@ The distribution $\pi = (0.5,0.5)$ is stationary. However, it is not a limiting 
 Solve the system of equations
 
 $$
-\sum_i \pi_i T_{ij} = \pi_i, \quad \forall j
+\sum_i \pi_i T_{ij} = \pi_j, \quad \forall j
 $$
 
 subject to the constraint $\pi_1 + \pi_2 +\pi_3= 1$. The solution is
@@ -844,7 +848,7 @@ A numerical test can be performed by evaluating a large number of transitions fr
 Solve the system of equations
 
 $$
-\sum_i \pi_i T_{ij} = \pi_i, \quad \forall j
+\sum_i \pi_i T_{ij} = \pi_j, \quad \forall j
 $$
 
 subject to the constraint $\pi_1 + \pi_2 + \pi_3= 1$ to find the stationary distribution.
@@ -897,9 +901,9 @@ $\pi T = \pi$. In other words, $\pi$ is a left eigenvector to $T$ with eigenvalu
   $$
   \mathrm{det}(T-\lambda I) = 0
   $$
-  which will give one eigenvalue $\lambda_0 = 1.
+  which will give one eigenvalue $\lambda_0 = 1$.
 
-  Since there is an eigenvalue that is one, there is a limiting distribution. To find 
+  Any transition matrix has an eigenvalue one since its rows sum to one. Here, the chain is also irreducible and aperiodic ($T_{11} > 0$), so there is a unique limiting distribution. To find 
 the distribution we compute the right eigenvector of $T^t$ corresponding to the $\lambda_0 = 1$ eigenvalue. We normalize it to have sum equal to one and get $\pi = \frac{1}{7}(4,1,2)$.
 
 (*iii*)
@@ -917,7 +921,7 @@ Hint:
 1. Express the conditional probability
 
    $$
-   \prob_{Y_{N+1} \vert Y_0, Y_1, \ldots, Y_n}(i_{n+1} \vert i_0, i_1, \ldots, i_n)
+   \prob_{Y_{n+1} \vert Y_0, Y_1, \ldots, Y_n}(i_{n+1} \vert i_0, i_1, \ldots, i_n)
    $$
 
    in terms of a ratio of joint probabilities. 

@@ -95,7 +95,7 @@ $$
 $$ (eq:scipy_beta_distribution)
 
 where $0 \leq x \leq 1$ and $a>0$, $b>0$. 
-So $p(x|a,b) = f(x,a,b)$ and our likelihood is a beta distribution $p(H,N|p_H) = f(p_H,1+H,1+N-H)$ to agree with {eq}`eq:binomial_likelihood`.
+So $p(x|a,b) = f(x,a,b)$ and our likelihood, as a function of $p_H$, is proportional to a beta distribution, $p(H,N|p_H) \propto f(p_H,1+H,1+N-H)$, to agree with {eq}`eq:binomial_likelihood`.
 
 If the prior is $p(p_H|I) = f(p_H,\alpha,\beta)$ with $\alpha$ and $\beta$ to reproduce our prior expectations (or knowledge), then by Bayes' theorem the *normalized* posterior is
 
@@ -107,7 +107,7 @@ $$
 \end{align}  
 $$ (eq:coinflip_updated)
 
-so we *update the prior* simply by changing the arguments of the beta distribution: $\alpha \rightarrow \alpha + H$, $\beta \rightarrow \beta + N-H$ because the (normalized) product of two beta distributions is another beta distribution. Heally easy!
+so we *update the prior* simply by changing the arguments of the beta distribution: $\alpha \rightarrow \alpha + H$, $\beta \rightarrow \beta + N-H$ because the (normalized) product of two beta distributions is another beta distribution. Really easy!
 
 :::{warning} Check this against the code! 
 Look in the code where the posterior is calculated and see how the beta distribution is used. Verify that {eq}`eq:coinflip_updated` is evaluated. Try changing the values of $\alpha$ and $\beta$ used in defining the prior to see the shapes.

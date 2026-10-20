@@ -16,9 +16,9 @@ Before turning to a real-world example, let us introduce the so called confusion
 |  $\hat{y}=1$ |  False Positive (FP)   | True Positive (TP) | P$^*$ |
 |  total |  N | P | n |
 
-The entries in this table should be replaced with the actual numbers from the validation set. This matrix provides more information than just the accuracy of the model as it also reveals how it fails when it does. Note that P(N) denotes the total number of positive(negative) outputs in the data set, while P$^*$(N$^*) is the total number of positive(negative) class predictions made by the model. 
+The entries in this table should be replaced with the actual numbers from the validation set. This matrix provides more information than just the accuracy of the model as it also reveals how it fails when it does. Note that P(N) denotes the total number of positive(negative) outputs in the data set, while P$^*$(N$^*$) is the total number of positive(negative) class predictions made by the model. 
 
-False postive predictions (FP) are also known as *Type I* errors, while false negatives (FN) are called *Type II* errors. Depending on the application, one of these types of errors is typically more serious than the other one. Consider for example a machine-learning model to diagnose a rare disease, or one that predicts whether a young offender is likely to commit future crimes, which type of error has the largest negative consequence in each situation? 
+False positive predictions (FP) are also known as *Type I* errors, while false negatives (FN) are called *Type II* errors. Depending on the application, one of these types of errors is typically more serious than the other one. Consider for example a machine-learning model to diagnose a rare disease, or one that predicts whether a young offender is likely to commit future crimes, which type of error has the largest negative consequence in each situation? 
 
 There is an extensive terminology connected with the confusion matrix. Let us just highlight a few metrics that might be relevant in different circumstances:
 
@@ -33,7 +33,7 @@ The fact that the choice of relevant metric depends on the problem reveals an im
 
 (from Sumpter 2021 {cite}`Sumpter2021`)
 
-The Compas algorithm was developed by a private company, Northpointe, to help with criminal sentencing decisions. The model used logistic regression with input variables including age at first arrest, years of education, and questionnaire answers about family background, drug use, and other factors to predict an output variable as to whether the person would reoffend. Race was not included in the model. Nonetheless, when tested – as part of a a study by Julia Angwin and colleagues at Pro-Publica on an independently collected data set, the model gave different predictions for black defendants than for white. The results are reproduced below in the form of a confusion matrix for re-offending over the next two years.
+The Compas algorithm was developed by a private company, Northpointe, to help with criminal sentencing decisions. The model used logistic regression with input variables including age at first arrest, years of education, and questionnaire answers about family background, drug use, and other factors to predict an output variable as to whether the person would reoffend. Race was not included in the model. Nonetheless, when tested – as part of a study by Julia Angwin and colleagues at Pro-Publica on an independently collected data set, the model gave different predictions for black defendants than for white. The results are reproduced below in the form of a confusion matrix for re-offending over the next two years.
 
 
 |  **Black defendants**     | Did not reoffend ($y=-1$)  | Reoffended ($y=1$)  | 
@@ -48,13 +48,13 @@ The Compas algorithm was developed by a private company, Northpointe, to help wi
 
 Angwin and her colleagues pointed out that the false positive rate for black
 defendants, 805/(990 + 805) = 44.8%, is almost double that of white defendants,
-349/(349 + 1 139) = 23.4%. This difference cannot be accounted for simply by
+349/(349 + 1 139) = 23.5%. This difference cannot be accounted for simply by
 overall reoffending rates: although this is higher for black defendants (at 51.4%
 arrested for another offence within two years), when compared to white defendants
-(39.2%), these differences are smaller than the differences in false positive rates.
+(39.4%), these differences are smaller than the differences in false positive rates.
 On this basis, the model is clearly unfair. The model is also unfair in terms of true
 positive rate (recall). For black defendants, this is 1 369/(532 + 1369) = 72.0%
-versus 505/(505 + 461) = 52.2% for white defendants. White offenders who go on
+versus 505/(505 + 461) = 52.3% for white defendants. White offenders who go on
 to commit crimes are more likely to be classified as lower risk.
 
 In response to criticism about the fairness of their method, the company Northpointe countered that in terms of performance, the precision (positive predictive
@@ -64,7 +64,7 @@ this sense the model is fair, in that it has the same performance for both group
 Moreover, Northpointe argued that it is precision which is required, by law, to be
 equal for different categories. Again this is the problem we highlighted above, but
 now with serious repercussions for the people this algorithm is applied to: black
-people who won’t later reoffend are more likely to classified as high risk than white
+people who won’t later reoffend are more likely to be classified as high risk than white
 people.
 
 
@@ -80,7 +80,7 @@ If you think data bias is the problem of recent times, it’s not. Dating back t
 
 The school developed a program that aimed to reduce the amount of work when selecting candidates for interviews. The school believed it would eliminate human error and inconsistencies. 
 
-But the [Commission of Racial Equality found the school guilty of discrimination against women and people with non-European sounding names](https://en.wikipedia.org/wiki/Medical_School_Admissions:_Report_of_a_formal_investigation_into_St._George%27s_Hospital_Medical_School_(1988)). In fact, the program bared the bias that already existed in the system.
+But the [Commission for Racial Equality found the school guilty of discrimination against women and people with non-European sounding names](https://en.wikipedia.org/wiki/Medical_School_Admissions:_Report_of_a_formal_investigation_into_St._George%27s_Hospital_Medical_School_(1988)). In fact, the program reproduced the bias that already existed in the system.
 
 ### Data bias types in machine learning, including examples
 
@@ -113,7 +113,7 @@ This case also overlaps with racial bias – when data skews in favor of a parti
 ```
 
 ```{admonition}  Overfitting and underfitting the data
-In machine learning, overfitting occurs when a model is trained with so much data that it begins to learn from the noise and inaccurate data entries in the data set. Machine learning models have trouble predicting new data based on the training data because this noise cannot be applied to new data. 
+In machine learning, overfitting occurs when a model is so flexible, relative to the amount of training data, that it begins to learn from the noise and inaccurate data entries in the data set. Machine learning models have trouble predicting new data based on the training data because this noise cannot be applied to new data. 
 
 When a machine learning model fails to capture the underlying trend of the data (because it is too simple), underfitting occurs. In this case, it indicates that the model or algorithm is not fitting the data well enough.
 ```
