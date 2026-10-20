@@ -91,28 +91,29 @@ where $\langle f \rangle$ is the sample mean, and becomes
 ```
 
 :::{admonition} Intuition: naive MC in one dimension
-In one dimension, the average of a function
+In one dimension, the average value of a function $g$ on $[a,b]$ is the number
 
 $$
-  \overline g(\theta) = \frac{1}{b-a}\int_a^b g(\theta)\,d\theta
+  \overline g = \frac{1}{b-a}\int_a^b g(\para)\,d\para .
 $$
 
-from calculus. But we can *estimate* $\overline g(\theta)$ by averaging over a set $n$ of random samples $\{\theta_i\}$:
+We can *estimate* $\overline g$ by averaging $g$ over $N$ samples $\para_i \sim \mathcal{U}(a,b)$, i.e., drawn uniformly on $[a,b]$. The integral then becomes
 
 $$
-   \overline g(\theta) \approx \frac{1}{n}\sum_{i=1}^{n} g(\theta_i) .
+  I = \int_a^b g(\para)\,d\para = (b-a)\,\overline g \approx \frac{b-a}{N}\sum_{i=1}^{N} g(\para_i) ,
 $$
 
-Then the expectation value of $f(\theta)$ is
+which is Eq. {eq}`eq:MCMC:MC-integration` with "volume" $V_D = b-a$ in $D=1$ dimension.
+
+Since $1/(b-a)$ is the uniform PDF on $[a,b]$, $\overline g = \mathbb{E}_{\mathcal{U}}\left[ g(\para) \right]$ is an expectation value. The same idea therefore works for any PDF $p(\para)$ that we can draw samples $\para_i \sim p$ from:
 
 $$
-  \langle f(\theta) \rangle = \int_a^b g(\theta)\,d\theta
-    \approx \frac{b-a}{n}\sum_{i=1}^{n} g(\theta_i)
+  \mathbb{E}_p\left[ f(\para) \right] = \int f(\para)\,p(\para)\,d\para \approx \frac{1}{N}\sum_{i=1}^{N} f(\para_i) .
 $$
 
-Here $b-a$ is the "volume" $V_D$ in $D=1$ dimension.
+There is no volume factor here because $p$ is normalized; in the uniform case $p(\para) = 1/(b-a) = 1/V_D$. Drawing samples from a general $p$ is what MCMC will do for us.
 
-Does this always work? No! (Cf., the radioactive lighthouse problem.) But if the central limit theorem applies, it should work, but usually not efficiently.
+Does this always work? No! The error decreases as $1/\sqrt{N}$ (central limit theorem) only if $f$ has a finite variance under the sampling distribution, $\text{Var}_p\left( f(\para) \right) < \infty$. This fails for Cauchy-like tails. In the radioactive lighthouse problem ({ref}`problem:radioactive-lighthouse-problem`) the flash positions have neither a finite mean nor a finite variance, so their sample average does not converge to the lighthouse position.
 :::
 
 
