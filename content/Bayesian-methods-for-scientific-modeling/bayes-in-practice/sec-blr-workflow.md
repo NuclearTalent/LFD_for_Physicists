@@ -91,7 +91,7 @@ Assuming normally distributed residuals, as we have done, it turns out to be str
 
 $$
 \covres &= \mathrm{diag}(\sigmas^2), \, \text{where} \\ 
-\sigmas^2 &= \left( \sigma_0^2, \sigma_1^2, \ldots, \sigma_{N_d-1}^2\right),
+\sigmas^2 &= \left( \sigma_1^2, \sigma_2^2, \ldots, \sigma_{N_d}^2\right),
 $$ (eq:BayesianLinearRegression:independent_errors)
 
 and $\sigmai^2$ is the variance for residual $\residual_i$. 
@@ -143,21 +143,24 @@ Review the probability rules in {numref}`Chapter %s <ch:Inferenceandpdfs>`. The 
 Furthermore, since we assume that the residuals are independent we find that the total likelihood becomes a product of the individual ones for each element of $\data$:
 
 $$
-\pdf{\data}{\parsLR,\sigmas^2,I} &= \prod_{i=0}^{N_d-1} \pdf{\data_i}{\parsLR,\sigmai^2,I} \\
+\pdf{\data}{\parsLR,\sigmas^2,I} &= \prod_{i=1}^{N_d} \pdf{\data_i}{\parsLR,\sigmai^2,I} \\
 &= \left(\frac{1}{2\pi}\right)^{N_d/2} \frac{1}{\left| \covres \right|^{1/2}} \exp\left[ -\frac{1}{2} (\data - \dmat \parsLR)^T \covres^{-1} (\data - \dmat \parsLR) \right],
 $$ (eq:BayesianLinearRegression:normal_likelihood)
 
-where we note that the diagonal form of $\covres$ implies that $\left| \covres \right|^{1/2} = \prod_{i=0}^{N_d-1} \sigmai$ and that the exponent becomes a sum of squared and weighted residual terms
+where we note that the diagonal form of $\covres$ implies that $\left| \covres \right|^{1/2} = \prod_{i=1}^{N_d} \sigmai$ and that the exponent becomes a sum of squared and weighted residual terms
 
 $$
--\frac{1}{2} (\data - \dmat \parsLR)^T \covres^{-1} (\data - \dmat \parsLR) = -\frac{1}{2} \sum_{i=0}^{N_d - 1} \frac{(\data_i - (\dmat \parsLR)_i)^2}{\sigma_i^2}.
+-\frac{1}{2} (\data - \dmat \parsLR)^T \covres^{-1} (\data - \dmat \parsLR) = -\frac{1}{2} \sum_{i=1}^{N_d} \frac{(\data_i - (\dmat \parsLR)_i)^2}{\sigma_i^2}.
 $$ (eq:BayesianLinearRegression:LR_likelihood_exponent)
 
 In the special case that all residuals are both *independent and identically distributed* (i.i.d.) we have that all variances are the same, $\sigmai^2 = \sigmares^2$, and the full covariance matrix is completely specified by a single parameter $\sigmares^2$. For this special case, the likelihood becomes
 
 $$
-\pdf{\data}{\parsLR,\sigmares^2,I} = \left(\frac{1}{2\pi\sigmares^2}\right)^{N_d/2} \exp\left[ -\frac{1}{2\sigmares^2} \sum_{i=0}^{N_d - 1} (\data_i - (\dmat \parsLR)_i)^2 \right].
+\pdf{\data}{\parsLR,\sigmares^2,I} &= \left(\frac{1}{2\pi\sigmares^2}\right)^{N_d/2} \exp\left[ -\frac{1}{2\sigmares^2} \sum_{i=1}^{N_d} (\data_i - (\dmat \parsLR)_i)^2 \right] \\
+&= \left(\frac{1}{2\pi\sigmares^2}\right)^{N_d/2} \exp\left[ -\frac{1}{2} \frac{(\data - \dmat \parsLR)^T (\data - \dmat \parsLR)}{\sigmares^2} \right].
 $$ (eq:BayesianLinearRegression:normal_iid_likelihood)
+
+In the following we will often include the error model, here specified by $\sigmares^2$, in the background information $I$ and simply write $\pdf{\data}{\parsLR,I}$.
 
 ```{caution} 
 For computational performance it is always better (if possible) to write sums, such as the one in the exponent of {eq}`eq:BayesianLinearRegression:normal_iid_likelihood`, in the form of vector-matrix operations rather than as for-loops. This particular sum should therefore be implemented as $(\data - \dmat \parsLR)^T (\data - \dmat \parsLR)$ to employ powerful optimization for vectorized operations in existing numerical libraries (such as [`numpy`](https://numpy.org/) in `python` and [`gsl`](https://www.gnu.org/software/gsl/), [`mkl`](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html) for C and other compiled programming languages).
@@ -441,41 +444,60 @@ Introduce the integration over $\parsLR$ using the sum rule and then obtain the 
 ## Solutions to exercises
 
 
-```{solution} exercise:BayesianLinearRegression:likelihood_pars_b
+````{solution} exercise:BayesianLinearRegression:likelihood_pars_b
 :label: solution:BayesianLinearRegression:likelihood_pars
 :class: dropdown
 
-- The likelihood can be written $\pdf{\data}{\parsLR,I} = \exp\left[ -L(\parsLR) \right]$, where we include information on the error distribution ($\sigmares$) in the conditional $I$. The negative log-likelihood, including the normalization factor, is
+1. *Negative log-likelihood.* We write the likelihood {eq}`eq:BayesianLinearRegression:normal_iid_likelihood` as $\pdf{\data}{\parsLR,I} = \exp\left[ -L(\parsLR) \right]$. The negative log-likelihood, including the normalization factor, is
 
-$$
-L(\parsLR) = \frac{N_d}{2}\log(2\pi\sigmares^2) + \frac{1}{2\sigmares^2} \sum_{i=0}^{N_d - 1} (\data_i - (\dmat \parsLR)_i)^2.
-$$
+   $$
+   L(\parsLR) = \frac{N_d}{2}\log(2\pi\sigmares^2) + \frac{1}{2\sigmares^2} (\data - \dmat \parsLR)^T (\data - \dmat \parsLR).
+   $$
 
-- Comparing with Eq. {eq}`eq:BayesianLinearRegression:cost-function` and the corresponding gradient vector {eq}`eq:BayesianLinearRegression:gradient` we find that
+   Apart from the constant first term and the factor $1/(2\sigmares^2)$, this is the least-squares cost function {eq}`eq:BayesianLinearRegression:cost-function`.
 
-  $$
-  \nabla_{\pars} L(\parsLR) = -\frac{\dmat^T\left( \data-\dmat\pars\right)}{\sigmares^2},
-  $$
+2. *Gradient and mode.* Using the gradient {eq}`eq:BayesianLinearRegression:gradient` of the cost function we find
 
-  which is zero at $\pars = \optparsLR = \left(\dmat^T\dmat\right)^{-1}\dmat^T\data$ corresponding to the solution of the normal equation.
+   $$
+   \boldsymbol{\nabla}_{\parsLR} L(\parsLR) = -\frac{\dmat^T\left( \data-\dmat\parsLR\right)}{\sigmares^2}.
+   $$
 
-- We can Taylor expand $L(\parsLR)$ around $\parsLR=\optparsLR$ realizing that the linear (gradient) term is zero. Furthermore, the quadratic term depends on the second derivative (Hessian) which is a constant matrix since $L$ only depends quadratically on the parameters
+   Setting it to zero gives the normal equation {eq}`eq:BayesianLinearRegression:NormalEquation`. The gradient therefore vanishes at $\parsLR = \optparsLR = \left(\dmat^T\dmat\right)^{-1}\dmat^T\data$, which is the mode of the likelihood.
 
-$$
-\boldsymbol{H} = \nabla_{\parsLR} \nabla_{\parsLR}^T L(\parsLR) = \frac{\dmat^T\dmat}{\sigmares^2}
-$$
+3. *Hessian.* Differentiating the gradient once more gives the matrix of second derivatives
 
-- Since higher derivatives therefore must be zero, the Taylor expansion actually terminates at second order
+   $$
+   \boldsymbol{H} = \boldsymbol{\nabla}_{\parsLR} \boldsymbol{\nabla}_{\parsLR}^T L(\parsLR) = \frac{\dmat^T\dmat}{\sigmares^2},
+   $$
 
-$$
-L(\parsLR) = L(\optparsLR) + \frac{1}{2} (\parsLR-\optparsLR)^T \frac{\dmat^T\dmat}{\sigmares^2} (\pars-\optparsLR)
-$$
+   which is constant, i.e., independent of $\parsLR$.
 
-- We introduce $\covparsLR^{-1} \equiv {\dmat^T\dmat} / {\sigmares^2}$ and use that $\exp\left[ - L(\optparsLR) \right] = \pdf{\data}{\optparsLR,I}$. Therefore, evaluating $\exp\left[ -L(\parsLR) \right]$ gives
+4. *Taylor expansion.* The expansion of $L(\parsLR)$ around $\optparsLR$ is
 
-  $$
-  \pdf{\data}{\parsLR,I} = \pdf{\data}{\optparsLR,I} \exp\left[ -\frac{1}{2} (\pars-\optparsLR)^T \covparsLR^{-1} (\pars-\optparsLR) \right],
-  $$
+   $$
+   L(\parsLR) = L(\optparsLR) + (\parsLR-\optparsLR)^T \boldsymbol{\nabla}_{\parsLR} L(\optparsLR) + \frac{1}{2} (\parsLR-\optparsLR)^T \boldsymbol{H} (\parsLR-\optparsLR).
+   $$
 
-  as we wanted to show.
+   It is *exact* and terminates at second order since $L$ is a quadratic polynomial in $\parsLR$, such that all third and higher derivatives vanish. Furthermore, the linear term is zero since $\boldsymbol{\nabla}_{\parsLR} L(\optparsLR) = 0$.
+
+5. *Exponentiate.* With $\covparsLR^{-1} \equiv \boldsymbol{H} = {\dmat^T\dmat} / {\sigmares^2}$ and $\exp\left[ - L(\optparsLR) \right] = \pdf{\data}{\optparsLR,I}$ we obtain
+
+   $$
+   \pdf{\data}{\parsLR,I} = \exp\left[ -L(\parsLR) \right] = \pdf{\data}{\optparsLR,I} \exp\left[ -\frac{1}{2} (\parsLR-\optparsLR)^T \covparsLR^{-1} (\parsLR-\optparsLR) \right],
+   $$
+
+   as we wanted to show. The prefactor $\pdf{\data}{\optparsLR,I}$ does not depend on $\parsLR$, so as a function of the parameters the likelihood is proportional to a multivariate normal distribution with mean $\optparsLR$ and covariance matrix $\covparsLR$.
+
+```{admonition} Alternative: completing the square
+:class: tip
+The same result can be obtained without a Taylor expansion. Writing $\data - \dmat\parsLR = (\data - \dmat\optparsLR) - \dmat(\parsLR - \optparsLR)$ gives
+
+\begin{align}
+(\data - \dmat\parsLR)^T(\data - \dmat\parsLR) &= (\data - \dmat\optparsLR)^T(\data - \dmat\optparsLR) \\
+& \quad + (\parsLR - \optparsLR)^T\dmat^T\dmat(\parsLR - \optparsLR) \\
+& \quad - 2(\parsLR - \optparsLR)^T\dmat^T(\data - \dmat\optparsLR).
+\end{align}
+
+The last term vanishes since $\optparsLR$ solves the normal equation, $\dmat^T(\data - \dmat\optparsLR) = 0$.
 ```
+````
