@@ -29,11 +29,11 @@ The stochastic process $X$ is a Markov chain if it has the **Markov property**
   = \prob_{X_n \vert X_{n-1}}\left( i_n \vert i_{n-1} \right)
 \end{equation}
 
-for a countable (discrete) sample space. For continuous variables we formulate this property using conditional distribution functions
+for a countable (discrete) sample space. For continuous variables we formulate this property using conditional probability densities
 
 \begin{equation}
-  P_{X_n \vert X_0, X_1, \ldots, X_{n-1}} \left( x_n \vert  x_0, x_1, \ldots, x_{n-1} \right)
-  = P_{X_n \vert X_{n-1}} \left( x_n \vert x_{n-1} \right)
+  p_{X_n \vert X_0, X_1, \ldots, X_{n-1}} \left( x_n \vert  x_0, x_1, \ldots, x_{n-1} \right)
+  = p_{X_n \vert X_{n-1}} \left( x_n \vert x_{n-1} \right)
 \end{equation}
 
 ```  
@@ -47,11 +47,11 @@ An observer of a Markov process would only have to measure the one-step conditio
 
 \begin{equation}
 \begin{gathered}
-P_{X_0}(x_0), \\
-P_{X_1 \vert X_0}(x_1 | x_0), \\
-P_{X_2 \vert X_1}(x_2 | x_1), \\
+p_{X_0}(x_0), \\
+p_{X_1 \vert X_0}(x_1 | x_0), \\
+p_{X_2 \vert X_1}(x_2 | x_1), \\
 \vdots\\
-P_{X_n \vert X_{n-1}}(x_n | x_{n-1}),
+p_{X_n \vert X_{n-1}}(x_n | x_{n-1}),
 \end{gathered}
 \end{equation}
 
@@ -63,8 +63,8 @@ An important subset of Markov processes are **stationary** which implies that th
 
 \begin{equation}
 \begin{gathered}
-P_{X_0}(x_0), \\
-P_{X_n \vert X_{n-1}}(x_n | x_{n-1}),
+p_{X_0}(x_0), \\
+p_{X_n \vert X_{n-1}}(x_n | x_{n-1}),
 \end{gathered}
 \end{equation}
 
@@ -75,21 +75,21 @@ for any $n$, to have a complete description. Here is a more formal definition.
 
 Given a countable (discrete) sample space $S$, the Markov chain $X$ is stationary if
 
-\begin{equation}
+$$
   \prob_{X_{n+1} \vert X_n} \left(  j \vert  i \right)
   = \prob_{X_1 \vert X_0} \left( j \vert  i \right)
   \equiv T(i,j)
-\end{equation}
+$$ (eq:MarkovChains:transition-density-discrete)
 
 for all $n,i,j$. Here we have also introduced the (stationary) **transition density** $T$, which here becomes an $|S| \times |S|$ matrix with elements $T(i,j)$. 
 
-For continuous variables we use (conditional) distribution functions and we introduce the continuous transition density 
+For continuous variables we use (conditional) probability densities and we introduce the continuous transition density 
 
-\begin{equation}
-  P_{ X_{n+1} \vert X_n} \left( x_j \vert x_i \right)
-  = P_{X_1 \vert X_0} \left( x_j \vert x_i \right)
+$$
+  p_{X_{n+1} \vert X_n} \left( x_j \vert x_i \right)
+  = p_{X_1 \vert X_0} \left( x_j \vert x_i \right)
   \equiv T\left( x_i, x_j \right).
-\end{equation}
+$$ (eq:MarkovChains:transition-density-continuous)
 
 ```  
 
@@ -97,7 +97,9 @@ For continuous variables we use (conditional) distribution functions and we intr
 Markov chains with this property are also known as *(time-)homogeneous*. This meaning of "stationary" should not be confused with the *stationary distribution* of a chain, which is introduced below.
 ```
 
-Be aware since the transition density is sometimes denoted $T(x_j \leftarrow x_i)$ or even $T_{j,i}$. 
+```{admonition} Notation: argument order
+In Eqs. {eq}`eq:MarkovChains:transition-density-discrete` and {eq}`eq:MarkovChains:transition-density-continuous` the conditional probabilities are written "to given from", e.g., $\prob_{X_{n+1} \vert X_n}(j \vert i)$, while the transition density is written "from, to". The transition density matrix element $T(i,j)$ is the probability to go *from* $i$ *to* $j$. Both orders are standard. The MH algorithm in {ref}`sec:BasicStructureMCMC` was formulated with conditional probabilities, $p(X|X') = T(X',X)$ for a move from $X'$ to $X$. Other texts write $T(x_j \leftarrow x_i)$ or $T_{j,i}$, so always check the convention.
+```
 
 ```{exercise} Stochastic matrix
 :label: exercise:MarkovChains:stochastic-matrix
@@ -113,7 +115,7 @@ The transition density $T$ is a so called *stochastic matrix*. What properties m
 - If so, what are the matrix elements of the transition density?
 ```
 
-In the following we will only consider stationary Markov chains and we stress that these are fully defined by $P_{X_0}(x_0)$ and $T\left( x_i, x_j \right)$. 
+In the following we will only consider stationary Markov chains and we stress that these are fully defined by $p_{X_0}(x_0)$ and $T\left( x_i, x_j \right)$. 
 
 ````{prf:example} A simple Markov process
 :label: example:simple-markov-process
@@ -480,7 +482,7 @@ $$
 T(i,i) = S(i,i) + \sum_{j \neq i} S(i,j) \left( 1 - A(i,j)\right).
 $$ (eq:MarkovChains:Metropolis-T-diagonal)
 
-An off-diagonal element is the probability that position $j$ is proposed *and* accepted. The chain stays at position $i$ either if this position is proposed (the first term of the diagonal element), or if a move to some other position $j$ is proposed (probability $S(i,j)$) and rejected (probability $1 - A(i,j)$).
+An off-diagonal element is the probability that position $j$ is proposed *and* accepted. The chain stays at position $i$ either if this position is proposed (the first term of the diagonal element), or if a move to some other position $j$ is proposed (probability $S(i,j)$) and rejected (probability $1 - A(i,j)$). In the notation of {ref}`sec:BasicStructureMCMC`, $S(i,j) = q(j|i)$ and $A(i,j) = A(i \to j)$.
 
 The question is now how to choose the acceptance probabilities such that the chain samples the desired distribution $\pi$.
 
