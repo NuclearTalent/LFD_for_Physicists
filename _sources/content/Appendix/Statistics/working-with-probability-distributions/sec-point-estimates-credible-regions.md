@@ -148,6 +148,7 @@ fig_x1x2 = pp.corner(x1x2, bins=50, labels=[r'$x_1$',r'$x_2$'],
                           plot_estimates=True, colors='green', n_uncertainty_digits=2, 
                           title_loc='center', figsize=(5,5))
 glue("bivariate_fig", fig_x1x2, display=False)
+plt.close(fig_x1x2)
 ```
 
 ```{glue:figure} bivariate_fig

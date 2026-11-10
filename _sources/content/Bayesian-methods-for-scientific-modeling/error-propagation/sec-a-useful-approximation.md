@@ -279,6 +279,7 @@ for iA, (A0,sigA) in enumerate([(9,1),(1,9),(-20,9)]):
 axs[0,1].legend(loc='best')
 fig_Af.tight_layout()
 glue(f"Af_fig", fig_Af, display=False)
+plt.close(fig_Af)
 ```
 
 ## Solutions to exercises

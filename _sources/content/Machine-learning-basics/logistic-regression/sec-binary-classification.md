@@ -110,6 +110,7 @@ ax.set_xlabel(r'Preactivation $z$')
 ax.set_ylabel('Activation function')
 
 glue("sigmoid_functions_fig", fig, display=False)
+plt.close(fig)
 ```
 
 ```{glue:figure} sigmoid_functions_fig

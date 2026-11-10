@@ -102,6 +102,7 @@ ax.set_ylabel('Population')
 ax.set_title(rf'Bacterial growth ($\lambda={lam}$, $y_0={y0}$)')
 
 glue("bacterial-growth_fig", fig, display=False)
+plt.close(fig)
 
 # How large is the probability that the number of bacteria exceeds 100 after 10 mins?
 i10 = np.argmin(np.abs(t-10))
