@@ -178,6 +178,7 @@ example = MarkovProcessExample(seed=1)
 example.create_multiple_processes(50,4)
 fig_runs, ax_runs = example.plot_processes()
 glue("MarkovProcessExample_runs_fig", fig_runs, display=False)
+plt.close(fig_runs)
 ```
 
 ```{code-cell} python3
@@ -191,6 +192,7 @@ example.create_multiple_processes(13,40000)
 # but we just plot the first four variables
 fig_corner = pp.corner(example.sequence[:4,:].T,labels=[fr'$X_{{{i}}}$' for i in range(4)])
 glue("MarkovProcessExample_corner_fig", fig_corner, display=False)
+plt.close(fig_corner)
 ```
 
 (sec:MarkovChains:limiting)=
@@ -233,6 +235,7 @@ is considered in {numref}`exercise:MarkovChains:memory`. Conditional distributio
 
 fig_X2givenX0,_,_,_,_ = example.plot_conditional_distributions([1,2],bins=20)
 glue("X2givenX0_fig", fig_X2givenX0, display=False)
+plt.close(fig_X2givenX0)
 ```
 
 ```{glue:figure} X2givenX0_fig
@@ -338,6 +341,7 @@ The appearance of a limiting distribution already after $\approx$ 8--12 iteratio
 
 fig_XmgivenX0,_,_,_,_ = example.plot_conditional_distributions([1,4,8,12],bins=20)
 glue("XmgivenX0_fig", fig_XmgivenX0, display=False)
+plt.close(fig_XmgivenX0)
 ```
 
 For practical purposes there are two issues to deal with:
@@ -429,10 +433,12 @@ example_reversible = ReversibleMarkovProcessExample(seed=1)
 example_reversible.create_multiple_processes(50,4)
 fig_runs_reversible, ax = example_reversible.plot_processes()
 glue("ReversibleMarkovProcessExample_runs_fig", fig_runs_reversible, display=False)
+plt.close(fig_runs_reversible)
 
 example_reversible.create_multiple_processes(17,40000)
 fig_cprob_reversible,_,_,_,_ = example_reversible.plot_conditional_distributions([1,4,16],bins=20)
 glue("ReversibleMarkovProcessExample_cprob_fig", fig_cprob_reversible, display=False)
+plt.close(fig_cprob_reversible)
 ```
 
 ```{exercise} A reversible Markov chain

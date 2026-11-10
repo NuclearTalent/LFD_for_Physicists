@@ -187,6 +187,7 @@ ax.legend(loc='best');
 
 from myst_nb import glue
 glue("MC-integration_fig", fig, display=False)
+plt.close(fig)
 ```
 
 ```{glue:figure} MC-integration_fig

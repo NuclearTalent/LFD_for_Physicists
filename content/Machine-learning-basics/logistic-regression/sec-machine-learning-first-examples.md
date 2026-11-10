@@ -167,6 +167,7 @@ ax.set_aspect('equal', 'box')
 ax.set_xlabel(r'$x_1$')
 ax.set_ylabel(r'$x_2$')
 glue("binary_classification_data_fig", fig_train_data, display=False);
+plt.close(fig_train_data)
 ```
 
 
@@ -352,6 +353,7 @@ ax.set_aspect('equal', 'box')
 ax.set_title('soft linear classifier');
 
 glue("fig_linear_classifier", fig_linear_classifier, display=False);
+plt.close(fig_linear_classifier)
 ```
 
 For visualization we also make a 3D plot of the surface $z=z(x_1,x_2) = w_0 + w_1 x_1 + w_2 x_2$ that results from the linear regression. This is the plane that minimizes the sum of squared distances to the data.
@@ -383,6 +385,7 @@ ax.set_zlim(-0.75, 1.75)
 ax.view_init(elev=15., azim=-75, roll=0)
 fig_linear_classifier_plane.tight_layout()
 glue("fig_linear_classifier_plane", fig_linear_classifier_plane, display=False);
+plt.close(fig_linear_classifier_plane)
 ```
 
 
@@ -432,6 +435,7 @@ for ik,k in enumerate(k_list):
     ax.set_title(rf'$k={k}$ NN')
 
 glue("fig_kNN_classifier", fig_kNN_classifier, display=False);
+plt.close(fig_kNN_classifier)
 ```
 
 ## Exercises
