@@ -1,3 +1,4 @@
+(sec:MathematicalOptimization:adaptive-gd)=
 # Adaptive gradient descent algorithms
 
 {{ sub_extra_tif385_admonition }}
