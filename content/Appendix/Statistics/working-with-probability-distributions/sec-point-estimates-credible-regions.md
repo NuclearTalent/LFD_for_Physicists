@@ -54,7 +54,7 @@ plt.close(fig_point)
 ```{glue:figure} pointestimates_fig
 :name: "fig-pdfs"
 
-The mean, median and mode(s) for some example PDFs. For some PDFs, several or all of these metrics are the same. For others they are not. The position of the mean is largely affected by long tails as illustrated in the middle panel. The PDF in the right panel has two modes (it is bimodal). Although no shuch example is shown here, there are PDFs for which the mean is not defined.
+The mean, median and mode(s) for some example PDFs. For some PDFs, several or all of these metrics are the same. For others they are not. The position of the mean is largely affected by long tails as illustrated in the middle panel. The PDF in the right panel has two modes (it is bimodal). Although no such example is shown here, there are PDFs for which the mean is not defined.
 ```
 
 ```{admonition} Discuss
@@ -82,7 +82,7 @@ This allows to make statements such as: "There is a 50% probability that the par
 
 2. **Equal-tailed interval** (ETI)
 
-   For a univariate PDF we can define an interval $[a,b]$ such that $\int_a^b p(x) dx = P$ and the probability mass on either side (the tails) are equal. The end points of this ETI fulfil
+   For a univariate PDF we can define an interval $[a,b]$ such that $\int_a^b p(x) dx = P$ and the probability mass on either side (the tails) are equal. The end points of this ETI fulfill
    
    \begin{equation}
    \int_{-\infty}^{a} p(x) dx = \int_{b}^{\infty} p(x) dx = \frac{1-P}{2}.
